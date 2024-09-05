@@ -6,13 +6,15 @@
 
 <link rel='canonical' href='https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/'>
 
-<link rel="stylesheet" href="/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="Ubuntu22.04安装MySQL8.0.35">
+<link rel="stylesheet" href="/scss/style.min.e0818f74a5cc5a3fb725aa5bbfa98f6567cf07f85ea0aa40f2d2d819bb19bc41.css"><meta property='og:title' content="Ubuntu22.04安装MySQL8.0.35">
 <meta property='og:description' content="更新软件包 1 sudo apt-get update ">
 <meta property='og:url' content='https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/'>
 <meta property='og:site_name' content='rustWood'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Ubuntu' /><meta property='article:tag' content='VMvare' /><meta property='article:tag' content='MySQL' /><meta property='article:published_time' content='2024-09-04T23:18:48&#43;08:00'/><meta property='article:modified_time' content='2024-09-04T23:18:48&#43;08:00'/>
 <meta name="twitter:title" content="Ubuntu22.04安装MySQL8.0.35">
-<meta name="twitter:description" content="更新软件包 1 sudo apt-get update ">
+<meta name="twitter:description" content="更新软件包 1 sudo apt-get update ">        
+        
+        <link rel="stylesheet" href="/highlight/styles/github.css">
     </head>
     <body class="
     article-page
@@ -419,11 +421,11 @@
 </span><span class="lnt">4
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">use mysql;
-</span></span><span class="line"><span class="cl">update user set authentication_string=&#39;&#39; where user=&#39;root&#39;;
-</span></span><span class="line"><span class="cl">alter user &#39;root&#39;@&#39;localhost&#39; identified with mysql_native_password by &#39;123456&#39;;
-</span></span><span class="line"><span class="cl">quit;
-</span></span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="n">use</span><span class="w"> </span><span class="n">mysql</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">update</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">set</span><span class="w"> </span><span class="n">authentication_string</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="k">user</span><span class="o">=</span><span class="s1">&#39;root&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">alter</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="s1">&#39;root&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="w"> </span><span class="n">identified</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="n">mysql_native_password</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="s1">&#39;123456&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">quit</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><p><img src="/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/5.png"
 	width="848"
@@ -468,10 +470,10 @@
 </span><span class="lnt">3
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">CREATE USER &#39;rust&#39;@&#39;%&#39; IDENTIFIED WITH mysql_native_password BY &#39;123456&#39;;
-</span></span><span class="line"><span class="cl">GRANT ALL PRIVILEGES ON *.* TO &#39;rust&#39;@&#39;%&#39; WITH GRANT OPTION;
-</span></span><span class="line"><span class="cl">flush privileges;
-</span></span></code></pre></td></tr></table>
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">USER</span><span class="w"> </span><span class="s1">&#39;rust&#39;</span><span class="o">@</span><span class="s1">&#39;%&#39;</span><span class="w"> </span><span class="n">IDENTIFIED</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="n">mysql_native_password</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;123456&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">GRANT</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="k">PRIVILEGES</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="o">*</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;rust&#39;</span><span class="o">@</span><span class="s1">&#39;%&#39;</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="k">GRANT</span><span class="w"> </span><span class="k">OPTION</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">flush</span><span class="w"> </span><span class="k">privileges</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="设置mysql数据库允许远程访问">设置MySQL数据库允许远程访问
 </h2><p>默认情况下，MySQL服务器只允许本地连接。</p>
@@ -508,7 +510,7 @@
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo systemctl restart mysql
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo systemctl restart mysql
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="mysql执行顺序">MySQL执行顺序
@@ -529,15 +531,15 @@
 </span><span class="lnt">9
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-java" data-lang="java"><span class="line"><span class="cl"><span class="p">(</span><span class="n">9</span><span class="p">)</span><span class="w"> </span><span class="n">SELECT</span><span class="w"> </span><span class="p">(</span><span class="n">10</span><span class="p">)</span><span class="n">DISTINCT</span><span class="w"> </span><span class="n">column</span><span class="p">,(</span><span class="n">6</span><span class="p">)</span><span class="w"> </span><span class="n">AGG_FUNC</span><span class="p">(</span><span class="n">column</span><span class="w"> </span><span class="n">or</span><span class="w"> </span><span class="n">expression</span><span class="p">),...</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="n">1</span><span class="err">）</span><span class="n">FROM</span><span class="w"> </span><span class="nf">left_table</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="n">3</span><span class="err">）</span><span class="n">J0IN</span><span class="w"> </span><span class="nf">right_table</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="n">2</span><span class="err">）</span><span class="w"> </span><span class="n">ON</span><span class="w"> </span><span class="n">tablename</span><span class="p">.</span><span class="na">column</span><span class="w"> </span><span class="o">=</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="n">other_tablename</span><span class="p">.</span><span class="na">column</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="p">(</span><span class="n">4</span><span class="err">）</span><span class="n">WHERE</span><span class="w"> </span><span class="nf">constraint_expression</span><span class="p">(</span><span class="n">5</span><span class="p">)</span><span class="n">GROUP</span><span class="w"> </span><span class="n">BY</span><span class="w"> </span><span class="nf">column</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="n">7</span><span class="p">)</span><span class="n">WITH</span><span class="w"> </span><span class="n">CUBE</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="n">ROLLUP</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="n">8</span><span class="p">)</span><span class="n">HAVING</span><span class="w"> </span><span class="nf">constraint_expression</span><span class="p">(</span><span class="n">11</span><span class="p">)</span><span class="n">ORDER</span><span class="w"> </span><span class="n">BY</span><span class="w"> </span><span class="n">column</span><span class="w"> </span><span class="nf">ASCIDEsc</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="n">12</span><span class="p">)</span><span class="n">LIMIT</span><span class="w"> </span><span class="n">count</span><span class="w"> </span><span class="n">OFFSET</span><span class="w"> </span><span class="n">count</span><span class="p">;</span><span class="w">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="p">(</span><span class="mi">9</span><span class="p">)</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="k">DISTINCT</span><span class="w"> </span><span class="k">column</span><span class="p">,(</span><span class="mi">6</span><span class="p">)</span><span class="w"> </span><span class="n">AGG_FUNC</span><span class="p">(</span><span class="k">column</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="n">expression</span><span class="p">),...</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="mi">1</span><span class="err">）</span><span class="k">FROM</span><span class="w"> </span><span class="n">left_table</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="mi">3</span><span class="err">）</span><span class="n">J0IN</span><span class="w"> </span><span class="n">right_table</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="mi">2</span><span class="err">）</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">tablename</span><span class="p">.</span><span class="k">column</span><span class="w"> </span><span class="o">=</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="n">other_tablename</span><span class="p">.</span><span class="k">column</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="p">(</span><span class="mi">4</span><span class="err">）</span><span class="k">WHERE</span><span class="w"> </span><span class="n">constraint_expression</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">column</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="k">WITH</span><span class="w"> </span><span class="k">CUBE</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">ROLLUP</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="k">HAVING</span><span class="w"> </span><span class="n">constraint_expression</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">column</span><span class="w"> </span><span class="n">ASCIDEsc</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="k">LIMIT</span><span class="w"> </span><span class="k">count</span><span class="w"> </span><span class="k">OFFSET</span><span class="w"> </span><span class="k">count</span><span class="p">;</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div>
@@ -742,5 +744,9 @@
     }());
 </script>
 
+
+        
+        <script src="/highlight/highlight.js"></script>
+        <script>hljs.highlightAll();</script>
     </body>
 </html>
