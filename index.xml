@@ -1,0 +1,2071 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>rustWood</title>
+        <link>https://rusthx.github.io/</link>
+        <description>Recent content on rustWood</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh-cn</language>
+        <copyright>rustWood</copyright>
+        <lastBuildDate>Wed, 04 Sep 2024 23:18:48 +0800</lastBuildDate><atom:link href="https://rusthx.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Ubuntu22.04安装MySQL8.0.35</title>
+        <link>https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/</link>
+        <pubDate>Wed, 04 Sep 2024 23:18:48 +0800</pubDate>
+        
+        <guid>https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/</guid>
+        <description>&lt;h2 id=&#34;更新软件包&#34;&gt;更新软件包
+&lt;/h2&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo apt-get update 
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/1.png&#34;
+	width=&#34;874&#34;
+	height=&#34;281&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/1_hu10208442681550117401.png 480w, https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/1_hu1540946352521276743.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;311&#34;
+		data-flex-basis=&#34;746px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;下载mysql&#34;&gt;下载MySQL
+&lt;/h2&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo apt-get install mysql-server
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/2.png&#34;
+	width=&#34;715&#34;
+	height=&#34;471&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/2_hu3499638476653893172.png 480w, https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/2_hu13321327387705561269.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;151&#34;
+		data-flex-basis=&#34;364px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;登入mysql&#34;&gt;登入MySQL
+&lt;/h2&gt;&lt;p&gt;MySQL安装完成后会有默认用户和密码，通过默认的用户和密码登入MySQL后可以新建用户并对该用户赋权&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;查看默认用户和密码的命令&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo cat /etc/mysql/debian.cnf
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/3.png&#34;
+	width=&#34;645&#34;
+	height=&#34;318&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/3_hu6395335293921905352.png 480w, https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/3_hu3445967368468062197.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;202&#34;
+		data-flex-basis=&#34;486px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;使用默认用户和密码登入数据库&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;mysql -u用户名 -p
+输入密码
+用户名和密码分别为上图中的user 和password&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;mysql -udebian-sys-maint -p
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/4.png&#34;
+	width=&#34;772&#34;
+	height=&#34;401&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/4_hu13038779922474440114.png 480w, https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/4_hu1796599610772816749.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;192&#34;
+		data-flex-basis=&#34;462px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;新建用户-设置密码-赋权&#34;&gt;新建用户 设置密码 赋权
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;设置root用户的密码（我的密码设置为123456，根据自己的需求修改命令）&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;use mysql;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;update user set authentication_string=&amp;#39;&amp;#39; where user=&amp;#39;root&amp;#39;;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;alter user &amp;#39;root&amp;#39;@&amp;#39;localhost&amp;#39; identified with mysql_native_password by &amp;#39;123456&amp;#39;;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;quit;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/5.png&#34;
+	width=&#34;848&#34;
+	height=&#34;578&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/5_hu13115251342486511113.png 480w, https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/5_hu4830470020606109148.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;146&#34;
+		data-flex-basis=&#34;352px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;使用root用户登入数据库，并新建用户和赋权&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;下图为查询用户密码（加密过的）的命令
+&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/6.png&#34;
+	width=&#34;1191&#34;
+	height=&#34;500&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/6_hu4511073906702965881.png 480w, https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/6_hu14249002274118037829.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;238&#34;
+		data-flex-basis=&#34;571px&#34;
+	
+&gt;
+下列命令的意思是：
+创建用户rust 并设置rust用户可以访问的位置为%（本地访问和远程访问，仅本地访问为localhost）
+复制所有数据库的所有权限给rust用户
+刷新权限&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-fallback&#34; data-lang=&#34;fallback&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;CREATE USER &amp;#39;rust&amp;#39;@&amp;#39;%&amp;#39; IDENTIFIED WITH mysql_native_password BY &amp;#39;123456&amp;#39;;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;GRANT ALL PRIVILEGES ON *.* TO &amp;#39;rust&amp;#39;@&amp;#39;%&amp;#39; WITH GRANT OPTION;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;flush privileges;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;设置mysql数据库允许远程访问&#34;&gt;设置MySQL数据库允许远程访问
+&lt;/h2&gt;&lt;p&gt;默认情况下，MySQL服务器只允许本地连接。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;编辑MySQL配置文件（/etc/mysql/mysql.conf.d/mysqld.cnf）并注释掉以下行（在 bind-address 行前面添加#）：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo gedit /etc/mysql/mysql.conf.d/mysqld.cnf
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/7.png&#34;
+	width=&#34;904&#34;
+	height=&#34;788&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/7_hu11885888147539780446.png 480w, https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/7_hu2354824758386346848.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;114&#34;
+		data-flex-basis=&#34;275px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;保存文件并重启MySQL服务器&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo systemctl restart mysql
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;mysql执行顺序&#34;&gt;MySQL执行顺序
+&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;参考资料：&lt;a class=&#34;link&#34; href=&#34;https://blog.csdn.net/Elsa15/article/details/108544943&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://blog.csdn.net/Elsa15/article/details/108544943&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-java&#34; data-lang=&#34;java&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;9&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;SELECT&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;10&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;DISTINCT&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;column&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;,(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;6&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;AGG_FUNC&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;column&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;or&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;expression&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;),...&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;）&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;FROM&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;left_table&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;）&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;J0IN&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;right_table&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;2&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;）&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ON&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;tablename&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;column&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;other_tablename&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;.&lt;/span&gt;&lt;span class=&#34;na&#34;&gt;column&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;4&lt;/span&gt;&lt;span class=&#34;err&#34;&gt;）&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;WHERE&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;constraint_expression&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;5&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;GROUP&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;BY&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;column&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;7&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;WITH&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;CUBE&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;o&#34;&gt;|&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ROLLUP&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;8&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;HAVING&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;constraint_expression&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;11&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;ORDER&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;BY&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;column&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;nf&#34;&gt;ASCIDEsc&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;(&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;12&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;)&lt;/span&gt;&lt;span class=&#34;n&#34;&gt;LIMIT&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;count&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;OFFSET&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;count&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description>
+        </item>
+        <item>
+        <title>Ubuntu22.04扩展虚拟机的磁盘空间</title>
+        <link>https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/</link>
+        <pubDate>Wed, 04 Sep 2024 23:10:48 +0800</pubDate>
+        
+        <guid>https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/</guid>
+        <description>&lt;p&gt;可视化界面的操作简单易上手，主要是基于Gparted,非常适合新手。但是可视化界面的操作也有无法解决的问题，比如因为某些操作（例如编译系统或者下载大小未知的文件）可能会导致系统磁盘空间被占满从而无法下载GParted甚至无法正常开机的状况，这种时候就要使用命令行的扩容方案。&lt;/p&gt;
+&lt;h2 id=&#34;1可视化界面操作方案&#34;&gt;1.可视化界面操作方案
+&lt;/h2&gt;&lt;h3 id=&#34;vmware给虚拟机扩展空间不是虚拟机可以直接跳过此步骤&#34;&gt;VMware给虚拟机扩展空间（不是虚拟机可以直接跳过此步骤）
+&lt;/h3&gt;&lt;p&gt;在虚拟机设置里的磁盘选项点击扩展，选择要扩展到的磁盘大小，我的虚拟机本来就有80G,所以这里就只扩展5G作为演示。
+&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/1.png&#34;
+	width=&#34;1208&#34;
+	height=&#34;985&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/1_hu12106751947029339970.png 480w, https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/1_hu6196415264076441985.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;122&#34;
+		data-flex-basis=&#34;294px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/2.png&#34;
+	width=&#34;859&#34;
+	height=&#34;975&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/2_hu9565770717993669400.png 480w, https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/2_hu15163141580311301028.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;88&#34;
+		data-flex-basis=&#34;211px&#34;
+	
+&gt;
+扩容完成后还需要在虚拟机里分区和扩展文件系统。
+&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/3.png&#34;
+	width=&#34;467&#34;
+	height=&#34;270&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/3_hu1773551381671098408.png 480w, https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/3_hu18111936894384987885.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;172&#34;
+		data-flex-basis=&#34;415px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;查看系统占用情况&#34;&gt;查看系统占用情况
+&lt;/h3&gt;&lt;p&gt;可视化界面可以在左侧点击文件管理后，点击其他位置，正上方的计算机那里可以看到计算机的使用情况
+&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/4.png&#34;
+	width=&#34;1721&#34;
+	height=&#34;571&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/4_hu2007246107059773133.png 480w, https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/4_hu7408267796379412263.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;301&#34;
+		data-flex-basis=&#34;723px&#34;
+	
+&gt;
+终端界面，可以输入&lt;code&gt;df -h&lt;/code&gt;或者&lt;code&gt;sudo fdisk -l&lt;/code&gt;查看系统占用情况
+&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/5.png&#34;
+	width=&#34;678&#34;
+	height=&#34;233&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/5_hu11591823085248474772.png 480w, https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/5_hu7497566207331258488.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;290&#34;
+		data-flex-basis=&#34;698px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/6.png&#34;
+	width=&#34;630&#34;
+	height=&#34;600&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/6_hu10768229985305003616.png 480w, https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/6_hu15012015003107074853.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;105&#34;
+		data-flex-basis=&#34;252px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;下载分区管理软件gparted&#34;&gt;下载分区管理软件GParted
+&lt;/h3&gt;&lt;p&gt;在终端中输入下面的命令下载GParted&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo apt-get install gparted
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/7.png&#34;
+	width=&#34;724&#34;
+	height=&#34;542&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/7_hu18236979346184824430.png 480w, https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/7_hu8463672506275937872.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;133&#34;
+		data-flex-basis=&#34;320px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;对磁盘进行分区&#34;&gt;对磁盘进行分区
+&lt;/h3&gt;&lt;p&gt;点击左下角的九个点（显示应用程序），找到GParted。因为涉及磁盘数据，所以需要root权限，在弹出界面输入root用户密码即可。
+&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/8.png&#34;
+	width=&#34;630&#34;
+	height=&#34;600&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/8_hu10768229985305003616.png 480w, https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/8_hu15012015003107074853.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;105&#34;
+		data-flex-basis=&#34;252px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/9.png&#34;
+	width=&#34;937&#34;
+	height=&#34;519&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/9_hu13732989479892242957.png 480w, https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/9_hu1920041380140205096.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;180&#34;
+		data-flex-basis=&#34;433px&#34;
+	
+&gt;
+打开软件可以看到目前虚拟机的磁盘情况，灰色的是刚刚在VMware给虚拟机扩容的5G,还没有分配，需要手动分配。
+&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/10.png&#34;
+	width=&#34;937&#34;
+	height=&#34;481&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/10_hu8036443337925835756.png 480w, https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/10_hu1497489823618280859.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;194&#34;
+		data-flex-basis=&#34;467px&#34;
+	
+&gt;
+可以看到，&lt;code&gt;/dev/sda3&lt;/code&gt;是被挂载到了根目录下面，我们扩容也是要对根目录扩容。右键&lt;code&gt;/dev/sda3&lt;/code&gt;，点击调整大小/移动选项，直接滑动条拉到底或者编辑新大小调整空间。然后点击调整大小。
+&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/11.png&#34;
+	width=&#34;777&#34;
+	height=&#34;533&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/11_hu9168923410551075940.png 480w, https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/11_hu14848813474366135717.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;145&#34;
+		data-flex-basis=&#34;349px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/12.png&#34;
+	width=&#34;777&#34;
+	height=&#34;575&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/12_hu9769587233959993197.png 480w, https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/12_hu10839976496606617712.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;135&#34;
+		data-flex-basis=&#34;324px&#34;
+	
+&gt;
+然后左下角会显示一项操作待处理，点击绿色的√后点击应用操作
+&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/13.png&#34;
+	width=&#34;783&#34;
+	height=&#34;535&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/13_hu13650397478392655371.png 480w, https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/13_hu689082093374461633.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;146&#34;
+		data-flex-basis=&#34;351px&#34;
+	
+&gt;
+此时计算机的空间就成功扩容5G
+&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/14.png&#34;
+	width=&#34;792&#34;
+	height=&#34;536&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/14_hu5341166121250603329.png 480w, https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/14_hu3563252421528596862.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;147&#34;
+		data-flex-basis=&#34;354px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;出现无法调整只读文件系统的大小cannot-resize-read-only-file-system的解决办法&#34;&gt;出现无法调整只读文件系统的大小(cannot resize read-only file system)的解决办法
+&lt;/h3&gt;&lt;p&gt;右键/dev/sda3，点击信息，查看挂载点，重新挂载文件夹目录的读写权限。这里系统挂载了几个目录就要重新挂载几个目录的文件读写权限。
+这里因为演示的这台机是一台新机，还没有用过火狐浏览器什么的，所以只挂载了根目录。我用另外一台机进行演示
+&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/15.png&#34;
+	width=&#34;1417&#34;
+	height=&#34;276&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/15_hu8590855065025474934.png 480w, https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/15_hu929876264231526366.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;513&#34;
+		data-flex-basis=&#34;1232px&#34;
+	
+&gt;
+打开终端，重新挂载这几个目录的读写权限&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo mount -o remount -rw /
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo mount -o remount -rw /var/snap/firefox/common/host-hunspell
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/16.png&#34;
+	width=&#34;778&#34;
+	height=&#34;540&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/16_hu12044048748551198719.png 480w, https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/16_hu16549570152843178858.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;144&#34;
+		data-flex-basis=&#34;345px&#34;
+	
+&gt;
+重新打开GParted或者点击左上角的刷新设备，再次对磁盘进行分区（参照上述教程）&lt;/p&gt;
+&lt;h2 id=&#34;2命令行操作方案&#34;&gt;2.命令行操作方案
+&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;参考资料：&lt;a class=&#34;link&#34; href=&#34;https://blog.csdn.net/ynstxx/article/details/129068856&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://blog.csdn.net/ynstxx/article/details/129068856&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;硬盘占满无法开机&#34;&gt;硬盘占满无法开机
+&lt;/h3&gt;&lt;p&gt;如果磁盘空间还能支持开机，就开机后使用终端；
+如果磁盘已经满了不能正常开机（开机时卡在&lt;code&gt;/dev/sda* clean&lt;/code&gt;），使用CTRL+ALT+F2进入终端界面，输入用户名和密码进入系统。
+&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/17.png&#34;
+	width=&#34;758&#34;
+	height=&#34;370&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/17_hu3930587950499533969.png 480w, https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/17_hu821852536552560395.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;204&#34;
+		data-flex-basis=&#34;491px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/18.png&#34;
+	width=&#34;974&#34;
+	height=&#34;487&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/18_hu8272817670038035462.png 480w, https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/18_hu8275156758171272472.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;200&#34;
+		data-flex-basis=&#34;480px&#34;
+	
+&gt;
+下面就可以按照正常的命令行操作步骤进行操作（按照此方法打开的终端会有文本显示错误的问题，如上图中的棱形，这是中文显示错误，不影响实际操作，为了演示美观，我就不用这个演示了）&lt;/p&gt;
+&lt;h3 id=&#34;查看系统占用情况-1&#34;&gt;查看系统占用情况
+&lt;/h3&gt;&lt;p&gt;扩展虚拟机空间和查看系统占用情况可参照上述教程
+输入命令 &lt;code&gt;sudo fdisk -l&lt;/code&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/19.png&#34;
+	width=&#34;755&#34;
+	height=&#34;385&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/19_hu12496287535317245089.png 480w, https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/19_hu288711113874393157.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;196&#34;
+		data-flex-basis=&#34;470px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/20.png&#34;
+	width=&#34;603&#34;
+	height=&#34;158&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/20_hu7655303471002176168.png 480w, https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/20_hu2602743695652585532.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;381&#34;
+		data-flex-basis=&#34;915px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;用parted--l命令解决爆红部分的分区表问题&#34;&gt;用&lt;code&gt;parted -l&lt;/code&gt;命令解决爆红部分的分区表问题
+&lt;/h3&gt;&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/21.png&#34;
+	width=&#34;758&#34;
+	height=&#34;536&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/21_hu12504574874930846555.png 480w, https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/21_hu15701136059759300342.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;141&#34;
+		data-flex-basis=&#34;339px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;使用parted命令将devsda3扩容&#34;&gt;使用parted命令将&lt;code&gt;/dev/sda3&lt;/code&gt;扩容
+&lt;/h3&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo parted /dev/sda
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;unit s（设置Size单位）
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;p free（查看磁盘详情）
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;resizepart 3（对第3个盘进行扩容）
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Yes（分区正在使用中，确认是否继续）
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;188743646s（需要将磁盘扩容到的大小值，此处参考自己的空间）
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;q（退出磁盘分区模式）
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/22.png&#34;
+	width=&#34;838&#34;
+	height=&#34;678&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/22_hu16198667942365521885.png 480w, https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/22_hu10614763616713566062.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;123&#34;
+		data-flex-basis=&#34;296px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;使用sudo-resize2fs-devsda3命令更新磁盘3的容量&#34;&gt;使用&lt;code&gt;sudo resize2fs /dev/sda3&lt;/code&gt;命令更新磁盘3的容量
+&lt;/h3&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo resize2fs /dev/sda3
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h3 id=&#34;再次通过df--h或者sudo-fdisk--l命令查看磁盘情况&#34;&gt;再次通过&lt;code&gt;df -h&lt;/code&gt;或者&lt;code&gt;sudo fdisk -l&lt;/code&gt;命令查看磁盘情况
+&lt;/h3&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;df -h
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo fdisk -l
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/23.png&#34;
+	width=&#34;687&#34;
+	height=&#34;392&#34;
+	srcset=&#34;https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/23_hu14240377433136994924.png 480w, https://rusthx.github.io/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/23_hu2204547631708861333.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;175&#34;
+		data-flex-basis=&#34;420px&#34;
+	
+&gt;
+扩容完成，如果是硬盘占满通过CTRL+ALT+F2打开的终端，此时输入命令&lt;code&gt;reboot&lt;/code&gt;重启电脑即可正常启动&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>VMvare安装配置Ubuntu虚拟机</title>
+        <link>https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/</link>
+        <pubDate>Tue, 03 Sep 2024 23:14:48 +0800</pubDate>
+        
+        <guid>https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/</guid>
+        <description>&lt;h2 id=&#34;安装虚拟机&#34;&gt;安装虚拟机
+&lt;/h2&gt;&lt;h3 id=&#34;下载vmvare&#34;&gt;下载vmvare
+&lt;/h3&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.vmware.com/products/desktop-hypervisor.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://www.vmware.com/products/desktop-hypervisor.html&lt;/a&gt;
+现在的vmvare安装变得麻烦起来了，还要登陆网站。这里我用的是我之前下载的vmvare16pro。如果官网下载不太容易也可以直接搜索vmvare16安装，浏览器上应该还有留存的资源。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/1.png&#34;
+	width=&#34;1762&#34;
+	height=&#34;927&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/1_hu16557380544197006931.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/1_hu12099559846922593663.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;190&#34;
+		data-flex-basis=&#34;456px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;下载ubuntu2404&#34;&gt;下载Ubuntu24.04
+&lt;/h3&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://cn.ubuntu.com/download/desktop&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://cn.ubuntu.com/download/desktop&lt;/a&gt;
+Ubuntu的镜像文件大了很多，Ubuntu22.04只有3G左右，Ubuntu24.04就已经5G了。自行选择吧，两种都可以。
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/2.png&#34;
+	width=&#34;1588&#34;
+	height=&#34;799&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/2_hu5034123142382739712.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/2_hu16011023535640819816.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;198&#34;
+		data-flex-basis=&#34;476px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;安装虚拟机-1&#34;&gt;安装虚拟机
+&lt;/h3&gt;&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/3.png&#34;
+	width=&#34;1718&#34;
+	height=&#34;888&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/3_hu15028365153493613592.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/3_hu15452238232751100552.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;193&#34;
+		data-flex-basis=&#34;464px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/4.png&#34;
+	width=&#34;571&#34;
+	height=&#34;540&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/4_hu1906887181596660575.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/4_hu1601084356099696181.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;105&#34;
+		data-flex-basis=&#34;253px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/5.png&#34;
+	width=&#34;561&#34;
+	height=&#34;540&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/5_hu12018164241888597293.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/5_hu9722857219868767260.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;103&#34;
+		data-flex-basis=&#34;249px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/6.png&#34;
+	width=&#34;568&#34;
+	height=&#34;544&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/6_hu17938781139678690530.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/6_hu12451276316271238826.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;104&#34;
+		data-flex-basis=&#34;250px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/7.png&#34;
+	width=&#34;573&#34;
+	height=&#34;537&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/7_hu6471993612658994229.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/7_hu17382715070509250368.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;106&#34;
+		data-flex-basis=&#34;256px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/8.png&#34;
+	width=&#34;568&#34;
+	height=&#34;537&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/8_hu13202302061932934917.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/8_hu17743998864326022790.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;105&#34;
+		data-flex-basis=&#34;253px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/9.png&#34;
+	width=&#34;573&#34;
+	height=&#34;545&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/9_hu2745729919336683621.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/9_hu639251567336138858.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;105&#34;
+		data-flex-basis=&#34;252px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;这次设置多少其实都可以，但是建议不要给的太少。尤其是磁盘空间，调整起来有点麻烦。官网给了最少资源。个人建议初始安装内存给4G，磁盘给40G。
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/10.png&#34;
+	width=&#34;576&#34;
+	height=&#34;546&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/10_hu5758192834789665648.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/10_hu15642381799053459483.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;105&#34;
+		data-flex-basis=&#34;253px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/11.png&#34;
+	width=&#34;566&#34;
+	height=&#34;542&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/11_hu13281064805977630105.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/11_hu12367515838884204110.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;104&#34;
+		data-flex-basis=&#34;250px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/12.png&#34;
+	width=&#34;570&#34;
+	height=&#34;534&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/12_hu3522227781166646788.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/12_hu7136029950188540953.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;106&#34;
+		data-flex-basis=&#34;256px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/13.png&#34;
+	width=&#34;565&#34;
+	height=&#34;539&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/13_hu8819568958471314455.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/13_hu13586334632508796147.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;104&#34;
+		data-flex-basis=&#34;251px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/14.png&#34;
+	width=&#34;569&#34;
+	height=&#34;546&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/14_hu6540135934770001600.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/14_hu10417702362518257062.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;104&#34;
+		data-flex-basis=&#34;250px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/15.png&#34;
+	width=&#34;573&#34;
+	height=&#34;539&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/15_hu7952648301021769732.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/15_hu3608462757434159084.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;106&#34;
+		data-flex-basis=&#34;255px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/16.png&#34;
+	width=&#34;574&#34;
+	height=&#34;534&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/16_hu16530258296814023170.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/16_hu4541536905588181365.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;107&#34;
+		data-flex-basis=&#34;257px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/17.png&#34;
+	width=&#34;569&#34;
+	height=&#34;541&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/17_hu6189455046104476310.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/17_hu15990332048400057851.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;105&#34;
+		data-flex-basis=&#34;252px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/18.png&#34;
+	width=&#34;863&#34;
+	height=&#34;975&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/18_hu3096994197635748497.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/18_hu10327417413162066484.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;88&#34;
+		data-flex-basis=&#34;212px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/19.png&#34;
+	width=&#34;1446&#34;
+	height=&#34;756&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/19_hu12548177497760397300.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/19_hu6988785480551902577.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;191&#34;
+		data-flex-basis=&#34;459px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/20.png&#34;
+	width=&#34;1709&#34;
+	height=&#34;903&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/20_hu12579660711719448843.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/20_hu4587039506186872072.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;189&#34;
+		data-flex-basis=&#34;454px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/21.png&#34;
+	width=&#34;1280&#34;
+	height=&#34;800&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/21_hu10420091755745894221.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/21_hu3377065777164935675.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;160&#34;
+		data-flex-basis=&#34;384px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/22.png&#34;
+	width=&#34;1280&#34;
+	height=&#34;800&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/22_hu11295597172791205370.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/22_hu5523378164038518786.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;160&#34;
+		data-flex-basis=&#34;384px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/23.png&#34;
+	width=&#34;1280&#34;
+	height=&#34;800&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/23_hu7497618973226286304.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/23_hu8533696951094452684.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;160&#34;
+		data-flex-basis=&#34;384px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/24.png&#34;
+	width=&#34;1280&#34;
+	height=&#34;800&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/24_hu14030744347810444039.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/24_hu9539955547272611243.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;160&#34;
+		data-flex-basis=&#34;384px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/25.png&#34;
+	width=&#34;1280&#34;
+	height=&#34;800&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/25_hu5905385333063574499.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/25_hu15819918448633135432.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;160&#34;
+		data-flex-basis=&#34;384px&#34;
+	
+&gt;
+这里安装扩展集合也可以，会比默认集合多装一些办公应用、视频播放器之类的东西。&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/26.png&#34;
+	width=&#34;1280&#34;
+	height=&#34;800&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/26_hu1787816568771006314.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/26_hu735685695584713460.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;160&#34;
+		data-flex-basis=&#34;384px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/27.png&#34;
+	width=&#34;1280&#34;
+	height=&#34;800&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/27_hu16091323265296203925.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/27_hu9384123171394196745.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;160&#34;
+		data-flex-basis=&#34;384px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/28.png&#34;
+	width=&#34;1280&#34;
+	height=&#34;800&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/28_hu492185345550698962.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/28_hu5439676092115104215.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;160&#34;
+		data-flex-basis=&#34;384px&#34;
+	
+&gt;
+谨慎设置用户名，电脑主机名修改比较容易，但是用户名修改比较困难。密码的话随意设置一个就可以。反正虚拟机是学习使用，太复杂的还是防自己罢了。
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/29.png&#34;
+	width=&#34;1280&#34;
+	height=&#34;800&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/29_hu8785505390027796326.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/29_hu13560469346167128808.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;160&#34;
+		data-flex-basis=&#34;384px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/30.png&#34;
+	width=&#34;1280&#34;
+	height=&#34;800&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/30_hu14798414081270724491.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/30_hu9865016295976400892.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;160&#34;
+		data-flex-basis=&#34;384px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/31.png&#34;
+	width=&#34;1280&#34;
+	height=&#34;800&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/31_hu12051295113381248772.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/31_hu14975761621986591206.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;160&#34;
+		data-flex-basis=&#34;384px&#34;
+	
+&gt;
+这个安装过程可能会很慢，应该会花几分钟。
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/32.png&#34;
+	width=&#34;1280&#34;
+	height=&#34;800&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/32_hu7425494666619658598.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/32_hu15729690338553605309.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;160&#34;
+		data-flex-basis=&#34;384px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/33.png&#34;
+	width=&#34;1280&#34;
+	height=&#34;800&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/33_hu9017715892290158905.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/33_hu4445784544299796534.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;160&#34;
+		data-flex-basis=&#34;384px&#34;
+	
+&gt;
+重启后会提示按enter键。&lt;/p&gt;
+&lt;h2 id=&#34;ubuntu配置&#34;&gt;Ubuntu配置
+&lt;/h2&gt;&lt;h3 id=&#34;配置网络&#34;&gt;配置网络
+&lt;/h3&gt;&lt;p&gt;刚安装的虚拟机里没有网，需要手动设置网络。设置网络有两种，一种是修改配置文件，一种是可视化界面（GUI）修改。我个人倾向GUI修改。
+配置文件修改的方案参考&lt;a class=&#34;link&#34; href=&#34;https://blog.csdn.net/zyw2002/article/details/123486055&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://blog.csdn.net/zyw2002/article/details/123486055&lt;/a&gt; 的2.2小节
+可视化界面修改网络配置信息步骤如下：
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/34.png&#34;
+	width=&#34;1280&#34;
+	height=&#34;800&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/34_hu13286299046669570766.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/34_hu455850788699419707.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;160&#34;
+		data-flex-basis=&#34;384px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/35.png&#34;
+	width=&#34;1280&#34;
+	height=&#34;800&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/35_hu3009377958740211709.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/35_hu15917547603358531633.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;160&#34;
+		data-flex-basis=&#34;384px&#34;
+	
+&gt;
+点击左上角的编辑，虚拟网络编辑器，VMnet8。记住子网IP。比如我的是192.168.146.0
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/36.png&#34;
+	width=&#34;603&#34;
+	height=&#34;499&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/36_hu17394159914278540588.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/36_hu1194596890129698324.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;120&#34;
+		data-flex-basis=&#34;290px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/37.png&#34;
+	width=&#34;706&#34;
+	height=&#34;678&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/37_hu7011728155877382789.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/37_hu16209175943937799583.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;104&#34;
+		data-flex-basis=&#34;249px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/38.png&#34;
+	width=&#34;1280&#34;
+	height=&#34;800&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/38_hu15343548983789215768.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/38_hu18169459468758911853.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;160&#34;
+		data-flex-basis=&#34;384px&#34;
+	
+&gt;
+我的VMnet8子网ip为192.168.146.0。所以这里ip地址我填入了192.168.146.xxx（这里xxx可以填入小于255的数，但是建议不要填10以内的数）。子网掩码填入255.255.255.0即可。网关和DNS参照我的填入即可。
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/39.png&#34;
+	width=&#34;1280&#34;
+	height=&#34;800&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/39_hu3831698291706307480.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/39_hu18404129481492276149.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;160&#34;
+		data-flex-basis=&#34;384px&#34;
+	
+&gt;
+应用配置后重启一下连接就可以正常连接网络。右上角的网络标记变成图中的标志时就表示联网正常。没有可视化界面的可以ping一下外网查看情况。&lt;code&gt;ping baidu.com&lt;/code&gt;。按CTRL+C即可终止命令。
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/40.png&#34;
+	width=&#34;598&#34;
+	height=&#34;134&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/40_hu17376055650997726811.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/40_hu9538698749771221281.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;446&#34;
+		data-flex-basis=&#34;1071px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;安装vmtools&#34;&gt;安装vmtools
+&lt;/h3&gt;&lt;p&gt;安装vmtools后可以解决屏幕显示比例的问题，可以在虚拟机外复制然后粘贴到虚拟机里，这很重要！
+右键，在终端中打开。安装命令如下&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo apt update
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo apt install open-vm-tools -y
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo apt install open-vm-tools-desktop -y
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo reboot
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/41.png&#34;
+	width=&#34;810&#34;
+	height=&#34;431&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/41_hu11721447381091044109.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/41_hu1019678563954530347.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;187&#34;
+		data-flex-basis=&#34;451px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/42.png&#34;
+	width=&#34;806&#34;
+	height=&#34;361&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/42_hu6082613264663902680.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/42_hu4011609726656300791.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;223&#34;
+		data-flex-basis=&#34;535px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/43.png&#34;
+	width=&#34;637&#34;
+	height=&#34;197&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/43_hu18145367479649830960.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/43_hu17543789475112457655.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;323&#34;
+		data-flex-basis=&#34;776px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;配置用户免密&#34;&gt;配置用户免密
+&lt;/h3&gt;&lt;p&gt;在使用sudo命令时普通用户需要输入密码。每次都需要输入密码很麻烦，设置免密后使用sudo就不需要再输入密码。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo passwd root &lt;span class=&#34;c1&#34;&gt;#给root用户设置一个密码&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo apt install gedit &lt;span class=&#34;c1&#34;&gt;# gedit是一个文本编辑器，可以让ubuntu上编辑文件像Windows的记事本&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo apt install vim &lt;span class=&#34;c1&#34;&gt;#vim 是一个纯终端的文本编辑器&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/44.png&#34;
+	width=&#34;347&#34;
+	height=&#34;119&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/44_hu7359312516820342846.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/44_hu17787348785431070939.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;291&#34;
+		data-flex-basis=&#34;699px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/45.png&#34;
+	width=&#34;719&#34;
+	height=&#34;311&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/45_hu4945677856340161550.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/45_hu5317292109880695809.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;231&#34;
+		data-flex-basis=&#34;554px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/46.png&#34;
+	width=&#34;583&#34;
+	height=&#34;436&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/46_hu7038207894010284767.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/46_hu10892438613526012861.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;133&#34;
+		data-flex-basis=&#34;320px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo chmod &lt;span class=&#34;m&#34;&gt;777&lt;/span&gt; /etc/sudoers &lt;span class=&#34;c1&#34;&gt;# /etc/sudoers是一个只读文件，需要修改权限&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;su root
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;gedit /etc/sudoers &lt;span class=&#34;c1&#34;&gt;#在文件中添加如下标注部分&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;chmod &lt;span class=&#34;m&#34;&gt;440&lt;/span&gt; /etc/sudoers &lt;span class=&#34;c1&#34;&gt;#将文件权限修改回来，解决报错/etc/sudoers可被任何人写&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;exit&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/47.png&#34;
+	width=&#34;412&#34;
+	height=&#34;28&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/47_hu12680780704706754853.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/47_hu16165549152694486022.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;1471&#34;
+		data-flex-basis=&#34;3531px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/48.png&#34;
+	width=&#34;1718&#34;
+	height=&#34;888&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/48_hu7468098753458918934.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/48_hu361869018477048918.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;193&#34;
+		data-flex-basis=&#34;464px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/49.png&#34;
+	width=&#34;593&#34;
+	height=&#34;363&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/49_hu17408402789675260201.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/49_hu7080031693843312013.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;163&#34;
+		data-flex-basis=&#34;392px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;安装ssh&#34;&gt;安装SSH
+&lt;/h3&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo apt-get install openssh-server
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo gedit /etc/ssh/sshd_config
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;reboot &lt;span class=&#34;c1&#34;&gt;#重启生效设置&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/50.png&#34;
+	width=&#34;569&#34;
+	height=&#34;232&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/50_hu10880904346983278671.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/50_hu14808256641867900731.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;245&#34;
+		data-flex-basis=&#34;588px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/51.png&#34;
+	width=&#34;1718&#34;
+	height=&#34;888&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/51_hu5090744386881797321.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/51_hu18060283699003644061.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;193&#34;
+		data-flex-basis=&#34;464px&#34;
+	
+&gt;
+尝试ssh远程登陆
+设置主机映射
+修改Windows的&lt;code&gt;C:\Windows\System32\drivers\etc&lt;/code&gt;下的hosts文件。这里修改可能会有权限问题，可以复制hosts文件，粘贴到能修改的地方，比如桌面。修改完成后删除&lt;code&gt;C:\Windows\System32\drivers\etc&lt;/code&gt;下的hosts，将修改后的hosts文件粘贴进来。
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/52.png&#34;
+	width=&#34;805&#34;
+	height=&#34;262&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/52_hu14003622279397167009.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/52_hu7574007154804546225.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;307&#34;
+		data-flex-basis=&#34;737px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/53.png&#34;
+	width=&#34;784&#34;
+	height=&#34;865&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/53_hu11982123495247602341.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/53_hu10618876749760878688.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;90&#34;
+		data-flex-basis=&#34;217px&#34;
+	
+&gt;
+打开Windows的命令终端，输入命令&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;ssh rust@bird &lt;span class=&#34;c1&#34;&gt;# rust为ubuntu的用户名，bird为刚才设置的主机映射名&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/54.png&#34;
+	width=&#34;1483&#34;
+	height=&#34;762&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/54_hu4899606701917429376.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/54_hu13328165002540383673.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;194&#34;
+		data-flex-basis=&#34;467px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h3 id=&#34;安装java&#34;&gt;安装Java
+&lt;/h3&gt;&lt;p&gt;Ubuntu安装java可以手动安装，也可以命令行安装。手动安装需要设置环境变量，建议使用命令行安装。命令行安装卸载比较方便。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;sudo apt-get install openjdk-8-jdk
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;java -version  &lt;span class=&#34;c1&#34;&gt;#查看安装是否成功&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/55.png&#34;
+	width=&#34;739&#34;
+	height=&#34;276&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/55_hu13542097576863628029.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/55_hu7571619688027331613.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;267&#34;
+		data-flex-basis=&#34;642px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/56.png&#34;
+	width=&#34;680&#34;
+	height=&#34;96&#34;
+	srcset=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/56_hu17584511672992408648.png 480w, https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/56_hu7429805898108029076.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;image.png&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;708&#34;
+		data-flex-basis=&#34;1700px&#34;
+	
+&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Chinese Test</title>
+        <link>https://rusthx.github.io/p/test-chinese/</link>
+        <pubDate>Wed, 09 Sep 2020 00:00:00 +0000</pubDate>
+        
+        <guid>https://rusthx.github.io/p/test-chinese/</guid>
+        <description>&lt;img src="https://rusthx.github.io/p/test-chinese/helena-hertz-wWZzXlDpMog-unsplash.jpg" alt="Featured image of post Chinese Test" /&gt;&lt;h2 id=&#34;正文测试&#34;&gt;正文测试
+&lt;/h2&gt;&lt;p&gt;而这些并不是完全重要，更加重要的问题是， 带着这些问题，我们来审视一下学生会退会。 既然如何， 对我个人而言，学生会退会不仅仅是一个重大的事件，还可能会改变我的人生。 我们不得不面对一个非常尴尬的事实，那就是， 可是，即使是这样，学生会退会的出现仍然代表了一定的意义。 学生会退会，发生了会如何，不发生又会如何。 经过上述讨论， 生活中，若学生会退会出现了，我们就不得不考虑它出现了的事实。 学生会退会，到底应该如何实现。 这样看来， 在这种困难的抉择下，本人思来想去，寝食难安。 对我个人而言，学生会退会不仅仅是一个重大的事件，还可能会改变我的人生。 就我个人来说，学生会退会对我的意义，不能不说非常重大。 莎士比亚曾经提到过，人的一生是短的，但如果卑劣地过这一生，就太长了。这似乎解答了我的疑惑。 莫扎特说过一句富有哲理的话，谁和我一样用功，谁就会和我一样成功。这启发了我， 对我个人而言，学生会退会不仅仅是一个重大的事件，还可能会改变我的人生。 学生会退会，到底应该如何实现。 一般来说， 从这个角度来看， 这种事实对本人来说意义重大，相信对这个世界也是有一定意义的。 在这种困难的抉择下，本人思来想去，寝食难安。 了解清楚学生会退会到底是一种怎么样的存在，是解决一切问题的关键。 一般来说， 生活中，若学生会退会出现了，我们就不得不考虑它出现了的事实。 问题的关键究竟为何？ 而这些并不是完全重要，更加重要的问题是。&lt;/p&gt;
+&lt;p&gt;奥斯特洛夫斯基曾经说过，共同的事业，共同的斗争，可以使人们产生忍受一切的力量。　带着这句话，我们还要更加慎重的审视这个问题： 一般来讲，我们都必须务必慎重的考虑考虑。 既然如此， 这种事实对本人来说意义重大，相信对这个世界也是有一定意义的。 带着这些问题，我们来审视一下学生会退会。 我认为， 我认为， 在这种困难的抉择下，本人思来想去，寝食难安。 问题的关键究竟为何？ 每个人都不得不面对这些问题。 在面对这种问题时， 要想清楚，学生会退会，到底是一种怎么样的存在。 我认为， 既然如此， 每个人都不得不面对这些问题。 在面对这种问题时， 那么， 我认为， 学生会退会因何而发生。&lt;/p&gt;
+&lt;h2 id=&#34;引用&#34;&gt;引用
+&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;思念是最暖的忧伤像一双翅膀&lt;br&gt;
+让我停不了飞不远在过往游荡&lt;br&gt;
+不告而别的你 就算为了我着想&lt;br&gt;
+这么沉痛的呵护 我怎么能翱翔&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.youtube.com/watch?v=3aypp_YlBzI&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;最暖的憂傷 - 田馥甄&lt;/a&gt;&lt;/em&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;图片&#34;&gt;图片
+&lt;/h2&gt;&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/test-chinese/florian-klauer-nptLmg6jqDo-unsplash.jpg&#34;
+	width=&#34;667&#34;
+	height=&#34;1000&#34;
+	srcset=&#34;https://rusthx.github.io/p/test-chinese/florian-klauer-nptLmg6jqDo-unsplash_hu13768363498926278726.jpg 480w, https://rusthx.github.io/p/test-chinese/florian-klauer-nptLmg6jqDo-unsplash_hu13380208884366868750.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;Photo by Florian Klauer on Unsplash&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;66&#34;
+		data-flex-basis=&#34;160px&#34;
+	
+&gt;  &lt;img src=&#34;https://rusthx.github.io/p/test-chinese/luca-bravo-alS7ewQ41M8-unsplash.jpg&#34;
+	width=&#34;1000&#34;
+	height=&#34;667&#34;
+	srcset=&#34;https://rusthx.github.io/p/test-chinese/luca-bravo-alS7ewQ41M8-unsplash_hu1712544344331247820.jpg 480w, https://rusthx.github.io/p/test-chinese/luca-bravo-alS7ewQ41M8-unsplash_hu12475395149584884402.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;Photo by Luca Bravo on Unsplash&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;149&#34;
+		data-flex-basis=&#34;359px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/test-chinese/helena-hertz-wWZzXlDpMog-unsplash.jpg&#34;
+	width=&#34;1000&#34;
+	height=&#34;750&#34;
+	srcset=&#34;https://rusthx.github.io/p/test-chinese/helena-hertz-wWZzXlDpMog-unsplash_hu8363585391189779282.jpg 480w, https://rusthx.github.io/p/test-chinese/helena-hertz-wWZzXlDpMog-unsplash_hu15102473124145023839.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;Photo by Helena Hertz on Unsplash&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;133&#34;
+		data-flex-basis=&#34;320px&#34;
+	
+&gt;  &lt;img src=&#34;https://rusthx.github.io/p/test-chinese/hudai-gayiran-3Od_VKcDEAA-unsplash.jpg&#34;
+	width=&#34;667&#34;
+	height=&#34;1000&#34;
+	srcset=&#34;https://rusthx.github.io/p/test-chinese/hudai-gayiran-3Od_VKcDEAA-unsplash_hu15886963791847885497.jpg 480w, https://rusthx.github.io/p/test-chinese/hudai-gayiran-3Od_VKcDEAA-unsplash_hu11726476772237334826.jpg 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;Photo by Hudai Gayiran on Unsplash&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;66&#34;
+		data-flex-basis=&#34;160px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-markdown&#34; data-lang=&#34;markdown&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;![&lt;span class=&#34;nt&#34;&gt;Photo by Florian Klauer on Unsplash&lt;/span&gt;](&lt;span class=&#34;na&#34;&gt;florian-klauer-nptLmg6jqDo-unsplash.jpg&lt;/span&gt;)  ![&lt;span class=&#34;nt&#34;&gt;Photo by Luca Bravo on Unsplash&lt;/span&gt;](&lt;span class=&#34;na&#34;&gt;luca-bravo-alS7ewQ41M8-unsplash.jpg&lt;/span&gt;) 
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;![&lt;span class=&#34;nt&#34;&gt;Photo by Helena Hertz on Unsplash&lt;/span&gt;](&lt;span class=&#34;na&#34;&gt;helena-hertz-wWZzXlDpMog-unsplash.jpg&lt;/span&gt;)  ![&lt;span class=&#34;nt&#34;&gt;Photo by Hudai Gayiran on Unsplash&lt;/span&gt;](&lt;span class=&#34;na&#34;&gt;hudai-gayiran-3Od_VKcDEAA-unsplash.jpg&lt;/span&gt;)
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;相册语法来自 &lt;a class=&#34;link&#34; href=&#34;https://typlog.com/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Typlog&lt;/a&gt;&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Archives</title>
+        <link>https://rusthx.github.io/archives/</link>
+        <pubDate>Tue, 28 May 2019 00:00:00 +0000</pubDate>
+        
+        <guid>https://rusthx.github.io/archives/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>Markdown Syntax Guide</title>
+        <link>https://rusthx.github.io/p/markdown-syntax-guide/</link>
+        <pubDate>Mon, 11 Mar 2019 00:00:00 +0000</pubDate>
+        
+        <guid>https://rusthx.github.io/p/markdown-syntax-guide/</guid>
+        <description>&lt;img src="https://rusthx.github.io/p/markdown-syntax-guide/pawel-czerwinski-8uZPynIu-rQ-unsplash.jpg" alt="Featured image of post Markdown Syntax Guide" /&gt;&lt;p&gt;This article offers a sample of basic Markdown syntax that can be used in Hugo content files, also it shows whether basic HTML elements are decorated with CSS in a Hugo theme.&lt;/p&gt;
+&lt;h2 id=&#34;headings&#34;&gt;Headings
+&lt;/h2&gt;&lt;p&gt;The following HTML &lt;code&gt;&amp;lt;h1&amp;gt;&lt;/code&gt;—&lt;code&gt;&amp;lt;h6&amp;gt;&lt;/code&gt; elements represent six levels of section headings. &lt;code&gt;&amp;lt;h1&amp;gt;&lt;/code&gt; is the highest section level while &lt;code&gt;&amp;lt;h6&amp;gt;&lt;/code&gt; is the lowest.&lt;/p&gt;
+&lt;h1 id=&#34;h1&#34;&gt;H1
+&lt;/h1&gt;&lt;h2 id=&#34;h2&#34;&gt;H2
+&lt;/h2&gt;&lt;h3 id=&#34;h3&#34;&gt;H3
+&lt;/h3&gt;&lt;h4 id=&#34;h4&#34;&gt;H4
+&lt;/h4&gt;&lt;h5 id=&#34;h5&#34;&gt;H5
+&lt;/h5&gt;&lt;h6 id=&#34;h6&#34;&gt;H6
+&lt;/h6&gt;&lt;h2 id=&#34;paragraph&#34;&gt;Paragraph
+&lt;/h2&gt;&lt;p&gt;Xerum, quo qui aut unt expliquam qui dolut labo. Aque venitatiusda cum, voluptionse latur sitiae dolessi aut parist aut dollo enim qui voluptate ma dolestendit peritin re plis aut quas inctum laceat est volestemque commosa as cus endigna tectur, offic to cor sequas etum rerum idem sintibus eiur? Quianimin porecus evelectur, cum que nis nust voloribus ratem aut omnimi, sitatur? Quiatem. Nam, omnis sum am facea corem alique molestrunt et eos evelece arcillit ut aut eos eos nus, sin conecerem erum fuga. Ri oditatquam, ad quibus unda veliamenimin cusam et facea ipsamus es exerum sitate dolores editium rerore eost, temped molorro ratiae volorro te reribus dolorer sperchicium faceata tiustia prat.&lt;/p&gt;
+&lt;p&gt;Itatur? Quiatae cullecum rem ent aut odis in re eossequodi nonsequ idebis ne sapicia is sinveli squiatum, core et que aut hariosam ex eat.&lt;/p&gt;
+&lt;h2 id=&#34;blockquotes&#34;&gt;Blockquotes
+&lt;/h2&gt;&lt;p&gt;The blockquote element represents content that is quoted from another source, optionally with a citation which must be within a &lt;code&gt;footer&lt;/code&gt; or &lt;code&gt;cite&lt;/code&gt; element, and optionally with in-line changes such as annotations and abbreviations.&lt;/p&gt;
+&lt;h4 id=&#34;blockquote-without-attribution&#34;&gt;Blockquote without attribution
+&lt;/h4&gt;&lt;blockquote&gt;
+&lt;p&gt;Tiam, ad mint andaepu dandae nostion secatur sequo quae.
+&lt;strong&gt;Note&lt;/strong&gt; that you can use &lt;em&gt;Markdown syntax&lt;/em&gt; within a blockquote.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h4 id=&#34;blockquote-with-attribution&#34;&gt;Blockquote with attribution
+&lt;/h4&gt;&lt;blockquote&gt;
+&lt;p&gt;Don&amp;rsquo;t communicate by sharing memory, share memory by communicating.&lt;br&gt;
+— &lt;cite&gt;Rob Pike&lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;&lt;/cite&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;tables&#34;&gt;Tables
+&lt;/h2&gt;&lt;p&gt;Tables aren&amp;rsquo;t part of the core Markdown spec, but Hugo supports supports them out-of-the-box.&lt;/p&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Name&lt;/th&gt;
+&lt;th&gt;Age&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Bob&lt;/td&gt;
+&lt;td&gt;27&lt;/td&gt;
+&lt;/tr&gt;
+&lt;tr&gt;
+&lt;td&gt;Alice&lt;/td&gt;
+&lt;td&gt;23&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h4 id=&#34;inline-markdown-within-tables&#34;&gt;Inline Markdown within tables
+&lt;/h4&gt;&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;Italics&lt;/th&gt;
+&lt;th&gt;Bold&lt;/th&gt;
+&lt;th&gt;Code&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;&lt;em&gt;italics&lt;/em&gt;&lt;/td&gt;
+&lt;td&gt;&lt;strong&gt;bold&lt;/strong&gt;&lt;/td&gt;
+&lt;td&gt;&lt;code&gt;code&lt;/code&gt;&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;table&gt;
+&lt;thead&gt;
+&lt;tr&gt;
+&lt;th&gt;A&lt;/th&gt;
+&lt;th&gt;B&lt;/th&gt;
+&lt;th&gt;C&lt;/th&gt;
+&lt;th&gt;D&lt;/th&gt;
+&lt;th&gt;E&lt;/th&gt;
+&lt;th&gt;F&lt;/th&gt;
+&lt;/tr&gt;
+&lt;/thead&gt;
+&lt;tbody&gt;
+&lt;tr&gt;
+&lt;td&gt;Lorem ipsum dolor sit amet, consectetur adipiscing elit.&lt;/td&gt;
+&lt;td&gt;Phasellus ultricies, sapien non euismod aliquam, dui ligula tincidunt odio, at accumsan nulla sapien eget ex.&lt;/td&gt;
+&lt;td&gt;Proin eleifend dictum ipsum, non euismod ipsum pulvinar et. Vivamus sollicitudin, quam in pulvinar aliquam, metus elit pretium purus&lt;/td&gt;
+&lt;td&gt;Proin sit amet velit nec enim imperdiet vehicula.&lt;/td&gt;
+&lt;td&gt;Ut bibendum vestibulum quam, eu egestas turpis gravida nec&lt;/td&gt;
+&lt;td&gt;Sed scelerisque nec turpis vel viverra. Vivamus vitae pretium sapien&lt;/td&gt;
+&lt;/tr&gt;
+&lt;/tbody&gt;
+&lt;/table&gt;
+&lt;h2 id=&#34;code-blocks&#34;&gt;Code Blocks
+&lt;/h2&gt;&lt;h4 id=&#34;code-block-with-backticks&#34;&gt;Code block with backticks
+&lt;/h4&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-html&#34; data-lang=&#34;html&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cp&#34;&gt;&amp;lt;!doctype html&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;html&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;lang&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;en&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;head&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;meta&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;charset&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;utf-8&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;title&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;Example HTML5 Document&lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;title&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;head&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;body&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;Test&lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;body&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;html&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h4 id=&#34;code-block-indented-with-four-spaces&#34;&gt;Code block indented with four spaces
+&lt;/h4&gt;&lt;pre&gt;&lt;code&gt;&amp;lt;!doctype html&amp;gt;
+&amp;lt;html lang=&amp;quot;en&amp;quot;&amp;gt;
+&amp;lt;head&amp;gt;
+  &amp;lt;meta charset=&amp;quot;utf-8&amp;quot;&amp;gt;
+  &amp;lt;title&amp;gt;Example HTML5 Document&amp;lt;/title&amp;gt;
+&amp;lt;/head&amp;gt;
+&amp;lt;body&amp;gt;
+  &amp;lt;p&amp;gt;Test&amp;lt;/p&amp;gt;
+&amp;lt;/body&amp;gt;
+&amp;lt;/html&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+&lt;h4 id=&#34;code-block-with-hugos-internal-highlight-shortcode&#34;&gt;Code block with Hugo&amp;rsquo;s internal highlight shortcode
+&lt;/h4&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-html&#34; data-lang=&#34;html&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;cp&#34;&gt;&amp;lt;!doctype html&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;html&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;lang&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;en&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;head&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;meta&lt;/span&gt; &lt;span class=&#34;na&#34;&gt;charset&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s&#34;&gt;&amp;#34;utf-8&amp;#34;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;title&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;Example HTML5 Document&lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;title&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;head&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;body&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  &lt;span class=&#34;p&#34;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;Test&lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;p&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;body&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;p&#34;&gt;&amp;lt;/&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;html&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;&amp;gt;&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;
+&lt;h4 id=&#34;diff-code-block&#34;&gt;Diff code block
+&lt;/h4&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-diff&#34; data-lang=&#34;diff&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;[dependencies.bevy]
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;git = &amp;#34;https://github.com/bevyengine/bevy&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;rev = &amp;#34;11f52b8c72fc3a568e8bb4a4cd1f3eb025ac2e13&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;gd&#34;&gt;- features = [&amp;#34;dynamic&amp;#34;]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;gd&#34;&gt;&lt;/span&gt;&lt;span class=&#34;gi&#34;&gt;+ features = [&amp;#34;jpeg&amp;#34;, &amp;#34;dynamic&amp;#34;]
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h2 id=&#34;list-types&#34;&gt;List Types
+&lt;/h2&gt;&lt;h4 id=&#34;ordered-list&#34;&gt;Ordered List
+&lt;/h4&gt;&lt;ol&gt;
+&lt;li&gt;First item&lt;/li&gt;
+&lt;li&gt;Second item&lt;/li&gt;
+&lt;li&gt;Third item&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;unordered-list&#34;&gt;Unordered List
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;List item&lt;/li&gt;
+&lt;li&gt;Another item&lt;/li&gt;
+&lt;li&gt;And another item&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h4 id=&#34;nested-list&#34;&gt;Nested list
+&lt;/h4&gt;&lt;ul&gt;
+&lt;li&gt;Fruit
+&lt;ul&gt;
+&lt;li&gt;Apple&lt;/li&gt;
+&lt;li&gt;Orange&lt;/li&gt;
+&lt;li&gt;Banana&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Dairy
+&lt;ul&gt;
+&lt;li&gt;Milk&lt;/li&gt;
+&lt;li&gt;Cheese&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;other-elements--abbr-sub-sup-kbd-mark&#34;&gt;Other Elements — abbr, sub, sup, kbd, mark
+&lt;/h2&gt;&lt;p&gt;&lt;abbr title=&#34;Graphics Interchange Format&#34;&gt;GIF&lt;/abbr&gt; is a bitmap image format.&lt;/p&gt;
+&lt;p&gt;H&lt;sub&gt;2&lt;/sub&gt;O&lt;/p&gt;
+&lt;p&gt;X&lt;sup&gt;n&lt;/sup&gt; + Y&lt;sup&gt;n&lt;/sup&gt; = Z&lt;sup&gt;n&lt;/sup&gt;&lt;/p&gt;
+&lt;p&gt;Press &lt;kbd&gt;CTRL&lt;/kbd&gt; + &lt;kbd&gt;ALT&lt;/kbd&gt; + &lt;kbd&gt;Delete&lt;/kbd&gt; to end the session.&lt;/p&gt;
+&lt;p&gt;Most &lt;mark&gt;salamanders&lt;/mark&gt; are nocturnal, and hunt for insects, worms, and other small creatures.&lt;/p&gt;
+&lt;h2 id=&#34;hyperlinked-image&#34;&gt;Hyperlinked image
+&lt;/h2&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://google.com&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;img src=&#34;https://www.google.com/images/branding/googlelogo/1x/googlelogo_light_color_272x92dp.png&#34;
+	
+	
+	
+	loading=&#34;lazy&#34;
+	
+		alt=&#34;Google&#34;
+	
+	
+&gt;&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34;&gt;
+&lt;p&gt;The above quote is excerpted from Rob Pike&amp;rsquo;s &lt;a class=&#34;link&#34; href=&#34;https://www.youtube.com/watch?v=PAAkCSZUG1c&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;talk&lt;/a&gt; during Gopherfest, November 18, 2015.&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;</description>
+        </item>
+        <item>
+        <title>Placeholder Text</title>
+        <link>https://rusthx.github.io/p/placeholder-text/</link>
+        <pubDate>Sat, 09 Mar 2019 00:00:00 +0000</pubDate>
+        
+        <guid>https://rusthx.github.io/p/placeholder-text/</guid>
+        <description>&lt;img src="https://rusthx.github.io/p/placeholder-text/matt-le-SJSpo9hQf7s-unsplash.jpg" alt="Featured image of post Placeholder Text" /&gt;&lt;p&gt;Lorem est tota propiore conpellat pectoribus de pectora summo.&lt;/p&gt;
+&lt;p&gt;Redit teque digerit hominumque toris verebor lumina non cervice subde tollit usus habet Arctonque, furores quas nec ferunt. Quoque montibus nunc caluere tempus inhospita parcite confusaque translucet patri vestro qui optatis lumine cognoscere flos nubis! Fronde ipsamque patulos Dryopen deorum.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Exierant elisi ambit vivere dedere&lt;/li&gt;
+&lt;li&gt;Duce pollice&lt;/li&gt;
+&lt;li&gt;Eris modo&lt;/li&gt;
+&lt;li&gt;Spargitque ferrea quos palude&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;Rursus nulli murmur; hastile inridet ut ab gravi sententia! Nomine potitus silentia flumen, sustinet placuit petis in dilapsa erat sunt. Atria tractus malis.&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Comas hunc haec pietate fetum procerum dixit&lt;/li&gt;
+&lt;li&gt;Post torum vates letum Tiresia&lt;/li&gt;
+&lt;li&gt;Flumen querellas&lt;/li&gt;
+&lt;li&gt;Arcanaque montibus omnes&lt;/li&gt;
+&lt;li&gt;Quidem et&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h1 id=&#34;vagus-elidunt&#34;&gt;Vagus elidunt
+&lt;/h1&gt;&lt;p&gt;&lt;svg class=&#34;canon&#34; xmlns=&#34;http://www.w3.org/2000/svg&#34; overflow=&#34;visible&#34; viewBox=&#34;0 0 496 373&#34; height=&#34;373&#34; width=&#34;496&#34;&gt;&lt;g fill=&#34;none&#34;&gt;&lt;path stroke=&#34;#000&#34; stroke-width=&#34;.75&#34; d=&#34;M.599 372.348L495.263 1.206M.312.633l494.95 370.853M.312 372.633L247.643.92M248.502.92l246.76 370.566M330.828 123.869V1.134M330.396 1.134L165.104 124.515&#34;&gt;&lt;/path&gt;&lt;path stroke=&#34;#ED1C24&#34; stroke-width=&#34;.75&#34; d=&#34;M275.73 41.616h166.224v249.05H275.73zM54.478 41.616h166.225v249.052H54.478z&#34;&gt;&lt;/path&gt;&lt;path stroke=&#34;#000&#34; stroke-width=&#34;.75&#34; d=&#34;M.479.375h495v372h-495zM247.979.875v372&#34;&gt;&lt;/path&gt;&lt;ellipse cx=&#34;498.729&#34; cy=&#34;177.625&#34; rx=&#34;.75&#34; ry=&#34;1.25&#34;&gt;&lt;/ellipse&gt;&lt;ellipse cx=&#34;247.229&#34; cy=&#34;377.375&#34; rx=&#34;.75&#34; ry=&#34;1.25&#34;&gt;&lt;/ellipse&gt;&lt;/g&gt;&lt;/svg&gt;&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://en.wikipedia.org/wiki/Canons_of_page_construction#Van_de_Graaf_canon&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;The Van de Graaf Canon&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;mane-refeci-capiebant-unda-mulcebat&#34;&gt;Mane refeci capiebant unda mulcebat
+&lt;/h2&gt;&lt;p&gt;Victa caducifer, malo vulnere contra dicere aurato, ludit regale, voca! Retorsit colit est profanae esse virescere furit nec; iaculi matertera et visa est, viribus. Divesque creatis, tecta novat collumque vulnus est, parvas. &lt;strong&gt;Faces illo pepulere&lt;/strong&gt; tempus adest. Tendit flamma, ab opes virum sustinet, sidus sequendo urbis.&lt;/p&gt;
+&lt;p&gt;Iubar proles corpore raptos vero auctor imperium; sed et huic: manus caeli Lelegas tu lux. Verbis obstitit intus oblectamina fixis linguisque ausus sperare Echionides cornuaque tenent clausit possit. Omnia putatur. Praeteritae refert ausus; ferebant e primus lora nutat, vici quae mea ipse. Et iter nil spectatae vulnus haerentia iuste et exercebat, sui et.&lt;/p&gt;
+&lt;p&gt;Eurytus Hector, materna ipsumque ut Politen, nec, nate, ignari, vernum cohaesit sequitur. Vel &lt;strong&gt;mitis temploque&lt;/strong&gt; vocatus, inque alis, &lt;em&gt;oculos nomen&lt;/em&gt; non silvis corpore coniunx ne displicet illa. Crescunt non unus, vidit visa quantum inmiti flumina mortis facto sic: undique a alios vincula sunt iactata abdita! Suspenderat ego fuit tendit: luna, ante urbem Propoetides &lt;strong&gt;parte&lt;/strong&gt;.&lt;/p&gt;</description>
+        </item>
+        <item>
+        <title>Math Typesetting</title>
+        <link>https://rusthx.github.io/p/math-typesetting/</link>
+        <pubDate>Fri, 08 Mar 2019 00:00:00 +0000</pubDate>
+        
+        <guid>https://rusthx.github.io/p/math-typesetting/</guid>
+        <description>&lt;p&gt;Mathematical notation in a Hugo project can be enabled by using third party JavaScript libraries.&lt;/p&gt;
+&lt;p&gt;In this example we will be using &lt;a class=&#34;link&#34; href=&#34;https://katex.org/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;KaTeX&lt;/a&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Create a partial under &lt;code&gt;/layouts/partials/math.html&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;Within this partial reference the &lt;a class=&#34;link&#34; href=&#34;https://katex.org/docs/autorender.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Auto-render Extension&lt;/a&gt; or host these scripts locally.&lt;/li&gt;
+&lt;li&gt;Include the partial in your templates like so:&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;{{&lt;/span&gt; &lt;span class=&#34;k&#34;&gt;if&lt;/span&gt; or .Params.math .Site.Params.math &lt;span class=&#34;o&#34;&gt;}}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;{{&lt;/span&gt; partial &lt;span class=&#34;s2&#34;&gt;&amp;#34;math.html&amp;#34;&lt;/span&gt; . &lt;span class=&#34;o&#34;&gt;}}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;{{&lt;/span&gt; end &lt;span class=&#34;o&#34;&gt;}}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ul&gt;
+&lt;li&gt;To enable KaTeX globally set the parameter &lt;code&gt;math&lt;/code&gt; to &lt;code&gt;true&lt;/code&gt; in a project&amp;rsquo;s configuration&lt;/li&gt;
+&lt;li&gt;To enable KaTeX on a per page basis include the parameter &lt;code&gt;math: true&lt;/code&gt; in content files&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;Note:&lt;/strong&gt; Use the online reference of &lt;a class=&#34;link&#34; href=&#34;https://katex.org/docs/supported.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Supported TeX Functions&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&#34;examples&#34;&gt;Examples
+&lt;/h3&gt;&lt;p&gt;Inline math: $\varphi = \dfrac{1+\sqrt5}{2}= 1.6180339887…$&lt;/p&gt;
+&lt;p&gt;Block math:
+$$
+\varphi = 1+\frac{1} {1+\frac{1} {1+\frac{1} {1+\cdots} } }
+$$&lt;/p&gt;</description>
+        </item>
+        <item>
+        <title>Emoji Support</title>
+        <link>https://rusthx.github.io/p/emoji-support/</link>
+        <pubDate>Tue, 05 Mar 2019 00:00:00 +0000</pubDate>
+        
+        <guid>https://rusthx.github.io/p/emoji-support/</guid>
+        <description>&lt;img src="https://rusthx.github.io/p/emoji-support/the-creative-exchange-d2zvqp3fpro-unsplash.jpg" alt="Featured image of post Emoji Support" /&gt;&lt;p&gt;Emoji can be enabled in a Hugo project in a number of ways.&lt;/p&gt;
+&lt;p&gt;The &lt;a class=&#34;link&#34; href=&#34;https://gohugo.io/functions/emojify/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;&lt;code&gt;emojify&lt;/code&gt;&lt;/a&gt; function can be called directly in templates or &lt;a class=&#34;link&#34; href=&#34;https://gohugo.io/templates/shortcode-templates/#inline-shortcodes&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Inline Shortcodes&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;To enable emoji globally, set &lt;code&gt;enableEmoji&lt;/code&gt; to &lt;code&gt;true&lt;/code&gt; in your site&amp;rsquo;s &lt;a class=&#34;link&#34; href=&#34;https://gohugo.io/getting-started/configuration/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;configuration&lt;/a&gt; and then you can type emoji shorthand codes directly in content files; e.g.&lt;/p&gt;
+&lt;p&gt;&lt;span class=&#34;nowrap&#34;&gt;&lt;span class=&#34;emojify&#34;&gt;🙈&lt;/span&gt; &lt;code&gt;:see_no_evil:&lt;/code&gt;&lt;/span&gt;  &lt;span class=&#34;nowrap&#34;&gt;&lt;span class=&#34;emojify&#34;&gt;🙉&lt;/span&gt; &lt;code&gt;:hear_no_evil:&lt;/code&gt;&lt;/span&gt;  &lt;span class=&#34;nowrap&#34;&gt;&lt;span class=&#34;emojify&#34;&gt;🙊&lt;/span&gt; &lt;code&gt;:speak_no_evil:&lt;/code&gt;&lt;/span&gt;&lt;/p&gt;
+&lt;br&gt;
+&lt;p&gt;The &lt;a class=&#34;link&#34; href=&#34;http://www.emoji-cheat-sheet.com/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Emoji cheat sheet&lt;/a&gt; is a useful reference for emoji shorthand codes.&lt;/p&gt;
+&lt;hr&gt;
+&lt;p&gt;&lt;strong&gt;N.B.&lt;/strong&gt; The above steps enable Unicode Standard emoji characters and sequences in Hugo, however the rendering of these glyphs depends on the browser and the platform. To style the emoji you can either use a third party emoji font or a font stack; e.g.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-html&#34; data-lang=&#34;html&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;.emoji {
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  font-family: Apple Color Emoji, Segoe UI Emoji, NotoColorEmoji, Segoe UI Symbol, Android Emoji, EmojiSymbols;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;}&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description>
+        </item>
+        <item>
+        <title>Links</title>
+        <link>https://rusthx.github.io/links/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        
+        <guid>https://rusthx.github.io/links/</guid>
+        <description>&lt;p&gt;To use this feature, add &lt;code&gt;links&lt;/code&gt; section to frontmatter.&lt;/p&gt;
+&lt;p&gt;This page&amp;rsquo;s frontmatter:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;9
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nt&#34;&gt;links&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;- &lt;span class=&#34;nt&#34;&gt;title&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;GitHub&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;description&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;GitHub is the world&amp;#39;s largest software development platform.&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;website&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;https://github.com&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;image&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;- &lt;span class=&#34;nt&#34;&gt;title&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;TypeScript&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;description&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;TypeScript is a typed superset of JavaScript that compiles to plain JavaScript.&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;website&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;https://www.typescriptlang.org&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;image&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;ts-logo-128.jpg&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;&lt;code&gt;image&lt;/code&gt; field accepts both local and external images.&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>Search</title>
+        <link>https://rusthx.github.io/search/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        
+        <guid>https://rusthx.github.io/search/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>关于</title>
+        <link>https://rusthx.github.io/%E5%85%B3%E4%BA%8E/</link>
+        <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+        
+        <guid>https://rusthx.github.io/%E5%85%B3%E4%BA%8E/</guid>
+        <description>&lt;p&gt;This is a test page for i18n support.&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>

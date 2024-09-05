@@ -1,0 +1,1414 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="安装虚拟机 下载vmvare https://www.vmware.com/products/desktop-hypervisor.html 现在的vmvare安装变得麻烦起来了，还要登陆网站。这里我用的是我之前下载的vmvare16pro。如果官网下载">
+<title>VMvare安装配置Ubuntu虚拟机</title>
+
+<link rel='canonical' href='https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/'>
+
+<link rel="stylesheet" href="/scss/style.min.0304c6baf04e01a8fe70693791cb744d56a3578a3120a8796cefc66825aa39c7.css"><meta property='og:title' content="VMvare安装配置Ubuntu虚拟机">
+<meta property='og:description' content="安装虚拟机 下载vmvare https://www.vmware.com/products/desktop-hypervisor.html 现在的vmvare安装变得麻烦起来了，还要登陆网站。这里我用的是我之前下载的vmvare16pro。如果官网下载">
+<meta property='og:url' content='https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/'>
+<meta property='og:site_name' content='rustWood'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Ubuntu' /><meta property='article:tag' content='VMvare' /><meta property='article:published_time' content='2024-09-03T23:14:48&#43;08:00'/><meta property='article:modified_time' content='2024-09-03T23:14:48&#43;08:00'/>
+<meta name="twitter:title" content="VMvare安装配置Ubuntu虚拟机">
+<meta name="twitter:description" content="安装虚拟机 下载vmvare https://www.vmware.com/products/desktop-hypervisor.html 现在的vmvare安装变得麻烦起来了，还要登陆网站。这里我用的是我之前下载的vmvare16pro。如果官网下载">
+  
+
+
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu290319576234017586.png" width="300"
+                            height="302" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">rustWood</a></h1>
+            <h2 class="site-description">江上何人初见月，江月何年初照人</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/rusthx'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>Archives</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>Search</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/links/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>Links</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#安装虚拟机">安装虚拟机</a>
+      <ol>
+        <li><a href="#下载vmvare">下载vmvare</a></li>
+        <li><a href="#下载ubuntu2404">下载Ubuntu24.04</a></li>
+        <li><a href="#安装虚拟机-1">安装虚拟机</a></li>
+      </ol>
+    </li>
+    <li><a href="#ubuntu配置">Ubuntu配置</a>
+      <ol>
+        <li><a href="#配置网络">配置网络</a></li>
+        <li><a href="#安装vmtools">安装vmtools</a></li>
+        <li><a href="#配置用户免密">配置用户免密</a></li>
+        <li><a href="#安装ssh">安装SSH</a></li>
+        <li><a href="#安装java">安装Java</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/">VMvare安装配置Ubuntu虚拟机</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-09-03</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="安装虚拟机">安装虚拟机
+</h2><h3 id="下载vmvare">下载vmvare
+</h3><p><a class="link" href="https://www.vmware.com/products/desktop-hypervisor.html"  target="_blank" rel="noopener"
+    >https://www.vmware.com/products/desktop-hypervisor.html</a>
+现在的vmvare安装变得麻烦起来了，还要登陆网站。这里我用的是我之前下载的vmvare16pro。如果官网下载不太容易也可以直接搜索vmvare16安装，浏览器上应该还有留存的资源。</p>
+<p><img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/1.png"
+	width="1762"
+	height="927"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/1_hu16557380544197006931.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/1_hu12099559846922593663.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="190"
+		data-flex-basis="456px"
+	
+></p>
+<h3 id="下载ubuntu2404">下载Ubuntu24.04
+</h3><p><a class="link" href="https://cn.ubuntu.com/download/desktop"  target="_blank" rel="noopener"
+    >https://cn.ubuntu.com/download/desktop</a>
+Ubuntu的镜像文件大了很多，Ubuntu22.04只有3G左右，Ubuntu24.04就已经5G了。自行选择吧，两种都可以。
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/2.png"
+	width="1588"
+	height="799"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/2_hu5034123142382739712.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/2_hu16011023535640819816.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="198"
+		data-flex-basis="476px"
+	
+></p>
+<h3 id="安装虚拟机-1">安装虚拟机
+</h3><p><img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/3.png"
+	width="1718"
+	height="888"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/3_hu15028365153493613592.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/3_hu15452238232751100552.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="193"
+		data-flex-basis="464px"
+	
+></p>
+<p><img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/4.png"
+	width="571"
+	height="540"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/4_hu1906887181596660575.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/4_hu1601084356099696181.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="105"
+		data-flex-basis="253px"
+	
+></p>
+<p><img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/5.png"
+	width="561"
+	height="540"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/5_hu12018164241888597293.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/5_hu9722857219868767260.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="103"
+		data-flex-basis="249px"
+	
+></p>
+<p><img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/6.png"
+	width="568"
+	height="544"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/6_hu17938781139678690530.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/6_hu12451276316271238826.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="104"
+		data-flex-basis="250px"
+	
+></p>
+<p><img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/7.png"
+	width="573"
+	height="537"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/7_hu6471993612658994229.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/7_hu17382715070509250368.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="106"
+		data-flex-basis="256px"
+	
+></p>
+<p><img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/8.png"
+	width="568"
+	height="537"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/8_hu13202302061932934917.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/8_hu17743998864326022790.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="105"
+		data-flex-basis="253px"
+	
+></p>
+<p><img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/9.png"
+	width="573"
+	height="545"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/9_hu2745729919336683621.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/9_hu639251567336138858.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="105"
+		data-flex-basis="252px"
+	
+></p>
+<p>这次设置多少其实都可以，但是建议不要给的太少。尤其是磁盘空间，调整起来有点麻烦。官网给了最少资源。个人建议初始安装内存给4G，磁盘给40G。
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/10.png"
+	width="576"
+	height="546"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/10_hu5758192834789665648.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/10_hu15642381799053459483.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="105"
+		data-flex-basis="253px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/11.png"
+	width="566"
+	height="542"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/11_hu13281064805977630105.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/11_hu12367515838884204110.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="104"
+		data-flex-basis="250px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/12.png"
+	width="570"
+	height="534"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/12_hu3522227781166646788.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/12_hu7136029950188540953.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="106"
+		data-flex-basis="256px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/13.png"
+	width="565"
+	height="539"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/13_hu8819568958471314455.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/13_hu13586334632508796147.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="104"
+		data-flex-basis="251px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/14.png"
+	width="569"
+	height="546"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/14_hu6540135934770001600.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/14_hu10417702362518257062.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="104"
+		data-flex-basis="250px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/15.png"
+	width="573"
+	height="539"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/15_hu7952648301021769732.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/15_hu3608462757434159084.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="106"
+		data-flex-basis="255px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/16.png"
+	width="574"
+	height="534"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/16_hu16530258296814023170.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/16_hu4541536905588181365.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="107"
+		data-flex-basis="257px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/17.png"
+	width="569"
+	height="541"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/17_hu6189455046104476310.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/17_hu15990332048400057851.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="105"
+		data-flex-basis="252px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/18.png"
+	width="863"
+	height="975"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/18_hu3096994197635748497.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/18_hu10327417413162066484.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="88"
+		data-flex-basis="212px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/19.png"
+	width="1446"
+	height="756"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/19_hu12548177497760397300.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/19_hu6988785480551902577.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="191"
+		data-flex-basis="459px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/20.png"
+	width="1709"
+	height="903"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/20_hu12579660711719448843.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/20_hu4587039506186872072.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="189"
+		data-flex-basis="454px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/21.png"
+	width="1280"
+	height="800"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/21_hu10420091755745894221.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/21_hu3377065777164935675.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="160"
+		data-flex-basis="384px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/22.png"
+	width="1280"
+	height="800"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/22_hu11295597172791205370.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/22_hu5523378164038518786.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="160"
+		data-flex-basis="384px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/23.png"
+	width="1280"
+	height="800"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/23_hu7497618973226286304.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/23_hu8533696951094452684.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="160"
+		data-flex-basis="384px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/24.png"
+	width="1280"
+	height="800"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/24_hu14030744347810444039.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/24_hu9539955547272611243.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="160"
+		data-flex-basis="384px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/25.png"
+	width="1280"
+	height="800"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/25_hu5905385333063574499.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/25_hu15819918448633135432.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="160"
+		data-flex-basis="384px"
+	
+>
+这里安装扩展集合也可以，会比默认集合多装一些办公应用、视频播放器之类的东西。<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/26.png"
+	width="1280"
+	height="800"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/26_hu1787816568771006314.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/26_hu735685695584713460.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="160"
+		data-flex-basis="384px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/27.png"
+	width="1280"
+	height="800"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/27_hu16091323265296203925.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/27_hu9384123171394196745.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="160"
+		data-flex-basis="384px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/28.png"
+	width="1280"
+	height="800"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/28_hu492185345550698962.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/28_hu5439676092115104215.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="160"
+		data-flex-basis="384px"
+	
+>
+谨慎设置用户名，电脑主机名修改比较容易，但是用户名修改比较困难。密码的话随意设置一个就可以。反正虚拟机是学习使用，太复杂的还是防自己罢了。
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/29.png"
+	width="1280"
+	height="800"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/29_hu8785505390027796326.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/29_hu13560469346167128808.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="160"
+		data-flex-basis="384px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/30.png"
+	width="1280"
+	height="800"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/30_hu14798414081270724491.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/30_hu9865016295976400892.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="160"
+		data-flex-basis="384px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/31.png"
+	width="1280"
+	height="800"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/31_hu12051295113381248772.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/31_hu14975761621986591206.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="160"
+		data-flex-basis="384px"
+	
+>
+这个安装过程可能会很慢，应该会花几分钟。
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/32.png"
+	width="1280"
+	height="800"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/32_hu7425494666619658598.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/32_hu15729690338553605309.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="160"
+		data-flex-basis="384px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/33.png"
+	width="1280"
+	height="800"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/33_hu9017715892290158905.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/33_hu4445784544299796534.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="160"
+		data-flex-basis="384px"
+	
+>
+重启后会提示按enter键。</p>
+<h2 id="ubuntu配置">Ubuntu配置
+</h2><h3 id="配置网络">配置网络
+</h3><p>刚安装的虚拟机里没有网，需要手动设置网络。设置网络有两种，一种是修改配置文件，一种是可视化界面（GUI）修改。我个人倾向GUI修改。
+配置文件修改的方案参考<a class="link" href="https://blog.csdn.net/zyw2002/article/details/123486055"  target="_blank" rel="noopener"
+    >https://blog.csdn.net/zyw2002/article/details/123486055</a> 的2.2小节
+可视化界面修改网络配置信息步骤如下：
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/34.png"
+	width="1280"
+	height="800"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/34_hu13286299046669570766.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/34_hu455850788699419707.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="160"
+		data-flex-basis="384px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/35.png"
+	width="1280"
+	height="800"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/35_hu3009377958740211709.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/35_hu15917547603358531633.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="160"
+		data-flex-basis="384px"
+	
+>
+点击左上角的编辑，虚拟网络编辑器，VMnet8。记住子网IP。比如我的是192.168.146.0
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/36.png"
+	width="603"
+	height="499"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/36_hu17394159914278540588.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/36_hu1194596890129698324.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="120"
+		data-flex-basis="290px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/37.png"
+	width="706"
+	height="678"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/37_hu7011728155877382789.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/37_hu16209175943937799583.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="104"
+		data-flex-basis="249px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/38.png"
+	width="1280"
+	height="800"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/38_hu15343548983789215768.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/38_hu18169459468758911853.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="160"
+		data-flex-basis="384px"
+	
+>
+我的VMnet8子网ip为192.168.146.0。所以这里ip地址我填入了192.168.146.xxx（这里xxx可以填入小于255的数，但是建议不要填10以内的数）。子网掩码填入255.255.255.0即可。网关和DNS参照我的填入即可。
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/39.png"
+	width="1280"
+	height="800"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/39_hu3831698291706307480.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/39_hu18404129481492276149.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="160"
+		data-flex-basis="384px"
+	
+>
+应用配置后重启一下连接就可以正常连接网络。右上角的网络标记变成图中的标志时就表示联网正常。没有可视化界面的可以ping一下外网查看情况。<code>ping baidu.com</code>。按CTRL+C即可终止命令。
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/40.png"
+	width="598"
+	height="134"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/40_hu17376055650997726811.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/40_hu9538698749771221281.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="446"
+		data-flex-basis="1071px"
+	
+></p>
+<h3 id="安装vmtools">安装vmtools
+</h3><p>安装vmtools后可以解决屏幕显示比例的问题，可以在虚拟机外复制然后粘贴到虚拟机里，这很重要！
+右键，在终端中打开。安装命令如下</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo apt update
+</span></span><span class="line"><span class="cl">sudo apt install open-vm-tools -y
+</span></span><span class="line"><span class="cl">sudo apt install open-vm-tools-desktop -y
+</span></span><span class="line"><span class="cl">sudo reboot
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/41.png"
+	width="810"
+	height="431"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/41_hu11721447381091044109.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/41_hu1019678563954530347.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="187"
+		data-flex-basis="451px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/42.png"
+	width="806"
+	height="361"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/42_hu6082613264663902680.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/42_hu4011609726656300791.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="223"
+		data-flex-basis="535px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/43.png"
+	width="637"
+	height="197"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/43_hu18145367479649830960.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/43_hu17543789475112457655.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="323"
+		data-flex-basis="776px"
+	
+></p>
+<h3 id="配置用户免密">配置用户免密
+</h3><p>在使用sudo命令时普通用户需要输入密码。每次都需要输入密码很麻烦，设置免密后使用sudo就不需要再输入密码。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo passwd root <span class="c1">#给root用户设置一个密码</span>
+</span></span><span class="line"><span class="cl">sudo apt install gedit <span class="c1"># gedit是一个文本编辑器，可以让ubuntu上编辑文件像Windows的记事本</span>
+</span></span><span class="line"><span class="cl">sudo apt install vim <span class="c1">#vim 是一个纯终端的文本编辑器</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/44.png"
+	width="347"
+	height="119"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/44_hu7359312516820342846.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/44_hu17787348785431070939.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="291"
+		data-flex-basis="699px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/45.png"
+	width="719"
+	height="311"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/45_hu4945677856340161550.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/45_hu5317292109880695809.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="231"
+		data-flex-basis="554px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/46.png"
+	width="583"
+	height="436"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/46_hu7038207894010284767.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/46_hu10892438613526012861.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="133"
+		data-flex-basis="320px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo chmod <span class="m">777</span> /etc/sudoers <span class="c1"># /etc/sudoers是一个只读文件，需要修改权限</span>
+</span></span><span class="line"><span class="cl">su root
+</span></span><span class="line"><span class="cl">gedit /etc/sudoers <span class="c1">#在文件中添加如下标注部分</span>
+</span></span><span class="line"><span class="cl">chmod <span class="m">440</span> /etc/sudoers <span class="c1">#将文件权限修改回来，解决报错/etc/sudoers可被任何人写</span>
+</span></span><span class="line"><span class="cl">exit<span class="p">;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/47.png"
+	width="412"
+	height="28"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/47_hu12680780704706754853.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/47_hu16165549152694486022.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="1471"
+		data-flex-basis="3531px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/48.png"
+	width="1718"
+	height="888"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/48_hu7468098753458918934.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/48_hu361869018477048918.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="193"
+		data-flex-basis="464px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/49.png"
+	width="593"
+	height="363"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/49_hu17408402789675260201.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/49_hu7080031693843312013.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="163"
+		data-flex-basis="392px"
+	
+></p>
+<h3 id="安装ssh">安装SSH
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo apt-get install openssh-server
+</span></span><span class="line"><span class="cl">sudo gedit /etc/ssh/sshd_config
+</span></span><span class="line"><span class="cl">reboot <span class="c1">#重启生效设置</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/50.png"
+	width="569"
+	height="232"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/50_hu10880904346983278671.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/50_hu14808256641867900731.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="245"
+		data-flex-basis="588px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/51.png"
+	width="1718"
+	height="888"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/51_hu5090744386881797321.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/51_hu18060283699003644061.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="193"
+		data-flex-basis="464px"
+	
+>
+尝试ssh远程登陆
+设置主机映射
+修改Windows的<code>C:\Windows\System32\drivers\etc</code>下的hosts文件。这里修改可能会有权限问题，可以复制hosts文件，粘贴到能修改的地方，比如桌面。修改完成后删除<code>C:\Windows\System32\drivers\etc</code>下的hosts，将修改后的hosts文件粘贴进来。
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/52.png"
+	width="805"
+	height="262"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/52_hu14003622279397167009.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/52_hu7574007154804546225.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="307"
+		data-flex-basis="737px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/53.png"
+	width="784"
+	height="865"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/53_hu11982123495247602341.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/53_hu10618876749760878688.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="90"
+		data-flex-basis="217px"
+	
+>
+打开Windows的命令终端，输入命令</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">ssh rust@bird <span class="c1"># rust为ubuntu的用户名，bird为刚才设置的主机映射名</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/54.png"
+	width="1483"
+	height="762"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/54_hu4899606701917429376.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/54_hu13328165002540383673.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="194"
+		data-flex-basis="467px"
+	
+></p>
+<h3 id="安装java">安装Java
+</h3><p>Ubuntu安装java可以手动安装，也可以命令行安装。手动安装需要设置环境变量，建议使用命令行安装。命令行安装卸载比较方便。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo apt-get install openjdk-8-jdk
+</span></span><span class="line"><span class="cl">java -version  <span class="c1">#查看安装是否成功</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/55.png"
+	width="739"
+	height="276"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/55_hu13542097576863628029.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/55_hu7571619688027331613.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="267"
+		data-flex-basis="642px"
+	
+>
+<img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/56.png"
+	width="680"
+	height="96"
+	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/56_hu17584511672992408648.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/56_hu7429805898108029076.png 1024w"
+	loading="lazy"
+	
+		alt="image.png"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="708"
+		data-flex-basis="1700px"
+	
+></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/ubuntu/">Ubuntu</a>
+        
+            <a href="/tags/vmvare/">VMvare</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+<aside class="related-content--wrapper">
+    <h2 class="section-title">相关文章</h2>
+    <div class="related-content">
+        <div class="flex article-list--tile">
+            
+                
+<article class="">
+    <a href="/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Ubuntu22.04安装MySQL8.0.35</h2>
+        </div>
+    </a>
+</article>
+
+            
+                
+<article class="">
+    <a href="/p/ubuntu22.04%E6%89%A9%E5%B1%95%E8%99%9A%E6%8B%9F%E6%9C%BA%E7%9A%84%E7%A3%81%E7%9B%98%E7%A9%BA%E9%97%B4/">
+        
+        
+
+        <div class="article-details">
+            <h2 class="article-title">Ubuntu22.04扩展虚拟机的磁盘空间</h2>
+        </div>
+    </a>
+</article>
+
+            
+        </div>
+    </div>
+</aside>
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2024 rustWood
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+    </body>
+</html>
