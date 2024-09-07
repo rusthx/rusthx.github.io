@@ -96,6 +96,20 @@
                     </a>
                 </li>
             
+                <li>
+                    <a 
+                        href='https://www.cnblogs.com/rustWood'
+                        target="_blank"
+                        title="博客园"
+                        rel="me"
+                    >
+                        
+                        
+                            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1725698578146" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1508" width="24" height="24" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M478.71488 33.88416c-75.76064 36.6592-123.11552 117.31456-114.82624 194.82624 8.28416 67.03616 43.8016 120.45824 104.17152 156.06784 187.03872 109.98272 419.05664-79.60576 316.06784-258.71872C722.57536 20.26496 591.17568-19.53792 478.71488 33.88416z m187.03872 67.03616c85.23264 52.37248 80.49664 188.53888-9.472 229.39136-104.17152 48.18432-213.07904-15.71328-213.07904-125.696 0-41.89696 5.91872-54.46656 40.24832-84.84352s48.5376-35.61472 98.2528-35.61472c33.14688 0.00512 68.6592 7.33696 84.04992 16.76288z" fill="#707070" p-id="1509"></path><path d="M797.15328 340.7872c-63.9232 115.22048-89.96864 148.736-164.54656 217.87136-75.76064 71.22432-105.35424 90.08128-209.53088 135.12192-67.47648 29.32736-132.5824 50.2784-147.97312 48.18432-22.49216-2.09408-36.69504-25.1392-88.78592-139.31008C120.02816 458.10176 53.73952 333.45536 25.32864 298.89024c-16.57344-19.90144-17.75616-18.85184-11.83744 10.47552 27.22304 156.06784 119.56224 465.06496 147.97312 494.39232 15.39072 17.80736 295.94624 18.85184 456.93952 2.09408 190.58688-19.90144 170.46528-27.23328-121.92768-47.13472l-106.54208-7.33184 102.9888-24.0896c114.82624-27.23328 177.56672-52.37248 261.61664-105.79456 31.96416-19.90144 62.74048-34.56512 69.84192-32.47104 5.91872 2.09408 49.72032 98.46272 94.70464 212.6336 46.16704 115.22048 86.41536 212.6336 91.15136 216.82176 11.83744 11.52-8.28416-233.57952-28.41088-358.22592-10.65472-60.75392-39.0656-187.4944-63.9232-282.81344l-44.98432-172.83072-75.76576 136.17152z" fill="#707070" p-id="1510"></path></svg>
+                        
+                    </a>
+                </li>
+            
         </ol><ol class="menu" id="main-menu">
         
         
@@ -247,14 +261,10 @@
         <div class="widget--toc">
             <nav id="TableOfContents">
   <ol>
-    <li>
-      <ol>
-        <li><a href="#docker拉取镜像">Docker拉取镜像</a></li>
-        <li><a href="#编辑所需文件">编辑所需文件</a></li>
-        <li><a href="#生成新的镜像">生成新的镜像</a></li>
-        <li><a href="#访问web和windows访问">访问Web和Windows访问</a></li>
-      </ol>
-    </li>
+    <li><a href="#docker拉取镜像">Docker拉取镜像</a></li>
+    <li><a href="#编辑所需文件">编辑所需文件</a></li>
+    <li><a href="#生成新的镜像">生成新的镜像</a></li>
+    <li><a href="#访问web和windows访问">访问Web和Windows访问</a></li>
   </ol>
 </nav>
         </div>
@@ -313,8 +323,8 @@
     
     
     <p>这里以老师的指导文档为例，实现一个基于flask和redis的web网页，用户每输入网址浏览一次就加一次浏览量并显示在网页上。</p>
-<h3 id="docker拉取镜像">Docker拉取镜像
-</h3><p>拉取Python镜像</p>
+<h2 id="docker拉取镜像">Docker拉取镜像
+</h2><p>拉取Python镜像</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -334,8 +344,8 @@
 		data-flex-grow="201"
 		data-flex-basis="482px"
 	
->
-拉取redis镜像</p>
+></p>
+<p>拉取redis镜像</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -355,8 +365,8 @@
 		data-flex-grow="241"
 		data-flex-basis="580px"
 	
->
-查看镜像</p>
+></p>
+<p>查看镜像</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -377,8 +387,8 @@
 		data-flex-basis="1805px"
 	
 ></p>
-<h3 id="编辑所需文件">编辑所需文件
-</h3><p>编辑Python程序，实现一个基于flask的web应用，在redis中存一个数值，初值为0，每访问一次网站，计数加1。
+<h2 id="编辑所需文件">编辑所需文件
+</h2><p>编辑Python程序，实现一个基于flask的web应用，在redis中存一个数值，初值为0，每访问一次网站，计数加1。
 代码如下：</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -480,8 +490,8 @@
 		data-flex-grow="249"
 		data-flex-basis="598px"
 	
->
-豆瓣源下redis和flask会报错如下，根据Windows下载这两个包的经验，猜测应该是镜像源的问题，换成百度源，解决问题。
+></p>
+<p>豆瓣源下redis和flask会报错如下，根据Windows下载这两个包的经验，猜测应该是镜像源的问题，换成百度源，解决问题。
 <img src="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/6.png"
 	width="692"
 	height="140"
@@ -494,8 +504,8 @@
 		data-flex-basis="1186px"
 	
 ></p>
-<h3 id="生成新的镜像">生成新的镜像
-</h3><div class="highlight"><div class="chroma">
+<h2 id="生成新的镜像">生成新的镜像
+</h2><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
@@ -526,8 +536,8 @@
 		data-flex-grow="659"
 		data-flex-basis="1581px"
 	
->
-从kubernetes拉取docker本地镜像
+></p>
+<p>从kubernetes拉取docker本地镜像
 编辑flaskredisdeploy.yaml</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -623,8 +633,8 @@
 		data-flex-basis="651px"
 	
 ></p>
-<h3 id="访问web和windows访问">访问Web和Windows访问
-</h3><p>虚拟器中浏览器输入上面查看日志得到的链接
+<h2 id="访问web和windows访问">访问Web和Windows访问
+</h2><p>虚拟器中浏览器输入上面查看日志得到的链接
 <img src="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/11.png"
 	width="692"
 	height="534"
@@ -689,8 +699,8 @@
 		data-flex-grow="126"
 		data-flex-basis="302px"
 	
->
-创建service</p>
+></p>
+<p>创建service</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -723,8 +733,8 @@
 		data-flex-grow="137"
 		data-flex-basis="330px"
 	
->
-成功创建service,查看service</p>
+></p>
+<p>成功创建service,查看service</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -744,8 +754,8 @@
 		data-flex-grow="386"
 		data-flex-basis="927px"
 	
->
-Windows访问k8s集群的service，进而访问相应的pod
+></p>
+<p>Windows访问k8s集群的service，进而访问相应的pod
 ip地址为node的地址（k8s集群中应用service的节点）
 <img src="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/16.png"
 	width="691"
