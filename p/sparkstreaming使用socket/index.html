@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content=" 参考：https://www.bilibili.com/video/BV11A411L7CK?p=188&amp;vd_source=2db7c64d895a2907954a5b8725db55d5\n终端打印大量日志影响结果查看可以看我首页的博客解决。 踩坑如下： 1.socket编程不会，写socket发送数据查了很多资料才写出来 2.Windows没有netcat命令，但是MACOS和Ubuntu有,所以理所当然的想到用虚拟机的端口来收集数据和输入数据，事实上这个想法确实没有问题，分别做的话是能正常实现的，但是这也为后续的错误埋下了大坑。想当然的把socket当成kafka用（producer和consumer），是我踩坑的一大原因。 3.被教程误导，socket发送数据到端口，但是不知道socket有服务器和客户端之分，发送数据和处理数据的都是客户端，导致发送端可以和nc -lk 结合使用，能正常监听到数据；接收端也能和nc -lk 结合使用，在监听的端口出输入数据可以正常计算；但是两者结合就没办法计算了\n">
+<title>SparkStreaming使用socket</title>
+
+<link rel='canonical' href='https://rusthx.github.io/p/sparkstreaming%E4%BD%BF%E7%94%A8socket/'>
+
+<link rel="stylesheet" href="/scss/style.min.e0818f74a5cc5a3fb725aa5bbfa98f6567cf07f85ea0aa40f2d2d819bb19bc41.css"><meta property='og:title' content="SparkStreaming使用socket">
+<meta property='og:description' content=" 参考：https://www.bilibili.com/video/BV11A411L7CK?p=188&amp;vd_source=2db7c64d895a2907954a5b8725db55d5\n终端打印大量日志影响结果查看可以看我首页的博客解决。 踩坑如下： 1.socket编程不会，写socket发送数据查了很多资料才写出来 2.Windows没有netcat命令，但是MACOS和Ubuntu有,所以理所当然的想到用虚拟机的端口来收集数据和输入数据，事实上这个想法确实没有问题，分别做的话是能正常实现的，但是这也为后续的错误埋下了大坑。想当然的把socket当成kafka用（producer和consumer），是我踩坑的一大原因。 3.被教程误导，socket发送数据到端口，但是不知道socket有服务器和客户端之分，发送数据和处理数据的都是客户端，导致发送端可以和nc -lk 结合使用，能正常监听到数据；接收端也能和nc -lk 结合使用，在监听的端口出输入数据可以正常计算；但是两者结合就没办法计算了\n">
+<meta property='og:url' content='https://rusthx.github.io/p/sparkstreaming%E4%BD%BF%E7%94%A8socket/'>
+<meta property='og:site_name' content='rustWood'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Spark' /><meta property='article:tag' content='socket' /><meta property='article:tag' content='SparkStreaming' /><meta property='article:published_time' content='2024-09-07T11:55:09&#43;08:00'/><meta property='article:modified_time' content='2024-09-07T11:55:09&#43;08:00'/>
+<meta name="twitter:title" content="SparkStreaming使用socket">
+<meta name="twitter:description" content=" 参考：https://www.bilibili.com/video/BV11A411L7CK?p=188&amp;vd_source=2db7c64d895a2907954a5b8725db55d5\n终端打印大量日志影响结果查看可以看我首页的博客解决。 踩坑如下： 1.socket编程不会，写socket发送数据查了很多资料才写出来 2.Windows没有netcat命令，但是MACOS和Ubuntu有,所以理所当然的想到用虚拟机的端口来收集数据和输入数据，事实上这个想法确实没有问题，分别做的话是能正常实现的，但是这也为后续的错误埋下了大坑。想当然的把socket当成kafka用（producer和consumer），是我踩坑的一大原因。 3.被教程误导，socket发送数据到端口，但是不知道socket有服务器和客户端之分，发送数据和处理数据的都是客户端，导致发送端可以和nc -lk 结合使用，能正常监听到数据；接收端也能和nc -lk 结合使用，在监听的端口出输入数据可以正常计算；但是两者结合就没办法计算了\n">        
+        
+        <link rel="stylesheet" href="/highlight/styles/github.css">
+         
+        <link rel="stylesheet" href="/highlight/styles/github-dark.css" media="(prefers-color-scheme: dark)">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu290319576234017586.png" width="300"
+                            height="302" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">rustWood</a></h1>
+            <h2 class="site-description">江上何人初见月，江月何年初照人</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/rusthx'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#windows安装netcat">Windows安装netcat</a></li>
+    <li><a href="#sparkstreaming-socket编程">SparkStreaming socket编程</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/sparkstreaming%E4%BD%BF%E7%94%A8socket/">SparkStreaming使用socket</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-09-07</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <blockquote>
+<p>参考：<a class="link" href="https://www.bilibili.com/video/BV11A411L7CK?p=188&amp;vd_source=2db7c64d895a2907954a5b8725db55d5"  target="_blank" rel="noopener"
+    >https://www.bilibili.com/video/BV11A411L7CK?p=188&amp;vd_source=2db7c64d895a2907954a5b8725db55d5</a></p>
+</blockquote>
+<p>终端打印大量日志影响结果查看可以看我首页的博客解决。
+踩坑如下：
+1.socket编程不会，写socket发送数据查了很多资料才写出来
+2.Windows没有netcat命令，但是MACOS和Ubuntu有,所以理所当然的想到用虚拟机的端口来收集数据和输入数据，事实上这个想法确实没有问题，分别做的话是能正常实现的，但是这也为后续的错误埋下了大坑。想当然的把socket当成kafka用（producer和consumer），是我踩坑的一大原因。
+3.被教程误导，socket发送数据到端口，但是不知道socket有服务器和客户端之分，发送数据和处理数据的都是客户端，导致发送端可以和nc -lk <Port>结合使用，能正常监听到数据；接收端也能和nc -lk <Port>结合使用，在监听的端口出输入数据可以正常计算；但是两者结合就没办法计算了</p>
+<h2 id="windows安装netcat">Windows安装netcat
+</h2><p>下载链接： <a class="link" href="https://nmap.org/download.html#windows"  target="_blank" rel="noopener"
+    >https://nmap.org/download.html#windows</a>
+下载的是一个exe包，点击exe包一路next即可完成安装。</p>
+<p>端口同时接收数据和计算数据时使用命令监听会无法访问，即启动socket数据发送程序和SparkStreaming数据计算程序后无法监听。但是监听命令可以用来分别调试两个程序。</p>
+<p>注意：Windows的netcat命令与Ubuntu和MacOS都不一样。Windows的命令是 <code>ncat -lk &lt;Port&gt;</code>，参数的意思可以通过<code>ncat -h</code>查看。
+<img src="/p/sparkstreaming%E4%BD%BF%E7%94%A8socket/1.png"
+	width="960"
+	height="634"
+	srcset="/p/sparkstreaming%E4%BD%BF%E7%94%A8socket/1_hu3612333662547381058.png 480w, /p/sparkstreaming%E4%BD%BF%E7%94%A8socket/1_hu16466038784867921191.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="151"
+		data-flex-basis="363px"
+	
+>
+<img src="/p/sparkstreaming%E4%BD%BF%E7%94%A8socket/2.png"
+	width="1481"
+	height="760"
+	srcset="/p/sparkstreaming%E4%BD%BF%E7%94%A8socket/2_hu3790405143218445351.png 480w, /p/sparkstreaming%E4%BD%BF%E7%94%A8socket/2_hu11535289130947449563.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="194"
+		data-flex-basis="467px"
+	
+></p>
+<h2 id="sparkstreaming-socket编程">SparkStreaming socket编程
+</h2><p>题目：1）写一个应用程序利用套接字每隔2秒生成20条大学主页用户访问日志（可以自定义内容），数据形式如下：“系统时间戳，位置城市，用户ID+姓名，访问大学主页”。其中城市自定义 9个，用户ID 10个，大学主页 7个。
+2）写第二个程序每隔2秒不断获取套接字产生的数据，并将词频统计结果打印出来。
+导入依赖</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">   <span class="nt">&lt;groupId&gt;</span>org.apache.spark<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">   <span class="nt">&lt;artifactId&gt;</span>spark-streaming_2.12<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">   <span class="nt">&lt;version&gt;</span>3.3.2<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">package</span> <span class="nn">SparkStreaming1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">import</span> <span class="nn">java.io.</span><span class="o">{</span><span class="nc">BufferedWriter</span><span class="o">,</span> <span class="nc">IOException</span><span class="o">,</span> <span class="nc">OutputStreamWriter</span><span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">import</span> <span class="nn">java.net.ServerSocket</span>
+</span></span><span class="line"><span class="cl"><span class="k">import</span> <span class="nn">scala.util.Random</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">object</span> <span class="nc">task11</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 定义城市和用户ID
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">cities</span> <span class="k">=</span> <span class="nc">Seq</span><span class="o">(</span><span class="s">&#34;杭州&#34;</span><span class="o">,</span> <span class="s">&#34;南京&#34;</span><span class="o">,</span> <span class="s">&#34;长沙&#34;</span><span class="o">,</span> <span class="s">&#34;天津&#34;</span><span class="o">,</span> <span class="s">&#34;北京&#34;</span><span class="o">,</span> <span class="s">&#34;上海&#34;</span><span class="o">,</span> <span class="s">&#34;成都&#34;</span><span class="o">,</span> <span class="s">&#34;广州&#34;</span><span class="o">,</span> <span class="s">&#34;深圳&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">userIds</span> <span class="k">=</span> <span class="nc">Seq</span><span class="o">(</span><span class="s">&#34;0:阿良良木历&#34;</span><span class="o">,</span> <span class="s">&#34;1:忍野忍&#34;</span><span class="o">,</span> <span class="s">&#34;2:战场原黑仪&#34;</span><span class="o">,</span> <span class="s">&#34;3:羽川翼&#34;</span><span class="o">,</span> <span class="s">&#34;4:八九寺真宵&#34;</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="s">&#34;5:神原骏河&#34;</span><span class="o">,</span> <span class="s">&#34;6:千石抚子&#34;</span><span class="o">,</span> <span class="s">&#34;7:阿良良木火怜&#34;</span><span class="o">,</span> <span class="s">&#34;8:阿良良木月火&#34;</span><span class="o">,</span> <span class="s">&#34;9:姬丝秀忒·雅赛劳拉莉昂·刃下心&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">universityUrls</span> <span class="k">=</span> <span class="nc">Seq</span><span class="o">(</span><span class="s">&#34;www.nju.edu.cn&#34;</span><span class="o">,</span> <span class="s">&#34;www.ustc.edu.cn&#34;</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="s">&#34;www.zju.edu.cn&#34;</span><span class="o">,</span> <span class="s">&#34;www.fudan.edu.cn&#34;</span><span class="o">,</span> <span class="s">&#34;www.tsinghua.edu.cn&#34;</span><span class="o">,</span> <span class="s">&#34;www.pku.edu.cn&#34;</span><span class="o">,</span> <span class="s">&#34;www.scu.edu.cn&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 创建一个 socket 连接
+</span></span></span><span class="line"><span class="cl"><span class="c1">//      val socket = new Socket(&#34;hadoop3&#34;, 9765)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">val</span> <span class="n">socketServer</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ServerSocket</span><span class="o">(</span><span class="mi">9765</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">val</span> <span class="n">client</span> <span class="k">=</span> <span class="n">socketServer</span><span class="o">.</span><span class="n">accept</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">      <span class="n">println</span><span class="o">(</span><span class="s">&#34;连接！&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">val</span> <span class="n">out</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">BufferedWriter</span><span class="o">(</span><span class="k">new</span> <span class="nc">OutputStreamWriter</span><span class="o">(</span><span class="n">client</span><span class="o">.</span><span class="n">getOutputStream</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//val in = new BufferedReader(new InputStreamReader(client.getInputStream))
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">){</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(</span><span class="k">_</span> <span class="k">&lt;-</span> <span class="mi">1</span> <span class="n">to</span> <span class="mi">20</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// 发送多条数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="k">val</span> <span class="n">currentTime</span> <span class="k">=</span> <span class="nc">System</span><span class="o">.</span><span class="n">currentTimeMillis</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">          <span class="k">val</span> <span class="n">city</span> <span class="k">=</span> <span class="n">cities</span><span class="o">(</span><span class="nc">Random</span><span class="o">.</span><span class="n">nextInt</span><span class="o">(</span><span class="n">cities</span><span class="o">.</span><span class="n">length</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">          <span class="k">val</span> <span class="n">userId</span> <span class="k">=</span> <span class="n">userIds</span><span class="o">(</span><span class="nc">Random</span><span class="o">.</span><span class="n">nextInt</span><span class="o">(</span><span class="n">userIds</span><span class="o">.</span><span class="n">length</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">          <span class="k">val</span> <span class="n">universityUrl</span> <span class="k">=</span> <span class="n">universityUrls</span><span class="o">(</span><span class="nc">Random</span><span class="o">.</span><span class="n">nextInt</span><span class="o">(</span><span class="n">universityUrls</span><span class="o">.</span><span class="n">length</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">          <span class="k">val</span> <span class="n">logLine</span> <span class="k">=</span> <span class="s">s&#34;</span><span class="si">$currentTime</span><span class="s"> </span><span class="si">$city</span><span class="s"> </span><span class="si">$userId</span><span class="s"> </span><span class="si">$universityUrl</span><span class="s">&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">          <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="o">(</span><span class="n">logLine</span> <span class="o">+</span> <span class="s">&#34;\n&#34;</span><span class="o">)</span> <span class="c1">// 添加换行符以区分消息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="n">out</span><span class="o">.</span><span class="n">flush</span><span class="o">()</span> <span class="c1">// 确保数据被发送出去
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="n">println</span><span class="o">(</span><span class="n">logLine</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">2000</span><span class="o">)</span> <span class="c1">// 休眠2秒，模拟连续发送
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="c1">// 关闭 socket
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">out</span><span class="o">.</span><span class="n">close</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//      socket.close()
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">catch</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="n">e</span><span class="k">:</span> <span class="kt">IOException</span> <span class="o">=&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">e</span><span class="o">.</span><span class="n">printStackTrace</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">package</span> <span class="nn">SparkStreaming1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">import</span> <span class="nn">org.apache.spark.SparkConf</span>
+</span></span><span class="line"><span class="cl"><span class="k">import</span> <span class="nn">org.apache.spark.sql.SparkSession</span>
+</span></span><span class="line"><span class="cl"><span class="k">import</span> <span class="nn">org.apache.spark.streaming.</span><span class="o">{</span><span class="nc">Seconds</span><span class="o">,</span> <span class="nc">StreamingContext</span><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">object</span> <span class="nc">task12</span><span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">sparkConf</span><span class="k">:</span> <span class="kt">SparkConf</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SparkConf</span><span class="o">().</span><span class="n">setMaster</span><span class="o">(</span><span class="s">&#34;local[*]&#34;</span><span class="o">).</span><span class="n">setAppName</span><span class="o">(</span><span class="s">&#34;job7task12&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">spark</span> <span class="k">=</span> <span class="nc">SparkSession</span><span class="o">.</span><span class="n">builder</span><span class="o">().</span><span class="n">config</span><span class="o">(</span><span class="n">sparkConf</span><span class="o">).</span><span class="n">getOrCreate</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">ssc</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">StreamingContext</span><span class="o">(</span><span class="n">spark</span><span class="o">.</span><span class="n">sparkContext</span><span class="o">,</span> <span class="nc">Seconds</span><span class="o">(</span><span class="mi">2</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 从套接字获取数据流
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">lines</span> <span class="k">=</span> <span class="n">ssc</span><span class="o">.</span><span class="n">socketTextStream</span><span class="o">(</span><span class="s">&#34;localhost&#34;</span><span class="o">,</span> <span class="mi">9765</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="n">lines</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">split</span><span class="o">(</span><span class="s">&#34; &#34;</span><span class="o">)(</span><span class="mi">2</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">      <span class="o">.</span><span class="n">map</span><span class="o">((</span><span class="k">_</span><span class="o">,</span> <span class="mi">1</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">      <span class="o">.</span><span class="n">reduceByKey</span><span class="o">(</span><span class="k">_</span> <span class="o">+</span> <span class="k">_</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">.</span><span class="n">print</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="n">ssc</span><span class="o">.</span><span class="n">start</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">ssc</span><span class="o">.</span><span class="n">awaitTermination</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>启动时需要先启动数据计算程序，再启动数据发送程序。
+成功运行截图：
+<img src="/p/sparkstreaming%E4%BD%BF%E7%94%A8socket/3.png"
+	width="692"
+	height="371"
+	srcset="/p/sparkstreaming%E4%BD%BF%E7%94%A8socket/3_hu4369904911137244949.png 480w, /p/sparkstreaming%E4%BD%BF%E7%94%A8socket/3_hu4522820763415712476.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="186"
+		data-flex-basis="447px"
+	
+></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/spark/">Spark</a>
+        
+            <a href="/tags/socket/">Socket</a>
+        
+            <a href="/tags/sparkstreaming/">SparkStreaming</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2024 rustWood
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+
+        
+        <script src="/highlight/highlight-min.js"></script>
+        <script>hljs.highlightAll();</script>
+    </body>
+</html>

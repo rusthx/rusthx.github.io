@@ -3,18 +3,72 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://rusthx.github.io/</loc>
-    <lastmod>2024-09-07T11:09:06+08:00</lastmod>
+    <lastmod>2024-09-07T12:50:40+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/tags/kubernetes/</loc>
+    <lastmod>2024-09-07T12:50:40+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/</loc>
+    <lastmod>2024-09-07T12:50:40+08:00</lastmod>
   </url><url>
     <loc>https://rusthx.github.io/post/</loc>
-    <lastmod>2024-09-07T11:09:06+08:00</lastmod>
-  </url><url>
-    <loc>https://rusthx.github.io/tags/superset/</loc>
-    <lastmod>2024-09-07T11:09:06+08:00</lastmod>
+    <lastmod>2024-09-07T12:50:40+08:00</lastmod>
   </url><url>
     <loc>https://rusthx.github.io/tags/</loc>
-    <lastmod>2024-09-07T11:09:06+08:00</lastmod>
+    <lastmod>2024-09-07T12:50:40+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/tags/docker/</loc>
+    <lastmod>2024-09-07T12:48:13+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/p/kubernetesk8s%E4%BD%BF%E7%94%A8%E6%9C%AC%E5%9C%B0docker%E9%95%9C%E5%83%8F/</loc>
+    <lastmod>2024-09-07T12:48:13+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/</loc>
+    <lastmod>2024-09-07T12:35:29+08:00</lastmod>
   </url><url>
     <loc>https://rusthx.github.io/tags/ubuntu/</loc>
+    <lastmod>2024-09-07T12:35:29+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/p/docker%E5%AE%89%E8%A3%85%E4%B8%8E%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/</loc>
+    <lastmod>2024-09-07T12:27:13+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/tags/socket/</loc>
+    <lastmod>2024-09-07T11:55:09+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/tags/spark/</loc>
+    <lastmod>2024-09-07T11:55:09+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/tags/sparkstreaming/</loc>
+    <lastmod>2024-09-07T11:55:09+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/p/sparkstreaming%E4%BD%BF%E7%94%A8socket/</loc>
+    <lastmod>2024-09-07T11:55:09+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/tags/hive/</loc>
+    <lastmod>2024-09-07T11:47:55+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/tags/mysql/</loc>
+    <lastmod>2024-09-07T11:47:55+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/tags/scala/</loc>
+    <lastmod>2024-09-07T11:47:55+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/p/scala%E8%BF%9E%E6%8E%A5mysql%E5%92%8Chive/</loc>
+    <lastmod>2024-09-07T11:47:55+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/p/scala%E4%B8%AD%E5%87%BD%E6%95%B0%E4%B8%8Espark%E7%9A%84%E7%AE%97%E5%AD%90%E7%9A%84%E5%8C%BA%E5%88%AB/</loc>
+    <lastmod>2024-09-07T11:46:08+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/p/spark%E7%A8%8B%E5%BA%8F%E5%A4%A7%E9%87%8Finfo%E6%97%A5%E5%BF%97%E9%97%AE%E9%A2%98%E8%A7%A3%E5%86%B3/</loc>
+    <lastmod>2024-09-07T11:39:08+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/p/ubuntu22.04%E9%85%8D%E7%BD%AEspark3.3.1%E9%9B%86%E7%BE%A4/</loc>
+    <lastmod>2024-09-07T11:22:39+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/p/ubuntu22.04%E9%85%8D%E7%BD%AEhive%E5%8F%8Ahive-on-spark/</loc>
+    <lastmod>2024-09-07T11:15:48+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/tags/superset/</loc>
     <lastmod>2024-09-07T11:09:06+08:00</lastmod>
   </url><url>
     <loc>https://rusthx.github.io/p/ubuntu-22.04%E9%83%A8%E7%BD%B2apache-superset/</loc>
@@ -22,9 +76,6 @@
   </url><url>
     <loc>https://rusthx.github.io/tags/vmvare/</loc>
     <lastmod>2024-09-07T11:09:06+08:00</lastmod>
-  </url><url>
-    <loc>https://rusthx.github.io/tags/mysql/</loc>
-    <lastmod>2024-09-04T23:18:48+08:00</lastmod>
   </url><url>
     <loc>https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/</loc>
     <lastmod>2024-09-04T23:18:48+08:00</lastmod>
