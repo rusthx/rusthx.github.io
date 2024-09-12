@@ -7,7 +7,31 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>rustWood</copyright>
-        <lastBuildDate>Thu, 12 Sep 2024 22:15:33 +0800</lastBuildDate><atom:link href="https://rusthx.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Thu, 12 Sep 2024 23:05:47 +0800</lastBuildDate><atom:link href="https://rusthx.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>MySQL 索引</title>
+        <link>https://rusthx.github.io/p/mysql-%E7%B4%A2%E5%BC%95/</link>
+        <pubDate>Thu, 12 Sep 2024 23:05:47 +0800</pubDate>
+        
+        <guid>https://rusthx.github.io/p/mysql-%E7%B4%A2%E5%BC%95/</guid>
+        <description>&lt;p&gt;我写的这篇伯爵只是我学习的一点总结，并不系统，也不全面。想要学习较为全面的知识可以看 &lt;a class=&#34;link&#34; href=&#34;https://xiaolincoding.com/mysql/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;小林coding的图解MySQL&lt;/a&gt;相关部分&lt;/p&gt;
+&lt;h2 id=&#34;密集列索引&#34;&gt;密集列索引
+&lt;/h2&gt;&lt;p&gt;密集列，是指一张表上列的数据没有离散度，列的取值范围较小，高度集中在少数几个值中（如性别）。&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;一般来说，密集列由于没有离散度，不适合作为索引列。使用这类密集索引的实际效率可能会低于全表扫描。但是，假如密集列的倾斜度很高时，例如有一个状态列表示是否停用，大部分对象都为停用，那么就可用使用密集列作为索引&lt;/li&gt;
+&lt;li&gt;需要保证要查询的数据分布较少，（低于总数据量的5%）。同时还要确定是否有为这一个查询单独优化的需要，因为索引也会占用空间，建太多索引反而会降低查询效率，甚至会出现加了索引，查询效率反而变慢的情况。优化并不是将每个查询都单独优化到1s内，而是衡量损失后在妥协中得到一个平衡，让慢查询只占很少比例，优先保证查询次数多的语句。&lt;/li&gt;
+&lt;li&gt;可能会频繁变更的列不宜作为索引列，因为索引列变更会导致索引重排，也即是B+树的树结构变更。这会导致修改效率大幅下降&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;索引合并index_merge&#34;&gt;索引合并(index_merge)
+&lt;/h2&gt;&lt;p&gt;当数据过滤条件分布在多个索引列上时（无论是&lt;code&gt;and&lt;/code&gt;还是&lt;code&gt;or&lt;/code&gt;），MySQL为了提升数据访问效率会使用多个索引合并的方式过滤数据。、&lt;/p&gt;
+&lt;p&gt;索引合并会导致单个索引过滤的数据量越大，查询效率下降越明显&lt;/p&gt;
+&lt;h2 id=&#34;锁&#34;&gt;锁
+&lt;/h2&gt;&lt;p&gt;MySQL的行锁是通过对索引加锁来实现的。数据修改时会根据过滤条件匹配对应的索引，在对应的索引上加锁。如果语句中修改了索引的值，就还会在修改后的值上加锁。其他事务使用相同的索引值修改数据不管是否是相同的行均会被阻塞。&lt;/p&gt;
+&lt;p&gt;多线程下应该使用主键来修改数据降低阻塞的概率。&lt;/p&gt;
+&lt;p&gt;如果&lt;code&gt;update/delete&lt;/code&gt;的where条件没有使用索引或者没有where条件，就会全表扫描，会对所有记录加上next-key锁（&lt;code&gt;record锁+gap锁&lt;/code&gt;）,相当于把整张表锁住了&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>MySQL删除修改数据优化</title>
         <link>https://rusthx.github.io/p/mysql%E5%88%A0%E9%99%A4%E4%BF%AE%E6%94%B9%E6%95%B0%E6%8D%AE%E4%BC%98%E5%8C%96/</link>
         <pubDate>Thu, 12 Sep 2024 22:15:33 +0800</pubDate>

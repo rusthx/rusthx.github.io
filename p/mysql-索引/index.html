@@ -1,24 +1,26 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="演示说明">
-<title>Posts</title>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="我写的这篇伯爵只是我学习的一点总结，并不系统，也不全面。想要学习较为全面的知识可以看 小林coding的图解MySQL相关部分\n密集列索引 密集列，是指一张表上列的数据没有离散度，列的取值范围较小，高度集中在少数几个值中（如性别）。\n">
+<title>MySQL 索引</title>
 
-<link rel='canonical' href='https://rusthx.github.io/post/'>
+<link rel='canonical' href='https://rusthx.github.io/p/mysql-%E7%B4%A2%E5%BC%95/'>
 
-<link rel="stylesheet" href="/scss/style.min.e0818f74a5cc5a3fb725aa5bbfa98f6567cf07f85ea0aa40f2d2d819bb19bc41.css"><meta property='og:title' content="Posts">
-<meta property='og:description' content="演示说明">
-<meta property='og:url' content='https://rusthx.github.io/post/'>
+<link rel="stylesheet" href="/scss/style.min.e0818f74a5cc5a3fb725aa5bbfa98f6567cf07f85ea0aa40f2d2d819bb19bc41.css"><meta property='og:title' content="MySQL 索引">
+<meta property='og:description' content="我写的这篇伯爵只是我学习的一点总结，并不系统，也不全面。想要学习较为全面的知识可以看 小林coding的图解MySQL相关部分\n密集列索引 密集列，是指一张表上列的数据没有离散度，列的取值范围较小，高度集中在少数几个值中（如性别）。\n">
+<meta property='og:url' content='https://rusthx.github.io/p/mysql-%E7%B4%A2%E5%BC%95/'>
 <meta property='og:site_name' content='rustWood'>
-<meta property='og:type' content='website'><meta property='og:updated_time' content=' 2024-09-12T23:05:47&#43;08:00 '/>
-<meta name="twitter:title" content="Posts">
-<meta name="twitter:description" content="演示说明"><link rel="alternate" type="application/rss&#43;xml" href="https://rusthx.github.io/post/index.xml">        
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='MySQL' /><meta property='article:published_time' content='2024-09-12T23:05:47&#43;08:00'/><meta property='article:modified_time' content='2024-09-12T23:05:47&#43;08:00'/>
+<meta name="twitter:title" content="MySQL 索引">
+<meta name="twitter:description" content="我写的这篇伯爵只是我学习的一点总结，并不系统，也不全面。想要学习较为全面的知识可以看 小林coding的图解MySQL相关部分\n密集列索引 密集列，是指一张表上列的数据没有离散度，列的取值范围较小，高度集中在少数几个值中（如性别）。\n">        
         
         <link rel="stylesheet" href="/highlight/styles/github.css">
          
         <link rel="stylesheet" href="/highlight/styles/github-dark.css" media="(prefers-color-scheme: dark)">
     </head>
-    <body class="">
+    <body class="
+    article-page
+    ">
     <script>
         (function() {
             const colorSchemeKey = 'StackColorScheme';
@@ -240,215 +242,154 @@
     <aside class="sidebar right-sidebar sticky">
         
             
-                <form action="/search/" class="search-form widget" >
-        <p>
-            <label>搜索</label>
-            <input name="keyword" required placeholder="输入关键词..." />
-        
-            <button title="搜索">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="10" cy="10" r="7" />
-  <line x1="21" y1="21" x2="15" y2="15" />
-</svg>
-
-
-
-            </button>
-        </p>
-    </form>
-            
-        
-            
-                <section class="widget archives">
+                
+    <section class="widget archives">
         <div class="widget-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-infinity" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M9.828 9.172a4 4 0 1 0 0 5.656 a10 10 0 0 0 2.172 -2.828a10 10 0 0 1 2.172 -2.828 a4 4 0 1 1 0 5.656a10 10 0 0 1 -2.172 -2.828a10 10 0 0 0 -2.172 -2.828" />
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
 </svg>
 
 
 
         </div>
-        <h2 class="widget-title section-title">归档</h2>
-
+        <h2 class="widget-title section-title">目录</h2>
         
-        
-        
-        
-        
-        <div class="widget-archive--list">
-            <div class="archives-year">
-                    <a href="/archives/#2024">
-                        
-                            <span class="year">2024</span>
-                            <span class="count">18</span>
-                        
-                    </a> 
-                </div>
-            
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#密集列索引">密集列索引</a></li>
+    <li><a href="#索引合并index_merge">索引合并(index_merge)</a></li>
+    <li><a href="#锁">锁</a></li>
+  </ol>
+</nav>
         </div>
     </section>
-            
-        
-            
-                <section class="widget tagCloud">
-    <div class="widget-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-tag" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11 3L20 12a1.5 1.5 0 0 1 0 2L14 20a1.5 1.5 0 0 1 -2 0L3 11v-4a4 4 0 0 1 4 -4h4" />
-  <circle cx="9" cy="9" r="2" />
-</svg>
 
-
-
-    </div>
-    <h2 class="widget-title section-title">标签云</h2>
-
-    <div class="tagCloud-tags">
-        
-            <a href="/tags/ubuntu/" class="font_size_8">
-                Ubuntu
-            </a>
-        
-            <a href="/tags/mysql/" class="font_size_5">
-                MySQL
-            </a>
-        
-            <a href="/tags/spark/" class="font_size_5">
-                Spark
-            </a>
-        
-            <a href="/tags/vmvare/" class="font_size_4">
-                VMvare
-            </a>
-        
-            <a href="/tags/kubernetes/" class="font_size_3">
-                Kubernetes
-            </a>
-        
-            <a href="/tags/docker/" class="font_size_2">
-                Docker
-            </a>
-        
-            <a href="/tags/hive/" class="font_size_2">
-                Hive
-            </a>
-        
-            <a href="/tags/scala/" class="font_size_2">
-                Scala
-            </a>
-        
-            <a href="/tags/sql/" class="font_size_2">
-                SQL
-            </a>
-        
-            <a href="/tags/java/" class="font_size_1">
-                Java
-            </a>
-        
-    </div>
-</section>
             
         
     </aside>
 
 
             <main class="main full-width">
-    <header>
-        <h3 class="section-title">
-            
-                章节
-            
-        </h3>
+    <article class="main-article">
+    <header class="article-header">
 
-        <div class="section-card">
-            <div class="section-details">
-                <h3 class="section-count">18 个页面</h3>
-                <h1 class="section-term">Posts</h1>
-                
-            </div>
-        </div>
-    </header>
+    <div class="article-details">
     
-    <section class="article-list--compact">
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/mysql-%E7%B4%A2%E5%BC%95/">MySQL 索引</a>
+        </h2>
+    
         
-            <article>
-    <a href="/p/mysql-%E7%B4%A2%E5%BC%95/">
-        <div class="article-details">
-            <h2 class="article-title">MySQL 索引</h2>
-            <footer class="article-time">
-                <time datetime='2024-09-12T23:05:47&#43;08:00'>2024-09-12</time>
-            </footer>
-        </div>
-    </a>
-</article>
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
         
-            <article>
-    <a href="/p/mysql%E5%88%A0%E9%99%A4%E4%BF%AE%E6%94%B9%E6%95%B0%E6%8D%AE%E4%BC%98%E5%8C%96/">
-        <div class="article-details">
-            <h2 class="article-title">MySQL删除修改数据优化</h2>
-            <footer class="article-time">
-                <time datetime='2024-09-12T22:15:33&#43;08:00'>2024-09-12</time>
-            </footer>
-        </div>
-    </a>
-</article>
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-09-12</time>
+            </div>
         
-            <article>
-    <a href="/p/java%E9%9A%8F%E6%9C%BA%E4%BA%A4%E6%8D%A2%E6%B4%97%E7%89%8C/">
-        <div class="article-details">
-            <h2 class="article-title">Java随机交换(洗牌)</h2>
-            <footer class="article-time">
-                <time datetime='2024-09-11T14:43:00&#43;08:00'>2024-09-11</time>
-            </footer>
-        </div>
-    </a>
-</article>
+
         
-            <article>
-    <a href="/p/sql%E8%AE%A1%E7%AE%97%E6%97%B6%E9%97%B4%E4%BA%A4%E9%9B%86/">
-        <div class="article-details">
-            <h2 class="article-title">SQL计算时间交集</h2>
-            <footer class="article-time">
-                <time datetime='2024-09-08T10:15:20&#43;08:00'>2024-09-08</time>
-            </footer>
-        </div>
-    </a>
-</article>
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>我写的这篇伯爵只是我学习的一点总结，并不系统，也不全面。想要学习较为全面的知识可以看 <a class="link" href="https://xiaolincoding.com/mysql/"  target="_blank" rel="noopener"
+    >小林coding的图解MySQL</a>相关部分</p>
+<h2 id="密集列索引">密集列索引
+</h2><p>密集列，是指一张表上列的数据没有离散度，列的取值范围较小，高度集中在少数几个值中（如性别）。</p>
+<ol>
+<li>一般来说，密集列由于没有离散度，不适合作为索引列。使用这类密集索引的实际效率可能会低于全表扫描。但是，假如密集列的倾斜度很高时，例如有一个状态列表示是否停用，大部分对象都为停用，那么就可用使用密集列作为索引</li>
+<li>需要保证要查询的数据分布较少，（低于总数据量的5%）。同时还要确定是否有为这一个查询单独优化的需要，因为索引也会占用空间，建太多索引反而会降低查询效率，甚至会出现加了索引，查询效率反而变慢的情况。优化并不是将每个查询都单独优化到1s内，而是衡量损失后在妥协中得到一个平衡，让慢查询只占很少比例，优先保证查询次数多的语句。</li>
+<li>可能会频繁变更的列不宜作为索引列，因为索引列变更会导致索引重排，也即是B+树的树结构变更。这会导致修改效率大幅下降</li>
+</ol>
+<h2 id="索引合并index_merge">索引合并(index_merge)
+</h2><p>当数据过滤条件分布在多个索引列上时（无论是<code>and</code>还是<code>or</code>），MySQL为了提升数据访问效率会使用多个索引合并的方式过滤数据。、</p>
+<p>索引合并会导致单个索引过滤的数据量越大，查询效率下降越明显</p>
+<h2 id="锁">锁
+</h2><p>MySQL的行锁是通过对索引加锁来实现的。数据修改时会根据过滤条件匹配对应的索引，在对应的索引上加锁。如果语句中修改了索引的值，就还会在修改后的值上加锁。其他事务使用相同的索引值修改数据不管是否是相同的行均会被阻塞。</p>
+<p>多线程下应该使用主键来修改数据降低阻塞的概率。</p>
+<p>如果<code>update/delete</code>的where条件没有使用索引或者没有where条件，就会全表扫描，会对所有记录加上next-key锁（<code>record锁+gap锁</code>）,相当于把整张表锁住了</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/mysql/">MySQL</a>
         
     </section>
-    <nav class='pagination'>
-        
-        
 
-        
-            
-                <span class='page-link current'>1</span>
-                
-            
-            
-                    <a class='page-link' href='/post/page/2/'>2</a>
-                
-            
-            
-                    
-                        
-                        <span class='page-link dots'>&hellip;</span>
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    <a class='page-link' href='/post/page/5/'>5</a>
-                
-            
-    </nav>
 
-<footer class="site-footer">
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
     <section class="copyright">
         &copy; 
         
@@ -461,6 +402,84 @@
     </section>
 </footer>
 
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
 
             </main>
         </div>
