@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前置准备：配置Hive的MySQL连接用户 MySQL的配置可参考我的教程 MySQL安装教程\n">
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前置准备：配置Hive的MySQL连接用户 MySQL的配置可参考我的教程 MySQL安装教程\n创建Hive元数据库 1 create database metastore; 创建用户hive，设置密码为123456 1 2 3 create user &#39;hive&#39;@&#39;%&#39; identified by &#39;123456&#39;; grant all privileges on metastore.* to &#39;hive&#39;@&#39;%&#39; with grant option; flush privileges; 安装Hive 参考资料：B站尚硅谷 062.Hive的安装部署_哔哩哔哩_bilibili\n">
 <title>Ubuntu22.04配置Hive及Hive on Spark</title>
 
 <link rel='canonical' href='https://rusthx.github.io/p/ubuntu22.04%E9%85%8D%E7%BD%AEhive%E5%8F%8Ahive-on-spark/'>
 
 <link rel="stylesheet" href="/scss/style.min.e0818f74a5cc5a3fb725aa5bbfa98f6567cf07f85ea0aa40f2d2d819bb19bc41.css"><meta property='og:title' content="Ubuntu22.04配置Hive及Hive on Spark">
-<meta property='og:description' content="前置准备：配置Hive的MySQL连接用户 MySQL的配置可参考我的教程 MySQL安装教程\n">
+<meta property='og:description' content="前置准备：配置Hive的MySQL连接用户 MySQL的配置可参考我的教程 MySQL安装教程\n创建Hive元数据库 1 create database metastore; 创建用户hive，设置密码为123456 1 2 3 create user &#39;hive&#39;@&#39;%&#39; identified by &#39;123456&#39;; grant all privileges on metastore.* to &#39;hive&#39;@&#39;%&#39; with grant option; flush privileges; 安装Hive 参考资料：B站尚硅谷 062.Hive的安装部署_哔哩哔哩_bilibili\n">
 <meta property='og:url' content='https://rusthx.github.io/p/ubuntu22.04%E9%85%8D%E7%BD%AEhive%E5%8F%8Ahive-on-spark/'>
 <meta property='og:site_name' content='rustWood'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Ubuntu' /><meta property='article:tag' content='Hive' /><meta property='article:tag' content='Spark' /><meta property='article:published_time' content='2024-09-07T11:15:48&#43;08:00'/><meta property='article:modified_time' content='2024-09-07T11:15:48&#43;08:00'/>
 <meta name="twitter:title" content="Ubuntu22.04配置Hive及Hive on Spark">
-<meta name="twitter:description" content="前置准备：配置Hive的MySQL连接用户 MySQL的配置可参考我的教程 MySQL安装教程\n">        
+<meta name="twitter:description" content="前置准备：配置Hive的MySQL连接用户 MySQL的配置可参考我的教程 MySQL安装教程\n创建Hive元数据库 1 create database metastore; 创建用户hive，设置密码为123456 1 2 3 create user &#39;hive&#39;@&#39;%&#39; identified by &#39;123456&#39;; grant all privileges on metastore.* to &#39;hive&#39;@&#39;%&#39; with grant option; flush privileges; 安装Hive 参考资料：B站尚硅谷 062.Hive的安装部署_哔哩哔哩_bilibili\n">        
         
         <link rel="stylesheet" href="/highlight/styles/github.css">
          
