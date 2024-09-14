@@ -7,7 +7,41 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>rustWood</copyright>
-        <lastBuildDate>Thu, 12 Sep 2024 22:15:33 +0800</lastBuildDate><atom:link href="https://rusthx.github.io/tags/sql/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sat, 14 Sep 2024 17:49:28 +0800</lastBuildDate><atom:link href="https://rusthx.github.io/tags/sql/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>数据库实现树状（层级）结构</title>
+        <link>https://rusthx.github.io/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0%E6%A0%91%E7%8A%B6%E5%B1%82%E7%BA%A7%E7%BB%93%E6%9E%84/</link>
+        <pubDate>Sat, 14 Sep 2024 17:49:28 +0800</pubDate>
+        
+        <guid>https://rusthx.github.io/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0%E6%A0%91%E7%8A%B6%E5%B1%82%E7%BA%A7%E7%BB%93%E6%9E%84/</guid>
+        <description>&lt;h2 id=&#34;问题&#34;&gt;问题
+&lt;/h2&gt;&lt;p&gt;有一张交易流水表（transaction），主键为账号，每个账号有所属公司。有一张公司信息表（company_info），主键为公司id，表中有上级公司id。&lt;/p&gt;
+&lt;p&gt;需要得到每个公司的交易信息（资金流入流出余额），但是每个公司的数据都应该是该公司及下属公司的汇总。
+但是数据库并不支持树形结构也不支持层级结构。&lt;/p&gt;
+&lt;h2 id=&#34;方案&#34;&gt;方案
+&lt;/h2&gt;&lt;p&gt;主要难题在于公司信息表，公司只有上面一级的信息，没有更上面的信息，也没有下属公司信息。&lt;/p&gt;
+&lt;p&gt;所以需要做一张公司树表（company_tree），记录上下关系和层级信息，加工方案如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;设置字段为公司id，公司id树（从最顶层公司到当前公司，类似&#39;0011-0022&amp;rsquo;），公司层级,上级公司id(sup_comp_id)。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;插入最顶层公司信息（&amp;lsquo;0011&amp;rsquo;）,设置该公司层级为1级。id树为&#39;0011&amp;rsquo;
+然后查询company_info表，插入上级为（&amp;lsquo;0011&amp;rsquo;）的公司信息，设置层级为2级，拼接上级公司id树(&amp;lsquo;0011&amp;rsquo;)和当前公司id作为当前公司的id树。
+然后插入三级公司、四级公司，直到最底层公司。不知道到底有多少层可以插入一层后观察company_tree表有无新增数据。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;注意：三级及更下级的公司需要冗余多行，每行的上级公司id不同（分别为顶级到当前公司的父级公司的公司id）&lt;/p&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;关联company_tree表和transaction,group by sup_comp_id,再对资金流入流出余额进行sum()聚合。
+这里加一个按层级的过滤条件，一层一层给地查，然后再union查询结果即可得到所有公司的信息&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;观察上面的方案不难发现，这张加工的company_tree不好用，公司信息比较少变（除了股市），一般都是作为数仓的维度表。
+但是每次需要关联查询company_tree时写的查询语句都很复杂，那么怎样才能不用union各层公司信息呢？&lt;/p&gt;
+&lt;p&gt;设计company_tree的时候再加一个up_comp_tree字段。这样聚合的时候group by up_comp_tree就能拿到所有公司的汇总信息。
+（因为公司的下属公司的所有下一级公司的up_comp_tree都是当前公司的id树）&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>MySQL删除修改数据优化</title>
         <link>https://rusthx.github.io/p/mysql%E5%88%A0%E9%99%A4%E4%BF%AE%E6%94%B9%E6%95%B0%E6%8D%AE%E4%BC%98%E5%8C%96/</link>
         <pubDate>Thu, 12 Sep 2024 22:15:33 +0800</pubDate>

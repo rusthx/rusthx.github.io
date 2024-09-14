@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="DataX介绍 DataX的Github介绍如下：\nDataX 是阿里云 DataWorks数据集成 的开源版本，在阿里巴巴集团内被广泛使用的离线数据同步工具/平台。DataX 实现了包括 MySQL、Oracle、OceanBase、SqlServer、Postgre、HDFS、Hive、ADS、HBase、TableStore(OTS)、MaxCompute(ODPS)、Hologres、DRDS, databend 等各种异构数据源之间高效的数据同步功能。\n">
+<title>通过DataX同步数据仓库数据</title>
+
+<link rel='canonical' href='https://rusthx.github.io/p/%E9%80%9A%E8%BF%87datax%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E6%95%B0%E6%8D%AE/'>
+
+<link rel="stylesheet" href="/scss/style.min.e0818f74a5cc5a3fb725aa5bbfa98f6567cf07f85ea0aa40f2d2d819bb19bc41.css"><meta property='og:title' content="通过DataX同步数据仓库数据">
+<meta property='og:description' content="DataX介绍 DataX的Github介绍如下：\nDataX 是阿里云 DataWorks数据集成 的开源版本，在阿里巴巴集团内被广泛使用的离线数据同步工具/平台。DataX 实现了包括 MySQL、Oracle、OceanBase、SqlServer、Postgre、HDFS、Hive、ADS、HBase、TableStore(OTS)、MaxCompute(ODPS)、Hologres、DRDS, databend 等各种异构数据源之间高效的数据同步功能。\n">
+<meta property='og:url' content='https://rusthx.github.io/p/%E9%80%9A%E8%BF%87datax%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E6%95%B0%E6%8D%AE/'>
+<meta property='og:site_name' content='rustWood'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='DataX' /><meta property='article:published_time' content='2024-09-14T16:58:47&#43;08:00'/><meta property='article:modified_time' content='2024-09-14T16:58:47&#43;08:00'/>
+<meta name="twitter:title" content="通过DataX同步数据仓库数据">
+<meta name="twitter:description" content="DataX介绍 DataX的Github介绍如下：\nDataX 是阿里云 DataWorks数据集成 的开源版本，在阿里巴巴集团内被广泛使用的离线数据同步工具/平台。DataX 实现了包括 MySQL、Oracle、OceanBase、SqlServer、Postgre、HDFS、Hive、ADS、HBase、TableStore(OTS)、MaxCompute(ODPS)、Hologres、DRDS, databend 等各种异构数据源之间高效的数据同步功能。\n">        
+        
+        <link rel="stylesheet" href="/highlight/styles/github.css">
+         
+        <link rel="stylesheet" href="/highlight/styles/github-dark.css" media="(prefers-color-scheme: dark)">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu290319576234017586.png" width="300"
+                            height="302" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">rustWood</a></h1>
+            <h2 class="site-description">江上何人初见月，江月何年初照人</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/rusthx'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://www.cnblogs.com/rustWood'
+                        target="_blank"
+                        title="博客园"
+                        rel="me"
+                    >
+                        
+                        
+                            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1725698578146" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1508" width="24" height="24" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M478.71488 33.88416c-75.76064 36.6592-123.11552 117.31456-114.82624 194.82624 8.28416 67.03616 43.8016 120.45824 104.17152 156.06784 187.03872 109.98272 419.05664-79.60576 316.06784-258.71872C722.57536 20.26496 591.17568-19.53792 478.71488 33.88416z m187.03872 67.03616c85.23264 52.37248 80.49664 188.53888-9.472 229.39136-104.17152 48.18432-213.07904-15.71328-213.07904-125.696 0-41.89696 5.91872-54.46656 40.24832-84.84352s48.5376-35.61472 98.2528-35.61472c33.14688 0.00512 68.6592 7.33696 84.04992 16.76288z" fill="#707070" p-id="1509"></path><path d="M797.15328 340.7872c-63.9232 115.22048-89.96864 148.736-164.54656 217.87136-75.76064 71.22432-105.35424 90.08128-209.53088 135.12192-67.47648 29.32736-132.5824 50.2784-147.97312 48.18432-22.49216-2.09408-36.69504-25.1392-88.78592-139.31008C120.02816 458.10176 53.73952 333.45536 25.32864 298.89024c-16.57344-19.90144-17.75616-18.85184-11.83744 10.47552 27.22304 156.06784 119.56224 465.06496 147.97312 494.39232 15.39072 17.80736 295.94624 18.85184 456.93952 2.09408 190.58688-19.90144 170.46528-27.23328-121.92768-47.13472l-106.54208-7.33184 102.9888-24.0896c114.82624-27.23328 177.56672-52.37248 261.61664-105.79456 31.96416-19.90144 62.74048-34.56512 69.84192-32.47104 5.91872 2.09408 49.72032 98.46272 94.70464 212.6336 46.16704 115.22048 86.41536 212.6336 91.15136 216.82176 11.83744 11.52-8.28416-233.57952-28.41088-358.22592-10.65472-60.75392-39.0656-187.4944-63.9232-282.81344l-44.98432-172.83072-75.76576 136.17152z" fill="#707070" p-id="1510"></path></svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#datax介绍">DataX介绍</a></li>
+    <li><a href="#问题">问题</a></li>
+    <li><a href="#实现">实现</a>
+      <ol>
+        <li><a href="#方案1-shell实现">方案1 shell实现</a></li>
+        <li><a href="#方案2-python实现">方案2 python实现</a></li>
+      </ol>
+    </li>
+    <li><a href="#补充datax的增量同步">补充：DataX的增量同步</a></li>
+    <li><a href="#补充crontab命令">补充：crontab命令</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E9%80%9A%E8%BF%87datax%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E6%95%B0%E6%8D%AE/">通过DataX同步数据仓库数据</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-09-14</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="datax介绍">DataX介绍
+</h2><p><a class="link" href="https://github.com/alibaba/DataX/tree/datax_v202309"  target="_blank" rel="noopener"
+    >DataX的Github</a>介绍如下：</p>
+<p>DataX 是阿里云 DataWorks数据集成 的开源版本，在阿里巴巴集团内被广泛使用的离线数据同步工具/平台。DataX 实现了包括 MySQL、Oracle、OceanBase、SqlServer、Postgre、HDFS、Hive、ADS、HBase、TableStore(OTS)、MaxCompute(ODPS)、Hologres、DRDS, databend 等各种异构数据源之间高效的数据同步功能。</p>
+<p>DataX本身作为数据同步框架，将不同数据源的同步抽象为从源头数据源读取数据的Reader插件，以及向目标端写入数据的Writer插件，理论上DataX框架可以支持任意数据源类型的数据同步工作。同时DataX插件体系作为一套生态系统, 每接入一套新数据源该新加入的数据源即可实现和现有的数据源互通。</p>
+<p><img src="/p/%E9%80%9A%E8%BF%87datax%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E6%95%B0%E6%8D%AE/1.png"
+	width="1334"
+	height="751"
+	srcset="/p/%E9%80%9A%E8%BF%87datax%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E6%95%B0%E6%8D%AE/1_hu16606306282830110616.png 480w, /p/%E9%80%9A%E8%BF%87datax%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E6%95%B0%E6%8D%AE/1_hu11140095319987742579.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="177"
+		data-flex-basis="426px"
+	
+>
+<img src="/p/%E9%80%9A%E8%BF%87datax%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E6%95%B0%E6%8D%AE/2.png"
+	width="1305"
+	height="441"
+	srcset="/p/%E9%80%9A%E8%BF%87datax%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E6%95%B0%E6%8D%AE/2_hu9070646682327868429.png 480w, /p/%E9%80%9A%E8%BF%87datax%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E6%95%B0%E6%8D%AE/2_hu682000736333306540.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="295"
+		data-flex-basis="710px"
+	
+></p>
+<h2 id="问题">问题
+</h2><p> 数仓开发时需要从异构数据源获取数据作为ODS层（原始数据层），同时还需要在数仓间进行ETL(数据抽取、转换、加载)。通过DataX来实现数据同步。</p>
+<h2 id="实现">实现
+</h2><h3 id="方案1-shell实现">方案1 shell实现
+</h3><p>1.写通过DataX将数据同步到ODS层的配置文件（reader、writter）</p>
+<p>2.通过shell脚本传入传入target_dir(数据库表名，判断是否是需要全量同步的表，若是，则进行全量同步)和datax_config(即步骤1的配置文件)</p>
+<p>3.将数仓间ETL的SQL脚本也封装成shell脚本</p>
+<p>4.通过dolphinscheduler调度步骤2和步骤3的shell脚本实现数据同步到数仓ODS层并在数仓间ETL</p>
+<p>缺点：系统复杂度高，不易维护</p>
+<p>优点：更加灵活，在部分自定义函数功能支持不是很友好的框架（Hive）里也能很好地发挥作用</p>
+<h3 id="方案2-python实现">方案2 python实现
+</h3><p>1.写通过DataX将数据同步到ODS层的配置文件（reader、writter）</p>
+<p>2.将异构数据源配置信息写成文件，然后在python脚本中调用配置信息，拼接成完整的DataX同步命令。</p>
+<p>3.将数仓间ETL的SQL脚本封装成自定义函数，再在步骤2的python脚本中连接数仓执行自定义函数</p>
+<p>4.在服务器上通过<code>contrab</code>设置定时任务实现自动执行</p>
+<p>缺点：Hive的自定义函数支持不是特别友好，部分功能可能没法实现。通用性差</p>
+<p>优点：系统复杂度低，DataX和python脚本都不用一直在线，定时调度任务开始执行时才会启动python脚本，降低了服务器负担</p>
+<h2 id="补充datax的增量同步">补充：DataX的增量同步
+</h2><p>数仓的增量同步一般都是用消息队列+数据库监听框架+数据同步框架（kafka+Maxwell+Flume）。
+但是在离线数仓实时性要求不高的场景下也可以用DataX来实现增量同步。
+实现原理：配置文件中reader部分支持column和querySQL,可以在querySQL中加入过滤条件来获取较新的数据。</p>
+<p>比如如果需要获取最新的每日交易数据，就可以加一个时间为最新日期或者传入日期参数的过滤条件。</p>
+<p>如果表中没有时间这种自然增长的字段也可以使用单调递增的id之类的。总之就是获取最新的一批数据就可以。</p>
+<p>然后为了保证数据一致性，还需要在wrritter的preSQL中删除符合reader的querySQL的数据。</p>
+<h2 id="补充crontab命令">补充：crontab命令
+</h2><blockquote>
+<p>参考资料：https://cloud.tencent.com/developer/article/2359335</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">（1）语　　法：
+</span></span><span class="line"><span class="cl">crontab <span class="o">[</span>-u &lt;用户名称&gt;<span class="o">][</span>配置文件<span class="o">]</span> 或 crontab <span class="o">{</span> -l <span class="p">|</span> -r <span class="p">|</span> -e <span class="o">}</span>
+</span></span><span class="line"><span class="cl">-u   <span class="c1">#&lt;用户名称&gt; 是指设定指定&lt;用户名称&gt;的定时任务，这个前提是你必须要有其权限(比如说是 root)才能够指定他人的时程表。如果不使用 -u user 的话，就是表示设定自己的定时任务。</span>
+</span></span><span class="line"><span class="cl">-l 　<span class="c1">#列出该用户的定时任务设置。</span>
+</span></span><span class="line"><span class="cl">-r 　<span class="c1">#删除该用户的定时任务设置。</span>
+</span></span><span class="line"><span class="cl">-e 　<span class="c1">#编辑该用户的定时任务设置。</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">（2）命令时间格式 :
+</span></span><span class="line"><span class="cl">*     * 　  *　  *　  *　　<span class="nb">command</span>
+</span></span><span class="line"><span class="cl">分　  时　  日　  月　 周　  命令
+</span></span><span class="line"><span class="cl">第1列表示分钟1～59 每分钟用*或者 */1表示
+</span></span><span class="line"><span class="cl">第2列表示小时1～23（0表示0点）
+</span></span><span class="line"><span class="cl">第3列表示日期1～31
+</span></span><span class="line"><span class="cl">第4列表示月份1～12
+</span></span><span class="line"><span class="cl">第5列标识号星期0～6（0表示星期天）
+</span></span><span class="line"><span class="cl">第6列要运行的命令
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">（3）一些Crontab定时任务例子：
+</span></span><span class="line"><span class="cl"><span class="m">30</span> <span class="m">21</span> * * * /usr/local/etc/rc.d/lighttpd restart  <span class="c1">#每晚的21:30 重启apache</span>
+</span></span><span class="line"><span class="cl"><span class="m">45</span> <span class="m">4</span> 1,10,22 * * /usr/local/etc/rc.d/lighttpd restart  <span class="c1">#每月1、10、22日的4 : 45重启apache</span>
+</span></span><span class="line"><span class="cl"><span class="m">10</span> <span class="m">1</span> * * 6,0 /usr/local/etc/rc.d/lighttpd restart  <span class="c1">#每周六、周日的1 : 10重启apache</span>
+</span></span><span class="line"><span class="cl">0,30 18-23 * * * /usr/local/etc/rc.d/lighttpd restart  <span class="c1">#每天18 : 00至23 : 00之间每隔30分钟重启apache</span>
+</span></span><span class="line"><span class="cl"><span class="m">0</span> <span class="m">23</span> * * <span class="m">6</span> /usr/local/etc/rc.d/lighttpd restart  <span class="c1">#每星期六的11 : 00 pm重启apache</span>
+</span></span><span class="line"><span class="cl">* 23-7/1 * * * /usr/local/etc/rc.d/lighttpd restart  <span class="c1">#晚上11点到早上7点之间，每隔一小时重启apache</span>
+</span></span><span class="line"><span class="cl">* */1 * * * /usr/local/etc/rc.d/lighttpd restart  <span class="c1">#每一小时重启apache</span>
+</span></span><span class="line"><span class="cl"><span class="m">0</span> <span class="m">11</span> <span class="m">4</span> * mon-wed /usr/local/etc/rc.d/lighttpd restart  <span class="c1">#每月的4号与每周一到周三的11点重启apache</span>
+</span></span><span class="line"><span class="cl"><span class="m">0</span> <span class="m">4</span> <span class="m">1</span> jan * /usr/local/etc/rc.d/lighttpd restart  <span class="c1">#一月一号的4点重启apache</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">*/30 * * * * /usr/sbin/ntpdate cn.pool.ntp.org  <span class="c1">#每半小时同步一下时间</span>
+</span></span><span class="line"><span class="cl"><span class="m">0</span> */2 * * * /sbin/service httpd restart  <span class="c1">#每两个小时重启一次apache </span>
+</span></span><span class="line"><span class="cl"><span class="m">50</span> <span class="m">7</span> * * * /sbin/service sshd start  <span class="c1">#每天7：50开启ssh服务 </span>
+</span></span><span class="line"><span class="cl"><span class="m">50</span> <span class="m">22</span> * * * /sbin/service sshd stop  <span class="c1">#每天22：50关闭ssh服务 </span>
+</span></span><span class="line"><span class="cl"><span class="m">0</span> <span class="m">0</span> 1,15 * * fsck /home  <span class="c1">#每月1号和15号检查/home 磁盘 </span>
+</span></span><span class="line"><span class="cl"><span class="m">1</span> * * * * /home/bruce/backup  <span class="c1">#每小时的第一分执行 /home/bruce/backup这个文件 </span>
+</span></span><span class="line"><span class="cl"><span class="m">00</span> <span class="m">03</span> * * 1-5 find /home <span class="s2">&#34;*.xxx&#34;</span> -mtime +4 -exec rm <span class="o">{}</span> <span class="se">\;</span>  <span class="c1">#每周一至周五3点钟，在目录/home中，查找文件名为*.xxx的文件，并删除4天前的文件。</span>
+</span></span><span class="line"><span class="cl"><span class="m">30</span> <span class="m">6</span> */10 * * ls  <span class="c1">#每月的1、11、21、31日是的6：30执行一次ls命令</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/datax/">DataX</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2024 rustWood
+    </section>
+    
+    <section class="powerby">
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+
+
+        
+        <script src="/highlight/highlight-min.js"></script>
+        <script>hljs.highlightAll();</script>
+    </body>
+</html>

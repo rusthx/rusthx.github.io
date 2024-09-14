@@ -1,25 +1,26 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
-    <head>
-	<meta name="generator" content="Hugo 0.134.2"><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="演示说明">
-<title>rustWood</title>
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="问题 有一张交易流水表（transaction），主键为账号，每个账号有所属公司。有一张公司信息表（company_info），主键为公司id，表中有上级公司id。\n">
+<title>数据库实现树状（层级）结构</title>
 
-<link rel='canonical' href='https://rusthx.github.io/'>
+<link rel='canonical' href='https://rusthx.github.io/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0%E6%A0%91%E7%8A%B6%E5%B1%82%E7%BA%A7%E7%BB%93%E6%9E%84/'>
 
-<link rel="stylesheet" href="/scss/style.min.e0818f74a5cc5a3fb725aa5bbfa98f6567cf07f85ea0aa40f2d2d819bb19bc41.css"><meta property='og:title' content="rustWood">
-<meta property='og:description' content="演示说明">
-<meta property='og:url' content='https://rusthx.github.io/'>
+<link rel="stylesheet" href="/scss/style.min.e0818f74a5cc5a3fb725aa5bbfa98f6567cf07f85ea0aa40f2d2d819bb19bc41.css"><meta property='og:title' content="数据库实现树状（层级）结构">
+<meta property='og:description' content="问题 有一张交易流水表（transaction），主键为账号，每个账号有所属公司。有一张公司信息表（company_info），主键为公司id，表中有上级公司id。\n">
+<meta property='og:url' content='https://rusthx.github.io/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0%E6%A0%91%E7%8A%B6%E5%B1%82%E7%BA%A7%E7%BB%93%E6%9E%84/'>
 <meta property='og:site_name' content='rustWood'>
-<meta property='og:type' content='website'><meta property='og:updated_time' content=' 2024-09-14T17:49:28&#43;08:00 '/>
-<meta name="twitter:title" content="rustWood">
-<meta name="twitter:description" content="演示说明"><link rel="alternate" type="application/rss&#43;xml" href="https://rusthx.github.io/index.xml">        
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='SQL' /><meta property='article:published_time' content='2024-09-14T17:49:28&#43;08:00'/><meta property='article:modified_time' content='2024-09-14T17:49:28&#43;08:00'/>
+<meta name="twitter:title" content="数据库实现树状（层级）结构">
+<meta name="twitter:description" content="问题 有一张交易流水表（transaction），主键为账号，每个账号有所属公司。有一张公司信息表（company_info），主键为公司id，表中有上级公司id。\n">        
         
         <link rel="stylesheet" href="/highlight/styles/github.css">
          
         <link rel="stylesheet" href="/highlight/styles/github-dark.css" media="(prefers-color-scheme: dark)">
     </head>
-    <body class="">
+    <body class="
+    article-page
+    ">
     <script>
         (function() {
             const colorSchemeKey = 'StackColorScheme';
@@ -113,7 +114,7 @@
         
         
         
-        <li  class='current' >
+        <li >
             <a href='/' >
                 
                 
@@ -241,130 +242,39 @@
     <aside class="sidebar right-sidebar sticky">
         
             
-                <form action="/search/" class="search-form widget" >
-        <p>
-            <label>搜索</label>
-            <input name="keyword" required placeholder="输入关键词..." />
-        
-            <button title="搜索">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="10" cy="10" r="7" />
-  <line x1="21" y1="21" x2="15" y2="15" />
-</svg>
-
-
-
-            </button>
-        </p>
-    </form>
-            
-        
-            
-                <section class="widget archives">
+                
+    <section class="widget archives">
         <div class="widget-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-infinity" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
   <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M9.828 9.172a4 4 0 1 0 0 5.656 a10 10 0 0 0 2.172 -2.828a10 10 0 0 1 2.172 -2.828 a4 4 0 1 1 0 5.656a10 10 0 0 1 -2.172 -2.828a10 10 0 0 0 -2.172 -2.828" />
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
 </svg>
 
 
 
         </div>
-        <h2 class="widget-title section-title">归档</h2>
-
+        <h2 class="widget-title section-title">目录</h2>
         
-        
-        
-        
-        
-        <div class="widget-archive--list">
-            <div class="archives-year">
-                    <a href="/archives/#2024">
-                        
-                            <span class="year">2024</span>
-                            <span class="count">21</span>
-                        
-                    </a> 
-                </div>
-            
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#问题">问题</a></li>
+    <li><a href="#方案">方案</a></li>
+  </ol>
+</nav>
         </div>
     </section>
-            
-        
-            
-                <section class="widget tagCloud">
-    <div class="widget-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-tag" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11 3L20 12a1.5 1.5 0 0 1 0 2L14 20a1.5 1.5 0 0 1 -2 0L3 11v-4a4 4 0 0 1 4 -4h4" />
-  <circle cx="9" cy="9" r="2" />
-</svg>
 
-
-
-    </div>
-    <h2 class="widget-title section-title">标签云</h2>
-
-    <div class="tagCloud-tags">
-        
-            <a href="/tags/ubuntu/" class="font_size_8">
-                Ubuntu
-            </a>
-        
-            <a href="/tags/mysql/" class="font_size_6">
-                MySQL
-            </a>
-        
-            <a href="/tags/spark/" class="font_size_5">
-                Spark
-            </a>
-        
-            <a href="/tags/vmvare/" class="font_size_4">
-                VMvare
-            </a>
-        
-            <a href="/tags/kubernetes/" class="font_size_3">
-                Kubernetes
-            </a>
-        
-            <a href="/tags/sql/" class="font_size_3">
-                SQL
-            </a>
-        
-            <a href="/tags/docker/" class="font_size_2">
-                Docker
-            </a>
-        
-            <a href="/tags/hive/" class="font_size_2">
-                Hive
-            </a>
-        
-            <a href="/tags/scala/" class="font_size_2">
-                Scala
-            </a>
-        
-            <a href="/tags/datax/" class="font_size_1">
-                DataX
-            </a>
-        
-    </div>
-</section>
             
         
     </aside>
 
 
             <main class="main full-width">
-    
-    
-    
-    
-
-    <section class="article-list">
-        
-            
-<article class="">
+    <article class="main-article">
     <header class="article-header">
 
     <div class="article-details">
@@ -406,179 +316,89 @@
 </div>
 
 </header>
-</article>
+
+    <section class="article-content">
+    
+    
+    <h2 id="问题">问题
+</h2><p>有一张交易流水表（transaction），主键为账号，每个账号有所属公司。有一张公司信息表（company_info），主键为公司id，表中有上级公司id。</p>
+<p>需要得到每个公司的交易信息（资金流入流出余额），但是每个公司的数据都应该是该公司及下属公司的汇总。
+但是数据库并不支持树形结构也不支持层级结构。</p>
+<h2 id="方案">方案
+</h2><p>主要难题在于公司信息表，公司只有上面一级的信息，没有更上面的信息，也没有下属公司信息。</p>
+<p>所以需要做一张公司树表（company_tree），记录上下关系和层级信息，加工方案如下：</p>
+<ol>
+<li>
+<p>设置字段为公司id，公司id树（从最顶层公司到当前公司，类似'0011-0022&rsquo;），公司层级,上级公司id(sup_comp_id)。</p>
+</li>
+<li>
+<p>插入最顶层公司信息（&lsquo;0011&rsquo;）,设置该公司层级为1级。id树为'0011&rsquo;
+然后查询company_info表，插入上级为（&lsquo;0011&rsquo;）的公司信息，设置层级为2级，拼接上级公司id树(&lsquo;0011&rsquo;)和当前公司id作为当前公司的id树。
+然后插入三级公司、四级公司，直到最底层公司。不知道到底有多少层可以插入一层后观察company_tree表有无新增数据。</p>
+</li>
+</ol>
+<p>注意：三级及更下级的公司需要冗余多行，每行的上级公司id不同（分别为顶级到当前公司的父级公司的公司id）</p>
+<ol start="3">
+<li>关联company_tree表和transaction,group by sup_comp_id,再对资金流入流出余额进行sum()聚合。
+这里加一个按层级的过滤条件，一层一层给地查，然后再union查询结果即可得到所有公司的信息</li>
+</ol>
+<p>观察上面的方案不难发现，这张加工的company_tree不好用，公司信息比较少变（除了股市），一般都是作为数仓的维度表。
+但是每次需要关联查询company_tree时写的查询语句都很复杂，那么怎样才能不用union各层公司信息呢？</p>
+<p>设计company_tree的时候再加一个up_comp_tree字段。这样聚合的时候group by up_comp_tree就能拿到所有公司的汇总信息。
+（因为公司的下属公司的所有下一级公司的up_comp_tree都是当前公司的id树）</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
         
-            
-<article class="">
-    <header class="article-header">
-
-    <div class="article-details">
-    
-
-    <div class="article-title-wrapper">
-        <h2 class="article-title">
-            <a href="/p/%E9%80%9A%E8%BF%87datax%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E6%95%B0%E6%8D%AE/">通过DataX同步数据仓库数据</a>
-        </h2>
-    
-        
-    </div>
-
-    
-    
-    
-    
-    <footer class="article-time">
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
-  <circle cx="18" cy="18" r="4" />
-  <path d="M15 3v4" />
-  <path d="M7 3v4" />
-  <path d="M3 11h16" />
-  <path d="M18 16.496v1.504l1 1" />
-</svg>
-                <time class="article-time--published">2024-09-14</time>
-            </div>
-        
-
-        
-    </footer>
-    
-
-    
-</div>
-
-</header>
-</article>
-        
-            
-<article class="">
-    <header class="article-header">
-
-    <div class="article-details">
-    
-
-    <div class="article-title-wrapper">
-        <h2 class="article-title">
-            <a href="/p/mysql-join%E4%BB%8B%E7%BB%8D%E4%B8%8E%E4%BC%98%E5%8C%96/">MySQL Join介绍与优化</a>
-        </h2>
-    
-        
-    </div>
-
-    
-    
-    
-    
-    <footer class="article-time">
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
-  <circle cx="18" cy="18" r="4" />
-  <path d="M15 3v4" />
-  <path d="M7 3v4" />
-  <path d="M3 11h16" />
-  <path d="M18 16.496v1.504l1 1" />
-</svg>
-                <time class="article-time--published">2024-09-12</time>
-            </div>
-        
-
-        
-    </footer>
-    
-
-    
-</div>
-
-</header>
-</article>
-        
-            
-<article class="">
-    <header class="article-header">
-
-    <div class="article-details">
-    
-
-    <div class="article-title-wrapper">
-        <h2 class="article-title">
-            <a href="/p/mysql-%E7%B4%A2%E5%BC%95/">MySQL 索引</a>
-        </h2>
-    
-        
-    </div>
-
-    
-    
-    
-    
-    <footer class="article-time">
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
-  <circle cx="18" cy="18" r="4" />
-  <path d="M15 3v4" />
-  <path d="M7 3v4" />
-  <path d="M3 11h16" />
-  <path d="M18 16.496v1.504l1 1" />
-</svg>
-                <time class="article-time--published">2024-09-12</time>
-            </div>
-        
-
-        
-    </footer>
-    
-
-    
-</div>
-
-</header>
-</article>
+            <a href="/tags/sql/">SQL</a>
         
     </section>
-    <nav class='pagination'>
-        
-        
 
-        
-            
-                <span class='page-link current'>1</span>
-                
-            
-            
-                    <a class='page-link' href='/page/2/'>2</a>
-                
-            
-            
-                    
-                        
-                        <span class='page-link dots'>&hellip;</span>
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    <a class='page-link' href='/page/6/'>6</a>
-                
-            
-    </nav>
 
-<footer class="site-footer">
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
     <section class="copyright">
         &copy; 
         
@@ -590,6 +410,85 @@
         主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
     </section>
 </footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
 
             </main>
         </div>

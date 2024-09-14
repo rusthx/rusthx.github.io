@@ -7,7 +7,184 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>rustWood</copyright>
-        <lastBuildDate>Thu, 12 Sep 2024 23:32:36 +0800</lastBuildDate><atom:link href="https://rusthx.github.io/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sat, 14 Sep 2024 17:49:28 +0800</lastBuildDate><atom:link href="https://rusthx.github.io/post/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>数据库实现树状（层级）结构</title>
+        <link>https://rusthx.github.io/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0%E6%A0%91%E7%8A%B6%E5%B1%82%E7%BA%A7%E7%BB%93%E6%9E%84/</link>
+        <pubDate>Sat, 14 Sep 2024 17:49:28 +0800</pubDate>
+        
+        <guid>https://rusthx.github.io/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E5%AE%9E%E7%8E%B0%E6%A0%91%E7%8A%B6%E5%B1%82%E7%BA%A7%E7%BB%93%E6%9E%84/</guid>
+        <description>&lt;h2 id=&#34;问题&#34;&gt;问题
+&lt;/h2&gt;&lt;p&gt;有一张交易流水表（transaction），主键为账号，每个账号有所属公司。有一张公司信息表（company_info），主键为公司id，表中有上级公司id。&lt;/p&gt;
+&lt;p&gt;需要得到每个公司的交易信息（资金流入流出余额），但是每个公司的数据都应该是该公司及下属公司的汇总。
+但是数据库并不支持树形结构也不支持层级结构。&lt;/p&gt;
+&lt;h2 id=&#34;方案&#34;&gt;方案
+&lt;/h2&gt;&lt;p&gt;主要难题在于公司信息表，公司只有上面一级的信息，没有更上面的信息，也没有下属公司信息。&lt;/p&gt;
+&lt;p&gt;所以需要做一张公司树表（company_tree），记录上下关系和层级信息，加工方案如下：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;设置字段为公司id，公司id树（从最顶层公司到当前公司，类似&#39;0011-0022&amp;rsquo;），公司层级,上级公司id(sup_comp_id)。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;插入最顶层公司信息（&amp;lsquo;0011&amp;rsquo;）,设置该公司层级为1级。id树为&#39;0011&amp;rsquo;
+然后查询company_info表，插入上级为（&amp;lsquo;0011&amp;rsquo;）的公司信息，设置层级为2级，拼接上级公司id树(&amp;lsquo;0011&amp;rsquo;)和当前公司id作为当前公司的id树。
+然后插入三级公司、四级公司，直到最底层公司。不知道到底有多少层可以插入一层后观察company_tree表有无新增数据。&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;注意：三级及更下级的公司需要冗余多行，每行的上级公司id不同（分别为顶级到当前公司的父级公司的公司id）&lt;/p&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;关联company_tree表和transaction,group by sup_comp_id,再对资金流入流出余额进行sum()聚合。
+这里加一个按层级的过滤条件，一层一层给地查，然后再union查询结果即可得到所有公司的信息&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;观察上面的方案不难发现，这张加工的company_tree不好用，公司信息比较少变（除了股市），一般都是作为数仓的维度表。
+但是每次需要关联查询company_tree时写的查询语句都很复杂，那么怎样才能不用union各层公司信息呢？&lt;/p&gt;
+&lt;p&gt;设计company_tree的时候再加一个up_comp_tree字段。这样聚合的时候group by up_comp_tree就能拿到所有公司的汇总信息。
+（因为公司的下属公司的所有下一级公司的up_comp_tree都是当前公司的id树）&lt;/p&gt;
+</description>
+        </item>
+        <item>
+        <title>通过DataX同步数据仓库数据</title>
+        <link>https://rusthx.github.io/p/%E9%80%9A%E8%BF%87datax%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E6%95%B0%E6%8D%AE/</link>
+        <pubDate>Sat, 14 Sep 2024 16:58:47 +0800</pubDate>
+        
+        <guid>https://rusthx.github.io/p/%E9%80%9A%E8%BF%87datax%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E6%95%B0%E6%8D%AE/</guid>
+        <description>&lt;h2 id=&#34;datax介绍&#34;&gt;DataX介绍
+&lt;/h2&gt;&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/alibaba/DataX/tree/datax_v202309&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;DataX的Github&lt;/a&gt;介绍如下：&lt;/p&gt;
+&lt;p&gt;DataX 是阿里云 DataWorks数据集成 的开源版本，在阿里巴巴集团内被广泛使用的离线数据同步工具/平台。DataX 实现了包括 MySQL、Oracle、OceanBase、SqlServer、Postgre、HDFS、Hive、ADS、HBase、TableStore(OTS)、MaxCompute(ODPS)、Hologres、DRDS, databend 等各种异构数据源之间高效的数据同步功能。&lt;/p&gt;
+&lt;p&gt;DataX本身作为数据同步框架，将不同数据源的同步抽象为从源头数据源读取数据的Reader插件，以及向目标端写入数据的Writer插件，理论上DataX框架可以支持任意数据源类型的数据同步工作。同时DataX插件体系作为一套生态系统, 每接入一套新数据源该新加入的数据源即可实现和现有的数据源互通。&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/%E9%80%9A%E8%BF%87datax%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E6%95%B0%E6%8D%AE/1.png&#34;
+	width=&#34;1334&#34;
+	height=&#34;751&#34;
+	srcset=&#34;https://rusthx.github.io/p/%E9%80%9A%E8%BF%87datax%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E6%95%B0%E6%8D%AE/1_hu16606306282830110616.png 480w, https://rusthx.github.io/p/%E9%80%9A%E8%BF%87datax%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E6%95%B0%E6%8D%AE/1_hu11140095319987742579.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;177&#34;
+		data-flex-basis=&#34;426px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/%E9%80%9A%E8%BF%87datax%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E6%95%B0%E6%8D%AE/2.png&#34;
+	width=&#34;1305&#34;
+	height=&#34;441&#34;
+	srcset=&#34;https://rusthx.github.io/p/%E9%80%9A%E8%BF%87datax%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E6%95%B0%E6%8D%AE/2_hu9070646682327868429.png 480w, https://rusthx.github.io/p/%E9%80%9A%E8%BF%87datax%E5%90%8C%E6%AD%A5%E6%95%B0%E6%8D%AE%E4%BB%93%E5%BA%93%E6%95%B0%E6%8D%AE/2_hu682000736333306540.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;295&#34;
+		data-flex-basis=&#34;710px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;问题&#34;&gt;问题
+&lt;/h2&gt;&lt;p&gt; 数仓开发时需要从异构数据源获取数据作为ODS层（原始数据层），同时还需要在数仓间进行ETL(数据抽取、转换、加载)。通过DataX来实现数据同步。&lt;/p&gt;
+&lt;h2 id=&#34;实现&#34;&gt;实现
+&lt;/h2&gt;&lt;h3 id=&#34;方案1-shell实现&#34;&gt;方案1 shell实现
+&lt;/h3&gt;&lt;p&gt;1.写通过DataX将数据同步到ODS层的配置文件（reader、writter）&lt;/p&gt;
+&lt;p&gt;2.通过shell脚本传入传入target_dir(数据库表名，判断是否是需要全量同步的表，若是，则进行全量同步)和datax_config(即步骤1的配置文件)&lt;/p&gt;
+&lt;p&gt;3.将数仓间ETL的SQL脚本也封装成shell脚本&lt;/p&gt;
+&lt;p&gt;4.通过dolphinscheduler调度步骤2和步骤3的shell脚本实现数据同步到数仓ODS层并在数仓间ETL&lt;/p&gt;
+&lt;p&gt;缺点：系统复杂度高，不易维护&lt;/p&gt;
+&lt;p&gt;优点：更加灵活，在部分自定义函数功能支持不是很友好的框架（Hive）里也能很好地发挥作用&lt;/p&gt;
+&lt;h3 id=&#34;方案2-python实现&#34;&gt;方案2 python实现
+&lt;/h3&gt;&lt;p&gt;1.写通过DataX将数据同步到ODS层的配置文件（reader、writter）&lt;/p&gt;
+&lt;p&gt;2.将异构数据源配置信息写成文件，然后在python脚本中调用配置信息，拼接成完整的DataX同步命令。&lt;/p&gt;
+&lt;p&gt;3.将数仓间ETL的SQL脚本封装成自定义函数，再在步骤2的python脚本中连接数仓执行自定义函数&lt;/p&gt;
+&lt;p&gt;4.在服务器上通过&lt;code&gt;contrab&lt;/code&gt;设置定时任务实现自动执行&lt;/p&gt;
+&lt;p&gt;缺点：Hive的自定义函数支持不是特别友好，部分功能可能没法实现。通用性差&lt;/p&gt;
+&lt;p&gt;优点：系统复杂度低，DataX和python脚本都不用一直在线，定时调度任务开始执行时才会启动python脚本，降低了服务器负担&lt;/p&gt;
+&lt;h2 id=&#34;补充datax的增量同步&#34;&gt;补充：DataX的增量同步
+&lt;/h2&gt;&lt;p&gt;数仓的增量同步一般都是用消息队列+数据库监听框架+数据同步框架（kafka+Maxwell+Flume）。
+但是在离线数仓实时性要求不高的场景下也可以用DataX来实现增量同步。
+实现原理：配置文件中reader部分支持column和querySQL,可以在querySQL中加入过滤条件来获取较新的数据。&lt;/p&gt;
+&lt;p&gt;比如如果需要获取最新的每日交易数据，就可以加一个时间为最新日期或者传入日期参数的过滤条件。&lt;/p&gt;
+&lt;p&gt;如果表中没有时间这种自然增长的字段也可以使用单调递增的id之类的。总之就是获取最新的一批数据就可以。&lt;/p&gt;
+&lt;p&gt;然后为了保证数据一致性，还需要在wrritter的preSQL中删除符合reader的querySQL的数据。&lt;/p&gt;
+&lt;h2 id=&#34;补充crontab命令&#34;&gt;补充：crontab命令
+&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;参考资料：https://cloud.tencent.com/developer/article/2359335&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;（1）语　　法：
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;crontab &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;-u &amp;lt;用户名称&amp;gt;&lt;span class=&#34;o&#34;&gt;][&lt;/span&gt;配置文件&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; 或 crontab &lt;span class=&#34;o&#34;&gt;{&lt;/span&gt; -l &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; -r &lt;span class=&#34;p&#34;&gt;|&lt;/span&gt; -e &lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;-u   &lt;span class=&#34;c1&#34;&gt;#&amp;lt;用户名称&amp;gt; 是指设定指定&amp;lt;用户名称&amp;gt;的定时任务，这个前提是你必须要有其权限(比如说是 root)才能够指定他人的时程表。如果不使用 -u user 的话，就是表示设定自己的定时任务。&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;-l 　&lt;span class=&#34;c1&#34;&gt;#列出该用户的定时任务设置。&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;-r 　&lt;span class=&#34;c1&#34;&gt;#删除该用户的定时任务设置。&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;-e 　&lt;span class=&#34;c1&#34;&gt;#编辑该用户的定时任务设置。&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;（2）命令时间格式 :
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;*     * 　  *　  *　  *　　&lt;span class=&#34;nb&#34;&gt;command&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;分　  时　  日　  月　 周　  命令
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;第1列表示分钟1～59 每分钟用*或者 */1表示
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;第2列表示小时1～23（0表示0点）
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;第3列表示日期1～31
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;第4列表示月份1～12
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;第5列标识号星期0～6（0表示星期天）
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;第6列要运行的命令
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;（3）一些Crontab定时任务例子：
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;m&#34;&gt;30&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;21&lt;/span&gt; * * * /usr/local/etc/rc.d/lighttpd restart  &lt;span class=&#34;c1&#34;&gt;#每晚的21:30 重启apache&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;m&#34;&gt;45&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;4&lt;/span&gt; 1,10,22 * * /usr/local/etc/rc.d/lighttpd restart  &lt;span class=&#34;c1&#34;&gt;#每月1、10、22日的4 : 45重启apache&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;m&#34;&gt;10&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; * * 6,0 /usr/local/etc/rc.d/lighttpd restart  &lt;span class=&#34;c1&#34;&gt;#每周六、周日的1 : 10重启apache&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;0,30 18-23 * * * /usr/local/etc/rc.d/lighttpd restart  &lt;span class=&#34;c1&#34;&gt;#每天18 : 00至23 : 00之间每隔30分钟重启apache&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;23&lt;/span&gt; * * &lt;span class=&#34;m&#34;&gt;6&lt;/span&gt; /usr/local/etc/rc.d/lighttpd restart  &lt;span class=&#34;c1&#34;&gt;#每星期六的11 : 00 pm重启apache&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;* 23-7/1 * * * /usr/local/etc/rc.d/lighttpd restart  &lt;span class=&#34;c1&#34;&gt;#晚上11点到早上7点之间，每隔一小时重启apache&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;* */1 * * * /usr/local/etc/rc.d/lighttpd restart  &lt;span class=&#34;c1&#34;&gt;#每一小时重启apache&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;11&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;4&lt;/span&gt; * mon-wed /usr/local/etc/rc.d/lighttpd restart  &lt;span class=&#34;c1&#34;&gt;#每月的4号与每周一到周三的11点重启apache&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;4&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; jan * /usr/local/etc/rc.d/lighttpd restart  &lt;span class=&#34;c1&#34;&gt;#一月一号的4点重启apache&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;*/30 * * * * /usr/sbin/ntpdate cn.pool.ntp.org  &lt;span class=&#34;c1&#34;&gt;#每半小时同步一下时间&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; */2 * * * /sbin/service httpd restart  &lt;span class=&#34;c1&#34;&gt;#每两个小时重启一次apache &lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;m&#34;&gt;50&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;7&lt;/span&gt; * * * /sbin/service sshd start  &lt;span class=&#34;c1&#34;&gt;#每天7：50开启ssh服务 &lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;m&#34;&gt;50&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;22&lt;/span&gt; * * * /sbin/service sshd stop  &lt;span class=&#34;c1&#34;&gt;#每天22：50关闭ssh服务 &lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; 1,15 * * fsck /home  &lt;span class=&#34;c1&#34;&gt;#每月1号和15号检查/home 磁盘 &lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;m&#34;&gt;1&lt;/span&gt; * * * * /home/bruce/backup  &lt;span class=&#34;c1&#34;&gt;#每小时的第一分执行 /home/bruce/backup这个文件 &lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;m&#34;&gt;00&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;03&lt;/span&gt; * * 1-5 find /home &lt;span class=&#34;s2&#34;&gt;&amp;#34;*.xxx&amp;#34;&lt;/span&gt; -mtime +4 -exec rm &lt;span class=&#34;o&#34;&gt;{}&lt;/span&gt; &lt;span class=&#34;se&#34;&gt;\;&lt;/span&gt;  &lt;span class=&#34;c1&#34;&gt;#每周一至周五3点钟，在目录/home中，查找文件名为*.xxx的文件，并删除4天前的文件。&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;m&#34;&gt;30&lt;/span&gt; &lt;span class=&#34;m&#34;&gt;6&lt;/span&gt; */10 * * ls  &lt;span class=&#34;c1&#34;&gt;#每月的1、11、21、31日是的6：30执行一次ls命令&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;</description>
+        </item>
+        <item>
         <title>MySQL Join介绍与优化</title>
         <link>https://rusthx.github.io/p/mysql-join%E4%BB%8B%E7%BB%8D%E4%B8%8E%E4%BC%98%E5%8C%96/</link>
         <pubDate>Thu, 12 Sep 2024 23:32:36 +0800</pubDate>
