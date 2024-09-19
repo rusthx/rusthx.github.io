@@ -103,9 +103,9 @@
 &lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
 &lt;/div&gt;&lt;h3 id=&#34;count-distinct引起数据倾斜&#34;&gt;count distinct引起数据倾斜
-&lt;/h3&gt;&lt;h4 id=&#34;产生原因&#34;&gt;产生原因
+&lt;/h3&gt;&lt;h4 id=&#34;倾斜原因-2&#34;&gt;倾斜原因
 &lt;/h4&gt;&lt;p&gt;count distinct聚合时存在大量特殊值，比如存在大量值为NULL或空的记录。&lt;/p&gt;
-&lt;h4 id=&#34;解决方式&#34;&gt;解决方式
+&lt;h4 id=&#34;解决方案-2&#34;&gt;解决方案
 &lt;/h4&gt;&lt;p&gt;做count distinct时，将值为空的情况单独处理。&lt;/p&gt;
 &lt;p&gt;1）如果只是统计去重后的记录数，可以不用处理空值，先把空值过滤掉，然后在最后结果中加1即可&lt;/p&gt;
 &lt;p&gt;2）如果还包含其他计算，需要进行groupby操作，先将值为空的记录单独处理，然后再跟其他计算结果union操作。&lt;/p&gt;

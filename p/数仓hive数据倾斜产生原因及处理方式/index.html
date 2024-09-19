@@ -280,8 +280,8 @@
         </li>
         <li><a href="#count-distinct引起数据倾斜">count distinct引起数据倾斜</a>
           <ol>
-            <li><a href="#产生原因">产生原因</a></li>
-            <li><a href="#解决方式">解决方式</a></li>
+            <li><a href="#倾斜原因-2">倾斜原因</a></li>
+            <li><a href="#解决方案-2">解决方案</a></li>
           </ol>
         </li>
         <li><a href="#join操作引起数据倾斜">join操作引起数据倾斜</a>
@@ -439,9 +439,9 @@
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="count-distinct引起数据倾斜">count distinct引起数据倾斜
-</h3><h4 id="产生原因">产生原因
+</h3><h4 id="倾斜原因-2">倾斜原因
 </h4><p>count distinct聚合时存在大量特殊值，比如存在大量值为NULL或空的记录。</p>
-<h4 id="解决方式">解决方式
+<h4 id="解决方案-2">解决方案
 </h4><p>做count distinct时，将值为空的情况单独处理。</p>
 <p>1）如果只是统计去重后的记录数，可以不用处理空值，先把空值过滤掉，然后在最后结果中加1即可</p>
 <p>2）如果还包含其他计算，需要进行groupby操作，先将值为空的记录单独处理，然后再跟其他计算结果union操作。</p>
