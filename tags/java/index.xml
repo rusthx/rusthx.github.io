@@ -7,7 +7,58 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>rustWood</copyright>
-        <lastBuildDate>Wed, 11 Sep 2024 14:43:00 +0800</lastBuildDate><atom:link href="https://rusthx.github.io/tags/java/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Fri, 25 Oct 2024 21:13:16 +0800</lastBuildDate><atom:link href="https://rusthx.github.io/tags/java/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Java面经备忘录</title>
+        <link>https://rusthx.github.io/p/java%E9%9D%A2%E7%BB%8F%E5%A4%87%E5%BF%98%E5%BD%95/</link>
+        <pubDate>Fri, 25 Oct 2024 21:13:16 +0800</pubDate>
+        
+        <guid>https://rusthx.github.io/p/java%E9%9D%A2%E7%BB%8F%E5%A4%87%E5%BF%98%E5%BD%95/</guid>
+        <description>&lt;h2 id=&#34;各类型编程语言对比&#34;&gt;各类型编程语言对比
+&lt;/h2&gt;&lt;p&gt;面向对象式编程(Java、C++)：面向对象编程，是一种程序设计范式，也是一种编程语言的分类。它以对象作为程序的基本单元，将算法和数据封装其中，程序可以访问和修改对象关联的数据。在面向对象编程中，我们可以操作对象，而不需要关心对象的内部结构和实现。&lt;/p&gt;
+&lt;p&gt;面向过程式编程(C)：是一种以过程为中心的编程思想, 分析出解决问题的所需要的步骤,然后用函数把这些步骤一步一步实现,然后依次调用;&lt;/p&gt;
+&lt;p&gt;面向函数式编程(scala)：函数式编程（Functional Programming, FP）是一种编程范式，它将计算视为数学中函数的求值过程，并避免使用程序状态及可变数据。在函数式编程中，函数被视为&amp;quot;第一等公民&amp;quot;，这意味着函数可以作为参数传递、作为返回值，甚至可以赋值给变量。函数式编程强调使用一系列的函数来处理数据，而不是依赖于数据的状态变化。&lt;/p&gt;
+&lt;h2 id=&#34;封装继承与多态&#34;&gt;封装、继承与多态
+&lt;/h2&gt;&lt;h3 id=&#34;封装&#34;&gt;封装
+&lt;/h3&gt;&lt;p&gt;概念：
+  将一些属性和相关方法封装在一个对象中，对外隐藏内部具体实现细节。内部实现，外界不需要关心，外界只需要根据“内部提供的接口”去使用就可以。&lt;/p&gt;
+&lt;p&gt;好处：
+使用起来更加方便：因为已经把很多相关的功能，封装成一个整体，类似于像外界提供一个工具箱，针对于不同的场景，使用不同的工具箱就可以；&lt;/p&gt;
+&lt;p&gt;保证数据的安全：针对于安全级别高的数据，可以设置成”私有“，可以控制数据为只读（外界无法修改），也可以拦截数据的写操作（进行数据校验和过滤）；&lt;/p&gt;
+&lt;p&gt;利于代码维护：如果后期，功能代码需要维护，则直接修改这个类内部代码即可；只要保证接口名称不变，外界不需要做任何代码修改。&lt;/p&gt;
+&lt;h3 id=&#34;继承&#34;&gt;继承
+&lt;/h3&gt;&lt;p&gt;概念：
+  通过必要的说明能够实现某个类无需重新定义就能拥有另一个类的某些属性和方法，这种关系就称为继承，并且允许多层的继承关系。先定义的类称为父类（基类、超类），后定义的类称为子类（派生类）。&lt;/p&gt;
+&lt;p&gt;注：Java中只能单继承（一个子类继承一个父类），而Python、C++中则支持多继承&lt;/p&gt;
+&lt;h3 id=&#34;多态&#34;&gt;多态
+&lt;/h3&gt;&lt;p&gt;多态是指父类的变量可以指向子类对象。允许不同类的对象对同一消息做出响应。即同一消息可以根据发送对象的不同而采用多种不同的行为方式。（发送消息就是函数调用）。&lt;/p&gt;
+&lt;h2 id=&#34;重写与重载&#34;&gt;重写与重载
+&lt;/h2&gt;&lt;p&gt;方法的重写(Overriding)和重载(Overloading)是Java多态性的不同表现。&lt;/p&gt;
+&lt;p&gt;重写是父类与子类之间多态性的一种表现，重载是一个类中多态性的一种表现。&lt;/p&gt;
+&lt;p&gt;如果在子类中定义某方法与其父类有相同的名称和参数，我们说该方法被重写。子类的对象使用这个方法时将调用子类的定义，对它而言，父类中的定义如果被覆盖了。&lt;/p&gt;
+&lt;p&gt;如果一个类中定义了多个同名的方法，它们或有不同的参数个数，或有不同的参数类型，则称为方法的重载。重载的方法可以修改返回值的类型。&lt;/p&gt;
+&lt;h2 id=&#34;构造方法的特殊之处&#34;&gt;构造方法的特殊之处
+&lt;/h2&gt;&lt;ol&gt;
+&lt;li&gt;构造方法必须比类目相同&lt;/li&gt;
+&lt;li&gt;构造方法没有返回值，但不用&lt;code&gt;void&lt;/code&gt;声明&lt;/li&gt;
+&lt;li&gt;构造方法不能使用&lt;code&gt;static&lt;/code&gt;、&lt;code&gt;final&lt;/code&gt;、&lt;code&gt;abstract&lt;/code&gt;、&lt;code&gt;synchonized&lt;/code&gt;和&lt;code&gt;native&lt;/code&gt;等修饰符&lt;/li&gt;
+&lt;li&gt;构造方法不能像一般方法那样用&lt;code&gt;对象.构造方法()&lt;/code&gt;显示地直接调用，应用new关键字调用构造方法，给新对象初始化&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;实例方法与类方法&#34;&gt;实例方法与类方法
+&lt;/h2&gt;&lt;p&gt; &lt;code&gt;static&lt;/code&gt;修饰地方法称为类方法（或静态方法），而没用static修饰地方法称为是实例方法，二者调用方式不同。
+实例方法属于实例，必须通过实例调用；类方法属于类，一般通过类名调用，也可以通过实例调用。二者访问地成员不同。实例方法可以直接访问该类地实例变量和实例方法，也可以访问类变量和类方法；类方法只能访问该类地类变量和类方法，不同直接访问实例变量和实例方法。&lt;/p&gt;
+&lt;p&gt;类方法要访问实例变量或调用实例方法，必须首先获得该实例，然后通过该实例访问相关地实例变量或调用实例方法。&lt;/p&gt;
+&lt;h2 id=&#34;抽象类与接口&#34;&gt;抽象类与接口
+&lt;/h2&gt;&lt;p&gt;相同点：抽象类和接口都可以有抽象方法，都不可以被实例化&lt;/p&gt;
+&lt;p&gt;不同点：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;创建类关键字不同：抽象类用关键字&lt;code&gt;abstract&lt;/code&gt;，接口用关键字&lt;code&gt;interface&lt;/code&gt;创建&lt;/li&gt;
+&lt;li&gt;成员变量不同：抽象类可以包含普通的变量，接口内的变量只能是&lt;code&gt;final&lt;/code&gt;的&lt;/li&gt;
+&lt;li&gt;方法不同：抽象类可以包含普通的方法，接口内只能有抽象的方法，且都是&lt;code&gt;public&lt;/code&gt;的&lt;/li&gt;
+&lt;li&gt;继承/实现不同：接口可以被多实现，抽象类只能被单继承&lt;/li&gt;
+&lt;/ol&gt;
+</description>
+        </item>
+        <item>
         <title>Java随机交换(洗牌)</title>
         <link>https://rusthx.github.io/p/java%E9%9A%8F%E6%9C%BA%E4%BA%A4%E6%8D%A2%E6%B4%97%E7%89%8C/</link>
         <pubDate>Wed, 11 Sep 2024 14:43:00 +0800</pubDate>

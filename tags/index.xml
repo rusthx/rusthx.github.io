@@ -7,20 +7,28 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>rustWood</copyright>
-        <lastBuildDate>Sun, 13 Oct 2024 21:32:40 +0800</lastBuildDate><atom:link href="https://rusthx.github.io/tags/index.xml" rel="self" type="application/rss+xml" /><item>
-        <title>MySQL</title>
-        <link>https://rusthx.github.io/tags/mysql/</link>
-        <pubDate>Sun, 13 Oct 2024 21:32:40 +0800</pubDate>
+        <lastBuildDate>Fri, 25 Oct 2024 21:13:16 +0800</lastBuildDate><atom:link href="https://rusthx.github.io/tags/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Java</title>
+        <link>https://rusthx.github.io/tags/java/</link>
+        <pubDate>Fri, 25 Oct 2024 21:13:16 +0800</pubDate>
         
-        <guid>https://rusthx.github.io/tags/mysql/</guid>
+        <guid>https://rusthx.github.io/tags/java/</guid>
         <description></description>
         </item>
         <item>
         <title>Hive</title>
         <link>https://rusthx.github.io/tags/hive/</link>
-        <pubDate>Thu, 19 Sep 2024 08:54:12 +0800</pubDate>
+        <pubDate>Fri, 25 Oct 2024 21:12:09 +0800</pubDate>
         
         <guid>https://rusthx.github.io/tags/hive/</guid>
+        <description></description>
+        </item>
+        <item>
+        <title>MySQL</title>
+        <link>https://rusthx.github.io/tags/mysql/</link>
+        <pubDate>Sun, 13 Oct 2024 21:32:40 +0800</pubDate>
+        
+        <guid>https://rusthx.github.io/tags/mysql/</guid>
         <description></description>
         </item>
         <item>
@@ -45,14 +53,6 @@
         <pubDate>Sat, 14 Sep 2024 16:58:47 +0800</pubDate>
         
         <guid>https://rusthx.github.io/tags/datax/</guid>
-        <description></description>
-        </item>
-        <item>
-        <title>Java</title>
-        <link>https://rusthx.github.io/tags/java/</link>
-        <pubDate>Wed, 11 Sep 2024 14:43:00 +0800</pubDate>
-        
-        <guid>https://rusthx.github.io/tags/java/</guid>
         <description></description>
         </item>
         <item>
