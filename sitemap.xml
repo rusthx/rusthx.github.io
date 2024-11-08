@@ -3,18 +3,24 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://rusthx.github.io/</loc>
-    <lastmod>2024-10-27T23:18:18+08:00</lastmod>
+    <lastmod>2024-11-07T14:51:19+08:00</lastmod>
   </url><url>
     <loc>https://rusthx.github.io/post/</loc>
-    <lastmod>2024-10-27T23:18:18+08:00</lastmod>
+    <lastmod>2024-11-07T14:51:19+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/tags/spark/</loc>
+    <lastmod>2024-11-07T14:51:19+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/</loc>
+    <lastmod>2024-11-07T14:51:19+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/tags/</loc>
+    <lastmod>2024-11-07T14:51:19+08:00</lastmod>
   </url><url>
     <loc>https://rusthx.github.io/tags/saprk/</loc>
     <lastmod>2024-10-27T23:18:18+08:00</lastmod>
   </url><url>
     <loc>https://rusthx.github.io/p/spark%E9%9D%A2%E7%BB%8F/</loc>
-    <lastmod>2024-10-27T23:18:18+08:00</lastmod>
-  </url><url>
-    <loc>https://rusthx.github.io/tags/</loc>
     <lastmod>2024-10-27T23:18:18+08:00</lastmod>
   </url><url>
     <loc>https://rusthx.github.io/tags/java/</loc>
@@ -93,9 +99,6 @@
     <lastmod>2024-09-07T12:27:13+08:00</lastmod>
   </url><url>
     <loc>https://rusthx.github.io/tags/socket/</loc>
-    <lastmod>2024-09-07T11:55:09+08:00</lastmod>
-  </url><url>
-    <loc>https://rusthx.github.io/tags/spark/</loc>
     <lastmod>2024-09-07T11:55:09+08:00</lastmod>
   </url><url>
     <loc>https://rusthx.github.io/tags/sparkstreaming/</loc>
