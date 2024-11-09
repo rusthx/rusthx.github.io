@@ -340,20 +340,28 @@
     
     <h2 id="简介">简介
 </h2><p>广播变量允许程序员在每台机器上缓存只读变量，而不是随任务一起发送副本。 例如，它们可以用来以高效的方式为每个节点提供一个大型输入数据集的副本。 Spark 还尝试使用高效的广播算法分发广播变量，以降低通信成本。 广播变量是通过调用 broadcast 从变量 v 中创建的。 广播变量是 v 的包装器，其值可通过调用 value 方法访问。</p>
-<p><img src="/1.png"
-	
-	
-	
+<p><img src="/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/1.png"
+	width="1249"
+	height="889"
+	srcset="/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/1_hu9234698187790083378.png 480w, /p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/1_hu17366738427305287415.png 1024w"
 	loading="lazy"
 	
+	
+		class="gallery-image" 
+		data-flex-grow="140"
+		data-flex-basis="337px"
 	
 >
-<img src="/2.png"
-	
-	
-	
+<img src="/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/2.png"
+	width="1763"
+	height="952"
+	srcset="/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/2_hu1508007316500837288.png 480w, /p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/2_hu13925634685911099771.png 1024w"
 	loading="lazy"
 	
+	
+		class="gallery-image" 
+		data-flex-grow="185"
+		data-flex-basis="444px"
 	
 ></p>
 <h2 id="快速上手">快速上手
@@ -406,7 +414,19 @@
 </span></span><span class="line"><span class="cl"><span class="o">}</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="原理简介">原理简介
+</div><p><img src="/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/3.png"
+	width="1920"
+	height="1030"
+	srcset="/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/3_hu12592535932714623619.png 480w, /p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/3_hu13777497629336887710.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="186"
+		data-flex-basis="447px"
+	
+></p>
+<h2 id="原理简介">原理简介
 </h2><blockquote>
 <p>参考资料：<a class="link" href="https://cloud.tencent.com/developer/article/1484260"  target="_blank" rel="noopener"
     >Spark Core源码精读计划11 | Spark广播机制的实现</a></p>
@@ -418,12 +438,16 @@
 <li>Driver将广播变量的值写到Block中，这样在driver上执行的tasks不会再创建一份新的广播变量副本</li>
 <li>Executor需要使用这个变量时，先从本地<code>BlockManager</code>中查找有无该变量，没有的话从Driver的<code>BlockManager</code>远程读取该变量</li>
 <li>Executor获取到这个广播变量后就将它缓存到本地的<code>BlockManager</code>中，避免重复地远程获取，提高性能。
-<img src="/3.png"
-	
-	
-	
+<img src="/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/4.png"
+	width="1830"
+	height="872"
+	srcset="/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/4_hu6247838819089611269.png 480w, /p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/4_hu5942886300715633446.png 1024w"
 	loading="lazy"
 	
+	
+		class="gallery-image" 
+		data-flex-grow="209"
+		data-flex-basis="503px"
 	
 ></li>
 </ol>
@@ -1035,23 +1059,31 @@ removeFromDriver（是否从驱动程序中移除状态）、blocking （是否�
 <li>将从远端获取的数据块存储到本地<code>BlcokManager</code>中。</li>
 </ol>
 <p>获取远端数据封装了很多层，大体读取顺序如下图
-<img src="/5.png"
-	
-	
-	
+<img src="/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/5.png"
+	width="829"
+	height="573"
+	srcset="/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/5_hu7419393722578630441.png 480w, /p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/5_hu8869478636972443548.png 1024w"
 	loading="lazy"
 	
+	
+		class="gallery-image" 
+		data-flex-grow="144"
+		data-flex-basis="347px"
 	
 >
 获取远端数据的最后一步，从其他节点读取数据属于BlockManager的部分，下次有机会再读一读</p>
 <h2 id="总结">总结
 </h2><p>广播变量的底层机制总结如下图：
-<img src="/4.png"
-	
-	
-	
+<img src="/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/6.png"
+	width="742"
+	height="733"
+	srcset="/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/6_hu9127105277565457001.png 480w, /p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/6_hu14277366887381701722.png 1024w"
 	loading="lazy"
 	
+	
+		class="gallery-image" 
+		data-flex-grow="101"
+		data-flex-basis="242px"
 	
 ></p>
 

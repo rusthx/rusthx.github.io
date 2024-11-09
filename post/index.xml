@@ -15,20 +15,28 @@
         <guid>https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/</guid>
         <description>&lt;h2 id=&#34;简介&#34;&gt;简介
 &lt;/h2&gt;&lt;p&gt;广播变量允许程序员在每台机器上缓存只读变量，而不是随任务一起发送副本。 例如，它们可以用来以高效的方式为每个节点提供一个大型输入数据集的副本。 Spark 还尝试使用高效的广播算法分发广播变量，以降低通信成本。 广播变量是通过调用 broadcast 从变量 v 中创建的。 广播变量是 v 的包装器，其值可通过调用 value 方法访问。&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/1.png&#34;
-	
-	
-	
+&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/1.png&#34;
+	width=&#34;1249&#34;
+	height=&#34;889&#34;
+	srcset=&#34;https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/1_hu9234698187790083378.png 480w, https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/1_hu17366738427305287415.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;140&#34;
+		data-flex-basis=&#34;337px&#34;
 	
 &gt;
-&lt;img src=&#34;https://rusthx.github.io/2.png&#34;
-	
-	
-	
+&lt;img src=&#34;https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/2.png&#34;
+	width=&#34;1763&#34;
+	height=&#34;952&#34;
+	srcset=&#34;https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/2_hu1508007316500837288.png 480w, https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/2_hu13925634685911099771.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;185&#34;
+		data-flex-basis=&#34;444px&#34;
 	
 &gt;&lt;/p&gt;
 &lt;h2 id=&#34;快速上手&#34;&gt;快速上手
@@ -81,7 +89,19 @@
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;}&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h2 id=&#34;原理简介&#34;&gt;原理简介
+&lt;/div&gt;&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/3.png&#34;
+	width=&#34;1920&#34;
+	height=&#34;1030&#34;
+	srcset=&#34;https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/3_hu12592535932714623619.png 480w, https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/3_hu13777497629336887710.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;186&#34;
+		data-flex-basis=&#34;447px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;原理简介&#34;&gt;原理简介
 &lt;/h2&gt;&lt;blockquote&gt;
 &lt;p&gt;参考资料：&lt;a class=&#34;link&#34; href=&#34;https://cloud.tencent.com/developer/article/1484260&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Spark Core源码精读计划11 | Spark广播机制的实现&lt;/a&gt;&lt;/p&gt;
@@ -93,12 +113,16 @@
 &lt;li&gt;Driver将广播变量的值写到Block中，这样在driver上执行的tasks不会再创建一份新的广播变量副本&lt;/li&gt;
 &lt;li&gt;Executor需要使用这个变量时，先从本地&lt;code&gt;BlockManager&lt;/code&gt;中查找有无该变量，没有的话从Driver的&lt;code&gt;BlockManager&lt;/code&gt;远程读取该变量&lt;/li&gt;
 &lt;li&gt;Executor获取到这个广播变量后就将它缓存到本地的&lt;code&gt;BlockManager&lt;/code&gt;中，避免重复地远程获取，提高性能。
-&lt;img src=&#34;https://rusthx.github.io/3.png&#34;
-	
-	
-	
+&lt;img src=&#34;https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/4.png&#34;
+	width=&#34;1830&#34;
+	height=&#34;872&#34;
+	srcset=&#34;https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/4_hu6247838819089611269.png 480w, https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/4_hu5942886300715633446.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;209&#34;
+		data-flex-basis=&#34;503px&#34;
 	
 &gt;&lt;/li&gt;
 &lt;/ol&gt;
@@ -710,23 +734,31 @@ removeFromDriver（是否从驱动程序中移除状态）、blocking （是否�
 &lt;li&gt;将从远端获取的数据块存储到本地&lt;code&gt;BlcokManager&lt;/code&gt;中。&lt;/li&gt;
 &lt;/ol&gt;
 &lt;p&gt;获取远端数据封装了很多层，大体读取顺序如下图
-&lt;img src=&#34;https://rusthx.github.io/5.png&#34;
-	
-	
-	
+&lt;img src=&#34;https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/5.png&#34;
+	width=&#34;829&#34;
+	height=&#34;573&#34;
+	srcset=&#34;https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/5_hu7419393722578630441.png 480w, https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/5_hu8869478636972443548.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;144&#34;
+		data-flex-basis=&#34;347px&#34;
 	
 &gt;
 获取远端数据的最后一步，从其他节点读取数据属于BlockManager的部分，下次有机会再读一读&lt;/p&gt;
 &lt;h2 id=&#34;总结&#34;&gt;总结
 &lt;/h2&gt;&lt;p&gt;广播变量的底层机制总结如下图：
-&lt;img src=&#34;https://rusthx.github.io/4.png&#34;
-	
-	
-	
+&lt;img src=&#34;https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/6.png&#34;
+	width=&#34;742&#34;
+	height=&#34;733&#34;
+	srcset=&#34;https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/6_hu9127105277565457001.png 480w, https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E5%B9%BF%E6%92%AD%E5%8F%98%E9%87%8F/6_hu14277366887381701722.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;101&#34;
+		data-flex-basis=&#34;242px&#34;
 	
 &gt;&lt;/p&gt;
 </description>
