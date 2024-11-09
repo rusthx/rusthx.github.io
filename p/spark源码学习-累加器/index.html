@@ -1,0 +1,1176 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="简介 累加器用来把 Executor 端变量信息聚合到 Driver 端。在 Driver 程序中定义的变量，在 Executor 端的每个 Task 都会得到这个变量的一份新的副本，每个 task 更新这些副本的值后， 传回 Driver 端进行 merge。\n">
+<title>Spark源码学习 累加器</title>
+
+<link rel='canonical' href='https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E7%B4%AF%E5%8A%A0%E5%99%A8/'>
+
+<link rel="stylesheet" href="/scss/style.min.e0818f74a5cc5a3fb725aa5bbfa98f6567cf07f85ea0aa40f2d2d819bb19bc41.css"><meta property='og:title' content="Spark源码学习 累加器">
+<meta property='og:description' content="简介 累加器用来把 Executor 端变量信息聚合到 Driver 端。在 Driver 程序中定义的变量，在 Executor 端的每个 Task 都会得到这个变量的一份新的副本，每个 task 更新这些副本的值后， 传回 Driver 端进行 merge。\n">
+<meta property='og:url' content='https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E7%B4%AF%E5%8A%A0%E5%99%A8/'>
+<meta property='og:site_name' content='rustWood'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Spark' /><meta property='article:published_time' content='2024-11-09T20:39:50&#43;08:00'/><meta property='article:modified_time' content='2024-11-09T20:39:50&#43;08:00'/>
+<meta name="twitter:title" content="Spark源码学习 累加器">
+<meta name="twitter:description" content="简介 累加器用来把 Executor 端变量信息聚合到 Driver 端。在 Driver 程序中定义的变量，在 Executor 端的每个 Task 都会得到这个变量的一份新的副本，每个 task 更新这些副本的值后， 传回 Driver 端进行 merge。\n">        
+        
+        <link rel="stylesheet" href="/highlight/styles/github.css">
+         
+        <link rel="stylesheet" href="/highlight/styles/github-dark.css" media="(prefers-color-scheme: dark)">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu290319576234017586.png" width="300"
+                            height="302" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">rustWood</a></h1>
+            <h2 class="site-description">江上何人初见月，江月何年初照人</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/rusthx'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://www.cnblogs.com/rustWood'
+                        target="_blank"
+                        title="博客园"
+                        rel="me"
+                    >
+                        
+                        
+                            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1725698578146" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1508" width="24" height="24" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M478.71488 33.88416c-75.76064 36.6592-123.11552 117.31456-114.82624 194.82624 8.28416 67.03616 43.8016 120.45824 104.17152 156.06784 187.03872 109.98272 419.05664-79.60576 316.06784-258.71872C722.57536 20.26496 591.17568-19.53792 478.71488 33.88416z m187.03872 67.03616c85.23264 52.37248 80.49664 188.53888-9.472 229.39136-104.17152 48.18432-213.07904-15.71328-213.07904-125.696 0-41.89696 5.91872-54.46656 40.24832-84.84352s48.5376-35.61472 98.2528-35.61472c33.14688 0.00512 68.6592 7.33696 84.04992 16.76288z" fill="#707070" p-id="1509"></path><path d="M797.15328 340.7872c-63.9232 115.22048-89.96864 148.736-164.54656 217.87136-75.76064 71.22432-105.35424 90.08128-209.53088 135.12192-67.47648 29.32736-132.5824 50.2784-147.97312 48.18432-22.49216-2.09408-36.69504-25.1392-88.78592-139.31008C120.02816 458.10176 53.73952 333.45536 25.32864 298.89024c-16.57344-19.90144-17.75616-18.85184-11.83744 10.47552 27.22304 156.06784 119.56224 465.06496 147.97312 494.39232 15.39072 17.80736 295.94624 18.85184 456.93952 2.09408 190.58688-19.90144 170.46528-27.23328-121.92768-47.13472l-106.54208-7.33184 102.9888-24.0896c114.82624-27.23328 177.56672-52.37248 261.61664-105.79456 31.96416-19.90144 62.74048-34.56512 69.84192-32.47104 5.91872 2.09408 49.72032 98.46272 94.70464 212.6336 46.16704 115.22048 86.41536 212.6336 91.15136 216.82176 11.83744 11.52-8.28416-233.57952-28.41088-358.22592-10.65472-60.75392-39.0656-187.4944-63.9232-282.81344l-44.98432-172.83072-75.76576 136.17152z" fill="#707070" p-id="1510"></path></svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#快速上手">快速上手</a></li>
+    <li><a href="#原理简介">原理简介</a></li>
+    <li><a href="#累加器类">累加器类</a>
+      <ol>
+        <li><a href="#longaccumulator">LongAccumulator</a></li>
+        <li><a href="#doubleaccumulator">DoubleAccumulator</a></li>
+        <li><a href="#collectionaccumulator">CollectionAccumulator</a></li>
+      </ol>
+    </li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E7%B4%AF%E5%8A%A0%E5%99%A8/">Spark源码学习 累加器</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-11-09</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="简介">简介
+</h2><p> 累加器用来把 Executor 端变量信息聚合到 Driver 端。在 Driver 程序中定义的变量，在
+Executor 端的每个 Task 都会得到这个变量的一份新的副本，每个 task 更新这些副本的值后，
+传回 Driver 端进行 merge。</p>
+<h2 id="快速上手">快速上手
+</h2><p>数据如下，数据格式为学生姓名，学生课程，课程成绩。要求计算选择了Database课程的人数</p>
+<p><img src="/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E7%B4%AF%E5%8A%A0%E5%99%A8/1.png"
+	width="966"
+	height="650"
+	srcset="/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E7%B4%AF%E5%8A%A0%E5%99%A8/1_hu14818999790699540141.png 480w, /p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E7%B4%AF%E5%8A%A0%E5%99%A8/1_hu16384632438318607173.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="148"
+		data-flex-basis="356px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">package</span> <span class="nn">SprakReview</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">import</span> <span class="nn">org.apache.spark.util.LongAccumulator</span>
+</span></span><span class="line"><span class="cl"><span class="k">import</span> <span class="nn">org.apache.spark.</span><span class="o">{</span><span class="nc">SparkConf</span><span class="o">,</span> <span class="nc">SparkContext</span><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">object</span> <span class="nc">AccumulatorTry</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">sparkConf</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">SparkConf</span><span class="o">().</span><span class="n">setMaster</span><span class="o">(</span><span class="s">&#34;local[*]&#34;</span><span class="o">).</span><span class="n">setAppName</span><span class="o">(</span><span class="s">&#34;累加器学习&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">sc</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">SparkContext</span><span class="o">(</span><span class="n">sparkConf</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">data</span> <span class="k">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">textFile</span><span class="o">(</span><span class="s">&#34;E:\\TestData\\sparkjob3\\task1\\Data01.txt&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">dbCount</span><span class="k">:</span> <span class="kt">LongAccumulator</span> <span class="o">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">longAccumulator</span><span class="o">(</span><span class="s">&#34;dbCount&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">data</span><span class="o">.</span><span class="n">foreach</span> <span class="o">{</span> <span class="n">line</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="k">val</span> <span class="n">course</span> <span class="k">=</span> <span class="n">line</span><span class="o">.</span><span class="n">split</span><span class="o">(</span><span class="s">&#34;,&#34;</span><span class="o">)(</span><span class="mi">1</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">course</span> <span class="o">==</span> <span class="s">&#34;DataBase&#34;</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="c1">// 每当课程为&#34;DataBase&#34;时，累加器的值加1
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>        <span class="n">dbCount</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="mi">1</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">println</span><span class="o">(</span><span class="s">&#34;DataBase count: &#34;</span> <span class="o">+</span> <span class="n">dbCount</span><span class="o">.</span><span class="n">value</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">//累加器实现查找选择了DataBase课的学生
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>
+</span></span><span class="line"><span class="cl">    <span class="n">sc</span><span class="o">.</span><span class="n">stop</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E7%B4%AF%E5%8A%A0%E5%99%A8/2.png"
+	width="1920"
+	height="1030"
+	srcset="/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E7%B4%AF%E5%8A%A0%E5%99%A8/2_hu4940220256607226227.png 480w, /p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E7%B4%AF%E5%8A%A0%E5%99%A8/2_hu5074419408996378584.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="186"
+		data-flex-basis="447px"
+	
+></p>
+<h2 id="原理简介">原理简介
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl">  <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Create and register a long accumulator, which starts with 0 and accumulates inputs by `add`.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">longAccumulator</span><span class="k">:</span> <span class="kt">LongAccumulator</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">acc</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">LongAccumulator</span>
+</span></span><span class="line"><span class="cl">    <span class="n">register</span><span class="o">(</span><span class="n">acc</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">acc</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Create and register a long accumulator, which starts with 0 and accumulates inputs by `add`.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">longAccumulator</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">LongAccumulator</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">acc</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">LongAccumulator</span>
+</span></span><span class="line"><span class="cl">    <span class="n">register</span><span class="o">(</span><span class="n">acc</span><span class="o">,</span> <span class="n">name</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">acc</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Create and register a double accumulator, which starts with 0 and accumulates inputs by `add`.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">doubleAccumulator</span><span class="k">:</span> <span class="kt">DoubleAccumulator</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">acc</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">DoubleAccumulator</span>
+</span></span><span class="line"><span class="cl">    <span class="n">register</span><span class="o">(</span><span class="n">acc</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">acc</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Create and register a double accumulator, which starts with 0 and accumulates inputs by `add`.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">doubleAccumulator</span><span class="o">(</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">DoubleAccumulator</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">acc</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">DoubleAccumulator</span>
+</span></span><span class="line"><span class="cl">    <span class="n">register</span><span class="o">(</span><span class="n">acc</span><span class="o">,</span> <span class="n">name</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">acc</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Create and register a `CollectionAccumulator`, which starts with empty list and accumulates
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * inputs by adding them into the list.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">collectionAccumulator</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="k">:</span> <span class="kt">CollectionAccumulator</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">acc</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">CollectionAccumulator</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">register</span><span class="o">(</span><span class="n">acc</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">acc</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Create and register a `CollectionAccumulator`, which starts with empty list and accumulates
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * inputs by adding them into the list.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">collectionAccumulator</span><span class="o">[</span><span class="kt">T</span><span class="o">](</span><span class="n">name</span><span class="k">:</span> <span class="kt">String</span><span class="o">)</span><span class="k">:</span> <span class="kt">CollectionAccumulator</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">acc</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">CollectionAccumulator</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span>
+</span></span><span class="line"><span class="cl">    <span class="n">register</span><span class="o">(</span><span class="n">acc</span><span class="o">,</span> <span class="n">name</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">acc</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Spark中的累加器有三种<code>doubleAccumulator</code>、<code>longAccumulator</code>、<code>collectionAccumulator</code>。分别有传入累加器名字和不穿名字的函数。
+累加器会新建一个对应的累加器类，然后在driver注册，传不传名字的区别是注册的时候会不会传入名字，最后返回已注册的累加器。</p>
+<p>源码中对注册的解释如下：</p>
+<blockquote>
+<p>Registers an AccumulatorV2 created on the driver such that it can be used on the executors.
+All accumulators registered here can later be used as a container for accumulating partial values across multiple tasks. This is what org.apache.spark.scheduler.DAGScheduler does. Note: if an accumulator is registered here, it should also be registered with the active context cleaner for cleanup so as to avoid memory leaks.
+If an AccumulatorV2 with the same ID was already registered, this does nothing instead of overwriting it. We will never register same accumulator twice, this is just a sanity check.</p>
+</blockquote>
+<p> 注册在driver上创建的 AccumulatorV2，以便在executor上使用。 在此注册的所有累加器以后都可用作容器，用于累加多个任务中的部分值。 这就是 org.apache.spark.scheduler.DAGScheduler 的作用。 注意：如果在这里注册了累加器，那么它也应注册到活动上下文清理器中进行清理，以避免内存泄漏。 如果已经注册了具有相同 ID 的 AccumulatorV2，则不会做任何操作，而会覆盖它。 我们永远不会注册同一个累加器两次，这只是为了进行合理性检查。</p>
+<h2 id="累加器类">累加器类
+</h2><h3 id="longaccumulator">LongAccumulator
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * An [[AccumulatorV2 accumulator]] for computing sum, count, and average of 64-bit integers.
+</span></span></span><span class="line"><span class="cl"><span class="cm"> *
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @since 2.0.0
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">LongAccumulator</span> <span class="k">extends</span> <span class="nc">AccumulatorV2</span><span class="o">[</span><span class="kt">jl.Long</span>, <span class="kt">jl.Long</span><span class="o">]</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">private</span> <span class="k">var</span> <span class="nc">_sum</span> <span class="k">=</span> <span class="mi">0L</span>
+</span></span><span class="line"><span class="cl">  <span class="k">private</span> <span class="k">var</span> <span class="nc">_count</span> <span class="k">=</span> <span class="mi">0L</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Returns false if this accumulator has had any values added to it or the sum is non-zero.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   *
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * @since 2.0.0
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">isZero</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="nc">_sum</span> <span class="o">==</span> <span class="mi">0L</span> <span class="o">&amp;&amp;</span> <span class="nc">_count</span> <span class="o">==</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">copy</span><span class="o">()</span><span class="k">:</span> <span class="kt">LongAccumulator</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">newAcc</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">LongAccumulator</span>
+</span></span><span class="line"><span class="cl">    <span class="n">newAcc</span><span class="o">.</span><span class="nc">_count</span> <span class="k">=</span> <span class="k">this</span><span class="o">.</span><span class="nc">_count</span>
+</span></span><span class="line"><span class="cl">    <span class="n">newAcc</span><span class="o">.</span><span class="nc">_sum</span> <span class="k">=</span> <span class="k">this</span><span class="o">.</span><span class="nc">_sum</span>
+</span></span><span class="line"><span class="cl">    <span class="n">newAcc</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">reset</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nc">_sum</span> <span class="k">=</span> <span class="mi">0L</span>
+</span></span><span class="line"><span class="cl">    <span class="nc">_count</span> <span class="k">=</span> <span class="mi">0L</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Adds v to the accumulator, i.e. increment sum by v and count by 1.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * @since 2.0.0
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">add</span><span class="o">(</span><span class="n">v</span><span class="k">:</span> <span class="kt">jl.Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nc">_sum</span> <span class="o">+=</span> <span class="n">v</span>
+</span></span><span class="line"><span class="cl">    <span class="nc">_count</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Adds v to the accumulator, i.e. increment sum by v and count by 1.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * @since 2.0.0
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">add</span><span class="o">(</span><span class="n">v</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nc">_sum</span> <span class="o">+=</span> <span class="n">v</span>
+</span></span><span class="line"><span class="cl">    <span class="nc">_count</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Returns the number of elements added to the accumulator.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * @since 2.0.0
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">count</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="nc">_count</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Returns the sum of elements added to the accumulator.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * @since 2.0.0
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">sum</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="nc">_sum</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Returns the average of elements added to the accumulator.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * @since 2.0.0
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">avg</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="nc">_sum</span><span class="o">.</span><span class="n">toDouble</span> <span class="o">/</span> <span class="nc">_count</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">merge</span><span class="o">(</span><span class="n">other</span><span class="k">:</span> <span class="kt">AccumulatorV2</span><span class="o">[</span><span class="kt">jl.Long</span>, <span class="kt">jl.Long</span><span class="o">])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="n">other</span> <span class="k">match</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="n">o</span><span class="k">:</span> <span class="kt">LongAccumulator</span> <span class="o">=&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nc">_sum</span> <span class="o">+=</span> <span class="n">o</span><span class="o">.</span><span class="n">sum</span>
+</span></span><span class="line"><span class="cl">      <span class="nc">_count</span> <span class="o">+=</span> <span class="n">o</span><span class="o">.</span><span class="n">count</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="k">_</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="k">throw</span> <span class="k">new</span> <span class="nc">UnsupportedOperationException</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">        <span class="s">s&#34;Cannot merge </span><span class="si">${</span><span class="k">this</span><span class="o">.</span><span class="n">getClass</span><span class="o">.</span><span class="n">getName</span><span class="si">}</span><span class="s"> with </span><span class="si">${</span><span class="n">other</span><span class="o">.</span><span class="n">getClass</span><span class="o">.</span><span class="n">getName</span><span class="si">}</span><span class="s">&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">private</span><span class="o">[</span><span class="kt">spark</span><span class="o">]</span> <span class="k">def</span> <span class="n">setValue</span><span class="o">(</span><span class="n">newValue</span><span class="k">:</span> <span class="kt">Long</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="nc">_sum</span> <span class="k">=</span> <span class="n">newValue</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">value</span><span class="k">:</span> <span class="kt">jl.Long</span> <span class="o">=</span> <span class="nc">_sum</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>LongAccumulator类是一个自定义累加器，用于计算64位整数的总和、计数和平均值。它继承自AccumulatorV2。
+私有变量_sum:(存储累加的总和)、_count(存储累加的元素个数)。
+用于计算整型数据的总和、计数和平均值，并在driver中访问结果。</p>
+<p>isZero方法:检查累加器是否未添加任何值或总和为零。</p>
+<p>copy方法:创建累加器的副本，包括当前的_sum和_count。</p>
+<p>reset方法:将_sum和_count重置为零。</p>
+<p>add方法:增加一个值到累加器中，更新_sum和_count。有两个重载版本，接收jl.Long和Long类型。
+(jl.Long是java.lang.Long的缩写。是Java的类类型，用于包装一个long的值。
+提供了许多方法来处理long类型的数据，比如转换、比较等。用于与Java类进行交互时的包装器类型。
+Long是Scala的基本数据类型。直接表示一个64位的整数。)</p>
+<p>count方法:返回添加到累加器中的元素个数。</p>
+<p>sum方法:返回累加器中的元素总和。</p>
+<p>avg方法:返回累加器中元素的平均值。</p>
+<p>merge方法:将另一个LongAccumulator的值合并到当前累加器。如果尝试与非LongAccumulator类型合并，会抛出异常。</p>
+<p>setValue方法:设置累加器的总和值（仅用于内部）。</p>
+<p>value方法:返回累加器的当前总和。</p>
+<h3 id="doubleaccumulator">DoubleAccumulator
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * An [[AccumulatorV2 accumulator]] for computing sum, count, and averages for double precision
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * floating numbers.
+</span></span></span><span class="line"><span class="cl"><span class="cm"> *
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @since 2.0.0
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">DoubleAccumulator</span> <span class="k">extends</span> <span class="nc">AccumulatorV2</span><span class="o">[</span><span class="kt">jl.Double</span>, <span class="kt">jl.Double</span><span class="o">]</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">private</span> <span class="k">var</span> <span class="nc">_sum</span> <span class="k">=</span> <span class="mf">0.0</span>
+</span></span><span class="line"><span class="cl">  <span class="k">private</span> <span class="k">var</span> <span class="nc">_count</span> <span class="k">=</span> <span class="mi">0L</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Returns false if this accumulator has had any values added to it or the sum is non-zero.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">isZero</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="nc">_sum</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="o">&amp;&amp;</span> <span class="nc">_count</span> <span class="o">==</span> <span class="mi">0</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">copy</span><span class="o">()</span><span class="k">:</span> <span class="kt">DoubleAccumulator</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">newAcc</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">DoubleAccumulator</span>
+</span></span><span class="line"><span class="cl">    <span class="n">newAcc</span><span class="o">.</span><span class="nc">_count</span> <span class="k">=</span> <span class="k">this</span><span class="o">.</span><span class="nc">_count</span>
+</span></span><span class="line"><span class="cl">    <span class="n">newAcc</span><span class="o">.</span><span class="nc">_sum</span> <span class="k">=</span> <span class="k">this</span><span class="o">.</span><span class="nc">_sum</span>
+</span></span><span class="line"><span class="cl">    <span class="n">newAcc</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">reset</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nc">_sum</span> <span class="k">=</span> <span class="mf">0.0</span>
+</span></span><span class="line"><span class="cl">    <span class="nc">_count</span> <span class="k">=</span> <span class="mi">0L</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Adds v to the accumulator, i.e. increment sum by v and count by 1.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * @since 2.0.0
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">add</span><span class="o">(</span><span class="n">v</span><span class="k">:</span> <span class="kt">jl.Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nc">_sum</span> <span class="o">+=</span> <span class="n">v</span>
+</span></span><span class="line"><span class="cl">    <span class="nc">_count</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Adds v to the accumulator, i.e. increment sum by v and count by 1.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * @since 2.0.0
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">add</span><span class="o">(</span><span class="n">v</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nc">_sum</span> <span class="o">+=</span> <span class="n">v</span>
+</span></span><span class="line"><span class="cl">    <span class="nc">_count</span> <span class="o">+=</span> <span class="mi">1</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Returns the number of elements added to the accumulator.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * @since 2.0.0
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">count</span><span class="k">:</span> <span class="kt">Long</span> <span class="o">=</span> <span class="nc">_count</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Returns the sum of elements added to the accumulator.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * @since 2.0.0
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">sum</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="nc">_sum</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Returns the average of elements added to the accumulator.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * @since 2.0.0
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">avg</span><span class="k">:</span> <span class="kt">Double</span> <span class="o">=</span> <span class="nc">_sum</span> <span class="o">/</span> <span class="nc">_count</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">merge</span><span class="o">(</span><span class="n">other</span><span class="k">:</span> <span class="kt">AccumulatorV2</span><span class="o">[</span><span class="kt">jl.Double</span>, <span class="kt">jl.Double</span><span class="o">])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="n">other</span> <span class="k">match</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="n">o</span><span class="k">:</span> <span class="kt">DoubleAccumulator</span> <span class="o">=&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="nc">_sum</span> <span class="o">+=</span> <span class="n">o</span><span class="o">.</span><span class="n">sum</span>
+</span></span><span class="line"><span class="cl">      <span class="nc">_count</span> <span class="o">+=</span> <span class="n">o</span><span class="o">.</span><span class="n">count</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="k">_</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="k">throw</span> <span class="k">new</span> <span class="nc">UnsupportedOperationException</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">        <span class="s">s&#34;Cannot merge </span><span class="si">${</span><span class="k">this</span><span class="o">.</span><span class="n">getClass</span><span class="o">.</span><span class="n">getName</span><span class="si">}</span><span class="s"> with </span><span class="si">${</span><span class="n">other</span><span class="o">.</span><span class="n">getClass</span><span class="o">.</span><span class="n">getName</span><span class="si">}</span><span class="s">&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">private</span><span class="o">[</span><span class="kt">spark</span><span class="o">]</span> <span class="k">def</span> <span class="n">setValue</span><span class="o">(</span><span class="n">newValue</span><span class="k">:</span> <span class="kt">Double</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="nc">_sum</span> <span class="k">=</span> <span class="n">newValue</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">value</span><span class="k">:</span> <span class="kt">jl.Double</span> <span class="o">=</span> <span class="nc">_sum</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>DoubleAccumulator</code>与<code>LongAccumulator</code>区别不大，主要区别在<code>DoubleAccumulator</code>的_sum为Double类型。</p>
+<h3 id="collectionaccumulator">CollectionAccumulator
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * An [[AccumulatorV2 accumulator]] for collecting a list of elements.
+</span></span></span><span class="line"><span class="cl"><span class="cm"> *
+</span></span></span><span class="line"><span class="cl"><span class="cm"> * @since 2.0.0
+</span></span></span><span class="line"><span class="cl"><span class="cm"> */</span>
+</span></span><span class="line"><span class="cl"><span class="k">class</span> <span class="nc">CollectionAccumulator</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="nc">extends</span> <span class="nc">AccumulatorV2</span><span class="o">[</span><span class="kt">T</span>, <span class="kt">java.util.List</span><span class="o">[</span><span class="kt">T</span><span class="o">]]</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">private</span> <span class="k">var</span> <span class="nc">_list</span><span class="k">:</span> <span class="kt">java.util.List</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="k">=</span> <span class="k">_</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">private</span> <span class="k">def</span> <span class="n">getOrCreate</span> <span class="k">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nc">_list</span> <span class="k">=</span> <span class="nc">Option</span><span class="o">(</span><span class="nc">_list</span><span class="o">).</span><span class="n">getOrElse</span><span class="o">(</span><span class="k">new</span> <span class="n">java</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="nc">ArrayList</span><span class="o">[</span><span class="kt">T</span><span class="o">]())</span>
+</span></span><span class="line"><span class="cl">    <span class="nc">_list</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Returns false if this accumulator instance has any values in it.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">isZero</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="n">synchronized</span><span class="o">(</span><span class="n">getOrCreate</span><span class="o">.</span><span class="n">isEmpty</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">copyAndReset</span><span class="o">()</span><span class="k">:</span> <span class="kt">CollectionAccumulator</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">CollectionAccumulator</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">copy</span><span class="o">()</span><span class="k">:</span> <span class="kt">CollectionAccumulator</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">newAcc</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">CollectionAccumulator</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">this</span><span class="o">.</span><span class="n">synchronized</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="n">newAcc</span><span class="o">.</span><span class="n">getOrCreate</span><span class="o">.</span><span class="n">addAll</span><span class="o">(</span><span class="n">getOrCreate</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">newAcc</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">reset</span><span class="o">()</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="n">synchronized</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nc">_list</span> <span class="k">=</span> <span class="kc">null</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">add</span><span class="o">(</span><span class="n">v</span><span class="k">:</span> <span class="kt">T</span><span class="o">)</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="n">synchronized</span><span class="o">(</span><span class="n">getOrCreate</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="n">v</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">merge</span><span class="o">(</span><span class="n">other</span><span class="k">:</span> <span class="kt">AccumulatorV2</span><span class="o">[</span><span class="kt">T</span>, <span class="kt">java.util.List</span><span class="o">[</span><span class="kt">T</span><span class="o">]])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="n">other</span> <span class="k">match</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="n">o</span><span class="k">:</span> <span class="kt">CollectionAccumulator</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="k">=&gt;</span> <span class="k">this</span><span class="o">.</span><span class="n">synchronized</span><span class="o">(</span><span class="n">getOrCreate</span><span class="o">.</span><span class="n">addAll</span><span class="o">(</span><span class="n">o</span><span class="o">.</span><span class="n">value</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">    <span class="k">case</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="k">throw</span> <span class="k">new</span> <span class="nc">UnsupportedOperationException</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">      <span class="s">s&#34;Cannot merge </span><span class="si">${</span><span class="k">this</span><span class="o">.</span><span class="n">getClass</span><span class="o">.</span><span class="n">getName</span><span class="si">}</span><span class="s"> with </span><span class="si">${</span><span class="n">other</span><span class="o">.</span><span class="n">getClass</span><span class="o">.</span><span class="n">getName</span><span class="si">}</span><span class="s">&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">value</span><span class="k">:</span> <span class="kt">java.util.List</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="k">=</span> <span class="k">this</span><span class="o">.</span><span class="n">synchronized</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">java</span><span class="o">.</span><span class="n">util</span><span class="o">.</span><span class="nc">Collections</span><span class="o">.</span><span class="n">unmodifiableList</span><span class="o">(</span><span class="k">new</span> <span class="nc">ArrayList</span><span class="o">[</span><span class="kt">T</span><span class="o">](</span><span class="n">getOrCreate</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">private</span><span class="o">[</span><span class="kt">spark</span><span class="o">]</span> <span class="k">def</span> <span class="n">setValue</span><span class="o">(</span><span class="n">newValue</span><span class="k">:</span> <span class="kt">java.util.List</span><span class="o">[</span><span class="kt">T</span><span class="o">])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="n">synchronized</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nc">_list</span> <span class="k">=</span> <span class="kc">null</span>
+</span></span><span class="line"><span class="cl">    <span class="n">getOrCreate</span><span class="o">.</span><span class="n">addAll</span><span class="o">(</span><span class="n">newValue</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p> CollectionAccumulator类是一个用于收集元素列表的自定义累加器。它继承自AccumulatorV2(在Spark中创建累加器的基类,自定义累加器也需要继承这个类)。具有私有变量 _list，用于存储累积的元素列表，初始为null。使用synchronized确保了对_list的操作是线程安全的。主要用途是在任务中收集元素并在driver上提供收集到的数据。 _list类型是java.util.List，所以java.util.List的方法都可以在这里正常使用（<code>setValue</code>就是先情况_list，再调用List的<code>addAll</code>添加一个<code>java.util.List</code>）。</p>
+<p><code>getOrCreate</code>方法:确保_list已初始化，如果为null，则创建一个新的ArrayList(java.util.ArrayList)。</p>
+<p><code>isZero</code>方法:检查累加器是否为空，如果为空则返回true。</p>
+<p><code>copyAndReset</code>方法:创建一个没有累积值的新CollectionAccumulator。</p>
+<p><code>copy</code>方法:创建一个新的CollectionAccumulator并复制当前元素。</p>
+<p><code>reset</code>方法:通过将_list设置为null来清空累加器。</p>
+<p><code>add</code>方法:向累加器中添加一个元素。</p>
+<p><code>merge</code>方法:将另一个累加器的值合并到这个累加器中，仅支持与另一个CollectionAccumulator合并。</p>
+<p><code>value</code>方法:返回累积列表的不可修改视图。</p>
+<p><code>setValue</code>方法:重置累加器并设置为新的元素列表。</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/spark/">Spark</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2024 rustWood
+    </section>
+    
+    <section class="powerby">
+        
+            网站总访客数：<span id='busuanzi_value_site_uv'>Loading</span><br/>网站总访问量：<span id='busuanzi_value_site_pv'>Loading</span> <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+    <section class="powerby">
+        页面浏览量<span id="busuanzi_value_page_pv">Loading</span>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<script defer src="https://cn.vercount.one/js"></script>
+
+
+        
+        <script src="/highlight/highlight-min.js"></script>
+        <script>hljs.highlightAll();</script>
+    </body>
+</html>
