@@ -55,8 +55,8 @@
 		data-flex-grow=&#34;163&#34;
 		data-flex-basis=&#34;391px&#34;
 	
-&gt;
-基本流程可以参考上图，这里有两个小问题需要关注：&lt;/p&gt;
+&gt;&lt;/p&gt;
+&lt;p&gt;基本流程可以参考上图，这里有两个小问题需要关注：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;hash join性能如何？&lt;/li&gt;
 &lt;/ol&gt;
