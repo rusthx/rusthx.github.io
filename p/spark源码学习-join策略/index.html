@@ -272,6 +272,7 @@
       </ol>
     </li>
     <li><a href="#选择join的机制">选择join的机制</a></li>
+    <li><a href="#补充rdd中的join">补充：RDD中的join</a></li>
   </ol>
 </nav>
         </div>
@@ -655,6 +656,140 @@
 <li>大表join大表，用SortMergeJoin</li>
 </ol>
 <p>非等值连接仅CartesianProduct 和 BroadcastNestedLoopJoin支持，常用BroadcastNestedLoopJoin。</p>
+<h2 id="补充rdd中的join">补充：RDD中的join
+</h2><p>前文中介绍的join都是SparkSQL中join的底层实现，但是在Spark的RDD中，也有一个join函数。
+具体实现如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl">  <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Return an RDD containing all pairs of elements with matching keys in `this` and `other`. Each
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * pair of elements will be returned as a (k, (v1, v2)) tuple, where (k, v1) is in `this` and
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * (k, v2) is in `other`. Uses the given Partitioner to partition the output RDD.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">join</span><span class="o">[</span><span class="kt">W</span><span class="o">](</span><span class="n">other</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">W</span><span class="o">)],</span> <span class="n">partitioner</span><span class="k">:</span> <span class="kt">Partitioner</span><span class="o">)</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[(</span><span class="kt">K</span>, <span class="o">(</span><span class="kt">V</span>, <span class="kt">W</span><span class="o">))]</span> <span class="k">=</span> <span class="n">self</span><span class="o">.</span><span class="n">withScope</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">this</span><span class="o">.</span><span class="n">cogroup</span><span class="o">(</span><span class="n">other</span><span class="o">,</span> <span class="n">partitioner</span><span class="o">).</span><span class="n">flatMapValues</span><span class="o">(</span> <span class="n">pair</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="k">for</span> <span class="o">(</span><span class="n">v</span> <span class="k">&lt;-</span> <span class="n">pair</span><span class="o">.</span><span class="n">_1</span><span class="o">.</span><span class="n">iterator</span><span class="o">;</span> <span class="n">w</span> <span class="k">&lt;-</span> <span class="n">pair</span><span class="o">.</span><span class="n">_2</span><span class="o">.</span><span class="n">iterator</span><span class="o">)</span> <span class="k">yield</span> <span class="o">(</span><span class="n">v</span><span class="o">,</span> <span class="n">w</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Perform a left outer join of `this` and `other`. For each element (k, v) in `this`, the
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * resulting RDD will either contain all pairs (k, (v, Some(w))) for w in `other`, or the
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * pair (k, (v, None)) if no elements in `other` have key k. Uses the given Partitioner to
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * partition the output RDD.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">leftOuterJoin</span><span class="o">[</span><span class="kt">W</span><span class="o">](</span>
+</span></span><span class="line"><span class="cl">      <span class="n">other</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">W</span><span class="o">)],</span>
+</span></span><span class="line"><span class="cl">      <span class="n">partitioner</span><span class="k">:</span> <span class="kt">Partitioner</span><span class="o">)</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[(</span><span class="kt">K</span>, <span class="o">(</span><span class="kt">V</span>, <span class="kt">Option</span><span class="o">[</span><span class="kt">W</span><span class="o">]))]</span> <span class="k">=</span> <span class="n">self</span><span class="o">.</span><span class="n">withScope</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">this</span><span class="o">.</span><span class="n">cogroup</span><span class="o">(</span><span class="n">other</span><span class="o">,</span> <span class="n">partitioner</span><span class="o">).</span><span class="n">flatMapValues</span> <span class="o">{</span> <span class="n">pair</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">pair</span><span class="o">.</span><span class="n">_2</span><span class="o">.</span><span class="n">isEmpty</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pair</span><span class="o">.</span><span class="n">_1</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">v</span> <span class="k">=&gt;</span> <span class="o">(</span><span class="n">v</span><span class="o">,</span> <span class="nc">None</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(</span><span class="n">v</span> <span class="k">&lt;-</span> <span class="n">pair</span><span class="o">.</span><span class="n">_1</span><span class="o">.</span><span class="n">iterator</span><span class="o">;</span> <span class="n">w</span> <span class="k">&lt;-</span> <span class="n">pair</span><span class="o">.</span><span class="n">_2</span><span class="o">.</span><span class="n">iterator</span><span class="o">)</span> <span class="k">yield</span> <span class="o">(</span><span class="n">v</span><span class="o">,</span> <span class="nc">Some</span><span class="o">(</span><span class="n">w</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Perform a right outer join of `this` and `other`. For each element (k, w) in `other`, the
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * resulting RDD will either contain all pairs (k, (Some(v), w)) for v in `this`, or the
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * pair (k, (None, w)) if no elements in `this` have key k. Uses the given Partitioner to
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * partition the output RDD.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">rightOuterJoin</span><span class="o">[</span><span class="kt">W</span><span class="o">](</span><span class="n">other</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">W</span><span class="o">)],</span> <span class="n">partitioner</span><span class="k">:</span> <span class="kt">Partitioner</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">:</span> <span class="kt">RDD</span><span class="o">[(</span><span class="kt">K</span>, <span class="o">(</span><span class="kt">Option</span><span class="o">[</span><span class="kt">V</span><span class="o">]</span>, <span class="kt">W</span><span class="o">))]</span> <span class="k">=</span> <span class="n">self</span><span class="o">.</span><span class="n">withScope</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">this</span><span class="o">.</span><span class="n">cogroup</span><span class="o">(</span><span class="n">other</span><span class="o">,</span> <span class="n">partitioner</span><span class="o">).</span><span class="n">flatMapValues</span> <span class="o">{</span> <span class="n">pair</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">pair</span><span class="o">.</span><span class="n">_1</span><span class="o">.</span><span class="n">isEmpty</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">pair</span><span class="o">.</span><span class="n">_2</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">w</span> <span class="k">=&gt;</span> <span class="o">(</span><span class="nc">None</span><span class="o">,</span> <span class="n">w</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(</span><span class="n">v</span> <span class="k">&lt;-</span> <span class="n">pair</span><span class="o">.</span><span class="n">_1</span><span class="o">.</span><span class="n">iterator</span><span class="o">;</span> <span class="n">w</span> <span class="k">&lt;-</span> <span class="n">pair</span><span class="o">.</span><span class="n">_2</span><span class="o">.</span><span class="n">iterator</span><span class="o">)</span> <span class="k">yield</span> <span class="o">(</span><span class="nc">Some</span><span class="o">(</span><span class="n">v</span><span class="o">),</span> <span class="n">w</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Perform a full outer join of `this` and `other`. For each element (k, v) in `this`, the
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * resulting RDD will either contain all pairs (k, (Some(v), Some(w))) for w in `other`, or
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * the pair (k, (Some(v), None)) if no elements in `other` have key k. Similarly, for each
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * element (k, w) in `other`, the resulting RDD will either contain all pairs
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * (k, (Some(v), Some(w))) for v in `this`, or the pair (k, (None, Some(w))) if no elements
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * in `this` have key k. Uses the given Partitioner to partition the output RDD.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">fullOuterJoin</span><span class="o">[</span><span class="kt">W</span><span class="o">](</span><span class="n">other</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">W</span><span class="o">)],</span> <span class="n">partitioner</span><span class="k">:</span> <span class="kt">Partitioner</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">:</span> <span class="kt">RDD</span><span class="o">[(</span><span class="kt">K</span>, <span class="o">(</span><span class="kt">Option</span><span class="o">[</span><span class="kt">V</span><span class="o">]</span>, <span class="kt">Option</span><span class="o">[</span><span class="kt">W</span><span class="o">]))]</span> <span class="k">=</span> <span class="n">self</span><span class="o">.</span><span class="n">withScope</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">this</span><span class="o">.</span><span class="n">cogroup</span><span class="o">(</span><span class="n">other</span><span class="o">,</span> <span class="n">partitioner</span><span class="o">).</span><span class="n">flatMapValues</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="o">(</span><span class="n">vs</span><span class="o">,</span> <span class="nc">Seq</span><span class="o">())</span> <span class="k">=&gt;</span> <span class="n">vs</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">v</span> <span class="k">=&gt;</span> <span class="o">(</span><span class="nc">Some</span><span class="o">(</span><span class="n">v</span><span class="o">),</span> <span class="nc">None</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="o">(</span><span class="nc">Seq</span><span class="o">(),</span> <span class="n">ws</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">ws</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">w</span> <span class="k">=&gt;</span> <span class="o">(</span><span class="nc">None</span><span class="o">,</span> <span class="nc">Some</span><span class="o">(</span><span class="n">w</span><span class="o">)))</span>
+</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="o">(</span><span class="n">vs</span><span class="o">,</span> <span class="n">ws</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="k">for</span> <span class="o">(</span><span class="n">v</span> <span class="k">&lt;-</span> <span class="n">vs</span><span class="o">.</span><span class="n">iterator</span><span class="o">;</span> <span class="n">w</span> <span class="k">&lt;-</span> <span class="n">ws</span><span class="o">.</span><span class="n">iterator</span><span class="o">)</span> <span class="k">yield</span> <span class="o">(</span><span class="nc">Some</span><span class="o">(</span><span class="n">v</span><span class="o">),</span> <span class="nc">Some</span><span class="o">(</span><span class="n">w</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>RDD的join实际是匹配两个RDD,以join为例，遍历(iterator)两个RDD的分区，调用cogroup函数将两个RDD的相同分区联合成一个turple返回。</p>
 
 </section>
 
