@@ -1,0 +1,1350 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content=" 作者由于水平问题，文中也许有一些错误遗漏的地方，欢迎联系指正(2024087171@qq.com)\n简介 参考资料：https://blog.csdn.net/weixin_42868529/article/details/84622803\n">
+<title>Spark源码学习 Shuffle</title>
+
+<link rel='canonical' href='https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-shuffle/'>
+
+<link rel="stylesheet" href="/scss/style.min.e0818f74a5cc5a3fb725aa5bbfa98f6567cf07f85ea0aa40f2d2d819bb19bc41.css"><meta property='og:title' content="Spark源码学习 Shuffle">
+<meta property='og:description' content=" 作者由于水平问题，文中也许有一些错误遗漏的地方，欢迎联系指正(2024087171@qq.com)\n简介 参考资料：https://blog.csdn.net/weixin_42868529/article/details/84622803\n">
+<meta property='og:url' content='https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-shuffle/'>
+<meta property='og:site_name' content='rustWood'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Spark' /><meta property='article:published_time' content='2024-12-09T22:01:04&#43;08:00'/><meta property='article:modified_time' content='2024-12-09T22:01:04&#43;08:00'/>
+<meta name="twitter:title" content="Spark源码学习 Shuffle">
+<meta name="twitter:description" content=" 作者由于水平问题，文中也许有一些错误遗漏的地方，欢迎联系指正(2024087171@qq.com)\n简介 参考资料：https://blog.csdn.net/weixin_42868529/article/details/84622803\n">        
+        
+        <link rel="stylesheet" href="/highlight/styles/github.css">
+         
+        <link rel="stylesheet" href="/highlight/styles/github-dark.css" media="(prefers-color-scheme: dark)">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu290319576234017586.png" width="300"
+                            height="302" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">rustWood</a></h1>
+            <h2 class="site-description">江上何人初见月，江月何年初照人</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/rusthx'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://www.cnblogs.com/rustWood'
+                        target="_blank"
+                        title="博客园"
+                        rel="me"
+                    >
+                        
+                        
+                            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1725698578146" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1508" width="24" height="24" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M478.71488 33.88416c-75.76064 36.6592-123.11552 117.31456-114.82624 194.82624 8.28416 67.03616 43.8016 120.45824 104.17152 156.06784 187.03872 109.98272 419.05664-79.60576 316.06784-258.71872C722.57536 20.26496 591.17568-19.53792 478.71488 33.88416z m187.03872 67.03616c85.23264 52.37248 80.49664 188.53888-9.472 229.39136-104.17152 48.18432-213.07904-15.71328-213.07904-125.696 0-41.89696 5.91872-54.46656 40.24832-84.84352s48.5376-35.61472 98.2528-35.61472c33.14688 0.00512 68.6592 7.33696 84.04992 16.76288z" fill="#707070" p-id="1509"></path><path d="M797.15328 340.7872c-63.9232 115.22048-89.96864 148.736-164.54656 217.87136-75.76064 71.22432-105.35424 90.08128-209.53088 135.12192-67.47648 29.32736-132.5824 50.2784-147.97312 48.18432-22.49216-2.09408-36.69504-25.1392-88.78592-139.31008C120.02816 458.10176 53.73952 333.45536 25.32864 298.89024c-16.57344-19.90144-17.75616-18.85184-11.83744 10.47552 27.22304 156.06784 119.56224 465.06496 147.97312 494.39232 15.39072 17.80736 295.94624 18.85184 456.93952 2.09408 190.58688-19.90144 170.46528-27.23328-121.92768-47.13472l-106.54208-7.33184 102.9888-24.0896c114.82624-27.23328 177.56672-52.37248 261.61664-105.79456 31.96416-19.90144 62.74048-34.56512 69.84192-32.47104 5.91872 2.09408 49.72032 98.46272 94.70464 212.6336 46.16704 115.22048 86.41536 212.6336 91.15136 216.82176 11.83744 11.52-8.28416-233.57952-28.41088-358.22592-10.65472-60.75392-39.0656-187.4944-63.9232-282.81344l-44.98432-172.83072-75.76576 136.17152z" fill="#707070" p-id="1510"></path></svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#简介">简介</a></li>
+    <li><a href="#hadoopmapreduce-shuffle">Hadoop(MapReduce) shuffle</a></li>
+    <li><a href="#spark-shuffle详细机制">Spark shuffle详细机制</a></li>
+    <li><a href="#与hadoopmapreduce-shuffle的区别">与Hadoop(MapReduce) shuffle的区别</a></li>
+    <li><a href="#shufflewriter及其选择策略">ShuffleWriter及其选择策略</a>
+      <ol>
+        <li><a href="#unsafeshufflewriter">UnsafeShuffleWriter</a></li>
+        <li><a href="#bypassmergesortshufflewriter">BypassMergeSortShuffleWriter</a></li>
+        <li><a href="#sortshufflewriter">SortShuffleWriter</a></li>
+        <li><a href="#选择策略">选择策略</a></li>
+      </ol>
+    </li>
+    <li><a href="#shufflereader">ShuffleReader</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-shuffle/">Spark源码学习 Shuffle</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2024-12-09</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <blockquote>
+<p>作者由于水平问题，文中也许有一些错误遗漏的地方，欢迎联系指正(<code>2024087171@qq.com</code>)</p>
+</blockquote>
+<h2 id="简介">简介
+</h2><blockquote>
+<p>参考资料：https://blog.csdn.net/weixin_42868529/article/details/84622803</p>
+</blockquote>
+<p>Shuffle 过程本质上都是将 Map 端获得的数据使用分区器进行划分，并将数据发送给对应的 Reducer 的过程。</p>
+<p>前一个stage的ShuffleMapTask进行shuffle write，把数据存储在blockManager上面，并且把数据元信息上报到dirver的mapOutTarck组件中，下一个stage根据数据位置源信息，进行shuffle read，拉取上一个stage的输出数据</p>
+<h2 id="hadoopmapreduce-shuffle">Hadoop(MapReduce) shuffle
+</h2><blockquote>
+<p>参考资料：尚硅谷Hadoop相关课程
+MapReduce的shuffle机制：</p>
+</blockquote>
+<ol>
+<li>MapTask收集我们的map()方法输出的kv对，放到环形缓冲区中</li>
+<li>从环形缓冲区不断溢写本地磁盘文件，可能会溢出多个文件</li>
+<li>多个溢出文件会被合并成大的溢出文件</li>
+<li>在溢出过程及合并的过程中，都要调用Partitioner进行分区和针对key进行排序</li>
+<li>ReduceTask根据自己的分区号，去各个MapTask机器上取相应的结果分区数据</li>
+<li>ReduceTask会抓取到同一个分区的来自不同MapTask的结果文件，ReduceTask会将这些文件再进行合并（归并排序）</li>
+<li>合并成大文件后，Shuffle的过程也就结束了，后面进入ReduceTask的逻辑运算过程（从文件中取出一个一个的键值对Group，调用用户自定义的reduce()方法）</li>
+</ol>
+<p><img src="/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-shuffle/1.png"
+	width="1058"
+	height="513"
+	srcset="/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-shuffle/1_hu3767354565587542623.png 480w, /p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-shuffle/1_hu10364141614106133650.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="206"
+		data-flex-basis="494px"
+	
+></p>
+<h2 id="spark-shuffle详细机制">Spark shuffle详细机制
+</h2><p>Spark的shuffle机制：</p>
+<blockquote>
+<p>前提条件：Spark的代码在运行到action算子时触发任务（job），然后DAGscheduler按算子间的血缘（依赖关系）划分形成DAG图（有向无环图），
+有shuffle操作的依赖关系称为宽依赖，没有的称为窄依赖。DAGscheduler按宽依赖将任务划分为多个stage，stage的数量就等于宽依赖数量+1。</p>
+</blockquote>
+<ol start="0">
+<li>根据 spark.shuffle.manager 设置，SparkEnv 会在driver和每个executor上创建一个 ShuffleManager。 driver在其中注册shuffle，executor（或在driver中本地运行的任务）可以要求读写数据。</li>
+<li>前一个stage的ShuffleMapTask将mapTaskID和partitions传入sortShuffleManager，调用getWriter（）方法后，首先会判断是否需要对计算结果进行聚合，然后将最终结果按照不同的 reduce 端进行区分，返回writeHandle,
+根据不同的writeHandle选择不同的writer（<code>UnsafeShuffleWriter</code>、<code>BypassMergeSortShuffleWriter</code>、<code>SortShuffleWriter</code>）</li>
+<li>writer将数据写入到executor的blockManager中</li>
+<li>shuffleManager为后一个stage创建一个<code>BlockStoreShuffleReader</code>，根据位置信息（<code>startMapIndex, endMapIndex, startPartition, endPartition</code>）拉取blockManger中的数据，根据数据的 Key 进行聚合，然后判断是否需要排序，最后生成新的 RDD。</li>
+</ol>
+<p><img src="/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-shuffle/2.png"
+	width="1920"
+	height="1030"
+	srcset="/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-shuffle/2_hu3537821498809195093.png 480w, /p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-shuffle/2_hu9124599422288604458.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="186"
+		data-flex-basis="447px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
+</span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
+</span><span class="lnt">84
+</span><span class="lnt">85
+</span><span class="lnt">86
+</span><span class="lnt">87
+</span><span class="lnt">88
+</span><span class="lnt">89
+</span><span class="lnt">90
+</span><span class="lnt">91
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Obtains a [[ShuffleHandle]] to pass to tasks.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">registerShuffle</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span>, <span class="kt">C</span><span class="o">](</span>
+</span></span><span class="line"><span class="cl">      <span class="n">shuffleId</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">dependency</span><span class="k">:</span> <span class="kt">ShuffleDependency</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span>, <span class="kt">C</span><span class="o">])</span><span class="k">:</span> <span class="kt">ShuffleHandle</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="nc">SortShuffleWriter</span><span class="o">.</span><span class="n">shouldBypassMergeSort</span><span class="o">(</span><span class="n">conf</span><span class="o">,</span> <span class="n">dependency</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// If there are fewer than spark.shuffle.sort.bypassMergeThreshold partitions and we don&#39;t
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// need map-side aggregation, then write numPartitions files directly and just concatenate
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// them at the end. This avoids doing serialization and deserialization twice to merge
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// together the spilled files, which would happen with the normal code path. The downside is
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// having multiple files open at a time and thus more memory allocated to buffers.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">new</span> <span class="nc">BypassMergeSortShuffleHandle</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span>
+</span></span><span class="line"><span class="cl">        <span class="n">shuffleId</span><span class="o">,</span> <span class="n">dependency</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">ShuffleDependency</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span>, <span class="kt">V</span><span class="o">]])</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nc">SortShuffleManager</span><span class="o">.</span><span class="n">canUseSerializedShuffle</span><span class="o">(</span><span class="n">dependency</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// Otherwise, try to buffer map outputs in a serialized form, since this is more efficient:
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">new</span> <span class="nc">SerializedShuffleHandle</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span>
+</span></span><span class="line"><span class="cl">        <span class="n">shuffleId</span><span class="o">,</span> <span class="n">dependency</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">ShuffleDependency</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span>, <span class="kt">V</span><span class="o">]])</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// Otherwise, buffer map outputs in a deserialized form:
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">new</span> <span class="nc">BaseShuffleHandle</span><span class="o">(</span><span class="n">shuffleId</span><span class="o">,</span> <span class="n">dependency</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Get a reader for a range of reduce partitions (startPartition to endPartition-1, inclusive) to
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * read from a range of map outputs(startMapIndex to endMapIndex-1, inclusive).
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * If endMapIndex=Int.MaxValue, the actual endMapIndex will be changed to the length of total map
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * outputs of the shuffle in `getMapSizesByExecutorId`.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   *
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Called on executors by reduce tasks.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">getReader</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">](</span>
+</span></span><span class="line"><span class="cl">      <span class="n">handle</span><span class="k">:</span> <span class="kt">ShuffleHandle</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">startMapIndex</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">endMapIndex</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">startPartition</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">endPartition</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">context</span><span class="k">:</span> <span class="kt">TaskContext</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">metrics</span><span class="k">:</span> <span class="kt">ShuffleReadMetricsReporter</span><span class="o">)</span><span class="k">:</span> <span class="kt">ShuffleReader</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">baseShuffleHandle</span> <span class="k">=</span> <span class="n">handle</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">BaseShuffleHandle</span><span class="o">[</span><span class="kt">K</span>, <span class="k">_</span>, <span class="kt">C</span><span class="o">]]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="o">(</span><span class="n">blocksByAddress</span><span class="o">,</span> <span class="n">canEnableBatchFetch</span><span class="o">)</span> <span class="k">=</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">baseShuffleHandle</span><span class="o">.</span><span class="n">dependency</span><span class="o">.</span><span class="n">isShuffleMergeFinalizedMarked</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="n">res</span> <span class="k">=</span> <span class="nc">SparkEnv</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">mapOutputTracker</span><span class="o">.</span><span class="n">getPushBasedShuffleMapSizesByExecutorId</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">          <span class="n">handle</span><span class="o">.</span><span class="n">shuffleId</span><span class="o">,</span> <span class="n">startMapIndex</span><span class="o">,</span> <span class="n">endMapIndex</span><span class="o">,</span> <span class="n">startPartition</span><span class="o">,</span> <span class="n">endPartition</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="o">(</span><span class="n">res</span><span class="o">.</span><span class="n">iter</span><span class="o">,</span> <span class="n">res</span><span class="o">.</span><span class="n">enableBatchFetch</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="n">address</span> <span class="k">=</span> <span class="nc">SparkEnv</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">mapOutputTracker</span><span class="o">.</span><span class="n">getMapSizesByExecutorId</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">          <span class="n">handle</span><span class="o">.</span><span class="n">shuffleId</span><span class="o">,</span> <span class="n">startMapIndex</span><span class="o">,</span> <span class="n">endMapIndex</span><span class="o">,</span> <span class="n">startPartition</span><span class="o">,</span> <span class="n">endPartition</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="o">(</span><span class="n">address</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">new</span> <span class="nc">BlockStoreShuffleReader</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">      <span class="n">handle</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">BaseShuffleHandle</span><span class="o">[</span><span class="kt">K</span>, <span class="k">_</span>, <span class="kt">C</span><span class="o">]],</span> <span class="n">blocksByAddress</span><span class="o">,</span> <span class="n">context</span><span class="o">,</span> <span class="n">metrics</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">shouldBatchFetch</span> <span class="k">=</span>
+</span></span><span class="line"><span class="cl">        <span class="n">canEnableBatchFetch</span> <span class="o">&amp;&amp;</span> <span class="n">canUseBatchFetch</span><span class="o">(</span><span class="n">startPartition</span><span class="o">,</span> <span class="n">endPartition</span><span class="o">,</span> <span class="n">context</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="cm">/** Get a writer for a given partition. Called on executors by map tasks. */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">getWriter</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span>
+</span></span><span class="line"><span class="cl">      <span class="n">handle</span><span class="k">:</span> <span class="kt">ShuffleHandle</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">mapId</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">context</span><span class="k">:</span> <span class="kt">TaskContext</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">metrics</span><span class="k">:</span> <span class="kt">ShuffleWriteMetricsReporter</span><span class="o">)</span><span class="k">:</span> <span class="kt">ShuffleWriter</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">mapTaskIds</span> <span class="k">=</span> <span class="n">taskIdMapsForShuffle</span><span class="o">.</span><span class="n">computeIfAbsent</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">      <span class="n">handle</span><span class="o">.</span><span class="n">shuffleId</span><span class="o">,</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="k">new</span> <span class="nc">OpenHashSet</span><span class="o">[</span><span class="kt">Long</span><span class="o">](</span><span class="mi">16</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">mapTaskIds</span><span class="o">.</span><span class="n">synchronized</span> <span class="o">{</span> <span class="n">mapTaskIds</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="n">mapId</span><span class="o">)</span> <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">env</span> <span class="k">=</span> <span class="nc">SparkEnv</span><span class="o">.</span><span class="n">get</span>
+</span></span><span class="line"><span class="cl">    <span class="n">handle</span> <span class="k">match</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="n">unsafeShuffleHandle</span><span class="k">:</span> <span class="kt">SerializedShuffleHandle</span><span class="o">[</span><span class="kt">K</span> <span class="kt">@unchecked</span>, <span class="kt">V</span> <span class="kt">@unchecked</span><span class="o">]</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">new</span> <span class="nc">UnsafeShuffleWriter</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">          <span class="n">env</span><span class="o">.</span><span class="n">blockManager</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">context</span><span class="o">.</span><span class="n">taskMemoryManager</span><span class="o">(),</span>
+</span></span><span class="line"><span class="cl">          <span class="n">unsafeShuffleHandle</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">mapId</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">context</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">env</span><span class="o">.</span><span class="n">conf</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">metrics</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">shuffleExecutorComponents</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="n">bypassMergeSortHandle</span><span class="k">:</span> <span class="kt">BypassMergeSortShuffleHandle</span><span class="o">[</span><span class="kt">K</span> <span class="kt">@unchecked</span>, <span class="kt">V</span> <span class="kt">@unchecked</span><span class="o">]</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">new</span> <span class="nc">BypassMergeSortShuffleWriter</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">          <span class="n">env</span><span class="o">.</span><span class="n">blockManager</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">bypassMergeSortHandle</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">mapId</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">env</span><span class="o">.</span><span class="n">conf</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">metrics</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">shuffleExecutorComponents</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="n">other</span><span class="k">:</span> <span class="kt">BaseShuffleHandle</span><span class="o">[</span><span class="kt">K</span> <span class="kt">@unchecked</span>, <span class="kt">V</span> <span class="kt">@unchecked</span>, <span class="k">_</span><span class="o">]</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">new</span> <span class="nc">SortShuffleWriter</span><span class="o">(</span><span class="n">other</span><span class="o">,</span> <span class="n">mapId</span><span class="o">,</span> <span class="n">context</span><span class="o">,</span> <span class="n">shuffleExecutorComponents</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="与hadoopmapreduce-shuffle的区别">与Hadoop(MapReduce) shuffle的区别
+</h2><blockquote>
+<p>参考：https://zhuanlan.zhihu.com/p/136466667</p>
+</blockquote>
+<ol>
+<li>功能上，MR的shuffle和Spark的shuffle是没啥区别的，都是对Map端的数据进行分区，要么聚合排序，要么不聚合排序，然后Reduce端或者下一个调度阶段进行拉取数据，完成map端到reduce端的数据传输功能。</li>
+<li>方案上，有很大的区别，MR的shuffle是基于合并排序的思想，在数据进入reduce端之前，都会进行sort，为了方便后续的reduce端的全局排序，而Spark的shuffle是可选择的聚合，特别是1.2之后，需要通过调用特定的算子才会触发排序聚合的功能。</li>
+<li>流程上，MR的Map端和Reduce区分非常明显，两块涉及到操作也是各司其职，而Spark的RDD是内存级的数据转换，不落盘，所以没有明确的划分，只是区分不同的调度阶段，不同的算子模型。</li>
+<li>数据拉取，MR的reduce是直接拉去Map端的分区数据，而Spark是根据MapId和TaskContext读取，而且是在action触发的时候才会拉取数据。</li>
+</ol>
+<h2 id="shufflewriter及其选择策略">ShuffleWriter及其选择策略
+</h2><h3 id="unsafeshufflewriter">UnsafeShuffleWriter
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="nd">@VisibleForTesting</span>
+</span></span><span class="line"><span class="cl"><span class="n">public</span> <span class="n">void</span> <span class="n">write</span><span class="o">(</span><span class="nc">Iterator</span><span class="o">&lt;</span><span class="nc">Product2</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;&gt;</span> <span class="n">records</span><span class="o">)</span> <span class="n">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">write</span><span class="o">(</span><span class="nc">JavaConverters</span><span class="o">.</span><span class="n">asScalaIteratorConverter</span><span class="o">(</span><span class="n">records</span><span class="o">).</span><span class="n">asScala</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl"><span class="n">public</span> <span class="n">void</span> <span class="n">write</span><span class="o">(</span><span class="n">scala</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="nc">Iterator</span><span class="o">&lt;</span><span class="nc">Product2</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;&gt;</span> <span class="n">records</span><span class="o">)</span> <span class="n">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="c1">// Keep track of success so we know if we encountered an exception
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// We do this rather than a standard try/catch/re-throw to handle
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// generic throwables.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">boolean</span> <span class="n">success</span> <span class="k">=</span> <span class="kc">false</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">while</span> <span class="o">(</span><span class="n">records</span><span class="o">.</span><span class="n">hasNext</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">insertRecordIntoSorter</span><span class="o">(</span><span class="n">records</span><span class="o">.</span><span class="n">next</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="n">closeAndWriteOutput</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">      <span class="n">success</span> <span class="k">=</span> <span class="kc">true</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">sorter</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="n">sorter</span><span class="o">.</span><span class="n">cleanupResources</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// Only throw this error if we won&#39;t be masking another
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="c1">// error.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="k">if</span> <span class="o">(</span><span class="n">success</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="k">throw</span> <span class="n">e</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">          <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="o">(</span><span class="s">&#34;In addition to a failure during writing, we failed during &#34;</span> <span class="o">+</span>
+</span></span><span class="line"><span class="cl">                         <span class="s">&#34;cleanup.&#34;</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">          <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nd">@VisibleForTesting</span>
+</span></span><span class="line"><span class="cl"><span class="n">void</span> <span class="n">insertRecordIntoSorter</span><span class="o">(</span><span class="nc">Product2</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">record</span><span class="o">)</span> <span class="n">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="n">assert</span><span class="o">(</span><span class="n">sorter</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">  <span class="k">final</span> <span class="n">K</span> <span class="n">key</span> <span class="k">=</span> <span class="n">record</span><span class="o">.</span><span class="n">_1</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">  <span class="k">final</span> <span class="n">int</span> <span class="n">partitionId</span> <span class="k">=</span> <span class="n">partitioner</span><span class="o">.</span><span class="n">getPartition</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">serBuffer</span><span class="o">.</span><span class="n">reset</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">serOutputStream</span><span class="o">.</span><span class="n">writeKey</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="nc">OBJECT_CLASS_TAG</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">serOutputStream</span><span class="o">.</span><span class="n">writeValue</span><span class="o">(</span><span class="n">record</span><span class="o">.</span><span class="n">_2</span><span class="o">(),</span> <span class="nc">OBJECT_CLASS_TAG</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">serOutputStream</span><span class="o">.</span><span class="n">flush</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">  <span class="k">final</span> <span class="n">int</span> <span class="n">serializedRecordSize</span> <span class="k">=</span> <span class="n">serBuffer</span><span class="o">.</span><span class="n">size</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">  <span class="n">assert</span> <span class="o">(</span><span class="n">serializedRecordSize</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">  <span class="n">sorter</span><span class="o">.</span><span class="n">insertRecord</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">serBuffer</span><span class="o">.</span><span class="n">getBuf</span><span class="o">(),</span> <span class="nc">Platform</span><span class="o">.</span><span class="nc">BYTE_ARRAY_OFFSET</span><span class="o">,</span> <span class="n">serializedRecordSize</span><span class="o">,</span> <span class="n">partitionId</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>当shuffle后的分区数小于等于<code>sortShuffleManager</code>的最大分区数时，进行<code>unsafeShuffle</code>。主要步骤：</p>
+<ol>
+<li>将内存中的对象通过Java可迭代对象转换器转换为Scala的可迭代对象（并没有进行序列化相关操作，只是为了兼容性）</li>
+<li>判断排序器（<code>sorter</code>）是否为空，使用分区器(<code>partitioner</code>)确认记录所属分区</li>
+<li>重置序列化缓冲区，遍历可迭代对象（<code>iterator</code>），将记录的键和值依次序列化后写入，并刷写脏页，确保数据写入缓冲区</li>
+<li>将序列化记录插入到排序器中。sorter负责按分区组织记录，并<font color=red>可能</font>在每个分区内对其进行排序。方法使用缓冲区、偏移量、大小和分区ID来正确放置记录。</li>
+</ol>
+<p>sorter什么时候排序？</p>
+<ol>
+<li>Shuffle操作的需求（最高优先级）：
+如果上层的Spark操作（如sortByKey）要求数据在每个分区内有序，那么排序器会对数据进行排序。
+对于不需要排序的操作（如groupByKey），排序器可能只负责将数据按分区组织，而不进行排序。</li>
+<li>排序器的类型和实现：
+Spark中有多种排序器实现，例如UnsafeExternalSorter。这些排序器可以根据需要对数据进行排序。
+如果排序器的实现支持排序，并且配置要求排序，那么数据会在每个分区内被排序。</li>
+<li>配置和优化（最低优先级）：
+Spark的某些配置参数可以影响排序行为。例如，spark.shuffle.sort.bypassMergeThreshold可以决定在某些情况下是否绕过排序。
+在某些优化场景下，为了提高性能，Spark可能会选择不进行排序。</li>
+</ol>
+<h3 id="bypassmergesortshufflewriter">BypassMergeSortShuffleWriter
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="nd">@Override</span>
+</span></span><span class="line"><span class="cl">  <span class="n">public</span> <span class="n">void</span> <span class="n">write</span><span class="o">(</span><span class="nc">Iterator</span><span class="o">&lt;</span><span class="nc">Product2</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;&gt;</span> <span class="n">records</span><span class="o">)</span> <span class="n">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">assert</span> <span class="o">(</span><span class="n">partitionWriters</span> <span class="o">==</span> <span class="kc">null</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="nc">ShuffleMapOutputWriter</span> <span class="n">mapOutputWriter</span> <span class="k">=</span> <span class="n">shuffleExecutorComponents</span>
+</span></span><span class="line"><span class="cl">        <span class="o">.</span><span class="n">createMapOutputWriter</span><span class="o">(</span><span class="n">shuffleId</span><span class="o">,</span> <span class="n">mapId</span><span class="o">,</span> <span class="n">numPartitions</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(!</span><span class="n">records</span><span class="o">.</span><span class="n">hasNext</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">partitionLengths</span> <span class="k">=</span> <span class="n">mapOutputWriter</span><span class="o">.</span><span class="n">commitAllPartitions</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">          <span class="nc">ShuffleChecksumHelper</span><span class="o">.</span><span class="nc">EMPTY_CHECKSUM_VALUE</span><span class="o">).</span><span class="n">getPartitionLengths</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mapStatus</span> <span class="k">=</span> <span class="nc">MapStatus</span><span class="n">$</span><span class="o">.</span><span class="nc">MODULE</span><span class="n">$</span><span class="o">.</span><span class="n">apply</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">          <span class="n">blockManager</span><span class="o">.</span><span class="n">shuffleServerId</span><span class="o">(),</span> <span class="n">partitionLengths</span><span class="o">,</span> <span class="n">mapId</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="k">final</span> <span class="nc">SerializerInstance</span> <span class="n">serInstance</span> <span class="k">=</span> <span class="n">serializer</span><span class="o">.</span><span class="n">newInstance</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">      <span class="k">final</span> <span class="n">long</span> <span class="n">openStartTime</span> <span class="k">=</span> <span class="nc">System</span><span class="o">.</span><span class="n">nanoTime</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">      <span class="n">partitionWriters</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">DiskBlockObjectWriter</span><span class="o">[</span><span class="kt">numPartitions</span><span class="o">];</span>
+</span></span><span class="line"><span class="cl">      <span class="n">partitionWriterSegments</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">FileSegment</span><span class="o">[</span><span class="kt">numPartitions</span><span class="o">];</span>
+</span></span><span class="line"><span class="cl">      <span class="k">for</span> <span class="o">(</span><span class="n">int</span> <span class="n">i</span> <span class="k">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">numPartitions</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">final</span> <span class="nc">Tuple2</span><span class="o">&lt;</span><span class="nc">TempShuffleBlockId</span><span class="o">,</span> <span class="nc">File</span><span class="o">&gt;</span> <span class="n">tempShuffleBlockIdPlusFile</span> <span class="k">=</span>
+</span></span><span class="line"><span class="cl">            <span class="n">blockManager</span><span class="o">.</span><span class="n">diskBlockManager</span><span class="o">().</span><span class="n">createTempShuffleBlock</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">final</span> <span class="nc">File</span> <span class="n">file</span> <span class="k">=</span> <span class="n">tempShuffleBlockIdPlusFile</span><span class="o">.</span><span class="n">_2</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">final</span> <span class="nc">BlockId</span> <span class="n">blockId</span> <span class="k">=</span> <span class="n">tempShuffleBlockIdPlusFile</span><span class="o">.</span><span class="n">_1</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="nc">DiskBlockObjectWriter</span> <span class="n">writer</span> <span class="k">=</span>
+</span></span><span class="line"><span class="cl">          <span class="n">blockManager</span><span class="o">.</span><span class="n">getDiskWriter</span><span class="o">(</span><span class="n">blockId</span><span class="o">,</span> <span class="n">file</span><span class="o">,</span> <span class="n">serInstance</span><span class="o">,</span> <span class="n">fileBufferSize</span><span class="o">,</span> <span class="n">writeMetrics</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">partitionChecksums</span><span class="o">.</span><span class="n">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="n">writer</span><span class="o">.</span><span class="n">setChecksum</span><span class="o">(</span><span class="n">partitionChecksums</span><span class="o">[</span><span class="kt">i</span><span class="o">]);</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="n">partitionWriters</span><span class="o">[</span><span class="kt">i</span><span class="o">]</span> <span class="k">=</span> <span class="n">writer</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// Creating the file to write to and creating a disk writer both involve interacting with
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// the disk, and can take a long time in aggregate when we open many files, so should be
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// included in the shuffle write time.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">writeMetrics</span><span class="o">.</span><span class="n">incWriteTime</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="n">nanoTime</span><span class="o">()</span> <span class="o">-</span> <span class="n">openStartTime</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="k">while</span> <span class="o">(</span><span class="n">records</span><span class="o">.</span><span class="n">hasNext</span><span class="o">())</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">final</span> <span class="nc">Product2</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">record</span> <span class="k">=</span> <span class="n">records</span><span class="o">.</span><span class="n">next</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="k">final</span> <span class="n">K</span> <span class="n">key</span> <span class="k">=</span> <span class="n">record</span><span class="o">.</span><span class="n">_1</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="n">partitionWriters</span><span class="o">[</span><span class="kt">partitioner.getPartition</span><span class="o">(</span><span class="kt">key</span><span class="o">)].</span><span class="n">write</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">record</span><span class="o">.</span><span class="n">_2</span><span class="o">());</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="k">for</span> <span class="o">(</span><span class="n">int</span> <span class="n">i</span> <span class="k">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">numPartitions</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">try</span> <span class="o">(</span><span class="nc">DiskBlockObjectWriter</span> <span class="n">writer</span> <span class="k">=</span> <span class="n">partitionWriters</span><span class="o">[</span><span class="kt">i</span><span class="o">])</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="n">partitionWriterSegments</span><span class="o">[</span><span class="kt">i</span><span class="o">]</span> <span class="k">=</span> <span class="n">writer</span><span class="o">.</span><span class="n">commitAndGet</span><span class="o">();</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="n">partitionLengths</span> <span class="k">=</span> <span class="n">writePartitionedData</span><span class="o">(</span><span class="n">mapOutputWriter</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">      <span class="n">mapStatus</span> <span class="k">=</span> <span class="nc">MapStatus</span><span class="n">$</span><span class="o">.</span><span class="nc">MODULE</span><span class="n">$</span><span class="o">.</span><span class="n">apply</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">        <span class="n">blockManager</span><span class="o">.</span><span class="n">shuffleServerId</span><span class="o">(),</span> <span class="n">partitionLengths</span><span class="o">,</span> <span class="n">mapId</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">mapOutputWriter</span><span class="o">.</span><span class="n">abort</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e2</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="o">(</span><span class="s">&#34;Failed to abort the writer after failing to write map output.&#34;</span><span class="o">,</span> <span class="n">e2</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">        <span class="n">e</span><span class="o">.</span><span class="n">addSuppressed</span><span class="o">(</span><span class="n">e2</span><span class="o">);</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="k">throw</span> <span class="n">e</span><span class="o">;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>BypassMergeSortShuffleWriter，专门用于处理小规模的 shuffle 操作。它通过绕过排序步骤来提高性能，适用于分区数较少的情况。</p>
+<ol>
+<li>初始化和检查：确保在写入开始时，partitionWriters 为空，防止重复初始化，然后创建一个用于写入 shuffle 输出的对象(<code>ShuffleMapOutputWriter</code>)。</li>
+<li>处理空记录集：如果没有记录需要写入，更新 map 状态,直接向blockkManager提交所有分区并返回。</li>
+<li>初始化序列化和写入器：创建一个新的序列化实例，初始化分区磁盘写入器数组(<code>DiskBlockObjectWriter[numPartitions]</code>)，初始化分区文件段数组。</li>
+<li>创建分区写入器：循环遍历每个分区，创建临时的 shuffle 块和对应的磁盘写入器。为每个分区创建一个磁盘写入器。</li>
+<li>写入记录： 遍历所有记录，根据键的分区，将记录写入对应的分区写入器。</li>
+<li>提交和获取分区数据：遍历每个分区，提交写入的数据并获取文件段。提交写入并获取文件段信息。</li>
+<li>写入分区数据和更新状态： 将分区数据写入输出。更新 map 状态。</li>
+</ol>
+<p> 文件段信息通常指的是每个分区在磁盘上的物理存储信息，包括：文件路径(数据在磁盘上的具体存储位置)、偏移量(数据在文件中的起始位置)、
+长度(数据的字节长度)。</p>
+<p> 更新 map 状态是指在 shuffle 写入完成后，更新 Spark 的内部状态以反映当前任务的输出状态。具体来说：</p>
+<ol>
+<li>MapStatus: 这是 Spark 用于跟踪每个 map 任务输出状态的对象（在一个 stage 中，map 任务完成后生成的输出信息。这些信息用于指导后续的 shuffle 操作，确保数据能够正确地传递到下一个 stage 的 reduce 任务中。）。它包含了每个分区的数据长度信息。</li>
+</ol>
+<blockquote>
+<p>源码中介绍如下：</p>
+<p>Result returned by a ShuffleMapTask to a scheduler. Includes the block manager address that the task has shuffle files stored on as well as the sizes of outputs for each reducer, for passing on to the reduce tasks.</p>
+<p>ShuffleMapTask 返回给调度程序的结果。 包括该任务存储了 Shuffle 文件的blockManager地址，以及给每个reducer的输出文件大小，以便传递给reduce。</p>
+</blockquote>
+<ol start="2">
+<li>blockManager.shuffleServerId(): 这是当前节点的标识符，用于标识数据存储的位置。</li>
+<li>partitionLengths: 这是一个数组，包含了每个分区的数据长度。
+更新 map 状态的目的是为了让 Spark 的调度器和后续的 reduce 任务知道每个分区的数据存储在哪里，以及每个分区的数据大小。这对于后续的 shuffle 读取操作至关重要，因为 reduce 任务需要知道从哪里读取数据。</li>
+</ol>
+<p>也即是，前一个stage写数据确定分区是通过分区器，而后一个stage读数据确定分区是通过<code>MapStatus</code>。</p>
+<h3 id="sortshufflewriter">SortShuffleWriter
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">write</span><span class="o">(</span><span class="n">records</span><span class="k">:</span> <span class="kt">Iterator</span><span class="o">[</span><span class="kt">Product2</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sorter</span> <span class="k">=</span> <span class="k">if</span> <span class="o">(</span><span class="n">dep</span><span class="o">.</span><span class="n">mapSideCombine</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">new</span> <span class="nc">ExternalSorter</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span>, <span class="kt">C</span><span class="o">](</span>
+</span></span><span class="line"><span class="cl">        <span class="n">context</span><span class="o">,</span> <span class="n">dep</span><span class="o">.</span><span class="n">aggregator</span><span class="o">,</span> <span class="nc">Some</span><span class="o">(</span><span class="n">dep</span><span class="o">.</span><span class="n">partitioner</span><span class="o">),</span> <span class="n">dep</span><span class="o">.</span><span class="n">keyOrdering</span><span class="o">,</span> <span class="n">dep</span><span class="o">.</span><span class="n">serializer</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// In this case we pass neither an aggregator nor an ordering to the sorter, because we don&#39;t
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// care whether the keys get sorted in each partition; that will be done on the reduce side
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// if the operation being run is sortByKey.
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">new</span> <span class="nc">ExternalSorter</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span>, <span class="kt">V</span><span class="o">](</span>
+</span></span><span class="line"><span class="cl">        <span class="n">context</span><span class="o">,</span> <span class="n">aggregator</span> <span class="k">=</span> <span class="nc">None</span><span class="o">,</span> <span class="nc">Some</span><span class="o">(</span><span class="n">dep</span><span class="o">.</span><span class="n">partitioner</span><span class="o">),</span> <span class="n">ordering</span> <span class="k">=</span> <span class="nc">None</span><span class="o">,</span> <span class="n">dep</span><span class="o">.</span><span class="n">serializer</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sorter</span><span class="o">.</span><span class="n">insertAll</span><span class="o">(</span><span class="n">records</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// Don&#39;t bother including the time to open the merged output file in the shuffle write time,
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// because it just opens a single file, so is typically too fast to measure accurately
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// (see SPARK-3570).
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">mapOutputWriter</span> <span class="k">=</span> <span class="n">shuffleExecutorComponents</span><span class="o">.</span><span class="n">createMapOutputWriter</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">      <span class="n">dep</span><span class="o">.</span><span class="n">shuffleId</span><span class="o">,</span> <span class="n">mapId</span><span class="o">,</span> <span class="n">dep</span><span class="o">.</span><span class="n">partitioner</span><span class="o">.</span><span class="n">numPartitions</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">sorter</span><span class="o">.</span><span class="n">writePartitionedMapOutput</span><span class="o">(</span><span class="n">dep</span><span class="o">.</span><span class="n">shuffleId</span><span class="o">,</span> <span class="n">mapId</span><span class="o">,</span> <span class="n">mapOutputWriter</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">partitionLengths</span> <span class="k">=</span> <span class="n">mapOutputWriter</span><span class="o">.</span><span class="n">commitAllPartitions</span><span class="o">(</span><span class="n">sorter</span><span class="o">.</span><span class="n">getChecksums</span><span class="o">).</span><span class="n">getPartitionLengths</span>
+</span></span><span class="line"><span class="cl">    <span class="n">mapStatus</span> <span class="k">=</span> <span class="nc">MapStatus</span><span class="o">(</span><span class="n">blockManager</span><span class="o">.</span><span class="n">shuffleServerId</span><span class="o">,</span> <span class="n">partitionLengths</span><span class="o">,</span> <span class="n">mapId</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol>
+<li>初始化一个sorter，如果map侧（上一个stage）需要聚合，那么就创建带<code>aggregater</code>并按键排序的sorter，否则创建一个不带<code>aggregater</code>的sorter;</li>
+<li>创建一个shuffleMapOutputWriter，写入器开启一个输出流，然后将给定reduce任务分区id的字节流持久化;</li>
+</ol>
+<blockquote>
+<p>Creates a writer that can open an output stream to persist bytes targeted for a given reduce partition id.
+The chunk corresponds to bytes in the given reduce partition. This will not be called twice for the same partition within any given map task. The partition identifier will be in the range of precisely 0 (inclusive) to numPartitions (exclusive), where numPartitions was provided upon the creation of this map output writer via ShuffleExecutorComponents.createMapOutputWriter(int, long, int).</p>
+</blockquote>
+<ol start="3">
+<li>将记录写入sorter中，在sorter中经过处理后写出分区器分区后的数据</li>
+</ol>
+<blockquote>
+<p>虽然叫sorter，但是如果map侧没有排序的需求，不会进行排序，如果map侧没有聚合的需求，也不会进行聚合。</p>
+<p>什么时候会排序：sortByKey,sortBy</p>
+<p>补充：</p>
+<ul>
+<li>
+<p>orderBy(SparkSQL中，RDD没有这个api):对 DataFrame 或 Dataset 进行全局排序。
+类似于 SQL 中的 ORDER BY，会对整个数据集进行排序。
+需要进行 shuffle 操作，以确保全局排序。</p>
+</li>
+<li>
+<p>sortWithinPartitions:数据被写入 ExternalSorter，在内存中进行排序。
+如果数据量超过内存限制，ExternalSorter 会将部分数据溢出到磁盘，并在需要时进行归并排序。
+最终，排序后的数据被取出并生成新的 RDD。</p>
+</li>
+</ul>
+<p>什么时候会聚合：reduceByKey,combineByKey,aggregateByKey(map侧和reduce侧都进行聚合，支持不同的聚合操作),foldByKey(map侧和reduce侧聚合操作相同时等同于aggregateByKey)</p>
+<p>注：map侧也叫分区内，reduce侧也叫分区间</p>
+</blockquote>
+<ol start="4">
+<li>向blockManager提交分区数据，并更新<code>MapStatus</code></li>
+</ol>
+<h3 id="选择策略">选择策略
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">getWriter</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span>
+</span></span><span class="line"><span class="cl">      <span class="n">handle</span><span class="k">:</span> <span class="kt">ShuffleHandle</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">mapId</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">context</span><span class="k">:</span> <span class="kt">TaskContext</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">metrics</span><span class="k">:</span> <span class="kt">ShuffleWriteMetricsReporter</span><span class="o">)</span><span class="k">:</span> <span class="kt">ShuffleWriter</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">mapTaskIds</span> <span class="k">=</span> <span class="n">taskIdMapsForShuffle</span><span class="o">.</span><span class="n">computeIfAbsent</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">      <span class="n">handle</span><span class="o">.</span><span class="n">shuffleId</span><span class="o">,</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="k">new</span> <span class="nc">OpenHashSet</span><span class="o">[</span><span class="kt">Long</span><span class="o">](</span><span class="mi">16</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">    <span class="n">mapTaskIds</span><span class="o">.</span><span class="n">synchronized</span> <span class="o">{</span> <span class="n">mapTaskIds</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="n">mapId</span><span class="o">)</span> <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">env</span> <span class="k">=</span> <span class="nc">SparkEnv</span><span class="o">.</span><span class="n">get</span>
+</span></span><span class="line"><span class="cl">    <span class="n">handle</span> <span class="k">match</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="n">unsafeShuffleHandle</span><span class="k">:</span> <span class="kt">SerializedShuffleHandle</span><span class="o">[</span><span class="kt">K</span> <span class="kt">@unchecked</span>, <span class="kt">V</span> <span class="kt">@unchecked</span><span class="o">]</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">new</span> <span class="nc">UnsafeShuffleWriter</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">          <span class="n">env</span><span class="o">.</span><span class="n">blockManager</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">context</span><span class="o">.</span><span class="n">taskMemoryManager</span><span class="o">(),</span>
+</span></span><span class="line"><span class="cl">          <span class="n">unsafeShuffleHandle</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">mapId</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">context</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">env</span><span class="o">.</span><span class="n">conf</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">metrics</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">shuffleExecutorComponents</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="n">bypassMergeSortHandle</span><span class="k">:</span> <span class="kt">BypassMergeSortShuffleHandle</span><span class="o">[</span><span class="kt">K</span> <span class="kt">@unchecked</span>, <span class="kt">V</span> <span class="kt">@unchecked</span><span class="o">]</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">new</span> <span class="nc">BypassMergeSortShuffleWriter</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">          <span class="n">env</span><span class="o">.</span><span class="n">blockManager</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">bypassMergeSortHandle</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">mapId</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">env</span><span class="o">.</span><span class="n">conf</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">metrics</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">          <span class="n">shuffleExecutorComponents</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="n">other</span><span class="k">:</span> <span class="kt">BaseShuffleHandle</span><span class="o">[</span><span class="kt">K</span> <span class="kt">@unchecked</span>, <span class="kt">V</span> <span class="kt">@unchecked</span>, <span class="k">_</span><span class="o">]</span> <span class="k">=&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="k">new</span> <span class="nc">SortShuffleWriter</span><span class="o">(</span><span class="n">other</span><span class="o">,</span> <span class="n">mapId</span><span class="o">,</span> <span class="n">context</span><span class="o">,</span> <span class="n">shuffleExecutorComponents</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p> 由源码可以看出，Spark的shuffle选择<code>shuffleWriter</code>的策略是匹配shuffleHandle，依次匹配SerializedShuffleHandle、BypassMergeSortShuffleHandle、BaseShuffleHandle。</p>
+<p>而shuffleHandle的类型如下：</p>
+<ol>
+<li>SerializedShuffleHandle:适用于需要高效序列化的场景。通常与 UnsafeShuffleWriter 搭配使用。
+这种 handle 主要用于 Spark 的 Tungsten 引擎优化路径，利用了 Spark 的内存管理和序列化优化。</li>
+<li>BypassMergeSortShuffleHandle:适用于小规模 shuffle 操作，特别是当分区数较少时。
+通常与 BypassMergeSortShuffleWriter 搭配使用。
+这种 handle 通过绕过排序步骤来提高性能，适合分区数小于 spark.shuffle.sort.bypassMergeThreshold 的情况。</li>
+<li>BaseShuffleHandle:这是一个通用的 handle 类型，适用于大多数 shuffle 操作。
+通常与 SortShuffleWriter 搭配使用。
+适合需要排序的 shuffle 操作。</li>
+</ol>
+<p>选择策略</p>
+<ol>
+<li>依赖类型:
+Spark 的 shuffle 依赖（ShuffleDependency）在 RDD 的转换操作中被创建。
+依赖类型决定了 shuffle 的处理方式。例如，ShuffleDependency 中的 serializer 和 partitioner 会影响 ShuffleHandle 的选择。</li>
+<li>配置参数:
+spark.shuffle.sort.bypassMergeThreshold: 这个参数决定了是否使用 BypassMergeSortShuffleHandle。如果分区数小于这个阈值，Spark 会选择 BypassMergeSortShuffleHandle。
+spark.shuffle.manager: 这个参数可以配置 shuffle 的管理方式，影响 ShuffleHandle 的选择。</li>
+</ol>
+<p>相关代码位于<code>org.apache.spark.internal.config.package.scala</code>1497行</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl">  <span class="k">private</span><span class="o">[</span><span class="kt">spark</span><span class="o">]</span> <span class="k">val</span> <span class="nc">SHUFFLE_SORT_BYPASS_MERGE_THRESHOLD</span> <span class="k">=</span>
+</span></span><span class="line"><span class="cl">    <span class="nc">ConfigBuilder</span><span class="o">(</span><span class="s">&#34;spark.shuffle.sort.bypassMergeThreshold&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">.</span><span class="n">doc</span><span class="o">(</span><span class="s">&#34;In the sort-based shuffle manager, avoid merge-sorting data if there is no &#34;</span> <span class="o">+</span>
+</span></span><span class="line"><span class="cl">        <span class="s">&#34;map-side aggregation and there are at most this many reduce partitions&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">.</span><span class="n">version</span><span class="o">(</span><span class="s">&#34;1.1.1&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">.</span><span class="n">intConf</span>
+</span></span><span class="line"><span class="cl">      <span class="o">.</span><span class="n">createWithDefault</span><span class="o">(</span><span class="mi">200</span><span class="o">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li>数据规模和分区数:
+小规模数据和少量分区通常会使用 BypassMergeSortShuffleHandle。
+大规模数据和大量分区通常会使用 SerializedShuffleHandle 或 BaseShuffleHandle。</li>
+</ol>
+<h2 id="shufflereader">ShuffleReader
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl">  <span class="cm">/**
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Get a reader for a range of reduce partitions (startPartition to endPartition-1, inclusive) to
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * read from a range of map outputs(startMapIndex to endMapIndex-1, inclusive).
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * If endMapIndex=Int.MaxValue, the actual endMapIndex will be changed to the length of total map
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * outputs of the shuffle in `getMapSizesByExecutorId`.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   *
+</span></span></span><span class="line"><span class="cl"><span class="cm">   * Called on executors by reduce tasks.
+</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
+</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">getReader</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">](</span>
+</span></span><span class="line"><span class="cl">      <span class="n">handle</span><span class="k">:</span> <span class="kt">ShuffleHandle</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">startMapIndex</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">endMapIndex</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">startPartition</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">endPartition</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">context</span><span class="k">:</span> <span class="kt">TaskContext</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">metrics</span><span class="k">:</span> <span class="kt">ShuffleReadMetricsReporter</span><span class="o">)</span><span class="k">:</span> <span class="kt">ShuffleReader</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">baseShuffleHandle</span> <span class="k">=</span> <span class="n">handle</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">BaseShuffleHandle</span><span class="o">[</span><span class="kt">K</span>, <span class="k">_</span>, <span class="kt">C</span><span class="o">]]</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="o">(</span><span class="n">blocksByAddress</span><span class="o">,</span> <span class="n">canEnableBatchFetch</span><span class="o">)</span> <span class="k">=</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">baseShuffleHandle</span><span class="o">.</span><span class="n">dependency</span><span class="o">.</span><span class="n">isShuffleMergeFinalizedMarked</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="n">res</span> <span class="k">=</span> <span class="nc">SparkEnv</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">mapOutputTracker</span><span class="o">.</span><span class="n">getPushBasedShuffleMapSizesByExecutorId</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">          <span class="n">handle</span><span class="o">.</span><span class="n">shuffleId</span><span class="o">,</span> <span class="n">startMapIndex</span><span class="o">,</span> <span class="n">endMapIndex</span><span class="o">,</span> <span class="n">startPartition</span><span class="o">,</span> <span class="n">endPartition</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="o">(</span><span class="n">res</span><span class="o">.</span><span class="n">iter</span><span class="o">,</span> <span class="n">res</span><span class="o">.</span><span class="n">enableBatchFetch</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="n">address</span> <span class="k">=</span> <span class="nc">SparkEnv</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">mapOutputTracker</span><span class="o">.</span><span class="n">getMapSizesByExecutorId</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">          <span class="n">handle</span><span class="o">.</span><span class="n">shuffleId</span><span class="o">,</span> <span class="n">startMapIndex</span><span class="o">,</span> <span class="n">endMapIndex</span><span class="o">,</span> <span class="n">startPartition</span><span class="o">,</span> <span class="n">endPartition</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="o">(</span><span class="n">address</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="k">new</span> <span class="nc">BlockStoreShuffleReader</span><span class="o">(</span>
+</span></span><span class="line"><span class="cl">      <span class="n">handle</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">BaseShuffleHandle</span><span class="o">[</span><span class="kt">K</span>, <span class="k">_</span>, <span class="kt">C</span><span class="o">]],</span> <span class="n">blocksByAddress</span><span class="o">,</span> <span class="n">context</span><span class="o">,</span> <span class="n">metrics</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="n">shouldBatchFetch</span> <span class="k">=</span>
+</span></span><span class="line"><span class="cl">        <span class="n">canEnableBatchFetch</span> <span class="o">&amp;&amp;</span> <span class="n">canUseBatchFetch</span><span class="o">(</span><span class="n">startPartition</span><span class="o">,</span> <span class="n">endPartition</span><span class="o">,</span> <span class="n">context</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Spark的shuffleReader比起shuffleWriter来说就简单很多，只有一个<code>BlockStoreShuffleReader</code>子类。</p>
+<ol>
+<li>ShuffleHandle 转换：ShuffleHandle 被转换为 BaseShuffleHandle，以便访问 shuffle 依赖的详细信息。</li>
+<li>获取块地址和批量获取能力：
+代码检查是否完成了 shuffle 合并（isShuffleMergeFinalizedMarked）。
+如果合并已完成，使用推送式 shuffle 方法 getPushBasedShuffleMapSizesByExecutorId 获取块大小和批量获取能力。
+否则，使用常规方法 getMapSizesByExecutorId 获取块地址。</li>
+<li>创建 BlockStoreShuffleReader：
+使用获取的块地址和批量获取能力创建 BlockStoreShuffleReader。
+shouldBatchFetch 参数决定是否启用批量获取，取决于 canEnableBatchFetch 和 canUseBatchFetch 的结果。</li>
+</ol>
+<p><code>BlockStoreShuffleReader</code>读数据流程：</p>
+<ol>
+<li>初始化</li>
+<li>获取数据块：
+创建<code>ShuffleBlockFetcherIterator</code>实例，用于从其他节点获取数据块。
+该迭代器负责处理数据块的网络传输、反序列化和错误处理。
+支持批量获取连续的数据块（如果条件允许），以提高网络传输效率。</li>
+<li>反序列化：
+使用<code>serializerManager.wrapStream</code>包装从网络获取的输入流。
+使用<code>serializerInstance.deserializeStream</code>将流反序列化为键值对迭代器。</li>
+<li>聚合(可选)：
+如果<code>dep.aggregator</code>被定义，使用聚合器对数据进行聚合。
+如果<code>mapSideCombine</code>为 true，则数据已经在 map 端部分聚合，使用 combineCombinersByKey。
+否则，使用 combineValuesByKey 进行聚合。</li>
+<li>排序(可选)：
+如果<code>dep.keyOrdering</code>被定义，使用 ExternalSorter 对数据进行排序。
+ExternalSorter 可以处理大规模数据集，通过将数据溢出到磁盘来进行排序。</li>
+<li>迭代器包装：
+使用 InterruptibleIterator 包装最终的结果迭代器，以支持任务取消。
+确保在任务取消时能够及时中断数据处理。</li>
+<li>结果返回：
+返回一个 Iterator[Product2[K, C]]，包含所有读取和处理后的键值对</li>
+</ol>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/spark/">Spark</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+        2024 rustWood
+    </section>
+    
+    <section class="powerby">
+        
+            网站总访客数：<span id='busuanzi_value_site_uv'>Loading</span><br/>网站总访问量：<span id='busuanzi_value_site_pv'>Loading</span> <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+    <section class="powerby">
+        页面浏览量<span id="busuanzi_value_page_pv">Loading</span>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<script defer src="https://cn.vercount.one/js"></script>
+
+
+        
+        <script src="/highlight/highlight-min.js"></script>
+        <script>hljs.highlightAll();</script>
+    </body>
+</html>
