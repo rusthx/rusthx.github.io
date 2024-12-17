@@ -24,9 +24,9 @@
 &lt;p&gt;前一个stage的ShuffleMapTask进行shuffle write，把数据存储在blockManager上面，并且把数据元信息上报到dirver的mapOutTarck组件中，下一个stage根据数据位置源信息，进行shuffle read，拉取上一个stage的输出数据&lt;/p&gt;
 &lt;h2 id=&#34;hadoopmapreduce-shuffle&#34;&gt;Hadoop(MapReduce) shuffle
 &lt;/h2&gt;&lt;blockquote&gt;
-&lt;p&gt;参考资料：尚硅谷Hadoop相关课程
-MapReduce的shuffle机制：&lt;/p&gt;
+&lt;p&gt;参考资料：尚硅谷Hadoop相关课程&lt;/p&gt;
 &lt;/blockquote&gt;
+&lt;p&gt;MapReduce的shuffle机制：&lt;/p&gt;
 &lt;ol&gt;
 &lt;li&gt;MapTask收集我们的map()方法输出的kv对，放到环形缓冲区中&lt;/li&gt;
 &lt;li&gt;从环形缓冲区不断溢写本地磁盘文件，可能会溢出多个文件&lt;/li&gt;
@@ -269,7 +269,7 @@ MapReduce的shuffle机制：&lt;/p&gt;
 &lt;li&gt;功能上，MR的shuffle和Spark的shuffle是没啥区别的，都是对Map端的数据进行分区，要么聚合排序，要么不聚合排序，然后Reduce端或者下一个调度阶段进行拉取数据，完成map端到reduce端的数据传输功能。&lt;/li&gt;
 &lt;li&gt;方案上，有很大的区别，MR的shuffle是基于合并排序的思想，在数据进入reduce端之前，都会进行sort，为了方便后续的reduce端的全局排序，而Spark的shuffle是可选择的聚合，特别是1.2之后，需要通过调用特定的算子才会触发排序聚合的功能。&lt;/li&gt;
 &lt;li&gt;流程上，MR的Map端和Reduce区分非常明显，两块涉及到操作也是各司其职，而Spark的RDD是内存级的数据转换，不落盘，所以没有明确的划分，只是区分不同的调度阶段，不同的算子模型。&lt;/li&gt;
-&lt;li&gt;数据拉取，MR的reduce是直接拉去Map端的分区数据，而Spark是根据MapId和TaskContext读取，而且是在action触发的时候才会拉取数据。&lt;/li&gt;
+&lt;li&gt;数据拉取，MR的reduce是直接拉取Map端的分区数据，而Spark是根据MapId和TaskContext读取，而且是在action触发的时候才会拉取数据。&lt;/li&gt;
 &lt;/ol&gt;
 &lt;h2 id=&#34;shufflewriter及其选择策略&#34;&gt;ShuffleWriter及其选择策略
 &lt;/h2&gt;&lt;h3 id=&#34;unsafeshufflewriter&#34;&gt;UnsafeShuffleWriter
