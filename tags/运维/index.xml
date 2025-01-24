@@ -1,0 +1,798 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>运维 on rustWood</title>
+        <link>https://rusthx.github.io/tags/%E8%BF%90%E7%BB%B4/</link>
+        <description>Recent content in 运维 on rustWood</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh-cn</language>
+        <copyright>rustWood</copyright>
+        <lastBuildDate>Mon, 13 Jan 2025 14:58:48 +0800</lastBuildDate><atom:link href="https://rusthx.github.io/tags/%E8%BF%90%E7%BB%B4/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>运维面经</title>
+        <link>https://rusthx.github.io/p/%E8%BF%90%E7%BB%B4%E9%9D%A2%E7%BB%8F/</link>
+        <pubDate>Mon, 13 Jan 2025 14:58:48 +0800</pubDate>
+        
+        <guid>https://rusthx.github.io/p/%E8%BF%90%E7%BB%B4%E9%9D%A2%E7%BB%8F/</guid>
+        <description>&lt;p&gt;2025/01/13 腾讯音乐运维一面&lt;/p&gt;
+&lt;h2 id=&#34;linux&#34;&gt;Linux
+&lt;/h2&gt;&lt;h3 id=&#34;linux启动顺序&#34;&gt;Linux启动顺序
+&lt;/h3&gt;&lt;h4 id=&#34;biosuefi阶段&#34;&gt;BIOS/UEFI阶段
+&lt;/h4&gt;&lt;blockquote&gt;
+&lt;p&gt;BIOS(Basic Input Output System)：基本输入输出系统。它是一组固化到计算机内主板上一个daoROM芯片上的程序，它保存着计算机最重要的基本输入输出的程序、系统设置信息、开机后自检程序和系统自启动程序。 其主要功能是为计算机提供最底层的、最直接的硬件设置和控制。BIOS应该是连接软件程序与硬件设备的一座&amp;quot;桥梁&amp;quot;，负责解决硬件的即时要求。简单地说，BIOS就是一个加载在计算机主板上最基础的一段程序，负责最基础的硬件控制和设置。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;blockquote&gt;
+&lt;p&gt;MBR(Master Boot Record):主引导程序，是分区计算器大容量存储设备（如固定硬盘或移动硬盘）的第一个块中的一种引导扇区。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;加载位于主板ROM中地址&lt;code&gt;0xFFFF0&lt;/code&gt;的BIOS信息，主要包括系统BIOS和显卡BIOS；进行POST自检，检查CPU、内存、主板等硬件；建立终端向量表和中断服务程序；检测可引导设备；加载MBR(主引导程序)的前446字节到内存&lt;code&gt;0x7c00&lt;/code&gt;处。&lt;/p&gt;
+&lt;p&gt;注：老电脑用MBR，较新的电脑，2017年之后的系统如Ubuntu17.04都默认使用GPT+UEFI组合。UEFI最大的好处就是启动方便，有图形化界面。&lt;/p&gt;
+&lt;p&gt;目前主板多设置成三种启动模式，即：Auto、UEFI、Legacy。在设置启动时，带有UEFI的BIOS还提供了启动选项供大家选择以何种方式启，各种模式含义如下：&lt;/p&gt;
+&lt;p&gt;Auto(自动)/Both：自动按照启动设备列表中的顺序启动，优先采用UEFI方式；&lt;/p&gt;
+&lt;p&gt;UEFI only(仅UEFI)：只选择具备UEFI启动条件的设备启动；&lt;/p&gt;
+&lt;p&gt;Legacy only(仅Legacy)：只选择具备Legacy启动条件的设备启动。&lt;/p&gt;
+&lt;p&gt;简单的来说uefi启动是新一代的bios，功能更加强大，而且它是以图形图像模式显示，让用户更便捷的直观操作。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;MBR最大支持2TB硬盘;最多支持4个主分区，或3个主分区+1个扩展分区;扩展分区可以包含多个逻辑分区;分区表只有一份，易损坏;启动代码占446字节，分区表占64字节;兼容传统BIOS系统
+GPT (GUID Partition Table)支持超过2TB的硬盘（最大18EB）;支持最多128个分区（理论上可更多）;分区表有主副两份，更安全;每个分区都有全球唯一标识符(GUID);支持更多分区类型;需要UEFI启动支持&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h4 id=&#34;boot-loader阶段&#34;&gt;Boot Loader阶段
+&lt;/h4&gt;&lt;p&gt;显示内核选择菜单；加载选定的内核镜像到内存；加载initramfs到内存；然后将控制权移交给内核&lt;/p&gt;
+&lt;h4 id=&#34;kernel初始化阶段&#34;&gt;Kernel初始化阶段
+&lt;/h4&gt;&lt;p&gt;系统读取内存映像，并进行解压缩操作。此时，屏幕一般会输出“Uncompressing Linux”的提示。当解压缩内核完成后，屏幕输出“OK, booting the kernel”。
+系统将解压后的内核放置在内存之中，并调用start_kernel()函数来启动一系列的初始化函数并初始化各种设备，完成Linux核心环境的建立。
+然后系统会初始化CPU、内存、设备驱动；挂载根文件系统；运行/sbin/init(PID 1)&lt;/p&gt;
+&lt;h4 id=&#34;init进程systemd阶段&#34;&gt;Init进程(systemd)阶段
+&lt;/h4&gt;&lt;blockquote&gt;
+&lt;p&gt;Unit:systemd管理的基本单元，包括&lt;code&gt;service服务&lt;/code&gt;、&lt;code&gt;socket进程间通信套接字&lt;/code&gt;、&lt;code&gt;target启动目标（类似于运行级别）&lt;/code&gt;、&lt;code&gt;mount文件系统挂载点&lt;/code&gt;、&lt;code&gt;device设备文件&lt;/code&gt;、&lt;code&gt;timer定时器&lt;/code&gt;。配置文件优先级依次是：&lt;code&gt;/etc/systemd/system/&lt;/code&gt; 系统管理员创建的配置，优先级最高;&lt;code&gt;/run/systemd/system/&lt;/code&gt; 运行时配置文件;&lt;code&gt;/usr/lib/systemd/system/&lt;/code&gt;软件包安装的默认配置。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;读取默认target配置文件；分析unit间依赖关系；激活系统服务；准备各类daemon进程；准备用户环境。&lt;/p&gt;
+&lt;p&gt;备注：系统级自启动程序就是在这时候启动的，如通过apt安装的Mysql、Docker。&lt;/p&gt;
+&lt;h4 id=&#34;用户空间阶段&#34;&gt;用户空间阶段
+&lt;/h4&gt;&lt;p&gt;依次读取&lt;code&gt;/etc/profile&lt;/code&gt;系统环境变量、&lt;code&gt; ~/.bashrc&lt;/code&gt;用户环境变量、 &lt;code&gt;/etc/passwd&lt;/code&gt;用户账户信息、 &lt;code&gt;/etc/shadow&lt;/code&gt;用户密码信息
+启动显示管理器，加载桌面环境，准备终端设备；等待用户登录&lt;/p&gt;
+&lt;p&gt;备注：用户级自启动程序在读取&lt;code&gt;~/.bashrc&lt;/code&gt;后自动执行，也就是说想要设置用户级自启动命令可以将启动命令写入到&lt;code&gt;~/.bashrc&lt;/code&gt;中&lt;/p&gt;
+&lt;h3 id=&#34;linux开机自启动&#34;&gt;Linux开机自启动
+&lt;/h3&gt;&lt;p&gt;Linux有三种级别的开机自启动：&lt;/p&gt;
+&lt;h4 id=&#34;系统级别&#34;&gt;系统级别
+&lt;/h4&gt;&lt;p&gt;通过apt包管理器安装的包默认就是这种级别的开机自启。
+可以通过 &lt;code&gt;sudo systemctl enable mysql&lt;/code&gt;来启用开机自启（&lt;code&gt;sudo systemctl disable mysql&lt;/code&gt;为关闭开机自启命令）。&lt;/p&gt;
+&lt;p&gt;除了包管理器，还可以自己制作service来实现，以nginx为例：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;在&lt;code&gt;/etc/systemd/system/&lt;/code&gt;下创建nginx.service文件&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; /etc/systemd/system/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;vim nginx.service
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;写入如下内容：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;Unit&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;Description&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;nginx - high performance web server
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;After&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;nginx.service
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;Service&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;Type&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;forking
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;ExecStart&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;/usr/local/nginx/sbin/nginx
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;ExecReload&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;/usr/local/nginx/sbin/nginx -s reload
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;ExecStop&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;/usr/local/nginx/sbin/nginx -s stop
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;Execenable&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;/usr/local/nginx/sbin/nginx
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;Install&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;WantedBy&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;multi-user.target
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;设置开机自启&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 设置开机启动&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;systemctl &lt;span class=&#34;nb&#34;&gt;enable&lt;/span&gt; nginx
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 取消开机自启动&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;#systemctl disable nginx&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 查看服务当前状态&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;systemctl status nginx
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 启动nginx服务&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;systemctl start nginx
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 停止nginx服务&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;systemctl stop nginx
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 重启nginx服务&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;systemctl restart nginx
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;h4 id=&#34;用户级别&#34;&gt;用户级别
+&lt;/h4&gt;&lt;p&gt;将需要自启动的命令写入&lt;code&gt;~/.bashrc&lt;/code&gt;中，即可实现用户级开机自启。具体操作时如果命令较为简单，比如使用&lt;code&gt;alias&lt;/code&gt;给命令指定别名或者&lt;code&gt;ulimit -n 65536&lt;/code&gt;修改最大打开文件句柄数（我的Ubuntu不知道为什么永久修改怎么也修改不成功，只能通过这种方式曲线救国），就可以直接把命令写到&lt;code&gt;~/.bashrc&lt;/code&gt;中。如果命令比较复杂，可以考虑将命令打包成脚本，然后在&lt;code&gt;~/.bashrc&lt;/code&gt;中执行启动脚本的命令。&lt;/p&gt;
+&lt;h4 id=&#34;桌面级别&#34;&gt;桌面级别
+&lt;/h4&gt;&lt;p&gt;大体步骤类似系统级自启动：切换到&lt;code&gt;/etc/xdg/autostart/&lt;/code&gt;目录，创建后缀为desktop的文件，编辑并保存。重启生效。
+&lt;img src=&#34;https://rusthx.github.io/p/%E8%BF%90%E7%BB%B4%E9%9D%A2%E7%BB%8F/1.png&#34;
+	width=&#34;1243&#34;
+	height=&#34;829&#34;
+	srcset=&#34;https://rusthx.github.io/p/%E8%BF%90%E7%BB%B4%E9%9D%A2%E7%BB%8F/1_hu2426779653841869099.png 480w, https://rusthx.github.io/p/%E8%BF%90%E7%BB%B4%E9%9D%A2%E7%BB%8F/1_hu8478774365589774668.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;149&#34;
+		data-flex-basis=&#34;359px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;数据库&#34;&gt;数据库
+&lt;/h2&gt;&lt;h3 id=&#34;mysql主从复制配置过程宕机恢复&#34;&gt;MySQL主从复制配置过程，宕机恢复
+&lt;/h3&gt;&lt;blockquote&gt;
+&lt;p&gt;参考资料：https://xiaolincoding.com/mysql/log/how_update.html#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%98%AF%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;主从复制可以用来做数据库的实时备份，保证数据的完整性；也可以做读写分离，提升数据库系统整体的读写性能。&lt;/p&gt;
+&lt;h4 id=&#34;主从复制原理&#34;&gt;主从复制原理：
+&lt;/h4&gt;&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/%E8%BF%90%E7%BB%B4%E9%9D%A2%E7%BB%8F/2.png&#34;
+	width=&#34;960&#34;
+	height=&#34;405&#34;
+	srcset=&#34;https://rusthx.github.io/p/%E8%BF%90%E7%BB%B4%E9%9D%A2%E7%BB%8F/2_hu12276740477023013187.png 480w, https://rusthx.github.io/p/%E8%BF%90%E7%BB%B4%E9%9D%A2%E7%BB%8F/2_hu11267129864193341543.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;237&#34;
+		data-flex-basis=&#34;568px&#34;
+	
+&gt;
+MySQL集群的主从复制过程梳理成3个阶段：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;写入 Binlog：主库写 binlog 日志，提交事务，并更新本地存储数据。&lt;/li&gt;
+&lt;li&gt;同步 Binlog：把 binlog 复制到所有从库上，每个从库把 binlog 写到暂存日志中。&lt;/li&gt;
+&lt;li&gt;回放 Binlog：回放 binlog，并更新存储引l擎中的数据。
+具体详细过程如下：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol&gt;
+&lt;li&gt;MySQL 主库在收到客户端提交事务的请求之后，会先写入binlog，再提交事务，更新存储引擎中的数
+据，事务提交完成后，返回给客户端&amp;quot;操作成功&amp;quot;的响应。&lt;/li&gt;
+&lt;li&gt;从库会创建一个专门的 I/O 线程，连接主库的 log dump 线程，来接收主库的 binlog 日志，再把
+binlog 信息写入 relay log 的中继日志里，再返回给主库&amp;quot;复制成功&amp;quot;的响应。&lt;/li&gt;
+&lt;li&gt;从库会创建一个用于回放 binlog 的线程，去读 relay log 中继日志，然后回放 binlog 更新存储引擎中
+的数据，最终实现主从的数据一致性。
+在完成主从复制之后，你就可以在写数据时只写主库，在读数据时只读从库，这样即使写请求会锁表或者
+锁记录，也不会影响读请求的执行。
+&lt;img src=&#34;https://rusthx.github.io/p/%E8%BF%90%E7%BB%B4%E9%9D%A2%E7%BB%8F/3.png&#34;
+	width=&#34;612&#34;
+	height=&#34;607&#34;
+	srcset=&#34;https://rusthx.github.io/p/%E8%BF%90%E7%BB%B4%E9%9D%A2%E7%BB%8F/3_hu14524736388878011446.png 480w, https://rusthx.github.io/p/%E8%BF%90%E7%BB%B4%E9%9D%A2%E7%BB%8F/3_hu12211041723728468306.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;100&#34;
+		data-flex-basis=&#34;241px&#34;
+	
+&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h4 id=&#34;主从复制配置过程&#34;&gt;主从复制配置过程
+&lt;/h4&gt;&lt;blockquote&gt;
+&lt;p&gt;参考资料：https://www.cnblogs.com/nulige/articles/9273537.html
+两台机器都操作，确保 server-id 要不同，通常主ID要小于从ID。一定注意。&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;mysql-binlog格式&#34;&gt;MySQL binlog格式
+&lt;/h3&gt;&lt;p&gt;binlog 是 MySQL 中的一种重要日志类型，用于记录所有的DDL和DML操作（不包括数据查询语句）。它主要用于数据恢复和主从复制。Binlog有三种模式：STATEMENT(语句模式)、ROW(行模式) 和 MIXED(混合模式)&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;STATEMENT模式&lt;/strong&gt;：基于SQL语句的复制（Statement-Based Replication, SBR），每一条修改数据的SQL语句都会记录到binlog中&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;优点：减少日志量：不需要记录每一行数据的变化，减少了磁盘IO，提高了性能&lt;/li&gt;
+&lt;li&gt;缺点：数据不一致：在某些情况下，主从库的数据可能会不一致。例如，使用 uuid() 函数时，每次执行都会生成不同的值；自增字段在执行时可能得到错误的值&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;ROW模式&lt;/strong&gt;：基于行的复制（Row-Based Replication, RBR），不记录SQL语句的上下文信息，仅记录哪条数据被修改了&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;优点：准确复制：不会出现存储过程、函数或触发器调用无法正确复制的问题&lt;/li&gt;
+&lt;li&gt;缺点：日志量大：尤其是在执行批量更新或删除操作时，会产生大量日志，影响IO性能&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;&lt;strong&gt;MIXED模式&lt;/strong&gt;：是前两种模式的混合体（Mixed-Based Replication, MBR），MySQL会根据具体的SQL语句选择使用STATEMENT或ROW模式。
+一般情况下，使用STATEMENT模式保存binlog，对于无法准确复制的操作则使用ROW模式&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;配置和查看Binlog&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;要开启和配置Binlog，可以修改MySQL的配置文件 my.cnf&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;mysqld&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;log-bin&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;ON
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nv&#34;&gt;binlog_format&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;mixed
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;server-id&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;查看Binlog日志可以使用 mysqlbinlog 工具&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;mysqlbinlog mysql-bin.000001
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;或者使用SQL命令查看事件：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-sql&#34; data-lang=&#34;sql&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;k&#34;&gt;SHOW&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;BINLOG&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;n&#34;&gt;EVENTS&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;k&#34;&gt;IN&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;mysql-bin.000001&amp;#39;&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;通过合理选择和配置Binlog模式，可以有效提高MySQL的性能和数据一致性&lt;/p&gt;
+&lt;h3 id=&#34;mysql-备份逻辑备份与物理备份&#34;&gt;MySQL 备份，逻辑备份与物理备份
+&lt;/h3&gt;&lt;p&gt;MySQL的物理备份和逻辑备份的主要区别在于备份文件的形式和备份恢复的灵活性。
+物理备份直接复制数据库的二进制文件(binlog)，备份文件较大，恢复时只能在相同架构的MySQL服务器上使用。
+逻辑备份将数据库导出为SQL语句的形式，备份文件较小，恢复时可跨平台使用，也可以进行数据的修改和筛选。&lt;/p&gt;
+&lt;h2 id=&#34;容器化&#34;&gt;容器化
+&lt;/h2&gt;&lt;h3 id=&#34;k8s移动pod&#34;&gt;k8s移动pod
+&lt;/h3&gt;&lt;blockquote&gt;
+&lt;p&gt;参考资料：https://blog.csdn.net/yanggd1987/article/details/108139436&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;k8s集群中的node节点要升级内存，以应对服务迁入、pod扩缩容导致的资源短缺，需要对node节点进行停机维护。此时就需要对pod进行迁移。&lt;/p&gt;
+&lt;h4 id=&#34;默认迁移&#34;&gt;默认迁移
+&lt;/h4&gt;&lt;p&gt;当node节点关机后，k8s集群并没有立刻发生任何自动迁移动作，如果该node节点上的副本数为1，则会出现服务中断的情况。其实事实并非如此，k8s在等待5分钟后，会自动将停机node节点上的pod自动迁移到其他node节点上。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 1.模拟node节点停机，停止kubelet&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;systemctl stop kubelet
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 2.集群状态&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 此时停机的node点处于NotReady状态&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# kubectl get node&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;NAME                STATUS     ROLES     AGE   VERSION
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;k8s-3-217   Ready        master     88d   v1.18.2
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;k8s-3-218   NotReady   &amp;lt;none&amp;gt;   88d   v1.18.2
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;k8s-3-219   Ready        &amp;lt;none&amp;gt;   88d   v1.18.2
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 3.监控pod状态，大约等待5分钟左右，集群开始有动作&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# kubectl get pod -n test -o wide -n test -w&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;NAME                                   READY   STATUS    RESTARTS   AGE   IP             NODE           NOMINATED NODE   READINESS GATES
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;helloworld-79956d95b4-q7jjg            1/1     Running   &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;          19h   10.244.1.154   k8s-3-218   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;helloworld-79956d95b4-q7jjg            1/1     Running   &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;          19h   10.244.1.154   k8s-3-218   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 5分钟后，pod终止并进行重建&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;helloworld-79956d95b4-q7jjg            1/1     Terminating   &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;          19h   10.244.1.154   k8s-3-218   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;helloworld-79956d95b4-nnlrq            0/1     Pending       &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;          0s    &amp;lt;none&amp;gt;         &amp;lt;none&amp;gt;         &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;helloworld-79956d95b4-nnlrq            0/1     Pending       &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;          0s    &amp;lt;none&amp;gt;         k8s-3-219   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;helloworld-79956d95b4-nnlrq            0/1     ContainerCreating   &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;          1s    &amp;lt;none&amp;gt;         k8s-3-219   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;helloworld-79956d95b4-nnlrq            0/1     Running             &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;          3s    10.244.2.215   k8s-3-219   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;helloworld-79956d95b4-nnlrq            1/1     Running             &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;          66s   10.244.2.215   k8s-3-219   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 4.访问测试：在pod重新迁移到其他node节点时，服务是不可用的。&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# curl -x 192.168.3.219:80 hello.test.cn&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;html&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;head&amp;gt;&amp;lt;title&amp;gt;503 Service Temporarily Unavailable&amp;lt;/title&amp;gt;&amp;lt;/head&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;body&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;center&amp;gt;&amp;lt;h1&amp;gt;503 Service Temporarily Unavailable&amp;lt;/h1&amp;gt;&amp;lt;/center&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&amp;lt;hr&amp;gt;&amp;lt;center&amp;gt;nginx/1.17.8&amp;lt;/center&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 5.迁移完毕：服务正常访问&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# curl -x 192.168.3.219:80 hello.test.cn&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Hello,world!
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;从以上过程看出，停机node节点上的pod在5分钟后先终止再重建，直到pod在新节点启动并由readiness探针检测正常后并处于1\1 Running状态才可以正式对外提供服务。因此&lt;strong&gt;服务中断时间=停机等待5分钟时间+重建时间+服务启动时间+readiness探针检测正常时间。&lt;/strong&gt;&lt;/p&gt;
+&lt;p&gt;为什么pod在5分钟后开始迁移呢?
+此时需要涉及到k8s中的Taint（污点）和 Toleration（容忍），这是从Kubernetes 1.6开始提供的高级调度功能。Taint和Toleration相互配合，可以避免pod被分配到不合适的节点上。每个节点上都可以应用一个或多个Taint，这表示对于那些不能容忍Taint的pod，是不会被该节点接受的。如果将Toleration应用于pod上，则表示这些pod可以（但不要求）被调度到具有匹配Taint的节点上。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 1.查看停止服务节点的状态&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# kubelet停止后，node节点自动添加了Taints；&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# kubectl describe node k8s-3-218&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Name:               k8s-3-218
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Roles:              &amp;lt;none&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;CreationTimestamp:  Fri, &lt;span class=&#34;m&#34;&gt;22&lt;/span&gt; May &lt;span class=&#34;m&#34;&gt;2020&lt;/span&gt; 11:36:16 +0800
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Taints:             node.kubernetes.io/unreachable:NoExecute
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                    node.kubernetes.io/unreachable:NoSchedule
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Unschedulable:      &lt;span class=&#34;nb&#34;&gt;false&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Lease:
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  HolderIdentity:  k8s-3-218
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  AcquireTime:     &amp;lt;unset&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  RenewTime:       Wed, &lt;span class=&#34;m&#34;&gt;19&lt;/span&gt; Aug &lt;span class=&#34;m&#34;&gt;2020&lt;/span&gt; 09:31:22 +0800
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Conditions:
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  Type                 Status    LastHeartbeatTime                 LastTransitionTime                Reason              Message
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  ----                 ------    -----------------                 ------------------                ------              -------
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  NetworkUnavailable   False     Tue, &lt;span class=&#34;m&#34;&gt;18&lt;/span&gt; Aug &lt;span class=&#34;m&#34;&gt;2020&lt;/span&gt; 09:07:59 +0800   Tue, &lt;span class=&#34;m&#34;&gt;18&lt;/span&gt; Aug &lt;span class=&#34;m&#34;&gt;2020&lt;/span&gt; 09:07:59 +0800   FlannelIsUp         Flannel is running on this node
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  MemoryPressure       Unknown   Wed, &lt;span class=&#34;m&#34;&gt;19&lt;/span&gt; Aug &lt;span class=&#34;m&#34;&gt;2020&lt;/span&gt; 09:29:56 +0800   Wed, &lt;span class=&#34;m&#34;&gt;19&lt;/span&gt; Aug &lt;span class=&#34;m&#34;&gt;2020&lt;/span&gt; 09:32:07 +0800   NodeStatusUnknown   Kubelet stopped posting node status.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  DiskPressure         Unknown   Wed, &lt;span class=&#34;m&#34;&gt;19&lt;/span&gt; Aug &lt;span class=&#34;m&#34;&gt;2020&lt;/span&gt; 09:29:56 +0800   Wed, &lt;span class=&#34;m&#34;&gt;19&lt;/span&gt; Aug &lt;span class=&#34;m&#34;&gt;2020&lt;/span&gt; 09:32:07 +0800   NodeStatusUnknown   Kubelet stopped posting node status.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  PIDPressure          Unknown   Wed, &lt;span class=&#34;m&#34;&gt;19&lt;/span&gt; Aug &lt;span class=&#34;m&#34;&gt;2020&lt;/span&gt; 09:29:56 +0800   Wed, &lt;span class=&#34;m&#34;&gt;19&lt;/span&gt; Aug &lt;span class=&#34;m&#34;&gt;2020&lt;/span&gt; 09:32:07 +0800   NodeStatusUnknown   Kubelet stopped posting node status.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  Ready                Unknown   Wed, &lt;span class=&#34;m&#34;&gt;19&lt;/span&gt; Aug &lt;span class=&#34;m&#34;&gt;2020&lt;/span&gt; 09:29:56 +0800   Wed, &lt;span class=&#34;m&#34;&gt;19&lt;/span&gt; Aug &lt;span class=&#34;m&#34;&gt;2020&lt;/span&gt; 09:32:07 +0800   NodeStatusUnknown   Kubelet stopped posting node status.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;...省略...
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Events:              &amp;lt;none&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 2.查看pod状态&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# kubectl describe pod helloworld-8565c4687b-rrfmj -n test&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Name:                      helloworld-8565c4687b-rrfmj
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Namespace:                 &lt;span class=&#34;nb&#34;&gt;test&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Priority:                  &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;......
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Node-Selectors:  &amp;lt;none&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Tolerations:     node.kubernetes.io/not-ready:NoExecute &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; 300s
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;                 node.kubernetes.io/unreachable:NoExecute &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; 300s
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Events:          &amp;lt;none&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;此时pod的Tolerations 默认对于具有相应Taint的node节点容忍时间为300s，超过此时间pod将会被驱逐到其他可用node节点上。因此5分钟后node节点上所有的pod重新被调度，在此期间服务是中断的。&lt;/p&gt;
+&lt;h4 id=&#34;手动迁移&#34;&gt;手动迁移
+&lt;/h4&gt;&lt;p&gt;默认的pod迁移无法避免服务中断，那么我们在node节点停机前，我们可以手动迁移。
+为避免等待默认的5分钟，我们还可以使用cordon、drain、uncordor三个命令实现节点的主动维护。此时需要用到以下三个命令：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;cordon&lt;/code&gt;:标记节点不可调度，后续新的pod不会被调度到此节点，但是该节点上的pod可以正常对外服务；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;drain&lt;/code&gt;:驱逐节点上的pod至其他可调度节点；&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;uncordon&lt;/code&gt;:标记节点可调度
+具体操作如下：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 1.标记节点不可调度&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# kubectl cordon k8s-3-219&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;node/k8s-3-219 cordoned
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 查看节点状态，此时219被标记为不可调度&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# kubectl get node&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;NAME           STATUS                     ROLES    AGE   VERSION
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;k8s-3-217   Ready                      master   89d   v1.18.2
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;k8s-3-218   Ready                      &amp;lt;none&amp;gt;   88d   v1.18.2
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;k8s-3-219   Ready,SchedulingDisabled   &amp;lt;none&amp;gt;   88d   v1.18.2
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 2.驱逐pod&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# kubectl drain k8s-3-219 --delete-local-data --ignore-daemonsets --force&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;node/k8s-3-219 already cordoned
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;WARNING: ignoring DaemonSet-managed Pods: ingress-nginx/nginx-ingress-controller-gmzq6, kube-system/kube-flannel-ds-amd64-5gfwh, kube-system/kube-proxy-vdckk
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;evicting pod kube-system/tiller-deploy-6c65968d87-75pfm
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;evicting pod kube-system/metrics-server-7f96bbcc66-bgt7j
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;evicting pod test/helloworld-79956d95b4-nnlrq
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 参数如下：&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;--delete-local-data  删除本地数据，即使emptyDir也将删除；
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;--ignore-daemonsets  忽略DeamonSet，否则DeamonSet被删除后，仍会自动重建；
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;--force  不加force参数只会删除该node节点上的ReplicationController, ReplicaSet, DaemonSet,StatefulSet or Job，加上后所有pod都将删除；
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 3. 查看驱逐，219上的pod迁移到218上了。&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# kubectl get pod -n test -o wide&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;NAME                                   READY   STATUS        RESTARTS   AGE   IP             NODE           NOMINATED NODE   READINESS GATES
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;helloworld-79956d95b4-gg58c            0/1     Running       &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;          20s   10.244.1.165   k8s-3-218   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;helloworld-79956d95b4-nnlrq            1/1     Terminating   &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;          77m   10.244.2.215   k8s-3-219   &amp;lt;none&amp;gt;           &amp;lt;none&amp;gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;此时与默认迁移不同的是，pod会先重建再终止，此时的&lt;strong&gt;服务中断时间=重建时间+服务启动时间+readiness探针检测正常时间&lt;/strong&gt;，必须等到1/1 Running服务才会正常。因此在单副本时迁移时，服务中断是不可避免的。&lt;/p&gt;
+&lt;h4 id=&#34;平滑迁移&#34;&gt;平滑迁移
+&lt;/h4&gt;&lt;p&gt;要做到平滑迁移就需要用的pdb(PodDisruptionBudget)，即主动驱逐保护。无论是默认迁移和手动迁移，都会导致服务中断，而pdb能可以实现节点维护期间不低于一定数量的pod正常运行，从而保证服务的可用性。&lt;/p&gt;
+&lt;p&gt;在仍以helloworld为例，由于只有一个副本，因此需要保证维护期间这个副本在迁移完成后，才会终止。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;34
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;35
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;36
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;37
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;38
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;39
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;40
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;41
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;42
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;43
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;44
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;45
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;46
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;47
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;48
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;49
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;50
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;51
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;52
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 从218 驱逐到 219&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 1.标记节点不可调度&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# kubectl cordon k8s-3-218&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;node/k8s-3-218 cordoned
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 2.新建pdb&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;vim pdb-test.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;apiVersion: policy/v1beta1
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kind: PodDisruptionBudget
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;metadata:
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  name: pdb-test
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  namespace: &lt;span class=&#34;nb&#34;&gt;test&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;spec:
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  minAvailable: &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;  selector:
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;    matchLabels:
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;      app: helloworld
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 2.应用并查看状态&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# kubectl apply -f pdb-test.yaml&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# kubectl get pdb -n test&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;NAME       MIN AVAILABLE   MAX UNAVAILABLE   ALLOWED DISRUPTIONS   AGE
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;pdb-test   &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;                         N/A                          &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt;                                       7s
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 3.驱逐&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# kubectl drain k8s-3-218 --delete-local-data --ignore-daemonsets --force&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;node/k8s-3-218 already cordoned
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;WARNING: ignoring DaemonSet-managed Pods: ingress-nginx/nginx-ingress-controller-hhb6h, kube-system/kube-flannel-ds-amd64-pb4d7, kube-system/kube-proxy-rzdcj
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;evicting pod kube-system/tiller-deploy-6c65968d87-ktqmm
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;evicting pod kube-system/metrics-server-7f96bbcc66-6p6wm
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;evicting pod test/helloworld-79956d95b4-gg58c
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;error when evicting pod &lt;span class=&#34;s2&#34;&gt;&amp;#34;helloworld-79956d95b4-gg58c&amp;#34;&lt;/span&gt; &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;will retry after 5s&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;: Cannot evict pod as it would violate the pod&lt;span class=&#34;s1&#34;&gt;&amp;#39;s disruption budget.
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;evicting pod test/helloworld-79956d95b4-gg58c
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;s1&#34;&gt;error when evicting pod &amp;#34;helloworld-79956d95b4-gg58c&amp;#34; (will retry after 5s): Cannot evict pod as it would violate the pod&amp;#39;&lt;/span&gt;s disruption budget.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;pod/tiller-deploy-6c65968d87-ktqmm evicted
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;#此时由于只有一个副本，最小可用为1，则ALLOWED就为0，因此在一个副本通过pdb是不会发生驱逐的。我们需要先扩容，将副本数调整为大于1。&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 3.手动调整副本数，将replicas为2&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;kubectl edit deploy helloworld -n &lt;span class=&#34;nb&#34;&gt;test&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 再次查看pdb&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# kubectl get pdb -n test&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;NAME       MIN AVAILABLE   MAX UNAVAILABLE   ALLOWED DISRUPTIONS   AGE
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;pdb-test   &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;               N/A               &lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;                     13m
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;#此时最小可用为1 ，ALLOWED为1，此时是数量会自动计算。&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 4.驱逐&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# kubectl drain k8s-3-218 --delete-local-data --ignore-daemonsets --force&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 5.维护完毕，将node调整为可调度&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# kubectl uncordon k8s-3-218&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;本次驱逐，由于helloworld始终保持有一个pod在提供服务，因此服务是不中断的。
+最后将副本数可以调节为1并将node节点调整为可调度，维护完毕。&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;总结&lt;/strong&gt;:通过简单了解了Taint（污点）和 Toleration（容忍）作用，我们既可以通过设置tolerationSeconds来缩短等待时间，也可以自行定义匹配规则实现符合实际情况的调度规则。&lt;/p&gt;
+&lt;p&gt;另外还要注意先重建再终止和先终止再重建，在此过程中服务启动时间和探针检测时间决定你的服务中断时间。&lt;/p&gt;
+&lt;h3 id=&#34;k8s镜像拉取配置参数及优先级&#34;&gt;k8s镜像拉取配置参数及优先级
+&lt;/h3&gt;&lt;blockquote&gt;
+&lt;p&gt;参考：https://www.cnblogs.com/leojazz/p/18686403&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;在 Kubernetes（简称 K8s）中，容器镜像的更新行为主要由 imagePullPolicy 参数控制。该策略决定了 Kubernetes 在启动或重启容器时是否从镜像仓库拉取新的镜像版本。常见的镜像更新策略有三种：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;Always
+如果容器的&lt;code&gt;imagePullPolicy&lt;/code&gt;设置为 Always，每次创建 Pod 或者重启容器时，Kubelet 都会从镜像仓库拉取最新的镜像版本。这对于使用 latest 标签或者希望始终获取最新镜像的场景非常有用，但在生产环境中应谨慎使用，因为 latest 标签的镜像内容可能会随时变化，导致版本不一致或潜在的不稳定。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;建议： 在生产环境中避免直接使用 latest 标签，使用明确的版本号（如 v1.0.1）来确保一致性，并记录镜像版本历史以便于追踪和排查问题。&lt;/p&gt;
+&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;IfNotPresent（默认值）
+当&lt;code&gt;imagePullPolicy&lt;/code&gt;设置为 IfNotPresent 时，如果本地节点上已经存在该镜像，则 Kubelet 不会尝试从镜像仓库拉取镜像；仅当本地不存在该镜像时，Kubelet 才会去远程仓库拉取镜像。通常，使用带有明确版本标签（如 v1.0）的镜像时，推荐使用此策略，以避免不必要的镜像拉取。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;注意： 默认情况下，如果镜像标签是 latest，imagePullPolicy 会自动设置为 Always；如果是版本号标签（如 v1.0），则默认使用 IfNotPresent。&lt;/p&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;Never
+如果&lt;code&gt;imagePullPolicy&lt;/code&gt;设置为 Never，无论本地是否存在该镜像，Kubelet 都不会尝试从镜像仓库拉取镜像，而是始终使用本地已有的镜像。这种策略适用于不希望自动升级镜像版本，且希望始终使用特定版本的场景。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;更新应用镜像的常见方法
+在 Kubernetes 中，更新应用镜像的常见方法是通过修改 Deployment、StatefulSet 等控制器中定义的 Pod 模板内的镜像版本，然后执行 kubectl apply 命令将更改推送到集群，触发滚动更新。&lt;/p&gt;
+&lt;p&gt;滚动更新的过程中，Kubernetes 会逐步替换旧的容器实例，确保服务的持续可用性。您可以使用以下命令来更新镜像版本：&lt;/p&gt;
+&lt;p&gt;示例：更新 Deployment 中的镜像
+假设我们有一个名为 example-deployment 的 Deployment，其中定义了一个容器镜像 myapp:v1.0。我们将镜像版本更新为 myapp:v2.0，并通过 kubectl apply 命令触发更新。&lt;/p&gt;
+&lt;p&gt;修改 Deployment 配置文件 deployment.yaml 中的镜像版本：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;18
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nt&#34;&gt;apiVersion&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;apps/v1&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;kind&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;Deployment&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;metadata&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;example-deployment&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;&lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;spec&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;replicas&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;selector&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;matchLabels&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;      &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;app&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;example&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;template&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;metadata&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;      &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;labels&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;        &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;app&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;example&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;spec&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;      &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;containers&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;      &lt;/span&gt;- &lt;span class=&#34;nt&#34;&gt;name&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;example-container&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;        &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;image&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;myapp:v2.0 &lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;c&#34;&gt;# 修改为新的镜像版本&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;        &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;imagePullPolicy&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;l&#34;&gt;IfNotPresent&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;执行 kubectl apply 命令将变更推送到集群：
+kubectl apply -f deployment.yaml
+在执行该命令后，Kubernetes 会根据定义的镜像更新策略（例如，imagePullPolicy: IfNotPresent）决定是否从仓库拉取新的镜像，并按滚动更新的方式逐步替换旧版本的容器实例。&lt;/p&gt;
+&lt;p&gt;滚动更新控制
+在滚动更新过程中，您还可以通过以下参数控制更新过程的行为：&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;maxUnavailable&lt;/code&gt;：定义更新过程中允许不可用的最大 Pod 数量，控制更新期间服务的最小可用性。&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;maxSurge&lt;/code&gt;：定义在更新过程中可以超出期望副本数的最大 Pod 数量，帮助提升更新的速度。
+合理设置这两个参数可以在保证服务可用性的同时加速或控制更新过程。例如：&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nt&#34;&gt;spec&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;replicas&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;m&#34;&gt;3&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;strategy&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;    &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;rollingUpdate&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;      &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;maxUnavailable&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;  &lt;/span&gt;&lt;span class=&#34;c&#34;&gt;# 最多允许 1 个 Pod 不可用&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;w&#34;&gt;      &lt;/span&gt;&lt;span class=&#34;nt&#34;&gt;maxSurge&lt;/span&gt;&lt;span class=&#34;p&#34;&gt;:&lt;/span&gt;&lt;span class=&#34;w&#34;&gt; &lt;/span&gt;&lt;span class=&#34;m&#34;&gt;1&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;        &lt;/span&gt;&lt;span class=&#34;c&#34;&gt;# 可以增加 1 个 Pod 以加速更新&lt;/span&gt;&lt;span class=&#34;w&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;通过设置这些参数，您可以精细控制容器的滚动更新行为，以平衡服务可用性和更新速度。&lt;/p&gt;
+&lt;p&gt;这种修订版本提供了更为清晰的策略解释、更新的实践方法和对滚动更新的详细控制，适用于生产环境中的实际操作。&lt;/p&gt;
+&lt;h3 id=&#34;k8s镜像仓库&#34;&gt;k8s镜像仓库
+&lt;/h3&gt;&lt;p&gt;k8s镜像仓库分为远程仓库和本地仓库。本地仓库就是存储在本机的镜像文件，可以通过工具(如Docker Registry、Harbor)搭建，用于管理和分发镜像；&lt;/p&gt;
+&lt;p&gt;由于 Kubernetes 使用的是容器运行时(如 containerd),直接在 Docker 中构建的镜像无法直接被 Kubernetes 使用。需要将镜像导入到对应的容器运行时中。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# containerd：使用 ctr 工具导入镜像&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;ctr -n k8s.io images import my-image.tar
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# CRI-O：使用 skopeo 或 crictl 工具导入镜像&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;crictl load my-image.tar
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol&gt;
+&lt;li&gt;Kubernetes 较新版本（1.24+）已移除对 Docker 的支持，转为使用 containerd 或 CRI-O。&lt;/li&gt;
+&lt;li&gt;不同运行时的镜像存储路径如下：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;ul&gt;
+&lt;li&gt;Docker：&lt;code&gt;/var/lib/docker&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;containerd：&lt;code&gt;/var/lib/containerd&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;CRI-O：&lt;code&gt;/var/lib/containers&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ol start=&#34;3&#34;&gt;
+&lt;li&gt;如果需要使用本地镜像，需根据运行时类型将镜像导入到对应的存储系统中，例如使用 ctr 或 crictl。
+Kubernetes 配置文件中需设置 imagePullPolicy 为 Never，并确保所有节点都加载了本地镜像。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;&lt;strong&gt;远程仓库&lt;/strong&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;公共镜像仓库:
+这些仓库通常是开放和免费的，供开发者和用户共享或下载镜像。&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://hub.docker.com&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Docker Hub&lt;/a&gt;:Docker 官方提供的公共镜像仓库，默认与 Docker CLI 配合使用。&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://gcr.io&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Google Container Registry (GCR)&lt;/a&gt;:Google 提供的镜像仓库(k8s1.24版本前的默认仓库)，适合与 Google Cloud Platform (GCP) 集成。k8s1.24后的默认仓库：https://registry.k8s.io&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://ghcr.io&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;GitHub Container Registry (GHCR)&lt;/a&gt;:GitHub 提供的容器镜像服务，适合与 GitHub 项目结合使用。&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://quay.io&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Quay.io&lt;/a&gt;:Red Hat 提供的镜像仓库，支持高级功能和企业用途。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;私有镜像仓库:
+为了安全性和隐私原因，很多企业会搭建自己的私有镜像仓库。&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://goharbor.io&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Harbor&lt;/a&gt;:一个开源的企业级私有镜像仓库，支持镜像管理、访问控制和漏洞扫描。&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://jfrog.com/artifactory&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Artifactory&lt;/a&gt;:JFrog 提供的企业级解决方案，支持多种包管理器，包括 Docker 镜像。&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://github.com/docker/distribution&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;自建私有仓库&lt;/a&gt;:使用 Docker Registry 开源项目搭建的简单私有仓库。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;云厂商提供的镜像仓库:
+各大云厂商为其云服务提供了专属的容器镜像仓库，方便与云平台集成。&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://aws.amazon.com/ecr&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Amazon Elastic Container Registry (ECR)&lt;/a&gt;:AWS 提供的镜像仓库，深度集成 AWS 生态。&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://azure.microsoft.com/en-us/services/container-registry/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Azure Container Registry (ACR)&lt;/a&gt;:Azure 提供的镜像仓库，支持与 Azure     Kubernetes 服务无缝集成。&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.aliyun.com/product/acr&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Alibaba Cloud Container Registry (ACR)&lt;/a&gt;:阿里云提供的镜像服务，支持国内加速访问和与阿里云服务集 成。&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://cloud.tencent.com/product/tcr&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Tencent Container Registry (TCR)&lt;/a&gt;:腾讯云提供的镜像仓库，适合国内用户使用。&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://www.huaweicloud.com/intl/en-us/product/swr.html&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Huawei Cloud SWR (SoftWare Repository for Container)&lt;/a&gt;:华为云提供的容器镜像服务，支持企业级容器管理。&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;国内公共镜像加速器
+由于国内网络环境的限制，许多镜像从国外仓库拉取较慢，因此国内厂商提供了一些公共镜像加速器。&lt;/p&gt;
+&lt;p&gt;阿里云容器镜像服务加速器:https://cr.console.aliyun.com&lt;/p&gt;
+&lt;p&gt;腾讯云容器镜像服务加速器：https://cloud.tencent.com/document/product/457/35996&lt;/p&gt;
+&lt;p&gt;华为云容器镜像加速器：https://www.huaweicloud.com/product/swr.html&lt;/p&gt;
+&lt;p&gt;网易云加速器：https://www.163yun.com/product/container&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;监控&#34;&gt;监控
+&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;参考：https://flashcat.cloud/blog/ops-monitor/&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h2 id=&#34;nginx&#34;&gt;nginx
+&lt;/h2&gt;</description>
+        </item>
+        
+    </channel>
+</rss>

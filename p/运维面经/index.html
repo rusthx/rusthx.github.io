@@ -1,0 +1,1322 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="2025/01/13 腾讯音乐运维一面\nLinux Linux启动顺序 BIOS/UEFI阶段 BIOS(Basic Input Output System)：基本输入输出系统。它是一组固化到计算机内主板上一个daoROM芯片上的程序，它保存着计算机最重要的基本输入输出的程序、系统设置信息、开机后自检程序和系统自启动程序。 其主要功能是为计算机提供最底层的、最直接的硬件设置和控制。BIOS应该是连接软件程序与硬件设备的一座&quot;桥梁&quot;，负责解决硬件的即时要求。简单地说，BIOS就是一个加载在计算机主板上最基础的一段程序，负责最基础的硬件控制和设置。\n">
+<title>运维面经</title>
+
+<link rel='canonical' href='https://rusthx.github.io/p/%E8%BF%90%E7%BB%B4%E9%9D%A2%E7%BB%8F/'>
+
+<link rel="stylesheet" href="/scss/style.min.e0818f74a5cc5a3fb725aa5bbfa98f6567cf07f85ea0aa40f2d2d819bb19bc41.css"><meta property='og:title' content="运维面经">
+<meta property='og:description' content="2025/01/13 腾讯音乐运维一面\nLinux Linux启动顺序 BIOS/UEFI阶段 BIOS(Basic Input Output System)：基本输入输出系统。它是一组固化到计算机内主板上一个daoROM芯片上的程序，它保存着计算机最重要的基本输入输出的程序、系统设置信息、开机后自检程序和系统自启动程序。 其主要功能是为计算机提供最底层的、最直接的硬件设置和控制。BIOS应该是连接软件程序与硬件设备的一座&quot;桥梁&quot;，负责解决硬件的即时要求。简单地说，BIOS就是一个加载在计算机主板上最基础的一段程序，负责最基础的硬件控制和设置。\n">
+<meta property='og:url' content='https://rusthx.github.io/p/%E8%BF%90%E7%BB%B4%E9%9D%A2%E7%BB%8F/'>
+<meta property='og:site_name' content='rustWood'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='运维' /><meta property='article:published_time' content='2025-01-13T14:58:48&#43;08:00'/><meta property='article:modified_time' content='2025-01-13T14:58:48&#43;08:00'/>
+<meta name="twitter:title" content="运维面经">
+<meta name="twitter:description" content="2025/01/13 腾讯音乐运维一面\nLinux Linux启动顺序 BIOS/UEFI阶段 BIOS(Basic Input Output System)：基本输入输出系统。它是一组固化到计算机内主板上一个daoROM芯片上的程序，它保存着计算机最重要的基本输入输出的程序、系统设置信息、开机后自检程序和系统自启动程序。 其主要功能是为计算机提供最底层的、最直接的硬件设置和控制。BIOS应该是连接软件程序与硬件设备的一座&quot;桥梁&quot;，负责解决硬件的即时要求。简单地说，BIOS就是一个加载在计算机主板上最基础的一段程序，负责最基础的硬件控制和设置。\n">        
+        
+        <link rel="stylesheet" href="/highlight/styles/github.css">
+         
+        <link rel="stylesheet" href="/highlight/styles/github-dark.css" media="(prefers-color-scheme: dark)">
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu290319576234017586.png" width="300"
+                            height="302" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">rustWood</a></h1>
+            <h2 class="site-description">江上何人初见月，江月何年初照人</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/rusthx'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://www.cnblogs.com/rustWood'
+                        target="_blank"
+                        title="博客园"
+                        rel="me"
+                    >
+                        
+                        
+                            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1725698578146" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1508" width="24" height="24" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M478.71488 33.88416c-75.76064 36.6592-123.11552 117.31456-114.82624 194.82624 8.28416 67.03616 43.8016 120.45824 104.17152 156.06784 187.03872 109.98272 419.05664-79.60576 316.06784-258.71872C722.57536 20.26496 591.17568-19.53792 478.71488 33.88416z m187.03872 67.03616c85.23264 52.37248 80.49664 188.53888-9.472 229.39136-104.17152 48.18432-213.07904-15.71328-213.07904-125.696 0-41.89696 5.91872-54.46656 40.24832-84.84352s48.5376-35.61472 98.2528-35.61472c33.14688 0.00512 68.6592 7.33696 84.04992 16.76288z" fill="#707070" p-id="1509"></path><path d="M797.15328 340.7872c-63.9232 115.22048-89.96864 148.736-164.54656 217.87136-75.76064 71.22432-105.35424 90.08128-209.53088 135.12192-67.47648 29.32736-132.5824 50.2784-147.97312 48.18432-22.49216-2.09408-36.69504-25.1392-88.78592-139.31008C120.02816 458.10176 53.73952 333.45536 25.32864 298.89024c-16.57344-19.90144-17.75616-18.85184-11.83744 10.47552 27.22304 156.06784 119.56224 465.06496 147.97312 494.39232 15.39072 17.80736 295.94624 18.85184 456.93952 2.09408 190.58688-19.90144 170.46528-27.23328-121.92768-47.13472l-106.54208-7.33184 102.9888-24.0896c114.82624-27.23328 177.56672-52.37248 261.61664-105.79456 31.96416-19.90144 62.74048-34.56512 69.84192-32.47104 5.91872 2.09408 49.72032 98.46272 94.70464 212.6336 46.16704 115.22048 86.41536 212.6336 91.15136 216.82176 11.83744 11.52-8.28416-233.57952-28.41088-358.22592-10.65472-60.75392-39.0656-187.4944-63.9232-282.81344l-44.98432-172.83072-75.76576 136.17152z" fill="#707070" p-id="1510"></path></svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#linux">Linux</a>
+      <ol>
+        <li><a href="#linux启动顺序">Linux启动顺序</a>
+          <ol>
+            <li><a href="#biosuefi阶段">BIOS/UEFI阶段</a></li>
+            <li><a href="#boot-loader阶段">Boot Loader阶段</a></li>
+            <li><a href="#kernel初始化阶段">Kernel初始化阶段</a></li>
+            <li><a href="#init进程systemd阶段">Init进程(systemd)阶段</a></li>
+            <li><a href="#用户空间阶段">用户空间阶段</a></li>
+          </ol>
+        </li>
+        <li><a href="#linux开机自启动">Linux开机自启动</a>
+          <ol>
+            <li><a href="#系统级别">系统级别</a></li>
+            <li><a href="#用户级别">用户级别</a></li>
+            <li><a href="#桌面级别">桌面级别</a></li>
+          </ol>
+        </li>
+      </ol>
+    </li>
+    <li><a href="#数据库">数据库</a>
+      <ol>
+        <li><a href="#mysql主从复制配置过程宕机恢复">MySQL主从复制配置过程，宕机恢复</a>
+          <ol>
+            <li><a href="#主从复制原理">主从复制原理：</a></li>
+            <li><a href="#主从复制配置过程">主从复制配置过程</a></li>
+          </ol>
+        </li>
+        <li><a href="#mysql-binlog格式">MySQL binlog格式</a></li>
+        <li><a href="#mysql-备份逻辑备份与物理备份">MySQL 备份，逻辑备份与物理备份</a></li>
+      </ol>
+    </li>
+    <li><a href="#容器化">容器化</a>
+      <ol>
+        <li><a href="#k8s移动pod">k8s移动pod</a>
+          <ol>
+            <li><a href="#默认迁移">默认迁移</a></li>
+            <li><a href="#手动迁移">手动迁移</a></li>
+            <li><a href="#平滑迁移">平滑迁移</a></li>
+          </ol>
+        </li>
+        <li><a href="#k8s镜像拉取配置参数及优先级">k8s镜像拉取配置参数及优先级</a></li>
+        <li><a href="#k8s镜像仓库">k8s镜像仓库</a></li>
+      </ol>
+    </li>
+    <li><a href="#监控">监控</a></li>
+    <li><a href="#nginx">nginx</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/%E8%BF%90%E7%BB%B4%E9%9D%A2%E7%BB%8F/">运维面经</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-01-13</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>2025/01/13 腾讯音乐运维一面</p>
+<h2 id="linux">Linux
+</h2><h3 id="linux启动顺序">Linux启动顺序
+</h3><h4 id="biosuefi阶段">BIOS/UEFI阶段
+</h4><blockquote>
+<p>BIOS(Basic Input Output System)：基本输入输出系统。它是一组固化到计算机内主板上一个daoROM芯片上的程序，它保存着计算机最重要的基本输入输出的程序、系统设置信息、开机后自检程序和系统自启动程序。 其主要功能是为计算机提供最底层的、最直接的硬件设置和控制。BIOS应该是连接软件程序与硬件设备的一座&quot;桥梁&quot;，负责解决硬件的即时要求。简单地说，BIOS就是一个加载在计算机主板上最基础的一段程序，负责最基础的硬件控制和设置。</p>
+</blockquote>
+<blockquote>
+<p>MBR(Master Boot Record):主引导程序，是分区计算器大容量存储设备（如固定硬盘或移动硬盘）的第一个块中的一种引导扇区。</p>
+</blockquote>
+<p>加载位于主板ROM中地址<code>0xFFFF0</code>的BIOS信息，主要包括系统BIOS和显卡BIOS；进行POST自检，检查CPU、内存、主板等硬件；建立终端向量表和中断服务程序；检测可引导设备；加载MBR(主引导程序)的前446字节到内存<code>0x7c00</code>处。</p>
+<p>注：老电脑用MBR，较新的电脑，2017年之后的系统如Ubuntu17.04都默认使用GPT+UEFI组合。UEFI最大的好处就是启动方便，有图形化界面。</p>
+<p>目前主板多设置成三种启动模式，即：Auto、UEFI、Legacy。在设置启动时，带有UEFI的BIOS还提供了启动选项供大家选择以何种方式启，各种模式含义如下：</p>
+<p>Auto(自动)/Both：自动按照启动设备列表中的顺序启动，优先采用UEFI方式；</p>
+<p>UEFI only(仅UEFI)：只选择具备UEFI启动条件的设备启动；</p>
+<p>Legacy only(仅Legacy)：只选择具备Legacy启动条件的设备启动。</p>
+<p>简单的来说uefi启动是新一代的bios，功能更加强大，而且它是以图形图像模式显示，让用户更便捷的直观操作。</p>
+<blockquote>
+<p>MBR最大支持2TB硬盘;最多支持4个主分区，或3个主分区+1个扩展分区;扩展分区可以包含多个逻辑分区;分区表只有一份，易损坏;启动代码占446字节，分区表占64字节;兼容传统BIOS系统
+GPT (GUID Partition Table)支持超过2TB的硬盘（最大18EB）;支持最多128个分区（理论上可更多）;分区表有主副两份，更安全;每个分区都有全球唯一标识符(GUID);支持更多分区类型;需要UEFI启动支持</p>
+</blockquote>
+<h4 id="boot-loader阶段">Boot Loader阶段
+</h4><p>显示内核选择菜单；加载选定的内核镜像到内存；加载initramfs到内存；然后将控制权移交给内核</p>
+<h4 id="kernel初始化阶段">Kernel初始化阶段
+</h4><p>系统读取内存映像，并进行解压缩操作。此时，屏幕一般会输出“Uncompressing Linux”的提示。当解压缩内核完成后，屏幕输出“OK, booting the kernel”。
+系统将解压后的内核放置在内存之中，并调用start_kernel()函数来启动一系列的初始化函数并初始化各种设备，完成Linux核心环境的建立。
+然后系统会初始化CPU、内存、设备驱动；挂载根文件系统；运行/sbin/init(PID 1)</p>
+<h4 id="init进程systemd阶段">Init进程(systemd)阶段
+</h4><blockquote>
+<p>Unit:systemd管理的基本单元，包括<code>service服务</code>、<code>socket进程间通信套接字</code>、<code>target启动目标（类似于运行级别）</code>、<code>mount文件系统挂载点</code>、<code>device设备文件</code>、<code>timer定时器</code>。配置文件优先级依次是：<code>/etc/systemd/system/</code> 系统管理员创建的配置，优先级最高;<code>/run/systemd/system/</code> 运行时配置文件;<code>/usr/lib/systemd/system/</code>软件包安装的默认配置。</p>
+</blockquote>
+<p>读取默认target配置文件；分析unit间依赖关系；激活系统服务；准备各类daemon进程；准备用户环境。</p>
+<p>备注：系统级自启动程序就是在这时候启动的，如通过apt安装的Mysql、Docker。</p>
+<h4 id="用户空间阶段">用户空间阶段
+</h4><p>依次读取<code>/etc/profile</code>系统环境变量、<code> ~/.bashrc</code>用户环境变量、 <code>/etc/passwd</code>用户账户信息、 <code>/etc/shadow</code>用户密码信息
+启动显示管理器，加载桌面环境，准备终端设备；等待用户登录</p>
+<p>备注：用户级自启动程序在读取<code>~/.bashrc</code>后自动执行，也就是说想要设置用户级自启动命令可以将启动命令写入到<code>~/.bashrc</code>中</p>
+<h3 id="linux开机自启动">Linux开机自启动
+</h3><p>Linux有三种级别的开机自启动：</p>
+<h4 id="系统级别">系统级别
+</h4><p>通过apt包管理器安装的包默认就是这种级别的开机自启。
+可以通过 <code>sudo systemctl enable mysql</code>来启用开机自启（<code>sudo systemctl disable mysql</code>为关闭开机自启命令）。</p>
+<p>除了包管理器，还可以自己制作service来实现，以nginx为例：</p>
+<ol>
+<li>在<code>/etc/systemd/system/</code>下创建nginx.service文件</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">cd</span> /etc/systemd/system/
+</span></span><span class="line"><span class="cl">vim nginx.service
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>写入如下内容：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>Unit<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="nv">Description</span><span class="o">=</span>nginx - high performance web server
+</span></span><span class="line"><span class="cl"><span class="nv">After</span><span class="o">=</span>nginx.service
+</span></span><span class="line"><span class="cl"><span class="o">[</span>Service<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="nv">Type</span><span class="o">=</span>forking
+</span></span><span class="line"><span class="cl"><span class="nv">ExecStart</span><span class="o">=</span>/usr/local/nginx/sbin/nginx
+</span></span><span class="line"><span class="cl"><span class="nv">ExecReload</span><span class="o">=</span>/usr/local/nginx/sbin/nginx -s reload
+</span></span><span class="line"><span class="cl"><span class="nv">ExecStop</span><span class="o">=</span>/usr/local/nginx/sbin/nginx -s stop
+</span></span><span class="line"><span class="cl"><span class="nv">Execenable</span><span class="o">=</span>/usr/local/nginx/sbin/nginx
+</span></span><span class="line"><span class="cl"><span class="o">[</span>Install<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>设置开机自启</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 设置开机启动</span>
+</span></span><span class="line"><span class="cl">systemctl <span class="nb">enable</span> nginx
+</span></span><span class="line"><span class="cl"><span class="c1"># 取消开机自启动</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#systemctl disable nginx</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 查看服务当前状态</span>
+</span></span><span class="line"><span class="cl">systemctl status nginx
+</span></span><span class="line"><span class="cl"><span class="c1"># 启动nginx服务</span>
+</span></span><span class="line"><span class="cl">systemctl start nginx
+</span></span><span class="line"><span class="cl"><span class="c1"># 停止nginx服务</span>
+</span></span><span class="line"><span class="cl">systemctl stop nginx
+</span></span><span class="line"><span class="cl"><span class="c1"># 重启nginx服务</span>
+</span></span><span class="line"><span class="cl">systemctl restart nginx
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="用户级别">用户级别
+</h4><p>将需要自启动的命令写入<code>~/.bashrc</code>中，即可实现用户级开机自启。具体操作时如果命令较为简单，比如使用<code>alias</code>给命令指定别名或者<code>ulimit -n 65536</code>修改最大打开文件句柄数（我的Ubuntu不知道为什么永久修改怎么也修改不成功，只能通过这种方式曲线救国），就可以直接把命令写到<code>~/.bashrc</code>中。如果命令比较复杂，可以考虑将命令打包成脚本，然后在<code>~/.bashrc</code>中执行启动脚本的命令。</p>
+<h4 id="桌面级别">桌面级别
+</h4><p>大体步骤类似系统级自启动：切换到<code>/etc/xdg/autostart/</code>目录，创建后缀为desktop的文件，编辑并保存。重启生效。
+<img src="/p/%E8%BF%90%E7%BB%B4%E9%9D%A2%E7%BB%8F/1.png"
+	width="1243"
+	height="829"
+	srcset="/p/%E8%BF%90%E7%BB%B4%E9%9D%A2%E7%BB%8F/1_hu2426779653841869099.png 480w, /p/%E8%BF%90%E7%BB%B4%E9%9D%A2%E7%BB%8F/1_hu8478774365589774668.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="149"
+		data-flex-basis="359px"
+	
+></p>
+<h2 id="数据库">数据库
+</h2><h3 id="mysql主从复制配置过程宕机恢复">MySQL主从复制配置过程，宕机恢复
+</h3><blockquote>
+<p>参考资料：https://xiaolincoding.com/mysql/log/how_update.html#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%98%AF%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0</p>
+</blockquote>
+<p>主从复制可以用来做数据库的实时备份，保证数据的完整性；也可以做读写分离，提升数据库系统整体的读写性能。</p>
+<h4 id="主从复制原理">主从复制原理：
+</h4><p><img src="/p/%E8%BF%90%E7%BB%B4%E9%9D%A2%E7%BB%8F/2.png"
+	width="960"
+	height="405"
+	srcset="/p/%E8%BF%90%E7%BB%B4%E9%9D%A2%E7%BB%8F/2_hu12276740477023013187.png 480w, /p/%E8%BF%90%E7%BB%B4%E9%9D%A2%E7%BB%8F/2_hu11267129864193341543.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="237"
+		data-flex-basis="568px"
+	
+>
+MySQL集群的主从复制过程梳理成3个阶段：</p>
+<ul>
+<li>写入 Binlog：主库写 binlog 日志，提交事务，并更新本地存储数据。</li>
+<li>同步 Binlog：把 binlog 复制到所有从库上，每个从库把 binlog 写到暂存日志中。</li>
+<li>回放 Binlog：回放 binlog，并更新存储引l擎中的数据。
+具体详细过程如下：</li>
+</ul>
+<ol>
+<li>MySQL 主库在收到客户端提交事务的请求之后，会先写入binlog，再提交事务，更新存储引擎中的数
+据，事务提交完成后，返回给客户端&quot;操作成功&quot;的响应。</li>
+<li>从库会创建一个专门的 I/O 线程，连接主库的 log dump 线程，来接收主库的 binlog 日志，再把
+binlog 信息写入 relay log 的中继日志里，再返回给主库&quot;复制成功&quot;的响应。</li>
+<li>从库会创建一个用于回放 binlog 的线程，去读 relay log 中继日志，然后回放 binlog 更新存储引擎中
+的数据，最终实现主从的数据一致性。
+在完成主从复制之后，你就可以在写数据时只写主库，在读数据时只读从库，这样即使写请求会锁表或者
+锁记录，也不会影响读请求的执行。
+<img src="/p/%E8%BF%90%E7%BB%B4%E9%9D%A2%E7%BB%8F/3.png"
+	width="612"
+	height="607"
+	srcset="/p/%E8%BF%90%E7%BB%B4%E9%9D%A2%E7%BB%8F/3_hu14524736388878011446.png 480w, /p/%E8%BF%90%E7%BB%B4%E9%9D%A2%E7%BB%8F/3_hu12211041723728468306.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="100"
+		data-flex-basis="241px"
+	
+></li>
+</ol>
+<h4 id="主从复制配置过程">主从复制配置过程
+</h4><blockquote>
+<p>参考资料：https://www.cnblogs.com/nulige/articles/9273537.html
+两台机器都操作，确保 server-id 要不同，通常主ID要小于从ID。一定注意。</p>
+</blockquote>
+<h3 id="mysql-binlog格式">MySQL binlog格式
+</h3><p>binlog 是 MySQL 中的一种重要日志类型，用于记录所有的DDL和DML操作（不包括数据查询语句）。它主要用于数据恢复和主从复制。Binlog有三种模式：STATEMENT(语句模式)、ROW(行模式) 和 MIXED(混合模式)</p>
+<p><strong>STATEMENT模式</strong>：基于SQL语句的复制（Statement-Based Replication, SBR），每一条修改数据的SQL语句都会记录到binlog中</p>
+<ul>
+<li>优点：减少日志量：不需要记录每一行数据的变化，减少了磁盘IO，提高了性能</li>
+<li>缺点：数据不一致：在某些情况下，主从库的数据可能会不一致。例如，使用 uuid() 函数时，每次执行都会生成不同的值；自增字段在执行时可能得到错误的值</li>
+</ul>
+<p><strong>ROW模式</strong>：基于行的复制（Row-Based Replication, RBR），不记录SQL语句的上下文信息，仅记录哪条数据被修改了</p>
+<ul>
+<li>优点：准确复制：不会出现存储过程、函数或触发器调用无法正确复制的问题</li>
+<li>缺点：日志量大：尤其是在执行批量更新或删除操作时，会产生大量日志，影响IO性能</li>
+</ul>
+<p><strong>MIXED模式</strong>：是前两种模式的混合体（Mixed-Based Replication, MBR），MySQL会根据具体的SQL语句选择使用STATEMENT或ROW模式。
+一般情况下，使用STATEMENT模式保存binlog，对于无法准确复制的操作则使用ROW模式</p>
+<p><strong>配置和查看Binlog</strong></p>
+<p>要开启和配置Binlog，可以修改MySQL的配置文件 my.cnf</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>mysqld<span class="o">]</span>
+</span></span><span class="line"><span class="cl">log-bin<span class="o">=</span>ON
+</span></span><span class="line"><span class="cl"><span class="nv">binlog_format</span><span class="o">=</span>mixed
+</span></span><span class="line"><span class="cl">server-id<span class="o">=</span><span class="m">1</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>查看Binlog日志可以使用 mysqlbinlog 工具</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">mysqlbinlog mysql-bin.000001
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>或者使用SQL命令查看事件：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SHOW</span><span class="w"> </span><span class="n">BINLOG</span><span class="w"> </span><span class="n">EVENTS</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="s1">&#39;mysql-bin.000001&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>通过合理选择和配置Binlog模式，可以有效提高MySQL的性能和数据一致性</p>
+<h3 id="mysql-备份逻辑备份与物理备份">MySQL 备份，逻辑备份与物理备份
+</h3><p>MySQL的物理备份和逻辑备份的主要区别在于备份文件的形式和备份恢复的灵活性。
+物理备份直接复制数据库的二进制文件(binlog)，备份文件较大，恢复时只能在相同架构的MySQL服务器上使用。
+逻辑备份将数据库导出为SQL语句的形式，备份文件较小，恢复时可跨平台使用，也可以进行数据的修改和筛选。</p>
+<h2 id="容器化">容器化
+</h2><h3 id="k8s移动pod">k8s移动pod
+</h3><blockquote>
+<p>参考资料：https://blog.csdn.net/yanggd1987/article/details/108139436</p>
+</blockquote>
+<p>k8s集群中的node节点要升级内存，以应对服务迁入、pod扩缩容导致的资源短缺，需要对node节点进行停机维护。此时就需要对pod进行迁移。</p>
+<h4 id="默认迁移">默认迁移
+</h4><p>当node节点关机后，k8s集群并没有立刻发生任何自动迁移动作，如果该node节点上的副本数为1，则会出现服务中断的情况。其实事实并非如此，k8s在等待5分钟后，会自动将停机node节点上的pod自动迁移到其他node节点上。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 1.模拟node节点停机，停止kubelet</span>
+</span></span><span class="line"><span class="cl">systemctl stop kubelet
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 2.集群状态</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 此时停机的node点处于NotReady状态</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl get node</span>
+</span></span><span class="line"><span class="cl">NAME                STATUS     ROLES     AGE   VERSION
+</span></span><span class="line"><span class="cl">k8s-3-217   Ready        master     88d   v1.18.2
+</span></span><span class="line"><span class="cl">k8s-3-218   NotReady   &lt;none&gt;   88d   v1.18.2
+</span></span><span class="line"><span class="cl">k8s-3-219   Ready        &lt;none&gt;   88d   v1.18.2
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 3.监控pod状态，大约等待5分钟左右，集群开始有动作</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl get pod -n test -o wide -n test -w</span>
+</span></span><span class="line"><span class="cl">NAME                                   READY   STATUS    RESTARTS   AGE   IP             NODE           NOMINATED NODE   READINESS GATES
+</span></span><span class="line"><span class="cl">helloworld-79956d95b4-q7jjg            1/1     Running   <span class="m">0</span>          19h   10.244.1.154   k8s-3-218   &lt;none&gt;           &lt;none&gt;
+</span></span><span class="line"><span class="cl">helloworld-79956d95b4-q7jjg            1/1     Running   <span class="m">0</span>          19h   10.244.1.154   k8s-3-218   &lt;none&gt;           &lt;none&gt;
+</span></span><span class="line"><span class="cl"><span class="c1"># 5分钟后，pod终止并进行重建</span>
+</span></span><span class="line"><span class="cl">helloworld-79956d95b4-q7jjg            1/1     Terminating   <span class="m">0</span>          19h   10.244.1.154   k8s-3-218   &lt;none&gt;           &lt;none&gt;
+</span></span><span class="line"><span class="cl">helloworld-79956d95b4-nnlrq            0/1     Pending       <span class="m">0</span>          0s    &lt;none&gt;         &lt;none&gt;         &lt;none&gt;           &lt;none&gt;
+</span></span><span class="line"><span class="cl">helloworld-79956d95b4-nnlrq            0/1     Pending       <span class="m">0</span>          0s    &lt;none&gt;         k8s-3-219   &lt;none&gt;           &lt;none&gt;
+</span></span><span class="line"><span class="cl">helloworld-79956d95b4-nnlrq            0/1     ContainerCreating   <span class="m">0</span>          1s    &lt;none&gt;         k8s-3-219   &lt;none&gt;           &lt;none&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">helloworld-79956d95b4-nnlrq            0/1     Running             <span class="m">0</span>          3s    10.244.2.215   k8s-3-219   &lt;none&gt;           &lt;none&gt;
+</span></span><span class="line"><span class="cl">helloworld-79956d95b4-nnlrq            1/1     Running             <span class="m">0</span>          66s   10.244.2.215   k8s-3-219   &lt;none&gt;           &lt;none&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 4.访问测试：在pod重新迁移到其他node节点时，服务是不可用的。</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># curl -x 192.168.3.219:80 hello.test.cn</span>
+</span></span><span class="line"><span class="cl">&lt;html&gt;
+</span></span><span class="line"><span class="cl">&lt;head&gt;&lt;title&gt;503 Service Temporarily Unavailable&lt;/title&gt;&lt;/head&gt;
+</span></span><span class="line"><span class="cl">&lt;body&gt;
+</span></span><span class="line"><span class="cl">&lt;center&gt;&lt;h1&gt;503 Service Temporarily Unavailable&lt;/h1&gt;&lt;/center&gt;
+</span></span><span class="line"><span class="cl">&lt;hr&gt;&lt;center&gt;nginx/1.17.8&lt;/center&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 5.迁移完毕：服务正常访问</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># curl -x 192.168.3.219:80 hello.test.cn</span>
+</span></span><span class="line"><span class="cl">Hello,world!
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>从以上过程看出，停机node节点上的pod在5分钟后先终止再重建，直到pod在新节点启动并由readiness探针检测正常后并处于1\1 Running状态才可以正式对外提供服务。因此<strong>服务中断时间=停机等待5分钟时间+重建时间+服务启动时间+readiness探针检测正常时间。</strong></p>
+<p>为什么pod在5分钟后开始迁移呢?
+此时需要涉及到k8s中的Taint（污点）和 Toleration（容忍），这是从Kubernetes 1.6开始提供的高级调度功能。Taint和Toleration相互配合，可以避免pod被分配到不合适的节点上。每个节点上都可以应用一个或多个Taint，这表示对于那些不能容忍Taint的pod，是不会被该节点接受的。如果将Toleration应用于pod上，则表示这些pod可以（但不要求）被调度到具有匹配Taint的节点上。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 1.查看停止服务节点的状态</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubelet停止后，node节点自动添加了Taints；</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl describe node k8s-3-218</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Name:               k8s-3-218
+</span></span><span class="line"><span class="cl">Roles:              &lt;none&gt;
+</span></span><span class="line"><span class="cl">CreationTimestamp:  Fri, <span class="m">22</span> May <span class="m">2020</span> 11:36:16 +0800
+</span></span><span class="line"><span class="cl">Taints:             node.kubernetes.io/unreachable:NoExecute
+</span></span><span class="line"><span class="cl">                    node.kubernetes.io/unreachable:NoSchedule
+</span></span><span class="line"><span class="cl">Unschedulable:      <span class="nb">false</span>
+</span></span><span class="line"><span class="cl">Lease:
+</span></span><span class="line"><span class="cl">  HolderIdentity:  k8s-3-218
+</span></span><span class="line"><span class="cl">  AcquireTime:     &lt;unset&gt;
+</span></span><span class="line"><span class="cl">  RenewTime:       Wed, <span class="m">19</span> Aug <span class="m">2020</span> 09:31:22 +0800
+</span></span><span class="line"><span class="cl">Conditions:
+</span></span><span class="line"><span class="cl">  Type                 Status    LastHeartbeatTime                 LastTransitionTime                Reason              Message
+</span></span><span class="line"><span class="cl">  ----                 ------    -----------------                 ------------------                ------              -------
+</span></span><span class="line"><span class="cl">  NetworkUnavailable   False     Tue, <span class="m">18</span> Aug <span class="m">2020</span> 09:07:59 +0800   Tue, <span class="m">18</span> Aug <span class="m">2020</span> 09:07:59 +0800   FlannelIsUp         Flannel is running on this node
+</span></span><span class="line"><span class="cl">  MemoryPressure       Unknown   Wed, <span class="m">19</span> Aug <span class="m">2020</span> 09:29:56 +0800   Wed, <span class="m">19</span> Aug <span class="m">2020</span> 09:32:07 +0800   NodeStatusUnknown   Kubelet stopped posting node status.
+</span></span><span class="line"><span class="cl">  DiskPressure         Unknown   Wed, <span class="m">19</span> Aug <span class="m">2020</span> 09:29:56 +0800   Wed, <span class="m">19</span> Aug <span class="m">2020</span> 09:32:07 +0800   NodeStatusUnknown   Kubelet stopped posting node status.
+</span></span><span class="line"><span class="cl">  PIDPressure          Unknown   Wed, <span class="m">19</span> Aug <span class="m">2020</span> 09:29:56 +0800   Wed, <span class="m">19</span> Aug <span class="m">2020</span> 09:32:07 +0800   NodeStatusUnknown   Kubelet stopped posting node status.
+</span></span><span class="line"><span class="cl">  Ready                Unknown   Wed, <span class="m">19</span> Aug <span class="m">2020</span> 09:29:56 +0800   Wed, <span class="m">19</span> Aug <span class="m">2020</span> 09:32:07 +0800   NodeStatusUnknown   Kubelet stopped posting node status.
+</span></span><span class="line"><span class="cl">...省略...
+</span></span><span class="line"><span class="cl">Events:              &lt;none&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 2.查看pod状态</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl describe pod helloworld-8565c4687b-rrfmj -n test</span>
+</span></span><span class="line"><span class="cl">Name:                      helloworld-8565c4687b-rrfmj
+</span></span><span class="line"><span class="cl">Namespace:                 <span class="nb">test</span>
+</span></span><span class="line"><span class="cl">Priority:                  <span class="m">0</span>
+</span></span><span class="line"><span class="cl">......
+</span></span><span class="line"><span class="cl">Node-Selectors:  &lt;none&gt;
+</span></span><span class="line"><span class="cl">Tolerations:     node.kubernetes.io/not-ready:NoExecute <span class="k">for</span> 300s
+</span></span><span class="line"><span class="cl">                 node.kubernetes.io/unreachable:NoExecute <span class="k">for</span> 300s
+</span></span><span class="line"><span class="cl">Events:          &lt;none&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>此时pod的Tolerations 默认对于具有相应Taint的node节点容忍时间为300s，超过此时间pod将会被驱逐到其他可用node节点上。因此5分钟后node节点上所有的pod重新被调度，在此期间服务是中断的。</p>
+<h4 id="手动迁移">手动迁移
+</h4><p>默认的pod迁移无法避免服务中断，那么我们在node节点停机前，我们可以手动迁移。
+为避免等待默认的5分钟，我们还可以使用cordon、drain、uncordor三个命令实现节点的主动维护。此时需要用到以下三个命令：</p>
+<ul>
+<li><code>cordon</code>:标记节点不可调度，后续新的pod不会被调度到此节点，但是该节点上的pod可以正常对外服务；</li>
+<li><code>drain</code>:驱逐节点上的pod至其他可调度节点；</li>
+<li><code>uncordon</code>:标记节点可调度
+具体操作如下：</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 1.标记节点不可调度</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl cordon k8s-3-219</span>
+</span></span><span class="line"><span class="cl">node/k8s-3-219 cordoned
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 查看节点状态，此时219被标记为不可调度</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl get node</span>
+</span></span><span class="line"><span class="cl">NAME           STATUS                     ROLES    AGE   VERSION
+</span></span><span class="line"><span class="cl">k8s-3-217   Ready                      master   89d   v1.18.2
+</span></span><span class="line"><span class="cl">k8s-3-218   Ready                      &lt;none&gt;   88d   v1.18.2
+</span></span><span class="line"><span class="cl">k8s-3-219   Ready,SchedulingDisabled   &lt;none&gt;   88d   v1.18.2
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 2.驱逐pod</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl drain k8s-3-219 --delete-local-data --ignore-daemonsets --force</span>
+</span></span><span class="line"><span class="cl">node/k8s-3-219 already cordoned
+</span></span><span class="line"><span class="cl">WARNING: ignoring DaemonSet-managed Pods: ingress-nginx/nginx-ingress-controller-gmzq6, kube-system/kube-flannel-ds-amd64-5gfwh, kube-system/kube-proxy-vdckk
+</span></span><span class="line"><span class="cl">evicting pod kube-system/tiller-deploy-6c65968d87-75pfm
+</span></span><span class="line"><span class="cl">evicting pod kube-system/metrics-server-7f96bbcc66-bgt7j
+</span></span><span class="line"><span class="cl">evicting pod test/helloworld-79956d95b4-nnlrq
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 参数如下：</span>
+</span></span><span class="line"><span class="cl">--delete-local-data  删除本地数据，即使emptyDir也将删除；
+</span></span><span class="line"><span class="cl">--ignore-daemonsets  忽略DeamonSet，否则DeamonSet被删除后，仍会自动重建；
+</span></span><span class="line"><span class="cl">--force  不加force参数只会删除该node节点上的ReplicationController, ReplicaSet, DaemonSet,StatefulSet or Job，加上后所有pod都将删除；
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 3. 查看驱逐，219上的pod迁移到218上了。</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl get pod -n test -o wide</span>
+</span></span><span class="line"><span class="cl">NAME                                   READY   STATUS        RESTARTS   AGE   IP             NODE           NOMINATED NODE   READINESS GATES
+</span></span><span class="line"><span class="cl">helloworld-79956d95b4-gg58c            0/1     Running       <span class="m">0</span>          20s   10.244.1.165   k8s-3-218   &lt;none&gt;           &lt;none&gt;
+</span></span><span class="line"><span class="cl">helloworld-79956d95b4-nnlrq            1/1     Terminating   <span class="m">0</span>          77m   10.244.2.215   k8s-3-219   &lt;none&gt;           &lt;none&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>此时与默认迁移不同的是，pod会先重建再终止，此时的<strong>服务中断时间=重建时间+服务启动时间+readiness探针检测正常时间</strong>，必须等到1/1 Running服务才会正常。因此在单副本时迁移时，服务中断是不可避免的。</p>
+<h4 id="平滑迁移">平滑迁移
+</h4><p>要做到平滑迁移就需要用的pdb(PodDisruptionBudget)，即主动驱逐保护。无论是默认迁移和手动迁移，都会导致服务中断，而pdb能可以实现节点维护期间不低于一定数量的pod正常运行，从而保证服务的可用性。</p>
+<p>在仍以helloworld为例，由于只有一个副本，因此需要保证维护期间这个副本在迁移完成后，才会终止。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 从218 驱逐到 219</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 1.标记节点不可调度</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl cordon k8s-3-218</span>
+</span></span><span class="line"><span class="cl">node/k8s-3-218 cordoned
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 2.新建pdb</span>
+</span></span><span class="line"><span class="cl">vim pdb-test.yaml
+</span></span><span class="line"><span class="cl">apiVersion: policy/v1beta1
+</span></span><span class="line"><span class="cl">kind: PodDisruptionBudget
+</span></span><span class="line"><span class="cl">metadata:
+</span></span><span class="line"><span class="cl">  name: pdb-test
+</span></span><span class="line"><span class="cl">  namespace: <span class="nb">test</span>
+</span></span><span class="line"><span class="cl">spec:
+</span></span><span class="line"><span class="cl">  minAvailable: <span class="m">1</span>
+</span></span><span class="line"><span class="cl">  selector:
+</span></span><span class="line"><span class="cl">    matchLabels:
+</span></span><span class="line"><span class="cl">      app: helloworld
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 2.应用并查看状态</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl apply -f pdb-test.yaml</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl get pdb -n test</span>
+</span></span><span class="line"><span class="cl">NAME       MIN AVAILABLE   MAX UNAVAILABLE   ALLOWED DISRUPTIONS   AGE
+</span></span><span class="line"><span class="cl">pdb-test   <span class="m">1</span>                         N/A                          <span class="m">0</span>                                       7s
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 3.驱逐</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl drain k8s-3-218 --delete-local-data --ignore-daemonsets --force</span>
+</span></span><span class="line"><span class="cl">node/k8s-3-218 already cordoned
+</span></span><span class="line"><span class="cl">WARNING: ignoring DaemonSet-managed Pods: ingress-nginx/nginx-ingress-controller-hhb6h, kube-system/kube-flannel-ds-amd64-pb4d7, kube-system/kube-proxy-rzdcj
+</span></span><span class="line"><span class="cl">evicting pod kube-system/tiller-deploy-6c65968d87-ktqmm
+</span></span><span class="line"><span class="cl">evicting pod kube-system/metrics-server-7f96bbcc66-6p6wm
+</span></span><span class="line"><span class="cl">evicting pod test/helloworld-79956d95b4-gg58c
+</span></span><span class="line"><span class="cl">error when evicting pod <span class="s2">&#34;helloworld-79956d95b4-gg58c&#34;</span> <span class="o">(</span>will retry after 5s<span class="o">)</span>: Cannot evict pod as it would violate the pod<span class="s1">&#39;s disruption budget.
+</span></span></span><span class="line"><span class="cl"><span class="s1">evicting pod test/helloworld-79956d95b4-gg58c
+</span></span></span><span class="line"><span class="cl"><span class="s1">error when evicting pod &#34;helloworld-79956d95b4-gg58c&#34; (will retry after 5s): Cannot evict pod as it would violate the pod&#39;</span>s disruption budget.
+</span></span><span class="line"><span class="cl">pod/tiller-deploy-6c65968d87-ktqmm evicted
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#此时由于只有一个副本，最小可用为1，则ALLOWED就为0，因此在一个副本通过pdb是不会发生驱逐的。我们需要先扩容，将副本数调整为大于1。</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 3.手动调整副本数，将replicas为2</span>
+</span></span><span class="line"><span class="cl">kubectl edit deploy helloworld -n <span class="nb">test</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 再次查看pdb</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl get pdb -n test</span>
+</span></span><span class="line"><span class="cl">NAME       MIN AVAILABLE   MAX UNAVAILABLE   ALLOWED DISRUPTIONS   AGE
+</span></span><span class="line"><span class="cl">pdb-test   <span class="m">1</span>               N/A               <span class="m">1</span>                     13m
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#此时最小可用为1 ，ALLOWED为1，此时是数量会自动计算。</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 4.驱逐</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl drain k8s-3-218 --delete-local-data --ignore-daemonsets --force</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 5.维护完毕，将node调整为可调度</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl uncordon k8s-3-218</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>本次驱逐，由于helloworld始终保持有一个pod在提供服务，因此服务是不中断的。
+最后将副本数可以调节为1并将node节点调整为可调度，维护完毕。</p>
+<p><strong>总结</strong>:通过简单了解了Taint（污点）和 Toleration（容忍）作用，我们既可以通过设置tolerationSeconds来缩短等待时间，也可以自行定义匹配规则实现符合实际情况的调度规则。</p>
+<p>另外还要注意先重建再终止和先终止再重建，在此过程中服务启动时间和探针检测时间决定你的服务中断时间。</p>
+<h3 id="k8s镜像拉取配置参数及优先级">k8s镜像拉取配置参数及优先级
+</h3><blockquote>
+<p>参考：https://www.cnblogs.com/leojazz/p/18686403</p>
+</blockquote>
+<p>在 Kubernetes（简称 K8s）中，容器镜像的更新行为主要由 imagePullPolicy 参数控制。该策略决定了 Kubernetes 在启动或重启容器时是否从镜像仓库拉取新的镜像版本。常见的镜像更新策略有三种：</p>
+<ol>
+<li>Always
+如果容器的<code>imagePullPolicy</code>设置为 Always，每次创建 Pod 或者重启容器时，Kubelet 都会从镜像仓库拉取最新的镜像版本。这对于使用 latest 标签或者希望始终获取最新镜像的场景非常有用，但在生产环境中应谨慎使用，因为 latest 标签的镜像内容可能会随时变化，导致版本不一致或潜在的不稳定。</li>
+</ol>
+<p>建议： 在生产环境中避免直接使用 latest 标签，使用明确的版本号（如 v1.0.1）来确保一致性，并记录镜像版本历史以便于追踪和排查问题。</p>
+<ol start="2">
+<li>IfNotPresent（默认值）
+当<code>imagePullPolicy</code>设置为 IfNotPresent 时，如果本地节点上已经存在该镜像，则 Kubelet 不会尝试从镜像仓库拉取镜像；仅当本地不存在该镜像时，Kubelet 才会去远程仓库拉取镜像。通常，使用带有明确版本标签（如 v1.0）的镜像时，推荐使用此策略，以避免不必要的镜像拉取。</li>
+</ol>
+<p>注意： 默认情况下，如果镜像标签是 latest，imagePullPolicy 会自动设置为 Always；如果是版本号标签（如 v1.0），则默认使用 IfNotPresent。</p>
+<ol start="3">
+<li>Never
+如果<code>imagePullPolicy</code>设置为 Never，无论本地是否存在该镜像，Kubelet 都不会尝试从镜像仓库拉取镜像，而是始终使用本地已有的镜像。这种策略适用于不希望自动升级镜像版本，且希望始终使用特定版本的场景。</li>
+</ol>
+<p>更新应用镜像的常见方法
+在 Kubernetes 中，更新应用镜像的常见方法是通过修改 Deployment、StatefulSet 等控制器中定义的 Pod 模板内的镜像版本，然后执行 kubectl apply 命令将更改推送到集群，触发滚动更新。</p>
+<p>滚动更新的过程中，Kubernetes 会逐步替换旧的容器实例，确保服务的持续可用性。您可以使用以下命令来更新镜像版本：</p>
+<p>示例：更新 Deployment 中的镜像
+假设我们有一个名为 example-deployment 的 Deployment，其中定义了一个容器镜像 myapp:v1.0。我们将镜像版本更新为 myapp:v2.0，并通过 kubectl apply 命令触发更新。</p>
+<p>修改 Deployment 配置文件 deployment.yaml 中的镜像版本：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">apps/v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Deployment</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">example-deployment</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="m">3</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">example</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">labels</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">example</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">containers</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">example-container</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">myapp:v2.0 </span><span class="w"> </span><span class="c"># 修改为新的镜像版本</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l">IfNotPresent</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>执行 kubectl apply 命令将变更推送到集群：
+kubectl apply -f deployment.yaml
+在执行该命令后，Kubernetes 会根据定义的镜像更新策略（例如，imagePullPolicy: IfNotPresent）决定是否从仓库拉取新的镜像，并按滚动更新的方式逐步替换旧版本的容器实例。</p>
+<p>滚动更新控制
+在滚动更新过程中，您还可以通过以下参数控制更新过程的行为：</p>
+<ul>
+<li><code>maxUnavailable</code>：定义更新过程中允许不可用的最大 Pod 数量，控制更新期间服务的最小可用性。</li>
+<li><code>maxSurge</code>：定义在更新过程中可以超出期望副本数的最大 Pod 数量，帮助提升更新的速度。
+合理设置这两个参数可以在保证服务可用性的同时加速或控制更新过程。例如：</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="m">3</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">strategy</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">rollingUpdate</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">maxUnavailable</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">  </span><span class="c"># 最多允许 1 个 Pod 不可用</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">maxSurge</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">        </span><span class="c"># 可以增加 1 个 Pod 以加速更新</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>通过设置这些参数，您可以精细控制容器的滚动更新行为，以平衡服务可用性和更新速度。</p>
+<p>这种修订版本提供了更为清晰的策略解释、更新的实践方法和对滚动更新的详细控制，适用于生产环境中的实际操作。</p>
+<h3 id="k8s镜像仓库">k8s镜像仓库
+</h3><p>k8s镜像仓库分为远程仓库和本地仓库。本地仓库就是存储在本机的镜像文件，可以通过工具(如Docker Registry、Harbor)搭建，用于管理和分发镜像；</p>
+<p>由于 Kubernetes 使用的是容器运行时(如 containerd),直接在 Docker 中构建的镜像无法直接被 Kubernetes 使用。需要将镜像导入到对应的容器运行时中。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># containerd：使用 ctr 工具导入镜像</span>
+</span></span><span class="line"><span class="cl">ctr -n k8s.io images import my-image.tar
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># CRI-O：使用 skopeo 或 crictl 工具导入镜像</span>
+</span></span><span class="line"><span class="cl">crictl load my-image.tar
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol>
+<li>Kubernetes 较新版本（1.24+）已移除对 Docker 的支持，转为使用 containerd 或 CRI-O。</li>
+<li>不同运行时的镜像存储路径如下：</li>
+</ol>
+<ul>
+<li>Docker：<code>/var/lib/docker</code></li>
+<li>containerd：<code>/var/lib/containerd</code></li>
+<li>CRI-O：<code>/var/lib/containers</code></li>
+</ul>
+<ol start="3">
+<li>如果需要使用本地镜像，需根据运行时类型将镜像导入到对应的存储系统中，例如使用 ctr 或 crictl。
+Kubernetes 配置文件中需设置 imagePullPolicy 为 Never，并确保所有节点都加载了本地镜像。</li>
+</ol>
+<p><strong>远程仓库</strong></p>
+<ol>
+<li>
+<p>公共镜像仓库:
+这些仓库通常是开放和免费的，供开发者和用户共享或下载镜像。</p>
+<p><a class="link" href="https://hub.docker.com"  target="_blank" rel="noopener"
+    >Docker Hub</a>:Docker 官方提供的公共镜像仓库，默认与 Docker CLI 配合使用。</p>
+<p><a class="link" href="https://gcr.io"  target="_blank" rel="noopener"
+    >Google Container Registry (GCR)</a>:Google 提供的镜像仓库(k8s1.24版本前的默认仓库)，适合与 Google Cloud Platform (GCP) 集成。k8s1.24后的默认仓库：https://registry.k8s.io</p>
+<p><a class="link" href="https://ghcr.io"  target="_blank" rel="noopener"
+    >GitHub Container Registry (GHCR)</a>:GitHub 提供的容器镜像服务，适合与 GitHub 项目结合使用。</p>
+<p><a class="link" href="https://quay.io"  target="_blank" rel="noopener"
+    >Quay.io</a>:Red Hat 提供的镜像仓库，支持高级功能和企业用途。</p>
+</li>
+<li>
+<p>私有镜像仓库:
+为了安全性和隐私原因，很多企业会搭建自己的私有镜像仓库。</p>
+<p><a class="link" href="https://goharbor.io"  target="_blank" rel="noopener"
+    >Harbor</a>:一个开源的企业级私有镜像仓库，支持镜像管理、访问控制和漏洞扫描。</p>
+<p><a class="link" href="https://jfrog.com/artifactory"  target="_blank" rel="noopener"
+    >Artifactory</a>:JFrog 提供的企业级解决方案，支持多种包管理器，包括 Docker 镜像。</p>
+<p><a class="link" href="https://github.com/docker/distribution"  target="_blank" rel="noopener"
+    >自建私有仓库</a>:使用 Docker Registry 开源项目搭建的简单私有仓库。</p>
+</li>
+<li>
+<p>云厂商提供的镜像仓库:
+各大云厂商为其云服务提供了专属的容器镜像仓库，方便与云平台集成。</p>
+<p><a class="link" href="https://aws.amazon.com/ecr"  target="_blank" rel="noopener"
+    >Amazon Elastic Container Registry (ECR)</a>:AWS 提供的镜像仓库，深度集成 AWS 生态。</p>
+<p><a class="link" href="https://azure.microsoft.com/en-us/services/container-registry/"  target="_blank" rel="noopener"
+    >Azure Container Registry (ACR)</a>:Azure 提供的镜像仓库，支持与 Azure     Kubernetes 服务无缝集成。</p>
+<p><a class="link" href="https://www.aliyun.com/product/acr"  target="_blank" rel="noopener"
+    >Alibaba Cloud Container Registry (ACR)</a>:阿里云提供的镜像服务，支持国内加速访问和与阿里云服务集 成。</p>
+<p><a class="link" href="https://cloud.tencent.com/product/tcr"  target="_blank" rel="noopener"
+    >Tencent Container Registry (TCR)</a>:腾讯云提供的镜像仓库，适合国内用户使用。</p>
+<p><a class="link" href="https://www.huaweicloud.com/intl/en-us/product/swr.html"  target="_blank" rel="noopener"
+    >Huawei Cloud SWR (SoftWare Repository for Container)</a>:华为云提供的容器镜像服务，支持企业级容器管理。</p>
+</li>
+<li>
+<p>国内公共镜像加速器
+由于国内网络环境的限制，许多镜像从国外仓库拉取较慢，因此国内厂商提供了一些公共镜像加速器。</p>
+<p>阿里云容器镜像服务加速器:https://cr.console.aliyun.com</p>
+<p>腾讯云容器镜像服务加速器：https://cloud.tencent.com/document/product/457/35996</p>
+<p>华为云容器镜像加速器：https://www.huaweicloud.com/product/swr.html</p>
+<p>网易云加速器：https://www.163yun.com/product/container</p>
+</li>
+</ol>
+<h2 id="监控">监控
+</h2><blockquote>
+<p>参考：https://flashcat.cloud/blog/ops-monitor/</p>
+</blockquote>
+<h2 id="nginx">nginx
+</h2>
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/%E8%BF%90%E7%BB%B4/">运维</a>
+        
+    </section>
+
+
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2025 rustWood
+    </section>
+    
+    <section class="powerby">
+        
+            网站总访客数：<span id='busuanzi_value_site_uv'>Loading</span><br/>网站总访问量：<span id='busuanzi_value_site_pv'>Loading</span> <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+    <section class="powerby">
+        页面浏览量<span id="busuanzi_value_page_pv">Loading</span>
+    </section>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+<script>
+    (function () {
+        const customFont = document.createElement('link');
+        customFont.href = "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap";
+
+        customFont.type = "text/css";
+        customFont.rel = "stylesheet";
+
+        document.head.appendChild(customFont);
+    }());
+</script>
+<script defer src="https://cn.vercount.one/js"></script>
+
+
+        
+        <script src="/highlight/highlight-min.js"></script>
+        <script>hljs.highlightAll();</script>
+    </body>
+</html>
