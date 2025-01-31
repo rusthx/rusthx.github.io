@@ -297,8 +297,8 @@ binlog 信息写入 relay log 的中继日志里，再返回给主库&amp;quot;�
 &gt;&lt;/p&gt;
 &lt;p&gt;同步成功，完成主从复制搭建。&lt;/p&gt;
 &lt;h3 id=&#34;踩坑与备注&#34;&gt;踩坑与备注
-&lt;/h3&gt;&lt;h4 id=&#34;slave_io_runningno&#34;&gt;slave_io_running：no
-&lt;/h4&gt;&lt;p&gt; 这是因为从库连接主库填写的信息有误，比如log_file和pos。补救方法，在从库执行如下命令：&lt;/p&gt;
+&lt;/h3&gt;&lt;h3 id=&#34;slave_io_runningno&#34;&gt;slave_io_running：no
+&lt;/h3&gt;&lt;p&gt; 这是因为从库连接主库填写的信息有误，比如log_file和pos。补救方法，在从库执行如下命令：&lt;/p&gt;
 &lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
 &lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
@@ -315,86 +315,43 @@ binlog 信息写入 relay log 的中继日志里，再返回给主库&amp;quot;�
 &lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;#再执行一遍正确的连接主库命令&lt;/span&gt;
 &lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
 &lt;/div&gt;
-&lt;/div&gt;&lt;h4 id=&#34;从库show-slave-statusg正常但查看不到主库数据&#34;&gt;从库show slave status\G;正常，但查看不到主库数据
-&lt;/h4&gt;&lt;p&gt; 这种是主库建的数据库和主库配置文件开启的数据库不同导致的，也就是说主库没有建立配置文件里的数据库。
+&lt;/div&gt;&lt;h3 id=&#34;从库show-slave-statusg正常但查看不到主库数据&#34;&gt;从库show slave status\G;正常，但查看不到主库数据
+&lt;/h3&gt;&lt;p&gt; 这种是主库建的数据库和主库配置文件开启的数据库不同导致的，也就是说主库没有建立配置文件里的数据库。
 （我呆得不行，主库配置文件里写的master_try，结果我建表转眼就建成mastertry。查不到数据我还以为是权限的问题，走了好多弯路）&lt;/p&gt;
-&lt;h4 id=&#34;mysql新版本相关命令已改变&#34;&gt;MySQL新版本相关命令已改变
-&lt;/h4&gt;&lt;blockquote&gt;
-&lt;p&gt;参考：https://www.cnblogs.com/architectforest/p/18429705&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;ol&gt;
-&lt;li&gt;show master status; 不能用了&lt;/li&gt;
-&lt;/ol&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# mysql 8.4版本前使用这条命令查看&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;show master status&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; 
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# MySQL 8.4版本后使用这条命令查看&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;SHOW BINARY LOG STATUS&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
-&lt;li&gt;change master to不能用了&lt;/li&gt;
-&lt;/ol&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# MSQL 8.23前&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;CHANGE MASTER TO &lt;span class=&#34;nv&#34;&gt;MASTER_HOST&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;192.168.6.133&amp;#39;&lt;/span&gt;, &lt;span class=&#34;nv&#34;&gt;MASTER_USER&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;remote&amp;#39;&lt;/span&gt;, &lt;span class=&#34;nv&#34;&gt;MASTER_PASSWORD&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;yourpassword&amp;#39;&lt;/span&gt;, &lt;span class=&#34;nv&#34;&gt;MASTER_LOG_FILE&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;binlog.000003&amp;#39;&lt;/span&gt;, &lt;span class=&#34;nv&#34;&gt;MASTER_LOG_POS&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;158&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;​
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# MSQL 8.23后&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;CHANGE REPLICATION SOURCE TO &lt;span class=&#34;nv&#34;&gt;SOURCE_HOST&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;192.168.6.133&amp;#39;&lt;/span&gt;, &lt;span class=&#34;nv&#34;&gt;SOURCE_USER&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;remote&amp;#39;&lt;/span&gt;, &lt;span class=&#34;nv&#34;&gt;SOURCE_PASSWORD&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;yourpassword&amp;#39;&lt;/span&gt;, &lt;span class=&#34;nv&#34;&gt;SOURCE_LOG_FILE&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;binlog.000003&amp;#39;&lt;/span&gt;, &lt;span class=&#34;nv&#34;&gt;SOURCE_LOG_POS&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;158&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;​
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;CHANGE REPLICATION SOURCE TO &lt;span class=&#34;nv&#34;&gt;SOURCE_HOST&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;192.168.6.136&amp;#39;&lt;/span&gt;, &lt;span class=&#34;nv&#34;&gt;SOURCE_USER&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;remote&amp;#39;&lt;/span&gt;, &lt;span class=&#34;nv&#34;&gt;SOURCE_PASSWORD&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;yourpassword&amp;#39;&lt;/span&gt;, &lt;span class=&#34;nv&#34;&gt;SOURCE_LOG_FILE&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;s1&#34;&gt;&amp;#39;binlog.000004&amp;#39;&lt;/span&gt;, &lt;span class=&#34;nv&#34;&gt;SOURCE_LOG_POS&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;158,GET_SOURCE_PUBLIC_KEY&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;1&lt;span class=&#34;p&#34;&gt;;&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;ol start=&#34;3&#34;&gt;
-&lt;li&gt;start slave不能用了&lt;/li&gt;
-&lt;/ol&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 开启同步&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;start replica &lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;#8.0.22之后 &lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;start slave &lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;#8.0.22之前&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;&lt;ol start=&#34;4&#34;&gt;
-&lt;li&gt;show slave status不能用了&lt;/li&gt;
-&lt;/ol&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
-&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
-&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
-&lt;td class=&#34;lntd&#34;&gt;
-&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;c1&#34;&gt;# 查看状态,\G表示行转列，便于查看&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;show replica status&lt;span class=&#34;se&#34;&gt;\G&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;#8.0.22之后 &lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;show slave status&lt;span class=&#34;se&#34;&gt;\G&lt;/span&gt; &lt;span class=&#34;p&#34;&gt;;&lt;/span&gt; &lt;span class=&#34;c1&#34;&gt;#8.0.22之前&lt;/span&gt;
-&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
-&lt;/div&gt;
-&lt;/div&gt;</description>
+&lt;!-- ### MySQL新版本相关命令已改变
+&gt;参考：https://www.cnblogs.com/architectforest/p/18429705
+
+1. show master status; 不能用了
+```shell
+# mysql 8.4版本前使用这条命令查看
+show master status; 
+
+# MySQL 8.4版本后使用这条命令查看
+SHOW BINARY LOG STATUS;
+```
+2. change master to不能用了
+```shell
+# MySQL 8.23前
+CHANGE MASTER TO MASTER_HOST=&#39;192.168.6.133&#39;, MASTER_USER=&#39;remote&#39;, MASTER_PASSWORD=&#39;yourpassword&#39;, MASTER_LOG_FILE=&#39;binlog.000003&#39;, MASTER_LOG_POS=158;
+​
+# MySQL 8.23后
+CHANGE REPLICATION SOURCE TO SOURCE_HOST=&#39;192.168.6.133&#39;, SOURCE_USER=&#39;remote&#39;, SOURCE_PASSWORD=&#39;yourpassword&#39;, SOURCE_LOG_FILE=&#39;binlog.000003&#39;, SOURCE_LOG_POS=158;
+​
+CHANGE REPLICATION SOURCE TO SOURCE_HOST=&#39;192.168.6.136&#39;, SOURCE_USER=&#39;remote&#39;, SOURCE_PASSWORD=&#39;yourpassword&#39;, SOURCE_LOG_FILE=&#39;binlog.000004&#39;, SOURCE_LOG_POS=158,GET_SOURCE_PUBLIC_KEY=1;
+```
+3. start slave不能用了
+```shell
+# 开启同步
+start replica ; #8.0.22之后 
+start slave ; #8.0.22之前
+```
+4. show slave status不能用了
+```shell
+# 查看状态,\G表示行转列，便于查看
+show replica status\G ; #8.0.22之后 
+show slave status\G ; #8.0.22之前
+``` --&gt;
+</description>
         </item>
         <item>
         <title>数据库死锁</title>

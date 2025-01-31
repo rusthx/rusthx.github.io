@@ -511,6 +511,17 @@
 </span><span class="lnt">70
 </span><span class="lnt">71
 </span><span class="lnt">72
+</span><span class="lnt">73
+</span><span class="lnt">74
+</span><span class="lnt">75
+</span><span class="lnt">76
+</span><span class="lnt">77
+</span><span class="lnt">78
+</span><span class="lnt">79
+</span><span class="lnt">80
+</span><span class="lnt">81
+</span><span class="lnt">82
+</span><span class="lnt">83
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># Superset specific config</span>
@@ -585,6 +596,17 @@
 </span></span><span class="line"><span class="cl"><span class="c1">#不填这个会导致报错如下</span>
 </span></span><span class="line"><span class="cl"><span class="c1">#ModuleNotFoundError: No module named &#39;MySQL_db&#39;</span>
 </span></span><span class="line"><span class="cl"><span class="n">SQLALCHEMY_TRACK_MODIFICATIONS</span> <span class="o">=</span> <span class="kc">False</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">logging</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">LOG_LEVEL</span> <span class="o">=</span> <span class="s1">&#39;DEBUG&#39;</span>  <span class="c1"># 设置日志级别为DEBUG可以获得最详细的日志信息</span>
+</span></span><span class="line"><span class="cl"><span class="n">LOG_FILE</span> <span class="o">=</span> <span class="s1">&#39;/home/rust/superset/superset_logfile.log&#39;</span>  <span class="c1"># 指定日志文件路径</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">    <span class="n">filename</span><span class="o">=</span><span class="n">LOG_FILE</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="n">level</span><span class="o">=</span><span class="n">LOG_LEVEL</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> </span><span class="si">%(levelname)s</span><span class="s1"> </span><span class="si">%(name)s</span><span class="s1"> </span><span class="si">%(threadName)s</span><span class="s1"> : </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">,</span>
+</span></span><span class="line"><span class="cl"><span class="p">)</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="初始化superset">初始化Superset
