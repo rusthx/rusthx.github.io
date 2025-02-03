@@ -7,7 +7,414 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>rustWood</copyright>
-        <lastBuildDate>Fri, 24 Jan 2025 22:23:10 +0800</lastBuildDate><atom:link href="https://rusthx.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Sun, 02 Feb 2025 22:44:44 +0800</lastBuildDate><atom:link href="https://rusthx.github.io/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>DataX 编译插件</title>
+        <link>https://rusthx.github.io/p/datax-%E7%BC%96%E8%AF%91%E6%8F%92%E4%BB%B6/</link>
+        <pubDate>Sun, 02 Feb 2025 22:44:44 +0800</pubDate>
+        
+        <guid>https://rusthx.github.io/p/datax-%E7%BC%96%E8%AF%91%E6%8F%92%E4%BB%B6/</guid>
+        <description>&lt;p&gt;前置准备工作：准备一个JDK8及以上，安装好maven。&lt;/p&gt;
+&lt;h2 id=&#34;拉取datax源码&#34;&gt;拉取DataX源码
+&lt;/h2&gt;&lt;p&gt;这里有两种方法，一种是通过git直接拉取DataX的项目代码。另外一种则是下载项目提供的打包源码。
+&lt;img src=&#34;https://rusthx.github.io/p/datax-%E7%BC%96%E8%AF%91%E6%8F%92%E4%BB%B6/1.png&#34;
+	width=&#34;1830&#34;
+	height=&#34;1014&#34;
+	srcset=&#34;https://rusthx.github.io/p/datax-%E7%BC%96%E8%AF%91%E6%8F%92%E4%BB%B6/1_hu10951412409216039274.png 480w, https://rusthx.github.io/p/datax-%E7%BC%96%E8%AF%91%E6%8F%92%E4%BB%B6/1_hu5380446507320320259.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;180&#34;
+		data-flex-basis=&#34;433px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;拉取源代码
+建立一个空文件夹，然后在文件夹内执行如下命令：&lt;/li&gt;
+&lt;/ol&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;git clone https://github.com/alibaba/DataX.git
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; DataX
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;ol start=&#34;2&#34;&gt;
+&lt;li&gt;下载源码
+直接下载压缩包，然后解压打开文件夹即可。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;全量编译项目&#34;&gt;全量编译项目
+&lt;/h2&gt;&lt;p&gt;执行命令：&lt;code&gt;mvn clean package&lt;/code&gt;。这个命令会清理之前的构建输出 (clean) 并重新打包项目 (package)。它会遍历所有模块，执行测试，并生成最终的 jar 文件和其他构建产物。这一步需要保证网络畅通，因为编译时Maven需要从远程仓管下载所需的依赖库。&lt;/p&gt;
+&lt;p&gt;顺利地话到这里就解决了，但是很显然没这么简单。接下来会语句一堆报错，而且还是我们所不关心的插件。那可不可以使用尚硅谷教程里提供的已经编译好的DataX呢？&lt;/p&gt;
+&lt;h2 id=&#34;单独编译需要的插件&#34;&gt;单独编译需要的插件
+&lt;/h2&gt;&lt;blockquote&gt;
+&lt;p&gt;注：Doris官网中编译doriswriter插件是在Linux中执行shell命令。我懒得再建一个Linux环境。就放弃了这条路线。
+使用Linux的可以直接查看&lt;a class=&#34;link&#34; href=&#34;https://doris.apache.org/zh-CN/docs/2.0/ecosystem/datax&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;Doris官网的相关部分&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;尚硅谷提供的已经编译好的压缩包虽然好，但是我所需要的&lt;code&gt;doriswriter&lt;/code&gt;插件是很早期的插件。和我现在用的Doris2.1.7不兼容。
+那我就需要自行编译&lt;code&gt;doriswriter&lt;/code&gt;插件，然后将编译好的jar包替换尚硅谷提供的压缩包里的jar包。&lt;/p&gt;
+&lt;p&gt;在doriswriter目录下执行&lt;code&gt;mvn clean package -DskipTests&lt;/code&gt;就可以得到所需jar包。&lt;/p&gt;
+&lt;p&gt;然后就遇见了以下报错：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;ERROR&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Failed to execute goal on project doriswriter: Could not resolve dependencies &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; project com.alibaba.datax:doriswriter:jar:0.0.1-SNAPSHOT: The following artifacts could not be
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt; resolved: com.alibaba.datax:datax-common:jar:0.0.1-SNAPSHOT, com.alibaba.datax:plugin-rdbms-util:jar:0.0.1-SNAPSHOT: Could not find artifact com.alibaba.datax:datax-common:jar:0.0.1-S
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;NAPSHOT in central &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;https://maven.aliyun.com/repository/central&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; -&amp;gt; &lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;Help 1&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;从错误信息来看，Maven 在尝试编译 doriswriter 插件时无法找到依赖项 datax-common 和 plugin-rdbms-util。这是因为这些依赖项没有在中央仓库中可用，它们是 DataX 项目内部的模块。&lt;/p&gt;
+&lt;p&gt;所以需要先确保 DorisWriter 插件依赖的模块（ datax-common 和 plugin-rdbms-util）已经被正确安装到本地 Maven 仓库中。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;8
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; common
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;mvn clean install -DskipTests
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; ../plugin-rdbms-util
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;mvn clean install -DskipTests
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;cd&lt;/span&gt; ../doriswriter/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;mvn clean package -DskipTests
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;  1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;  2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;  3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;  4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;  5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;  6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;  7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;  8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;  9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 12
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 13
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 14
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 15
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 16
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 17
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 18
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 19
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 20
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 21
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 22
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 23
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 24
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 25
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 26
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 27
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 28
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 29
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 30
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 31
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 32
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 33
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 34
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 35
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 36
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 37
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 38
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 39
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 40
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 41
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 42
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 43
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 44
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 45
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 46
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 47
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 48
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 49
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 50
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 51
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 52
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 53
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 54
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 55
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 56
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 57
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 58
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 59
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 60
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 61
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 62
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 63
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 64
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 65
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 66
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 67
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 68
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 69
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 70
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 71
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 72
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 73
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 74
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 75
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 76
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 77
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 78
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 79
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 80
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 81
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 82
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 83
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 84
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 85
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 86
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 87
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 88
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 89
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 90
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 91
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 92
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 93
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 94
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 95
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 96
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 97
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 98
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 99
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;100
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;101
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;102
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;103
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;104
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;105
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;106
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;107
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;108
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;109
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;110
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;111
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;112
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;113
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;114
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;115
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;116
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;117
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;118
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;119
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;120
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;121
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;122
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;123
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;124
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;125
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;126
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;D:&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;eskTop&lt;span class=&#34;se&#34;&gt;\煊\笔&lt;/span&gt;记&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX-datax_v202309&lt;span class=&#34;se&#34;&gt;\c&lt;/span&gt;ommon&amp;gt;mvn clean install -DskipTests
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Scanning &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; projects...
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; -------------------&amp;lt; com.alibaba.datax:datax-common &amp;gt;-------------------
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Building datax-common 0.0.1-SNAPSHOT
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --------------------------------&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt; jar &lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;---------------------------------
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --- maven-clean-plugin:2.5:clean &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;default-clean&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; @ datax-common ---
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Deleting D:&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;eskTop&lt;span class=&#34;se&#34;&gt;\煊\笔&lt;/span&gt;记&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX-datax_v202309&lt;span class=&#34;se&#34;&gt;\c&lt;/span&gt;ommon&lt;span class=&#34;se&#34;&gt;\t&lt;/span&gt;arget
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --- maven-resources-plugin:2.6:resources &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;default-resources&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; @ datax-common ---
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Using &lt;span class=&#34;s1&#34;&gt;&amp;#39;UTF-8&amp;#39;&lt;/span&gt; encoding to copy filtered resources.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Copying &lt;span class=&#34;m&#34;&gt;6&lt;/span&gt; resources
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --- maven-compiler-plugin:2.3.2:compile &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;default-compile&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; @ datax-common ---
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Compiling &lt;span class=&#34;m&#34;&gt;45&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;source&lt;/span&gt; files to D:&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;eskTop&lt;span class=&#34;se&#34;&gt;\煊\笔&lt;/span&gt;记&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX-datax_v202309&lt;span class=&#34;se&#34;&gt;\c&lt;/span&gt;ommon&lt;span class=&#34;se&#34;&gt;\t&lt;/span&gt;arget&lt;span class=&#34;se&#34;&gt;\c&lt;/span&gt;lasses
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --- maven-resources-plugin:2.6:testResources &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;default-testResources&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; @ datax-common ---
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Using &lt;span class=&#34;s1&#34;&gt;&amp;#39;UTF-8&amp;#39;&lt;/span&gt; encoding to copy filtered resources.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; skip non existing resourceDirectory D:&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;eskTop&lt;span class=&#34;se&#34;&gt;\煊\笔&lt;/span&gt;记&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX-datax_v202309&lt;span class=&#34;se&#34;&gt;\c&lt;/span&gt;ommon&lt;span class=&#34;se&#34;&gt;\s&lt;/span&gt;rc&lt;span class=&#34;se&#34;&gt;\t&lt;/span&gt;est&lt;span class=&#34;se&#34;&gt;\r&lt;/span&gt;esources
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --- maven-compiler-plugin:2.3.2:testCompile &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;default-testCompile&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; @ datax-common ---
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; No sources to compile
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --- maven-surefire-plugin:2.12.4:test &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;default-test&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; @ datax-common ---
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Tests are skipped.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --- maven-jar-plugin:2.4:jar &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;default-jar&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; @ datax-common ---
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Building jar: D:&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;eskTop&lt;span class=&#34;se&#34;&gt;\煊\笔&lt;/span&gt;记&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX-datax_v202309&lt;span class=&#34;se&#34;&gt;\c&lt;/span&gt;ommon&lt;span class=&#34;se&#34;&gt;\t&lt;/span&gt;arget&lt;span class=&#34;se&#34;&gt;\d&lt;/span&gt;atax-common-0.0.1-SNAPSHOT.jar
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --- maven-install-plugin:2.4:install &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;default-install&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; @ datax-common ---
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Installing D:&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;eskTop&lt;span class=&#34;se&#34;&gt;\煊\笔&lt;/span&gt;记&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX-datax_v202309&lt;span class=&#34;se&#34;&gt;\c&lt;/span&gt;ommon&lt;span class=&#34;se&#34;&gt;\t&lt;/span&gt;arget&lt;span class=&#34;se&#34;&gt;\d&lt;/span&gt;atax-common-0.0.1-SNAPSHOT.jar to D:&lt;span class=&#34;se&#34;&gt;\m&lt;/span&gt;aven-3.8.6&lt;span class=&#34;se&#34;&gt;\r&lt;/span&gt;espository&lt;span class=&#34;se&#34;&gt;\c&lt;/span&gt;om&lt;span class=&#34;se&#34;&gt;\a&lt;/span&gt;libaba&lt;span class=&#34;se&#34;&gt;\d&lt;/span&gt;atax&lt;span class=&#34;se&#34;&gt;\d&lt;/span&gt;atax-common&lt;span class=&#34;se&#34;&gt;\0&lt;/span&gt;.0.1-SNAPSHOT&lt;span class=&#34;se&#34;&gt;\d&lt;/span&gt;atax-common-0.0.1-SNAPSHOT.jar
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Installing D:&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;eskTop&lt;span class=&#34;se&#34;&gt;\煊\笔&lt;/span&gt;记&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX-datax_v202309&lt;span class=&#34;se&#34;&gt;\c&lt;/span&gt;ommon&lt;span class=&#34;se&#34;&gt;\p&lt;/span&gt;om.xml to D:&lt;span class=&#34;se&#34;&gt;\m&lt;/span&gt;aven-3.8.6&lt;span class=&#34;se&#34;&gt;\r&lt;/span&gt;espository&lt;span class=&#34;se&#34;&gt;\c&lt;/span&gt;om&lt;span class=&#34;se&#34;&gt;\a&lt;/span&gt;libaba&lt;span class=&#34;se&#34;&gt;\d&lt;/span&gt;atax&lt;span class=&#34;se&#34;&gt;\d&lt;/span&gt;atax-common&lt;span class=&#34;se&#34;&gt;\0&lt;/span&gt;.0.1-SNAPSHOT&lt;span class=&#34;se&#34;&gt;\d&lt;/span&gt;atax-common-0.0.1-SNAPSHOT.pom
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; ------------------------------------------------------------------------
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; BUILD SUCCESS
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; ------------------------------------------------------------------------
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Total time:  2.041 s
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Finished at: 2025-02-03T17:26:33+08:00
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; ------------------------------------------------------------------------
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;D:&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;eskTop&lt;span class=&#34;se&#34;&gt;\煊\笔&lt;/span&gt;记&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX-datax_v202309&lt;span class=&#34;se&#34;&gt;\c&lt;/span&gt;ommon&amp;gt;cd ../plugin-rdbms-util
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;D:&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;eskTop&lt;span class=&#34;se&#34;&gt;\煊\笔&lt;/span&gt;记&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX-datax_v202309&lt;span class=&#34;se&#34;&gt;\p&lt;/span&gt;lugin-rdbms-util&amp;gt;mvn clean install -DskipTests
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Scanning &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; projects...
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; ----------------&amp;lt; com.alibaba.datax:plugin-rdbms-util &amp;gt;-----------------
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Building plugin-rdbms-util 0.0.1-SNAPSHOT
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --------------------------------&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt; jar &lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;---------------------------------
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Downloading from spring: https://maven.aliyun.com/repository/spring/com/alibaba/datax/datax-all/0.0.1-SNAPSHOT/maven-metadata.xml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Downloading from central: https://maven.aliyun.com/repository/central/com/alibaba/datax/datax-all/0.0.1-SNAPSHOT/maven-metadata.xml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --- maven-clean-plugin:2.5:clean &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;default-clean&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; @ plugin-rdbms-util ---
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Deleting D:&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;eskTop&lt;span class=&#34;se&#34;&gt;\煊\笔&lt;/span&gt;记&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX-datax_v202309&lt;span class=&#34;se&#34;&gt;\p&lt;/span&gt;lugin-rdbms-util&lt;span class=&#34;se&#34;&gt;\t&lt;/span&gt;arget
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --- maven-resources-plugin:2.6:resources &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;default-resources&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; @ plugin-rdbms-util ---
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Using &lt;span class=&#34;s1&#34;&gt;&amp;#39;UTF-8&amp;#39;&lt;/span&gt; encoding to copy filtered resources.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Copying &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; resource
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --- maven-compiler-plugin:2.3.2:compile &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;default-compile&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; @ plugin-rdbms-util ---
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Compiling &lt;span class=&#34;m&#34;&gt;25&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;source&lt;/span&gt; files to D:&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;eskTop&lt;span class=&#34;se&#34;&gt;\煊\笔&lt;/span&gt;记&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX-datax_v202309&lt;span class=&#34;se&#34;&gt;\p&lt;/span&gt;lugin-rdbms-util&lt;span class=&#34;se&#34;&gt;\t&lt;/span&gt;arget&lt;span class=&#34;se&#34;&gt;\c&lt;/span&gt;lasses
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --- maven-resources-plugin:2.6:testResources &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;default-testResources&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; @ plugin-rdbms-util ---
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Using &lt;span class=&#34;s1&#34;&gt;&amp;#39;UTF-8&amp;#39;&lt;/span&gt; encoding to copy filtered resources.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; skip non existing resourceDirectory D:&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;eskTop&lt;span class=&#34;se&#34;&gt;\煊\笔&lt;/span&gt;记&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX-datax_v202309&lt;span class=&#34;se&#34;&gt;\p&lt;/span&gt;lugin-rdbms-util&lt;span class=&#34;se&#34;&gt;\s&lt;/span&gt;rc&lt;span class=&#34;se&#34;&gt;\t&lt;/span&gt;est&lt;span class=&#34;se&#34;&gt;\r&lt;/span&gt;esources
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --- maven-compiler-plugin:2.3.2:testCompile &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;default-testCompile&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; @ plugin-rdbms-util ---
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; No sources to compile
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --- maven-surefire-plugin:2.12.4:test &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;default-test&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; @ plugin-rdbms-util ---
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Tests are skipped.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --- maven-jar-plugin:2.4:jar &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;default-jar&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; @ plugin-rdbms-util ---
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Building jar: D:&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;eskTop&lt;span class=&#34;se&#34;&gt;\煊\笔&lt;/span&gt;记&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX-datax_v202309&lt;span class=&#34;se&#34;&gt;\p&lt;/span&gt;lugin-rdbms-util&lt;span class=&#34;se&#34;&gt;\t&lt;/span&gt;arget&lt;span class=&#34;se&#34;&gt;\p&lt;/span&gt;lugin-rdbms-util-0.0.1-SNAPSHOT.jar
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --- maven-install-plugin:2.4:install &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;default-install&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; @ plugin-rdbms-util ---
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Installing D:&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;eskTop&lt;span class=&#34;se&#34;&gt;\煊\笔&lt;/span&gt;记&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX-datax_v202309&lt;span class=&#34;se&#34;&gt;\p&lt;/span&gt;lugin-rdbms-util&lt;span class=&#34;se&#34;&gt;\t&lt;/span&gt;arget&lt;span class=&#34;se&#34;&gt;\p&lt;/span&gt;lugin-rdbms-util-0.0.1-SNAPSHOT.jar to D:&lt;span class=&#34;se&#34;&gt;\m&lt;/span&gt;aven-3.8.6&lt;span class=&#34;se&#34;&gt;\r&lt;/span&gt;espository&lt;span class=&#34;se&#34;&gt;\c&lt;/span&gt;om&lt;span class=&#34;se&#34;&gt;\a&lt;/span&gt;libaba&lt;span class=&#34;se&#34;&gt;\d&lt;/span&gt;atax&lt;span class=&#34;se&#34;&gt;\p&lt;/span&gt;lugin-rdbms-util&lt;span class=&#34;se&#34;&gt;\0&lt;/span&gt;.0.1-SNAPSHOT&lt;span class=&#34;se&#34;&gt;\p&lt;/span&gt;lugin-rdbms-util-0.0.1-SNAPSHOT.jar
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Installing D:&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;eskTop&lt;span class=&#34;se&#34;&gt;\煊\笔&lt;/span&gt;记&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX-datax_v202309&lt;span class=&#34;se&#34;&gt;\p&lt;/span&gt;lugin-rdbms-util&lt;span class=&#34;se&#34;&gt;\p&lt;/span&gt;om.xml to D:&lt;span class=&#34;se&#34;&gt;\m&lt;/span&gt;aven-3.8.6&lt;span class=&#34;se&#34;&gt;\r&lt;/span&gt;espository&lt;span class=&#34;se&#34;&gt;\c&lt;/span&gt;om&lt;span class=&#34;se&#34;&gt;\a&lt;/span&gt;libaba&lt;span class=&#34;se&#34;&gt;\d&lt;/span&gt;atax&lt;span class=&#34;se&#34;&gt;\p&lt;/span&gt;lugin-rdbms-util&lt;span class=&#34;se&#34;&gt;\0&lt;/span&gt;.0.1-SNAPSHOT&lt;span class=&#34;se&#34;&gt;\p&lt;/span&gt;lugin-rdbms-util-0.0.1-SNAPSHOT.pom
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; ------------------------------------------------------------------------
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; BUILD SUCCESS
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; ------------------------------------------------------------------------
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Total time:  2.183 s
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Finished at: 2025-02-03T17:27:38+08:00
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; ------------------------------------------------------------------------
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;D:&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;eskTop&lt;span class=&#34;se&#34;&gt;\煊\笔&lt;/span&gt;记&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX-datax_v202309&lt;span class=&#34;se&#34;&gt;\p&lt;/span&gt;lugin-rdbms-util&amp;gt;cd ../doriswriter/
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;D:&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;eskTop&lt;span class=&#34;se&#34;&gt;\煊\笔&lt;/span&gt;记&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX-datax_v202309&lt;span class=&#34;se&#34;&gt;\d&lt;/span&gt;oriswriter&amp;gt;mvn clean package -DskipTests
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Scanning &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; projects...
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; -------------------&amp;lt; com.alibaba.datax:doriswriter &amp;gt;--------------------
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Building doriswriter 0.0.1-SNAPSHOT
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --------------------------------&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt; jar &lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;---------------------------------
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --- maven-clean-plugin:2.5:clean &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;default-clean&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; @ doriswriter ---
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Deleting D:&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;eskTop&lt;span class=&#34;se&#34;&gt;\煊\笔&lt;/span&gt;记&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX-datax_v202309&lt;span class=&#34;se&#34;&gt;\d&lt;/span&gt;oriswriter&lt;span class=&#34;se&#34;&gt;\t&lt;/span&gt;arget
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --- maven-resources-plugin:2.6:resources &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;default-resources&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; @ doriswriter ---
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Using &lt;span class=&#34;s1&#34;&gt;&amp;#39;UTF-8&amp;#39;&lt;/span&gt; encoding to copy filtered resources.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Copying &lt;span class=&#34;m&#34;&gt;0&lt;/span&gt; resource
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --- maven-compiler-plugin:2.3.2:compile &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;default-compile&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; @ doriswriter ---
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Compiling &lt;span class=&#34;m&#34;&gt;13&lt;/span&gt; &lt;span class=&#34;nb&#34;&gt;source&lt;/span&gt; files to D:&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;eskTop&lt;span class=&#34;se&#34;&gt;\煊\笔&lt;/span&gt;记&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX-datax_v202309&lt;span class=&#34;se&#34;&gt;\d&lt;/span&gt;oriswriter&lt;span class=&#34;se&#34;&gt;\t&lt;/span&gt;arget&lt;span class=&#34;se&#34;&gt;\c&lt;/span&gt;lasses
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --- maven-resources-plugin:2.6:testResources &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;default-testResources&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; @ doriswriter ---
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Using &lt;span class=&#34;s1&#34;&gt;&amp;#39;UTF-8&amp;#39;&lt;/span&gt; encoding to copy filtered resources.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; skip non existing resourceDirectory D:&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;eskTop&lt;span class=&#34;se&#34;&gt;\煊\笔&lt;/span&gt;记&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX-datax_v202309&lt;span class=&#34;se&#34;&gt;\d&lt;/span&gt;oriswriter&lt;span class=&#34;se&#34;&gt;\s&lt;/span&gt;rc&lt;span class=&#34;se&#34;&gt;\t&lt;/span&gt;est&lt;span class=&#34;se&#34;&gt;\r&lt;/span&gt;esources
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --- maven-compiler-plugin:2.3.2:testCompile &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;default-testCompile&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; @ doriswriter ---
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; No sources to compile
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --- maven-surefire-plugin:2.12.4:test &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;default-test&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; @ doriswriter ---
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Tests are skipped.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --- maven-jar-plugin:2.4:jar &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;default-jar&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; @ doriswriter ---
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Building jar: D:&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;eskTop&lt;span class=&#34;se&#34;&gt;\煊\笔&lt;/span&gt;记&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX-datax_v202309&lt;span class=&#34;se&#34;&gt;\d&lt;/span&gt;oriswriter&lt;span class=&#34;se&#34;&gt;\t&lt;/span&gt;arget&lt;span class=&#34;se&#34;&gt;\d&lt;/span&gt;oriswriter-0.0.1-SNAPSHOT.jar
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; --- maven-assembly-plugin:2.2-beta-5:single &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;dwzip&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt; @ doriswriter ---
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Reading assembly descriptor: src/main/assembly/package.xml
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Copying files to D:&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;eskTop&lt;span class=&#34;se&#34;&gt;\煊\笔&lt;/span&gt;记&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX-datax_v202309&lt;span class=&#34;se&#34;&gt;\d&lt;/span&gt;oriswriter&lt;span class=&#34;se&#34;&gt;\t&lt;/span&gt;arget&lt;span class=&#34;se&#34;&gt;\d&lt;/span&gt;atax
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;WARNING&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Assembly file: D:&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;eskTop&lt;span class=&#34;se&#34;&gt;\煊\笔&lt;/span&gt;记&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX&lt;span class=&#34;se&#34;&gt;\D&lt;/span&gt;ataX-datax_v202309&lt;span class=&#34;se&#34;&gt;\d&lt;/span&gt;oriswriter&lt;span class=&#34;se&#34;&gt;\t&lt;/span&gt;arget&lt;span class=&#34;se&#34;&gt;\d&lt;/span&gt;atax is not a regular file &lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;it may be a directory&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;. It cannot be attached to the project build &lt;span class=&#34;k&#34;&gt;for&lt;/span&gt; installation or deployment.
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; ------------------------------------------------------------------------
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; BUILD SUCCESS
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; ------------------------------------------------------------------------
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Total time:  2.912 s
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; Finished at: 2025-02-03T17:28:12+08:00
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;o&#34;&gt;[&lt;/span&gt;INFO&lt;span class=&#34;o&#34;&gt;]&lt;/span&gt; ------------------------------------------------------------------------
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;成功完成编译，这时候就可以在&lt;code&gt;doriswriter/target&lt;/code&gt;目录下看到生成的 JAR 文件
+&lt;img src=&#34;https://rusthx.github.io/p/datax-%E7%BC%96%E8%AF%91%E6%8F%92%E4%BB%B6/2.png&#34;
+	width=&#34;892&#34;
+	height=&#34;329&#34;
+	srcset=&#34;https://rusthx.github.io/p/datax-%E7%BC%96%E8%AF%91%E6%8F%92%E4%BB%B6/2_hu15743830796818348885.png 480w, https://rusthx.github.io/p/datax-%E7%BC%96%E8%AF%91%E6%8F%92%E4%BB%B6/2_hu3655523356224308540.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;271&#34;
+		data-flex-basis=&#34;650px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;然后再替换旧的插件。旧的插件放在&lt;code&gt;datax\datax\plugin\writer\doriswriter&lt;/code&gt;。
+注意不是在&lt;code&gt;datax\plugin\writer\doriswriter&lt;/code&gt;里。&lt;/p&gt;
+&lt;h2 id=&#34;补充报错&#34;&gt;补充报错
+&lt;/h2&gt;&lt;p&gt;实际在使用时还遇见了找不到 com.alibaba.fastjson2.JSON 类。的报错。这个错误通常是由于缺少必要的依赖库或版本不匹配导致的。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt; 1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 6
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 7
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 8
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt; 9
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;10
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;11
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;DataX运行报错Exception in thread &lt;span class=&#34;s2&#34;&gt;&amp;#34;Thread-1&amp;#34;&lt;/span&gt; java.lang.NoClassDefFoundError: com/alibaba/fastjson2/JSON
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	at com.alibaba.datax.plugin.writer.doriswriter.DorisStreamLoadObserver.put&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;DorisStreamLoadObserver.java:186&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	at com.alibaba.datax.plugin.writer.doriswriter.DorisStreamLoadObserver.streamLoad&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;DorisStreamLoadObserver.java:63&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	at com.alibaba.datax.plugin.writer.doriswriter.DorisWriterManager.asyncFlush&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;DorisWriterManager.java:163&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	at com.alibaba.datax.plugin.writer.doriswriter.DorisWriterManager.access&lt;span class=&#34;nv&#34;&gt;$000&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;DorisWriterManager.java:19&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	at com.alibaba.datax.plugin.writer.doriswriter.DorisWriterManager&lt;span class=&#34;nv&#34;&gt;$1&lt;/span&gt;.run&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;DorisWriterManager.java:134&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	at java.lang.Thread.run&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;Thread.java:750&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;Caused by: java.lang.ClassNotFoundException: com.alibaba.fastjson2.JSON
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	at java.net.URLClassLoader.findClass&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;URLClassLoader.java:387&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	at java.lang.ClassLoader.loadClass&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;ClassLoader.java:418&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	at java.lang.ClassLoader.loadClass&lt;span class=&#34;o&#34;&gt;(&lt;/span&gt;ClassLoader.java:351&lt;span class=&#34;o&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;	... &lt;span class=&#34;m&#34;&gt;6&lt;/span&gt; more
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;在&lt;code&gt;datax\datax\plugin\writer\doriswriter\lib&lt;/code&gt;下有Doris插件所需的工具包，这里有一个&lt;code&gt;fastjson-1.1.46.sec10.jar&lt;/code&gt;。果然是版本依赖错误。
+直接下载最新版本的fastjson2，替换这个jar包。
+下面这个命令直接在lib文件夹下执行，会直接下在jar包到当前目录下。下载好后记得删除或者将原来的jar包改后缀。&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;wget https://repo1.maven.org/maven2/com/alibaba/fastjson2/fastjson2/2.0.3/fastjson2-2.0.3.jar
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;然后就能正常执行了。&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>MySQL主从复制</title>
         <link>https://rusthx.github.io/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/</link>
         <pubDate>Fri, 24 Jan 2025 22:23:10 +0800</pubDate>
