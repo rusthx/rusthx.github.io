@@ -13,7 +13,11 @@
         <pubDate>Sun, 02 Feb 2025 22:44:44 +0800</pubDate>
         
         <guid>https://rusthx.github.io/p/datax-%E7%BC%96%E8%AF%91%E6%8F%92%E4%BB%B6/</guid>
-        <description>&lt;p&gt;前置准备工作：准备一个JDK8及以上，安装好maven。&lt;/p&gt;
+        <description>&lt;p&gt;我出于自身需要，已经编译好了doriswriter和clickhousewriter，有相同需求的可以直接云盘下载。&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://wwsx.lanzouw.com/b00y9w9ovg&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;https://wwsx.lanzouw.com/b00y9w9ovg&lt;/a&gt;
+密码:byxl&lt;/p&gt;
+&lt;p&gt;前置准备工作：准备一个JDK8及以上，安装好maven。&lt;/p&gt;
 &lt;h2 id=&#34;拉取datax源码&#34;&gt;拉取DataX源码
 &lt;/h2&gt;&lt;p&gt;这里有两种方法，一种是通过git直接拉取DataX的项目代码。另外一种则是下载项目提供的打包源码。
 &lt;img src=&#34;https://rusthx.github.io/p/datax-%E7%BC%96%E8%AF%91%E6%8F%92%E4%BB%B6/1.png&#34;
