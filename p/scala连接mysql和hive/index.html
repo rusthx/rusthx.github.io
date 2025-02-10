@@ -6,7 +6,7 @@
 
 <link rel='canonical' href='https://rusthx.github.io/p/scala%E8%BF%9E%E6%8E%A5mysql%E5%92%8Chive/'>
 
-<link rel="stylesheet" href="/scss/style.min.e0818f74a5cc5a3fb725aa5bbfa98f6567cf07f85ea0aa40f2d2d819bb19bc41.css"><meta property='og:title' content="Scala连接MySQL和Hive">
+<link rel="stylesheet" href="/scss/style.min.4b2deb252882445fa5507279a1888a7183bd491350cab99101c7115a3656c2e5.css"><meta property='og:title' content="Scala连接MySQL和Hive">
 <meta property='og:description' content="连接MySQL 参考链接：https://www.cnblogs.com/Jaryer/p/13671449.html\nmaven添加依赖 1 2 3 4 5 &lt;dependency&gt; &lt;groupId&gt;com.mysql&lt;/groupId&gt; &lt;artifactId&gt;mysql-connector-j&lt;/artifactId&gt; &lt;version&gt;8.0.33&lt;/version&gt; &lt;/dependency&gt; 连接数据库 1 2 3 4 5 val host = &#34;localhost&#34; val port = 3306 val database = &#34;sparktest&#34; val jdbcUrl = s&#34;jdbc:mysql://$host:$port/$database?useUnicode=true&amp;characterEncoding=utf-8&#34; val mysqlConn: Connection = DriverManager.getConnection(jdbcUrl, &#34;root&#34;, &#34;123456&#34;) 执行查询 SQL语句在执行时有三种：executeQuery,executeUpdate,execute。具体细节可查看此节开头的参考资料。\n">
 <meta property='og:url' content='https://rusthx.github.io/p/scala%E8%BF%9E%E6%8E%A5mysql%E5%92%8Chive/'>
 <meta property='og:site_name' content='rustWood'>
