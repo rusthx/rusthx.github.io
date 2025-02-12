@@ -12,7 +12,22 @@
 <meta property='og:site_name' content='rustWood'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='MySQL' /><meta property='article:published_time' content='2025-01-24T22:23:10&#43;08:00'/><meta property='article:modified_time' content='2025-01-24T22:23:10&#43;08:00'/>
 <meta name="twitter:title" content="MySQL主从复制">
-<meta name="twitter:description" content="主从复制可以用来做数据库的实时备份，保证数据的完整性；也可以做读写分离，提升数据库系统整体的读写性能。\n主从复制原理 参考资料：https://xiaolincoding.com/mysql/log/how_update.html#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%98%AF%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0 MySQL集群的主从复制过程梳理成3个阶段：\n">        
+<meta name="twitter:description" content="主从复制可以用来做数据库的实时备份，保证数据的完整性；也可以做读写分离，提升数据库系统整体的读写性能。\n主从复制原理 参考资料：https://xiaolincoding.com/mysql/log/how_update.html#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%98%AF%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0 MySQL集群的主从复制过程梳理成3个阶段：\n">
+<link rel="stylesheet" href="/static/highlight/styles/github.min.css">
+<script src="/static/highlight/highlight.min.js"></script>
+<script src="/static/highlight/languages/java.min.js"></script>
+<script src="/static/highlight/languages/python.min.js"></script>
+<script src="/static/highlight/languages/bash.min.js"></script>
+<script src="/static/highlight/languages/shell.min.js"></script>
+<script src="/static/highlight/languages/scala.min.js"></script>
+<script src="/static/highlight/languages/sql.js"></script>
+<script src="/static/highlight/languages/xml.js"></script>
+<script src="/static/highlight/languages/yaml.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', (event) => {
+    hljs.highlightAll();
+  });
+</script>        
         
         <link rel="stylesheet" href="/highlight/styles/github.css">
          
@@ -393,51 +408,26 @@ binlog 信息写入 relay log 的中继日志里，再返回给主库&quot;复�
 	
 ></p>
 <p>hadoop1和hadoop2两台机上都将安装好MySQL，然后hadoop1将作为主节点，hadoop2将作为从节点。主节点提前创建用户用来进行主从连接。注意要给<code>slave</code>权限</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">CREATE USER <span class="s1">&#39;rust&#39;</span>@<span class="s1">&#39;%&#39;</span> IDENTIFIED BY <span class="s1">&#39;123456&#39;</span><span class="p">;</span>
-</span></span><span class="line"><span class="cl">GRANT REPLICATION SLAVE ON *.* TO <span class="s1">&#39;rust&#39;</span>@<span class="s1">&#39;%&#39;</span> WITH GRANT OPTION<span class="p">;</span>
-</span></span><span class="line"><span class="cl">FLUSH PRIVILEGES<span class="p">;</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><h3 id="修改配置文件">修改配置文件
+<pre><code class="language-shell">CREATE USER 'rust'@'%' IDENTIFIED BY '123456';
+GRANT REPLICATION SLAVE ON *.* TO 'rust'@'%' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+</code></pre>
+<h3 id="修改配置文件">修改配置文件
 </h3><p>修改主库配置文件如下：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo gedit /etc/mysql/my.cnf
-</span></span><span class="line"><span class="cl"><span class="c1"># 也可以通过vim修改，命令如下。</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#sudo vim /etc/mysql/my.cnf</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># 添加如下内容</span>
-</span></span><span class="line"><span class="cl"><span class="o">[</span>mysqld<span class="o">]</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">server-id <span class="o">=</span> <span class="m">1</span>
-</span></span><span class="line"><span class="cl">log-bin<span class="o">=</span>mysql-bin
-</span></span><span class="line"><span class="cl"><span class="nv">binlog_format</span><span class="o">=</span>row <span class="c1">#这一行可省略，因为MySQL在5.7.7开始的默认值就是row了</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">binlog-do-db<span class="o">=</span>master_try <span class="c1">#用来主从复制的数据库。需要提前创建</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/4.png"
+<pre><code class="language-shell">sudo gedit /etc/mysql/my.cnf
+# 也可以通过vim修改，命令如下。
+#sudo vim /etc/mysql/my.cnf
+
+# 添加如下内容
+[mysqld]
+
+server-id = 1
+log-bin=mysql-bin
+binlog_format=row #这一行可省略，因为MySQL在5.7.7开始的默认值就是row了
+
+binlog-do-db=master_try #用来主从复制的数据库。需要提前创建
+</code></pre>
+<p><img src="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/4.png"
 	width="1142"
 	height="796"
 	srcset="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/4_hu17169091789042476138.png 480w, /p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/4_hu11920911155031730745.png 1024w"
@@ -450,34 +440,17 @@ binlog 信息写入 relay log 的中继日志里，再返回给主库&quot;复�
 	
 ></p>
 <p>修改后保存重启生效。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo systemctl restart mysql
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>修改从库配置文件如下：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>mysqld<span class="o">]</span>
-</span></span><span class="line"><span class="cl">server-id<span class="o">=</span><span class="m">2</span> <span class="c1"># 从数据库的唯一标识符，通常大于主数据库的server-id</span>
-</span></span><span class="line"><span class="cl">relay-log<span class="o">=</span>mysql-relay-bin <span class="c1"># 启用中继日志，用于在从数据库上复制主数据库的操作</span>
-</span></span><span class="line"><span class="cl">read-only<span class="o">=</span><span class="m">1</span> <span class="c1"># 设置从数据库为只读，防止在从数据库上直接写入数据</span>
-</span></span><span class="line"><span class="cl"><span class="nv">enforce_gtid_consistency</span> <span class="o">=</span> ON
-</span></span><span class="line"><span class="cl"><span class="nv">gtid_mode</span> <span class="o">=</span> ON
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/5.png"
+<pre><code class="language-shell">sudo systemctl restart mysql
+</code></pre>
+<p>修改从库配置文件如下：</p>
+<pre><code class="language-shell">[mysqld]
+server-id=2 # 从数据库的唯一标识符，通常大于主数据库的server-id
+relay-log=mysql-relay-bin # 启用中继日志，用于在从数据库上复制主数据库的操作
+read-only=1 # 设置从数据库为只读，防止在从数据库上直接写入数据
+enforce_gtid_consistency = ON
+gtid_mode = ON
+</code></pre>
+<p><img src="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/5.png"
 	width="1288"
 	height="672"
 	srcset="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/5_hu13300301466352054486.png 480w, /p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/5_hu5035409371873853278.png 1024w"
@@ -491,17 +464,10 @@ binlog 信息写入 relay log 的中继日志里，再返回给主库&quot;复�
 ></p>
 <h3 id="登录从库连接到主库">登录从库，连接到主库
 </h3><p>登录主库，查看所需信息：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">mysql -uroot -p
-</span></span><span class="line"><span class="cl">show master status<span class="p">;</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/6.png"
+<pre><code class="language-shell">mysql -uroot -p
+show master status;
+</code></pre>
+<p><img src="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/6.png"
 	width="1031"
 	height="590"
 	srcset="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/6_hu6635927571981079756.png 480w, /p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/6_hu14305490593648961526.png 1024w"
@@ -514,31 +480,18 @@ binlog 信息写入 relay log 的中继日志里，再返回给主库&quot;复�
 	
 ></p>
 <p>登录从库</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span><span class="lnt">9
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">mysql -uroot -p                                  <span class="c1">#登录mysql</span>
-</span></span><span class="line"><span class="cl">CHANGE MASTER TO <span class="nv">MASTER_HOST</span><span class="o">=</span><span class="s1">&#39;192.168.146.161&#39;</span>,  <span class="c1">#指向主库             </span>
-</span></span><span class="line"><span class="cl"><span class="nv">MASTER_USER</span><span class="o">=</span><span class="s1">&#39;rust&#39;</span>,                              <span class="c1">#用于复制的MySQL账户,需要提前给定权限</span>
-</span></span><span class="line"><span class="cl"><span class="nv">MASTER_PASSWORD</span><span class="o">=</span><span class="s1">&#39;123456&#39;</span>,                        <span class="c1">#密码</span>
-</span></span><span class="line"><span class="cl"><span class="nv">MASTER_LOG_FILE</span><span class="o">=</span><span class="s1">&#39;mysql-bin.000093&#39;</span>,              <span class="c1">#主库bin log名称，主库上用SHOW MASTER STATUS查看</span>
-</span></span><span class="line"><span class="cl"><span class="nv">MASTER_LOG_POS</span><span class="o">=</span>197<span class="p">;</span>                              <span class="c1">#主库bin log位置，主库上用SHOW MASTER STATUS查看</span>
-</span></span><span class="line"><span class="cl">                      
-</span></span><span class="line"><span class="cl">START SLAVE<span class="p">;</span>                                     <span class="c1">#启动从库进程</span>
-</span></span><span class="line"><span class="cl">SHOW SLAVE STATUS<span class="se">\G</span><span class="p">;</span>                             <span class="c1">#显示进程状态</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/7.png"
+<pre><code class="language-shell">mysql -uroot -p                                  #登录mysql
+CHANGE MASTER TO MASTER_HOST='192.168.146.161',  #指向主库             
+MASTER_USER='rust',                              #用于复制的MySQL账户,需要提前给定权限
+MASTER_PASSWORD='123456',                        #密码
+MASTER_LOG_FILE='mysql-bin.000093',              #主库bin log名称，主库上用SHOW MASTER STATUS查看
+MASTER_LOG_POS=197;                              #主库bin log位置，主库上用SHOW MASTER STATUS查看
+                      
+START SLAVE;                                     #启动从库进程
+SHOW SLAVE STATUS\G;                             #显示进程状态
+
+</code></pre>
+<p><img src="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/7.png"
 	width="973"
 	height="754"
 	srcset="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/7_hu14326689744804357760.png 480w, /p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/7_hu13688712789841800896.png 1024w"
@@ -565,29 +518,16 @@ binlog 信息写入 relay log 的中继日志里，再返回给主库&quot;复�
 <p>注意这里一定要出现两个Yes才行。</p>
 <h3 id="测试">测试
 </h3><p>登录主库，建表插入如下数据。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="n">use</span><span class="w"> </span><span class="n">master_try</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">student</span><span class="p">(</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">`</span><span class="n">id</span><span class="o">`</span><span class="w"> </span><span class="nb">int</span><span class="w"> </span><span class="n">auto_increment</span><span class="w"> </span><span class="k">primary</span><span class="w"> </span><span class="k">key</span><span class="p">,</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">`</span><span class="n">name</span><span class="o">`</span><span class="w"> </span><span class="nb">varchar</span><span class="p">(</span><span class="mi">50</span><span class="p">),</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="o">`</span><span class="n">age</span><span class="o">`</span><span class="w"> </span><span class="nb">int</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">);</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">student</span><span class="p">(</span><span class="n">id</span><span class="p">,</span><span class="o">`</span><span class="n">name</span><span class="o">`</span><span class="p">,</span><span class="n">age</span><span class="p">)</span><span class="w"> </span><span class="k">values</span><span class="w"> </span><span class="p">(</span><span class="s1">&#39;1&#39;</span><span class="p">,</span><span class="s1">&#39;姬丝秀忒·雅赛劳拉莉昂·刃下心&#39;</span><span class="p">,</span><span class="s1">&#39;598&#39;</span><span class="p">);</span><span class="w">
-</span></span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/9.png"
+<pre><code class="language-sql">use master_try;
+create table student(
+    `id` int auto_increment primary key,
+    `name` varchar(50),
+    `age` int
+);
+
+insert into student(id,`name`,age) values ('1','姬丝秀忒·雅赛劳拉莉昂·刃下心','598');
+</code></pre>
+<p><img src="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/9.png"
 	width="1016"
 	height="347"
 	srcset="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/9_hu5200674971078331333.png 480w, /p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/9_hu3142568949465835453.png 1024w"
@@ -616,23 +556,13 @@ binlog 信息写入 relay log 的中继日志里，再返回给主库&quot;复�
 <h3 id="踩坑与备注">踩坑与备注
 </h3><h3 id="slave_io_runningno">slave_io_running：no
 </h3><p> 这是因为从库连接主库填写的信息有误，比如log_file和pos。补救方法，在从库执行如下命令：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">stop slave<span class="p">;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">reset slave all<span class="p">;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">#再执行一遍正确的连接主库命令</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><h3 id="从库show-slave-statusg正常但查看不到主库数据">从库show slave status\G;正常，但查看不到主库数据
+<pre><code class="language-shell">stop slave;
+
+reset slave all;
+
+#再执行一遍正确的连接主库命令
+</code></pre>
+<h3 id="从库show-slave-statusg正常但查看不到主库数据">从库show slave status\G;正常，但查看不到主库数据
 </h3><p> 这种是主库建的数据库和主库配置文件开启的数据库不同导致的，也就是说主库没有建立配置文件里的数据库。
 （我呆得不行，主库配置文件里写的master_try，结果我建表转眼就建成mastertry。查不到数据我还以为是权限的问题，走了好多弯路）</p>
 <!-- ### MySQL新版本相关命令已改变

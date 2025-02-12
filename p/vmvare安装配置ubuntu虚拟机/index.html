@@ -12,7 +12,22 @@
 <meta property='og:site_name' content='rustWood'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Ubuntu' /><meta property='article:tag' content='VMvare' /><meta property='article:published_time' content='2024-09-03T23:14:48&#43;08:00'/><meta property='article:modified_time' content='2024-09-03T23:14:48&#43;08:00'/>
 <meta name="twitter:title" content="VMvare安装配置Ubuntu虚拟机">
-<meta name="twitter:description" content="安装虚拟机 下载vmvare https://www.vmware.com/products/desktop-hypervisor.html 现在的vmvare安装变得麻烦起来了，还要登陆网站。这里我用的是我之前下载的vmvare16pro。如果官网下载不太容易也可以直接搜索vmvare16安装，浏览器上应该还有留存的资源。\n">        
+<meta name="twitter:description" content="安装虚拟机 下载vmvare https://www.vmware.com/products/desktop-hypervisor.html 现在的vmvare安装变得麻烦起来了，还要登陆网站。这里我用的是我之前下载的vmvare16pro。如果官网下载不太容易也可以直接搜索vmvare16安装，浏览器上应该还有留存的资源。\n">
+<link rel="stylesheet" href="/static/highlight/styles/github.min.css">
+<script src="/static/highlight/highlight.min.js"></script>
+<script src="/static/highlight/languages/java.min.js"></script>
+<script src="/static/highlight/languages/python.min.js"></script>
+<script src="/static/highlight/languages/bash.min.js"></script>
+<script src="/static/highlight/languages/shell.min.js"></script>
+<script src="/static/highlight/languages/scala.min.js"></script>
+<script src="/static/highlight/languages/sql.js"></script>
+<script src="/static/highlight/languages/xml.js"></script>
+<script src="/static/highlight/languages/yaml.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', (event) => {
+    hljs.highlightAll();
+  });
+</script>        
         
         <link rel="stylesheet" href="/highlight/styles/github.css">
          
@@ -840,21 +855,12 @@ Ubuntu的镜像文件大了很多，Ubuntu22.04只有3G左右，Ubuntu24.04就�
 <h3 id="安装vmtools">安装vmtools
 </h3><p>安装vmtools后可以解决屏幕显示比例的问题，可以在虚拟机外复制然后粘贴到虚拟机里，这很重要！
 右键，在终端中打开。安装命令如下</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo apt update
-</span></span><span class="line"><span class="cl">sudo apt install open-vm-tools -y
-</span></span><span class="line"><span class="cl">sudo apt install open-vm-tools-desktop -y
-</span></span><span class="line"><span class="cl">sudo reboot
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/41.png"
+<pre><code class="language-shell">sudo apt update
+sudo apt install open-vm-tools -y
+sudo apt install open-vm-tools-desktop -y
+sudo reboot
+</code></pre>
+<p><img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/41.png"
 	width="810"
 	height="431"
 	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/41_hu11721447381091044109.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/41_hu1019678563954530347.png 1024w"
@@ -892,19 +898,11 @@ Ubuntu的镜像文件大了很多，Ubuntu22.04只有3G左右，Ubuntu24.04就�
 ></p>
 <h3 id="配置用户免密">配置用户免密
 </h3><p>在使用sudo命令时普通用户需要输入密码。每次都需要输入密码很麻烦，设置免密后使用sudo就不需要再输入密码。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo passwd root <span class="c1">#给root用户设置一个密码</span>
-</span></span><span class="line"><span class="cl">sudo apt install gedit <span class="c1"># gedit是一个文本编辑器，可以让ubuntu上编辑文件像Windows的记事本</span>
-</span></span><span class="line"><span class="cl">sudo apt install vim <span class="c1">#vim 是一个纯终端的文本编辑器</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/44.png"
+<pre><code class="language-shell">sudo passwd root #给root用户设置一个密码
+sudo apt install gedit # gedit是一个文本编辑器，可以让ubuntu上编辑文件像Windows的记事本
+sudo apt install vim #vim 是一个纯终端的文本编辑器
+</code></pre>
+<p><img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/44.png"
 	width="347"
 	height="119"
 	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/44_hu7359312516820342846.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/44_hu17787348785431070939.png 1024w"
@@ -940,23 +938,13 @@ Ubuntu的镜像文件大了很多，Ubuntu22.04只有3G左右，Ubuntu24.04就�
 		data-flex-basis="320px"
 	
 ></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo chmod <span class="m">777</span> /etc/sudoers <span class="c1"># /etc/sudoers是一个只读文件，需要修改权限</span>
-</span></span><span class="line"><span class="cl">su root
-</span></span><span class="line"><span class="cl">gedit /etc/sudoers <span class="c1">#在文件中添加如下标注部分</span>
-</span></span><span class="line"><span class="cl">chmod <span class="m">440</span> /etc/sudoers <span class="c1">#将文件权限修改回来，解决报错/etc/sudoers可被任何人写</span>
-</span></span><span class="line"><span class="cl">exit<span class="p">;</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/47.png"
+<pre><code class="language-shell">sudo chmod 777 /etc/sudoers # /etc/sudoers是一个只读文件，需要修改权限
+su root
+gedit /etc/sudoers #在文件中添加如下标注部分
+chmod 440 /etc/sudoers #将文件权限修改回来，解决报错/etc/sudoers可被任何人写
+exit;
+</code></pre>
+<p><img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/47.png"
 	width="412"
 	height="28"
 	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/47_hu12680780704706754853.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/47_hu16165549152694486022.png 1024w"
@@ -993,19 +981,11 @@ Ubuntu的镜像文件大了很多，Ubuntu22.04只有3G左右，Ubuntu24.04就�
 	
 ></p>
 <h3 id="安装ssh">安装SSH
-</h3><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo apt-get install openssh-server
-</span></span><span class="line"><span class="cl">sudo gedit /etc/ssh/sshd_config
-</span></span><span class="line"><span class="cl">reboot <span class="c1">#重启生效设置</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/50.png"
+</h3><pre><code class="language-shell">sudo apt-get install openssh-server
+sudo gedit /etc/ssh/sshd_config
+reboot #重启生效设置
+</code></pre>
+<p><img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/50.png"
 	width="569"
 	height="232"
 	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/50_hu10880904346983278671.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/50_hu14808256641867900731.png 1024w"
@@ -1057,15 +1037,9 @@ Ubuntu的镜像文件大了很多，Ubuntu22.04只有3G左右，Ubuntu24.04就�
 	
 >
 打开Windows的命令终端，输入命令</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">ssh rust@bird <span class="c1"># rust为ubuntu的用户名，bird为刚才设置的主机映射名</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/54.png"
+<pre><code class="language-shell">ssh rust@bird # rust为ubuntu的用户名，bird为刚才设置的主机映射名
+</code></pre>
+<p><img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/54.png"
 	width="1483"
 	height="762"
 	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/54_hu4899606701917429376.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/54_hu13328165002540383673.png 1024w"
@@ -1079,17 +1053,10 @@ Ubuntu的镜像文件大了很多，Ubuntu22.04只有3G左右，Ubuntu24.04就�
 ></p>
 <h3 id="安装java">安装Java
 </h3><p>Ubuntu安装java可以手动安装，也可以命令行安装。手动安装需要设置环境变量，建议使用命令行安装。命令行安装卸载比较方便。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo apt-get install openjdk-8-jdk
-</span></span><span class="line"><span class="cl">java -version  <span class="c1">#查看安装是否成功</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/55.png"
+<pre><code class="language-shell">sudo apt-get install openjdk-8-jdk
+java -version  #查看安装是否成功
+</code></pre>
+<p><img src="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/55.png"
 	width="739"
 	height="276"
 	srcset="/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/55_hu13542097576863628029.png 480w, /p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/55_hu7571619688027331613.png 1024w"

@@ -1,18 +1,33 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="更新软件包 1 sudo apt-get update 下载MySQL 1 sudo apt-get install mysql-server 登入MySQL MySQL安装完成后会有默认用户和密码，通过默认的用户和密码登入MySQL后可以新建用户并对该用户赋权\n">
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="更新软件包 sudo apt-get update 下载MySQL sudo apt-get install mysql-server 登入MySQL MySQL安装完成后会有默认用户和密码，通过默认的用户和密码登入MySQL后可以新建用户并对该用户赋权\n">
 <title>Ubuntu22.04安装MySQL8.0.35</title>
 
 <link rel='canonical' href='https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/'>
 
 <link rel="stylesheet" href="/scss/style.min.725af1264ab3622779405835da58c5dd0a2906077996c89f3e27ba6359be149d.css"><meta property='og:title' content="Ubuntu22.04安装MySQL8.0.35">
-<meta property='og:description' content="更新软件包 1 sudo apt-get update 下载MySQL 1 sudo apt-get install mysql-server 登入MySQL MySQL安装完成后会有默认用户和密码，通过默认的用户和密码登入MySQL后可以新建用户并对该用户赋权\n">
+<meta property='og:description' content="更新软件包 sudo apt-get update 下载MySQL sudo apt-get install mysql-server 登入MySQL MySQL安装完成后会有默认用户和密码，通过默认的用户和密码登入MySQL后可以新建用户并对该用户赋权\n">
 <meta property='og:url' content='https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/'>
 <meta property='og:site_name' content='rustWood'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Ubuntu' /><meta property='article:tag' content='VMvare' /><meta property='article:tag' content='MySQL' /><meta property='article:published_time' content='2024-09-04T23:18:48&#43;08:00'/><meta property='article:modified_time' content='2024-09-04T23:18:48&#43;08:00'/>
 <meta name="twitter:title" content="Ubuntu22.04安装MySQL8.0.35">
-<meta name="twitter:description" content="更新软件包 1 sudo apt-get update 下载MySQL 1 sudo apt-get install mysql-server 登入MySQL MySQL安装完成后会有默认用户和密码，通过默认的用户和密码登入MySQL后可以新建用户并对该用户赋权\n">        
+<meta name="twitter:description" content="更新软件包 sudo apt-get update 下载MySQL sudo apt-get install mysql-server 登入MySQL MySQL安装完成后会有默认用户和密码，通过默认的用户和密码登入MySQL后可以新建用户并对该用户赋权\n">
+<link rel="stylesheet" href="/static/highlight/styles/github.min.css">
+<script src="/static/highlight/highlight.min.js"></script>
+<script src="/static/highlight/languages/java.min.js"></script>
+<script src="/static/highlight/languages/python.min.js"></script>
+<script src="/static/highlight/languages/bash.min.js"></script>
+<script src="/static/highlight/languages/shell.min.js"></script>
+<script src="/static/highlight/languages/scala.min.js"></script>
+<script src="/static/highlight/languages/sql.js"></script>
+<script src="/static/highlight/languages/xml.js"></script>
+<script src="/static/highlight/languages/yaml.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', (event) => {
+    hljs.highlightAll();
+  });
+</script>        
         
         <link rel="stylesheet" href="/highlight/styles/github.css">
          
@@ -325,15 +340,9 @@
     
     
     <h2 id="更新软件包">更新软件包
-</h2><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo apt-get update 
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/1.png"
+</h2><pre><code class="language-shell">sudo apt-get update 
+</code></pre>
+<p><img src="/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/1.png"
 	width="874"
 	height="281"
 	srcset="/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/1_hu10208442681550117401.png 480w, /p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/1_hu1540946352521276743.png 1024w"
@@ -346,15 +355,9 @@
 	
 ></p>
 <h2 id="下载mysql">下载MySQL
-</h2><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo apt-get install mysql-server
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/2.png"
+</h2><pre><code class="language-shell">sudo apt-get install mysql-server
+</code></pre>
+<p><img src="/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/2.png"
 	width="715"
 	height="471"
 	srcset="/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/2_hu3499638476653893172.png 480w, /p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/2_hu13321327387705561269.png 1024w"
@@ -371,15 +374,9 @@
 <ol>
 <li>查看默认用户和密码的命令</li>
 </ol>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo cat /etc/mysql/debian.cnf
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/3.png"
+<pre><code class="language-shell">sudo cat /etc/mysql/debian.cnf
+</code></pre>
+<p><img src="/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/3.png"
 	width="645"
 	height="318"
 	srcset="/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/3_hu6395335293921905352.png 480w, /p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/3_hu3445967368468062197.png 1024w"
@@ -397,15 +394,10 @@
 <p>mysql -u用户名 -p
 输入密码
 用户名和密码分别为上图中的user 和password</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">mysql -udebian-sys-maint -p
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/4.png"
+<pre><code class="language-shell">mysql -udebian-sys-maint -p
+
+</code></pre>
+<p><img src="/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/4.png"
 	width="772"
 	height="401"
 	srcset="/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/4_hu13038779922474440114.png 480w, /p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/4_hu1796599610772816749.png 1024w"
@@ -421,21 +413,12 @@
 </h2><ol>
 <li>设置root用户的密码（我的密码设置为123456，根据自己的需求修改命令）</li>
 </ol>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="n">use</span><span class="w"> </span><span class="n">mysql</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">update</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="k">set</span><span class="w"> </span><span class="n">authentication_string</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="w"> </span><span class="k">where</span><span class="w"> </span><span class="k">user</span><span class="o">=</span><span class="s1">&#39;root&#39;</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">alter</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="s1">&#39;root&#39;</span><span class="o">@</span><span class="s1">&#39;localhost&#39;</span><span class="w"> </span><span class="n">identified</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="n">mysql_native_password</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="s1">&#39;123456&#39;</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">quit</span><span class="p">;</span><span class="w">
-</span></span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/5.png"
+<pre><code class="language-sql">use mysql;
+update user set authentication_string='' where user='root';
+alter user 'root'@'localhost' identified with mysql_native_password by '123456';
+quit;
+</code></pre>
+<p><img src="/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/5.png"
 	width="848"
 	height="578"
 	srcset="/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/5_hu13115251342486511113.png 480w, /p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/5_hu4830470020606109148.png 1024w"
@@ -467,32 +450,18 @@
 创建用户rust 并设置rust用户可以访问的位置为%（本地访问和远程访问，仅本地访问为localhost）
 复制所有数据库的所有权限给rust用户
 刷新权限</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">USER</span><span class="w"> </span><span class="s1">&#39;rust&#39;</span><span class="o">@</span><span class="s1">&#39;%&#39;</span><span class="w"> </span><span class="n">IDENTIFIED</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="n">mysql_native_password</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;123456&#39;</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">GRANT</span><span class="w"> </span><span class="k">ALL</span><span class="w"> </span><span class="k">PRIVILEGES</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="o">*</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">TO</span><span class="w"> </span><span class="s1">&#39;rust&#39;</span><span class="o">@</span><span class="s1">&#39;%&#39;</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="k">GRANT</span><span class="w"> </span><span class="k">OPTION</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">flush</span><span class="w"> </span><span class="k">privileges</span><span class="p">;</span><span class="w">
-</span></span></span></code></pre></td></tr></table>
-</div>
-</div><h2 id="设置mysql数据库允许远程访问">设置MySQL数据库允许远程访问
+<pre><code class="language-sql">CREATE USER 'rust'@'%' IDENTIFIED WITH mysql_native_password BY '123456';
+GRANT ALL PRIVILEGES ON *.* TO 'rust'@'%' WITH GRANT OPTION;
+flush privileges;
+</code></pre>
+<h2 id="设置mysql数据库允许远程访问">设置MySQL数据库允许远程访问
 </h2><p>默认情况下，MySQL服务器只允许本地连接。</p>
 <ol>
 <li>编辑MySQL配置文件（/etc/mysql/mysql.conf.d/mysqld.cnf）并注释掉以下行（在 bind-address 行前面添加#）：</li>
 </ol>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo gedit /etc/mysql/mysql.conf.d/mysqld.cnf
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/7.png"
+<pre><code class="language-bash">sudo gedit /etc/mysql/mysql.conf.d/mysqld.cnf
+</code></pre>
+<p><img src="/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/7.png"
 	width="904"
 	height="788"
 	srcset="/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/7_hu11885888147539780446.png 480w, /p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/7_hu2354824758386346848.png 1024w"
@@ -507,44 +476,24 @@
 <ol start="2">
 <li>保存文件并重启MySQL服务器</li>
 </ol>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo systemctl restart mysql
-</span></span></code></pre></td></tr></table>
-</div>
-</div><h2 id="mysql执行顺序">MySQL执行顺序
+<pre><code class="language-shell">sudo systemctl restart mysql
+</code></pre>
+<h2 id="mysql执行顺序">MySQL执行顺序
 </h2><blockquote>
 <p>参考资料：<a class="link" href="https://blog.csdn.net/Elsa15/article/details/108544943"  target="_blank" rel="noopener"
     >https://blog.csdn.net/Elsa15/article/details/108544943</a></p>
 </blockquote>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span><span class="lnt">9
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="p">(</span><span class="mi">9</span><span class="p">)</span><span class="w"> </span><span class="k">SELECT</span><span class="w"> </span><span class="p">(</span><span class="mi">10</span><span class="p">)</span><span class="k">DISTINCT</span><span class="w"> </span><span class="k">column</span><span class="p">,(</span><span class="mi">6</span><span class="p">)</span><span class="w"> </span><span class="n">AGG_FUNC</span><span class="p">(</span><span class="k">column</span><span class="w"> </span><span class="k">or</span><span class="w"> </span><span class="n">expression</span><span class="p">),...</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="mi">1</span><span class="err">）</span><span class="k">FROM</span><span class="w"> </span><span class="n">left_table</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="mi">3</span><span class="err">）</span><span class="n">J0IN</span><span class="w"> </span><span class="n">right_table</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="mi">2</span><span class="err">）</span><span class="w"> </span><span class="k">ON</span><span class="w"> </span><span class="n">tablename</span><span class="p">.</span><span class="k">column</span><span class="w"> </span><span class="o">=</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="n">other_tablename</span><span class="p">.</span><span class="k">column</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"> </span><span class="p">(</span><span class="mi">4</span><span class="err">）</span><span class="k">WHERE</span><span class="w"> </span><span class="n">constraint_expression</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span><span class="k">GROUP</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">column</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="mi">7</span><span class="p">)</span><span class="k">WITH</span><span class="w"> </span><span class="k">CUBE</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="k">ROLLUP</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="mi">8</span><span class="p">)</span><span class="k">HAVING</span><span class="w"> </span><span class="n">constraint_expression</span><span class="p">(</span><span class="mi">11</span><span class="p">)</span><span class="k">ORDER</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="k">column</span><span class="w"> </span><span class="n">ASCIDEsc</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="k">LIMIT</span><span class="w"> </span><span class="k">count</span><span class="w"> </span><span class="k">OFFSET</span><span class="w"> </span><span class="k">count</span><span class="p">;</span><span class="w">
-</span></span></span></code></pre></td></tr></table>
-</div>
-</div>
+<pre><code class="language-sql">(9) SELECT (10)DISTINCT column,(6) AGG_FUNC(column or expression),...
+(1）FROM left_table
+(3）J0IN right_table
+(2） ON tablename.column =
+ other_tablename.column
+ (4）WHERE constraint_expression(5)GROUP BY column
+(7)WITH CUBE | ROLLUP
+(8)HAVING constraint_expression(11)ORDER BY column ASCIDEsc
+(12)LIMIT count OFFSET count;
+</code></pre>
+
 </section>
 
 

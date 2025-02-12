@@ -12,7 +12,22 @@
 <meta property='og:site_name' content='rustWood'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='DataX' /><meta property='article:published_time' content='2024-09-14T16:58:47&#43;08:00'/><meta property='article:modified_time' content='2024-09-14T16:58:47&#43;08:00'/>
 <meta name="twitter:title" content="通过DataX同步数据仓库数据">
-<meta name="twitter:description" content="DataX介绍 DataX的Github介绍如下：\nDataX 是阿里云 DataWorks数据集成 的开源版本，在阿里巴巴集团内被广泛使用的离线数据同步工具/平台。DataX 实现了包括 MySQL、Oracle、OceanBase、SqlServer、Postgre、HDFS、Hive、ADS、HBase、TableStore(OTS)、MaxCompute(ODPS)、Hologres、DRDS, databend 等各种异构数据源之间高效的数据同步功能。\n">        
+<meta name="twitter:description" content="DataX介绍 DataX的Github介绍如下：\nDataX 是阿里云 DataWorks数据集成 的开源版本，在阿里巴巴集团内被广泛使用的离线数据同步工具/平台。DataX 实现了包括 MySQL、Oracle、OceanBase、SqlServer、Postgre、HDFS、Hive、ADS、HBase、TableStore(OTS)、MaxCompute(ODPS)、Hologres、DRDS, databend 等各种异构数据源之间高效的数据同步功能。\n">
+<link rel="stylesheet" href="/static/highlight/styles/github.min.css">
+<script src="/static/highlight/highlight.min.js"></script>
+<script src="/static/highlight/languages/java.min.js"></script>
+<script src="/static/highlight/languages/python.min.js"></script>
+<script src="/static/highlight/languages/bash.min.js"></script>
+<script src="/static/highlight/languages/shell.min.js"></script>
+<script src="/static/highlight/languages/scala.min.js"></script>
+<script src="/static/highlight/languages/sql.js"></script>
+<script src="/static/highlight/languages/xml.js"></script>
+<script src="/static/highlight/languages/yaml.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', (event) => {
+    hljs.highlightAll();
+  });
+</script>        
         
         <link rel="stylesheet" href="/highlight/styles/github.css">
          
@@ -385,85 +400,45 @@
 </h2><blockquote>
 <p>参考资料：https://cloud.tencent.com/developer/article/2359335</p>
 </blockquote>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">（1）语　　法：
-</span></span><span class="line"><span class="cl">crontab <span class="o">[</span>-u &lt;用户名称&gt;<span class="o">][</span>配置文件<span class="o">]</span> 或 crontab <span class="o">{</span> -l <span class="p">|</span> -r <span class="p">|</span> -e <span class="o">}</span>
-</span></span><span class="line"><span class="cl">-u   <span class="c1">#&lt;用户名称&gt; 是指设定指定&lt;用户名称&gt;的定时任务，这个前提是你必须要有其权限(比如说是 root)才能够指定他人的时程表。如果不使用 -u user 的话，就是表示设定自己的定时任务。</span>
-</span></span><span class="line"><span class="cl">-l 　<span class="c1">#列出该用户的定时任务设置。</span>
-</span></span><span class="line"><span class="cl">-r 　<span class="c1">#删除该用户的定时任务设置。</span>
-</span></span><span class="line"><span class="cl">-e 　<span class="c1">#编辑该用户的定时任务设置。</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">（2）命令时间格式 :
-</span></span><span class="line"><span class="cl">*     * 　  *　  *　  *　　<span class="nb">command</span>
-</span></span><span class="line"><span class="cl">分　  时　  日　  月　 周　  命令
-</span></span><span class="line"><span class="cl">第1列表示分钟1～59 每分钟用*或者 */1表示
-</span></span><span class="line"><span class="cl">第2列表示小时1～23（0表示0点）
-</span></span><span class="line"><span class="cl">第3列表示日期1～31
-</span></span><span class="line"><span class="cl">第4列表示月份1～12
-</span></span><span class="line"><span class="cl">第5列标识号星期0～6（0表示星期天）
-</span></span><span class="line"><span class="cl">第6列要运行的命令
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">（3）一些Crontab定时任务例子：
-</span></span><span class="line"><span class="cl"><span class="m">30</span> <span class="m">21</span> * * * /usr/local/etc/rc.d/lighttpd restart  <span class="c1">#每晚的21:30 重启apache</span>
-</span></span><span class="line"><span class="cl"><span class="m">45</span> <span class="m">4</span> 1,10,22 * * /usr/local/etc/rc.d/lighttpd restart  <span class="c1">#每月1、10、22日的4 : 45重启apache</span>
-</span></span><span class="line"><span class="cl"><span class="m">10</span> <span class="m">1</span> * * 6,0 /usr/local/etc/rc.d/lighttpd restart  <span class="c1">#每周六、周日的1 : 10重启apache</span>
-</span></span><span class="line"><span class="cl">0,30 18-23 * * * /usr/local/etc/rc.d/lighttpd restart  <span class="c1">#每天18 : 00至23 : 00之间每隔30分钟重启apache</span>
-</span></span><span class="line"><span class="cl"><span class="m">0</span> <span class="m">23</span> * * <span class="m">6</span> /usr/local/etc/rc.d/lighttpd restart  <span class="c1">#每星期六的11 : 00 pm重启apache</span>
-</span></span><span class="line"><span class="cl">* 23-7/1 * * * /usr/local/etc/rc.d/lighttpd restart  <span class="c1">#晚上11点到早上7点之间，每隔一小时重启apache</span>
-</span></span><span class="line"><span class="cl">* */1 * * * /usr/local/etc/rc.d/lighttpd restart  <span class="c1">#每一小时重启apache</span>
-</span></span><span class="line"><span class="cl"><span class="m">0</span> <span class="m">11</span> <span class="m">4</span> * mon-wed /usr/local/etc/rc.d/lighttpd restart  <span class="c1">#每月的4号与每周一到周三的11点重启apache</span>
-</span></span><span class="line"><span class="cl"><span class="m">0</span> <span class="m">4</span> <span class="m">1</span> jan * /usr/local/etc/rc.d/lighttpd restart  <span class="c1">#一月一号的4点重启apache</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">*/30 * * * * /usr/sbin/ntpdate cn.pool.ntp.org  <span class="c1">#每半小时同步一下时间</span>
-</span></span><span class="line"><span class="cl"><span class="m">0</span> */2 * * * /sbin/service httpd restart  <span class="c1">#每两个小时重启一次apache </span>
-</span></span><span class="line"><span class="cl"><span class="m">50</span> <span class="m">7</span> * * * /sbin/service sshd start  <span class="c1">#每天7：50开启ssh服务 </span>
-</span></span><span class="line"><span class="cl"><span class="m">50</span> <span class="m">22</span> * * * /sbin/service sshd stop  <span class="c1">#每天22：50关闭ssh服务 </span>
-</span></span><span class="line"><span class="cl"><span class="m">0</span> <span class="m">0</span> 1,15 * * fsck /home  <span class="c1">#每月1号和15号检查/home 磁盘 </span>
-</span></span><span class="line"><span class="cl"><span class="m">1</span> * * * * /home/bruce/backup  <span class="c1">#每小时的第一分执行 /home/bruce/backup这个文件 </span>
-</span></span><span class="line"><span class="cl"><span class="m">00</span> <span class="m">03</span> * * 1-5 find /home <span class="s2">&#34;*.xxx&#34;</span> -mtime +4 -exec rm <span class="o">{}</span> <span class="se">\;</span>  <span class="c1">#每周一至周五3点钟，在目录/home中，查找文件名为*.xxx的文件，并删除4天前的文件。</span>
-</span></span><span class="line"><span class="cl"><span class="m">30</span> <span class="m">6</span> */10 * * ls  <span class="c1">#每月的1、11、21、31日是的6：30执行一次ls命令</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div>
+<pre><code class="language-shell">（1）语　　法：
+crontab [-u &lt;用户名称&gt;][配置文件] 或 crontab { -l | -r | -e }
+-u   #&lt;用户名称&gt; 是指设定指定&lt;用户名称&gt;的定时任务，这个前提是你必须要有其权限(比如说是 root)才能够指定他人的时程表。如果不使用 -u user 的话，就是表示设定自己的定时任务。
+-l 　#列出该用户的定时任务设置。
+-r 　#删除该用户的定时任务设置。
+-e 　#编辑该用户的定时任务设置。
+
+（2）命令时间格式 :
+*     * 　  *　  *　  *　　command
+分　  时　  日　  月　 周　  命令
+第1列表示分钟1～59 每分钟用*或者 */1表示
+第2列表示小时1～23（0表示0点）
+第3列表示日期1～31
+第4列表示月份1～12
+第5列标识号星期0～6（0表示星期天）
+第6列要运行的命令
+
+（3）一些Crontab定时任务例子：
+30 21 * * * /usr/local/etc/rc.d/lighttpd restart  #每晚的21:30 重启apache
+45 4 1,10,22 * * /usr/local/etc/rc.d/lighttpd restart  #每月1、10、22日的4 : 45重启apache
+10 1 * * 6,0 /usr/local/etc/rc.d/lighttpd restart  #每周六、周日的1 : 10重启apache
+0,30 18-23 * * * /usr/local/etc/rc.d/lighttpd restart  #每天18 : 00至23 : 00之间每隔30分钟重启apache
+0 23 * * 6 /usr/local/etc/rc.d/lighttpd restart  #每星期六的11 : 00 pm重启apache
+* 23-7/1 * * * /usr/local/etc/rc.d/lighttpd restart  #晚上11点到早上7点之间，每隔一小时重启apache
+* */1 * * * /usr/local/etc/rc.d/lighttpd restart  #每一小时重启apache
+0 11 4 * mon-wed /usr/local/etc/rc.d/lighttpd restart  #每月的4号与每周一到周三的11点重启apache
+0 4 1 jan * /usr/local/etc/rc.d/lighttpd restart  #一月一号的4点重启apache
+
+*/30 * * * * /usr/sbin/ntpdate cn.pool.ntp.org  #每半小时同步一下时间
+0 */2 * * * /sbin/service httpd restart  #每两个小时重启一次apache 
+50 7 * * * /sbin/service sshd start  #每天7：50开启ssh服务 
+50 22 * * * /sbin/service sshd stop  #每天22：50关闭ssh服务 
+0 0 1,15 * * fsck /home  #每月1号和15号检查/home 磁盘 
+1 * * * * /home/bruce/backup  #每小时的第一分执行 /home/bruce/backup这个文件 
+00 03 * * 1-5 find /home &quot;*.xxx&quot; -mtime +4 -exec rm {} \;  #每周一至周五3点钟，在目录/home中，查找文件名为*.xxx的文件，并删除4天前的文件。
+30 6 */10 * * ls  #每月的1、11、21、31日是的6：30执行一次ls命令
+
+</code></pre>
+
 </section>
 
 

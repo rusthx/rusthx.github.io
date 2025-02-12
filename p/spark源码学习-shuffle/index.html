@@ -12,7 +12,22 @@
 <meta property='og:site_name' content='rustWood'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Spark' /><meta property='article:published_time' content='2024-12-09T22:01:04&#43;08:00'/><meta property='article:modified_time' content='2024-12-09T22:01:04&#43;08:00'/>
 <meta name="twitter:title" content="Spark源码学习 Shuffle">
-<meta name="twitter:description" content=" 作者由于水平问题，文中也许有一些错误遗漏的地方，欢迎联系指正(2024087171@qq.com)\n简介 参考资料：https://blog.csdn.net/weixin_42868529/article/details/84622803\n">        
+<meta name="twitter:description" content=" 作者由于水平问题，文中也许有一些错误遗漏的地方，欢迎联系指正(2024087171@qq.com)\n简介 参考资料：https://blog.csdn.net/weixin_42868529/article/details/84622803\n">
+<link rel="stylesheet" href="/static/highlight/styles/github.min.css">
+<script src="/static/highlight/highlight.min.js"></script>
+<script src="/static/highlight/languages/java.min.js"></script>
+<script src="/static/highlight/languages/python.min.js"></script>
+<script src="/static/highlight/languages/bash.min.js"></script>
+<script src="/static/highlight/languages/shell.min.js"></script>
+<script src="/static/highlight/languages/scala.min.js"></script>
+<script src="/static/highlight/languages/sql.js"></script>
+<script src="/static/highlight/languages/xml.js"></script>
+<script src="/static/highlight/languages/yaml.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', (event) => {
+    hljs.highlightAll();
+  });
+</script>        
         
         <link rel="stylesheet" href="/highlight/styles/github.css">
          
@@ -391,195 +406,99 @@
 		data-flex-basis="447px"
 	
 ></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span><span class="lnt">44
-</span><span class="lnt">45
-</span><span class="lnt">46
-</span><span class="lnt">47
-</span><span class="lnt">48
-</span><span class="lnt">49
-</span><span class="lnt">50
-</span><span class="lnt">51
-</span><span class="lnt">52
-</span><span class="lnt">53
-</span><span class="lnt">54
-</span><span class="lnt">55
-</span><span class="lnt">56
-</span><span class="lnt">57
-</span><span class="lnt">58
-</span><span class="lnt">59
-</span><span class="lnt">60
-</span><span class="lnt">61
-</span><span class="lnt">62
-</span><span class="lnt">63
-</span><span class="lnt">64
-</span><span class="lnt">65
-</span><span class="lnt">66
-</span><span class="lnt">67
-</span><span class="lnt">68
-</span><span class="lnt">69
-</span><span class="lnt">70
-</span><span class="lnt">71
-</span><span class="lnt">72
-</span><span class="lnt">73
-</span><span class="lnt">74
-</span><span class="lnt">75
-</span><span class="lnt">76
-</span><span class="lnt">77
-</span><span class="lnt">78
-</span><span class="lnt">79
-</span><span class="lnt">80
-</span><span class="lnt">81
-</span><span class="lnt">82
-</span><span class="lnt">83
-</span><span class="lnt">84
-</span><span class="lnt">85
-</span><span class="lnt">86
-</span><span class="lnt">87
-</span><span class="lnt">88
-</span><span class="lnt">89
-</span><span class="lnt">90
-</span><span class="lnt">91
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl">  
-</span></span><span class="line"><span class="cl">  <span class="cm">/**
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * Obtains a [[ShuffleHandle]] to pass to tasks.
-</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
-</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">registerShuffle</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span>, <span class="kt">C</span><span class="o">](</span>
-</span></span><span class="line"><span class="cl">      <span class="n">shuffleId</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">      <span class="n">dependency</span><span class="k">:</span> <span class="kt">ShuffleDependency</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span>, <span class="kt">C</span><span class="o">])</span><span class="k">:</span> <span class="kt">ShuffleHandle</span> <span class="o">=</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="nc">SortShuffleWriter</span><span class="o">.</span><span class="n">shouldBypassMergeSort</span><span class="o">(</span><span class="n">conf</span><span class="o">,</span> <span class="n">dependency</span><span class="o">))</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">      <span class="c1">// If there are fewer than spark.shuffle.sort.bypassMergeThreshold partitions and we don&#39;t
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// need map-side aggregation, then write numPartitions files directly and just concatenate
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// them at the end. This avoids doing serialization and deserialization twice to merge
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// together the spilled files, which would happen with the normal code path. The downside is
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// having multiple files open at a time and thus more memory allocated to buffers.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">new</span> <span class="nc">BypassMergeSortShuffleHandle</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span>
-</span></span><span class="line"><span class="cl">        <span class="n">shuffleId</span><span class="o">,</span> <span class="n">dependency</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">ShuffleDependency</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span>, <span class="kt">V</span><span class="o">]])</span>
-</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="nc">SortShuffleManager</span><span class="o">.</span><span class="n">canUseSerializedShuffle</span><span class="o">(</span><span class="n">dependency</span><span class="o">))</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">      <span class="c1">// Otherwise, try to buffer map outputs in a serialized form, since this is more efficient:
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">new</span> <span class="nc">SerializedShuffleHandle</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span>
-</span></span><span class="line"><span class="cl">        <span class="n">shuffleId</span><span class="o">,</span> <span class="n">dependency</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">ShuffleDependency</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span>, <span class="kt">V</span><span class="o">]])</span>
-</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">      <span class="c1">// Otherwise, buffer map outputs in a deserialized form:
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">new</span> <span class="nc">BaseShuffleHandle</span><span class="o">(</span><span class="n">shuffleId</span><span class="o">,</span> <span class="n">dependency</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">    <span class="o">}</span>
-</span></span><span class="line"><span class="cl">  <span class="o">}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">  <span class="cm">/**
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * Get a reader for a range of reduce partitions (startPartition to endPartition-1, inclusive) to
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * read from a range of map outputs(startMapIndex to endMapIndex-1, inclusive).
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * If endMapIndex=Int.MaxValue, the actual endMapIndex will be changed to the length of total map
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * outputs of the shuffle in `getMapSizesByExecutorId`.
-</span></span></span><span class="line"><span class="cl"><span class="cm">   *
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * Called on executors by reduce tasks.
-</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
-</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">getReader</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">](</span>
-</span></span><span class="line"><span class="cl">      <span class="n">handle</span><span class="k">:</span> <span class="kt">ShuffleHandle</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">      <span class="n">startMapIndex</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">      <span class="n">endMapIndex</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">      <span class="n">startPartition</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">      <span class="n">endPartition</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">      <span class="n">context</span><span class="k">:</span> <span class="kt">TaskContext</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">      <span class="n">metrics</span><span class="k">:</span> <span class="kt">ShuffleReadMetricsReporter</span><span class="o">)</span><span class="k">:</span> <span class="kt">ShuffleReader</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">baseShuffleHandle</span> <span class="k">=</span> <span class="n">handle</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">BaseShuffleHandle</span><span class="o">[</span><span class="kt">K</span>, <span class="k">_</span>, <span class="kt">C</span><span class="o">]]</span>
-</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="o">(</span><span class="n">blocksByAddress</span><span class="o">,</span> <span class="n">canEnableBatchFetch</span><span class="o">)</span> <span class="k">=</span>
-</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">baseShuffleHandle</span><span class="o">.</span><span class="n">dependency</span><span class="o">.</span><span class="n">isShuffleMergeFinalizedMarked</span><span class="o">)</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="n">res</span> <span class="k">=</span> <span class="nc">SparkEnv</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">mapOutputTracker</span><span class="o">.</span><span class="n">getPushBasedShuffleMapSizesByExecutorId</span><span class="o">(</span>
-</span></span><span class="line"><span class="cl">          <span class="n">handle</span><span class="o">.</span><span class="n">shuffleId</span><span class="o">,</span> <span class="n">startMapIndex</span><span class="o">,</span> <span class="n">endMapIndex</span><span class="o">,</span> <span class="n">startPartition</span><span class="o">,</span> <span class="n">endPartition</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">        <span class="o">(</span><span class="n">res</span><span class="o">.</span><span class="n">iter</span><span class="o">,</span> <span class="n">res</span><span class="o">.</span><span class="n">enableBatchFetch</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="n">address</span> <span class="k">=</span> <span class="nc">SparkEnv</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">mapOutputTracker</span><span class="o">.</span><span class="n">getMapSizesByExecutorId</span><span class="o">(</span>
-</span></span><span class="line"><span class="cl">          <span class="n">handle</span><span class="o">.</span><span class="n">shuffleId</span><span class="o">,</span> <span class="n">startMapIndex</span><span class="o">,</span> <span class="n">endMapIndex</span><span class="o">,</span> <span class="n">startPartition</span><span class="o">,</span> <span class="n">endPartition</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">        <span class="o">(</span><span class="n">address</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">      <span class="o">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">new</span> <span class="nc">BlockStoreShuffleReader</span><span class="o">(</span>
-</span></span><span class="line"><span class="cl">      <span class="n">handle</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">BaseShuffleHandle</span><span class="o">[</span><span class="kt">K</span>, <span class="k">_</span>, <span class="kt">C</span><span class="o">]],</span> <span class="n">blocksByAddress</span><span class="o">,</span> <span class="n">context</span><span class="o">,</span> <span class="n">metrics</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">      <span class="n">shouldBatchFetch</span> <span class="k">=</span>
-</span></span><span class="line"><span class="cl">        <span class="n">canEnableBatchFetch</span> <span class="o">&amp;&amp;</span> <span class="n">canUseBatchFetch</span><span class="o">(</span><span class="n">startPartition</span><span class="o">,</span> <span class="n">endPartition</span><span class="o">,</span> <span class="n">context</span><span class="o">))</span>
-</span></span><span class="line"><span class="cl">  <span class="o">}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">  <span class="cm">/** Get a writer for a given partition. Called on executors by map tasks. */</span>
-</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">getWriter</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span>
-</span></span><span class="line"><span class="cl">      <span class="n">handle</span><span class="k">:</span> <span class="kt">ShuffleHandle</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">      <span class="n">mapId</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">      <span class="n">context</span><span class="k">:</span> <span class="kt">TaskContext</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">      <span class="n">metrics</span><span class="k">:</span> <span class="kt">ShuffleWriteMetricsReporter</span><span class="o">)</span><span class="k">:</span> <span class="kt">ShuffleWriter</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">mapTaskIds</span> <span class="k">=</span> <span class="n">taskIdMapsForShuffle</span><span class="o">.</span><span class="n">computeIfAbsent</span><span class="o">(</span>
-</span></span><span class="line"><span class="cl">      <span class="n">handle</span><span class="o">.</span><span class="n">shuffleId</span><span class="o">,</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="k">new</span> <span class="nc">OpenHashSet</span><span class="o">[</span><span class="kt">Long</span><span class="o">](</span><span class="mi">16</span><span class="o">))</span>
-</span></span><span class="line"><span class="cl">    <span class="n">mapTaskIds</span><span class="o">.</span><span class="n">synchronized</span> <span class="o">{</span> <span class="n">mapTaskIds</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="n">mapId</span><span class="o">)</span> <span class="o">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">env</span> <span class="k">=</span> <span class="nc">SparkEnv</span><span class="o">.</span><span class="n">get</span>
-</span></span><span class="line"><span class="cl">    <span class="n">handle</span> <span class="k">match</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="n">unsafeShuffleHandle</span><span class="k">:</span> <span class="kt">SerializedShuffleHandle</span><span class="o">[</span><span class="kt">K</span> <span class="kt">@unchecked</span>, <span class="kt">V</span> <span class="kt">@unchecked</span><span class="o">]</span> <span class="k">=&gt;</span>
-</span></span><span class="line"><span class="cl">        <span class="k">new</span> <span class="nc">UnsafeShuffleWriter</span><span class="o">(</span>
-</span></span><span class="line"><span class="cl">          <span class="n">env</span><span class="o">.</span><span class="n">blockManager</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">          <span class="n">context</span><span class="o">.</span><span class="n">taskMemoryManager</span><span class="o">(),</span>
-</span></span><span class="line"><span class="cl">          <span class="n">unsafeShuffleHandle</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">          <span class="n">mapId</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">          <span class="n">context</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">          <span class="n">env</span><span class="o">.</span><span class="n">conf</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">          <span class="n">metrics</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">          <span class="n">shuffleExecutorComponents</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="n">bypassMergeSortHandle</span><span class="k">:</span> <span class="kt">BypassMergeSortShuffleHandle</span><span class="o">[</span><span class="kt">K</span> <span class="kt">@unchecked</span>, <span class="kt">V</span> <span class="kt">@unchecked</span><span class="o">]</span> <span class="k">=&gt;</span>
-</span></span><span class="line"><span class="cl">        <span class="k">new</span> <span class="nc">BypassMergeSortShuffleWriter</span><span class="o">(</span>
-</span></span><span class="line"><span class="cl">          <span class="n">env</span><span class="o">.</span><span class="n">blockManager</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">          <span class="n">bypassMergeSortHandle</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">          <span class="n">mapId</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">          <span class="n">env</span><span class="o">.</span><span class="n">conf</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">          <span class="n">metrics</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">          <span class="n">shuffleExecutorComponents</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="n">other</span><span class="k">:</span> <span class="kt">BaseShuffleHandle</span><span class="o">[</span><span class="kt">K</span> <span class="kt">@unchecked</span>, <span class="kt">V</span> <span class="kt">@unchecked</span>, <span class="k">_</span><span class="o">]</span> <span class="k">=&gt;</span>
-</span></span><span class="line"><span class="cl">        <span class="k">new</span> <span class="nc">SortShuffleWriter</span><span class="o">(</span><span class="n">other</span><span class="o">,</span> <span class="n">mapId</span><span class="o">,</span> <span class="n">context</span><span class="o">,</span> <span class="n">shuffleExecutorComponents</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">    <span class="o">}</span>
-</span></span><span class="line"><span class="cl">  <span class="o">}</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><h2 id="与hadoopmapreduce-shuffle的区别">与Hadoop(MapReduce) shuffle的区别
+<pre><code class="language-scala">  
+  /**
+   * Obtains a [[ShuffleHandle]] to pass to tasks.
+   */
+  override def registerShuffle[K, V, C](
+      shuffleId: Int,
+      dependency: ShuffleDependency[K, V, C]): ShuffleHandle = {
+    if (SortShuffleWriter.shouldBypassMergeSort(conf, dependency)) {
+      // If there are fewer than spark.shuffle.sort.bypassMergeThreshold partitions and we don't
+      // need map-side aggregation, then write numPartitions files directly and just concatenate
+      // them at the end. This avoids doing serialization and deserialization twice to merge
+      // together the spilled files, which would happen with the normal code path. The downside is
+      // having multiple files open at a time and thus more memory allocated to buffers.
+      new BypassMergeSortShuffleHandle[K, V](
+        shuffleId, dependency.asInstanceOf[ShuffleDependency[K, V, V]])
+    } else if (SortShuffleManager.canUseSerializedShuffle(dependency)) {
+      // Otherwise, try to buffer map outputs in a serialized form, since this is more efficient:
+      new SerializedShuffleHandle[K, V](
+        shuffleId, dependency.asInstanceOf[ShuffleDependency[K, V, V]])
+    } else {
+      // Otherwise, buffer map outputs in a deserialized form:
+      new BaseShuffleHandle(shuffleId, dependency)
+    }
+  }
+
+  /**
+   * Get a reader for a range of reduce partitions (startPartition to endPartition-1, inclusive) to
+   * read from a range of map outputs(startMapIndex to endMapIndex-1, inclusive).
+   * If endMapIndex=Int.MaxValue, the actual endMapIndex will be changed to the length of total map
+   * outputs of the shuffle in `getMapSizesByExecutorId`.
+   *
+   * Called on executors by reduce tasks.
+   */
+  override def getReader[K, C](
+      handle: ShuffleHandle,
+      startMapIndex: Int,
+      endMapIndex: Int,
+      startPartition: Int,
+      endPartition: Int,
+      context: TaskContext,
+      metrics: ShuffleReadMetricsReporter): ShuffleReader[K, C] = {
+    val baseShuffleHandle = handle.asInstanceOf[BaseShuffleHandle[K, _, C]]
+    val (blocksByAddress, canEnableBatchFetch) =
+      if (baseShuffleHandle.dependency.isShuffleMergeFinalizedMarked) {
+        val res = SparkEnv.get.mapOutputTracker.getPushBasedShuffleMapSizesByExecutorId(
+          handle.shuffleId, startMapIndex, endMapIndex, startPartition, endPartition)
+        (res.iter, res.enableBatchFetch)
+      } else {
+        val address = SparkEnv.get.mapOutputTracker.getMapSizesByExecutorId(
+          handle.shuffleId, startMapIndex, endMapIndex, startPartition, endPartition)
+        (address, true)
+      }
+    new BlockStoreShuffleReader(
+      handle.asInstanceOf[BaseShuffleHandle[K, _, C]], blocksByAddress, context, metrics,
+      shouldBatchFetch =
+        canEnableBatchFetch &amp;&amp; canUseBatchFetch(startPartition, endPartition, context))
+  }
+
+  /** Get a writer for a given partition. Called on executors by map tasks. */
+  override def getWriter[K, V](
+      handle: ShuffleHandle,
+      mapId: Long,
+      context: TaskContext,
+      metrics: ShuffleWriteMetricsReporter): ShuffleWriter[K, V] = {
+    val mapTaskIds = taskIdMapsForShuffle.computeIfAbsent(
+      handle.shuffleId, _ =&gt; new OpenHashSet[Long](16))
+    mapTaskIds.synchronized { mapTaskIds.add(mapId) }
+    val env = SparkEnv.get
+    handle match {
+      case unsafeShuffleHandle: SerializedShuffleHandle[K @unchecked, V @unchecked] =&gt;
+        new UnsafeShuffleWriter(
+          env.blockManager,
+          context.taskMemoryManager(),
+          unsafeShuffleHandle,
+          mapId,
+          context,
+          env.conf,
+          metrics,
+          shuffleExecutorComponents)
+      case bypassMergeSortHandle: BypassMergeSortShuffleHandle[K @unchecked, V @unchecked] =&gt;
+        new BypassMergeSortShuffleWriter(
+          env.blockManager,
+          bypassMergeSortHandle,
+          mapId,
+          env.conf,
+          metrics,
+          shuffleExecutorComponents)
+      case other: BaseShuffleHandle[K @unchecked, V @unchecked, _] =&gt;
+        new SortShuffleWriter(other, mapId, context, shuffleExecutorComponents)
+    }
+  }
+</code></pre>
+<h2 id="与hadoopmapreduce-shuffle的区别">与Hadoop(MapReduce) shuffle的区别
 </h2><blockquote>
 <p>参考：https://zhuanlan.zhihu.com/p/136466667</p>
 </blockquote>
@@ -591,109 +510,56 @@
 </ol>
 <h2 id="shufflewriter及其选择策略">ShuffleWriter及其选择策略
 </h2><h3 id="unsafeshufflewriter">UnsafeShuffleWriter
-</h3><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span><span class="lnt">44
-</span><span class="lnt">45
-</span><span class="lnt">46
-</span><span class="lnt">47
-</span><span class="lnt">48
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="nd">@VisibleForTesting</span>
-</span></span><span class="line"><span class="cl"><span class="n">public</span> <span class="n">void</span> <span class="n">write</span><span class="o">(</span><span class="nc">Iterator</span><span class="o">&lt;</span><span class="nc">Product2</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;&gt;</span> <span class="n">records</span><span class="o">)</span> <span class="n">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">  <span class="n">write</span><span class="o">(</span><span class="nc">JavaConverters</span><span class="o">.</span><span class="n">asScalaIteratorConverter</span><span class="o">(</span><span class="n">records</span><span class="o">).</span><span class="n">asScala</span><span class="o">());</span>
-</span></span><span class="line"><span class="cl"><span class="o">}</span>
-</span></span><span class="line"><span class="cl"><span class="nd">@Override</span>
-</span></span><span class="line"><span class="cl"><span class="n">public</span> <span class="n">void</span> <span class="n">write</span><span class="o">(</span><span class="n">scala</span><span class="o">.</span><span class="n">collection</span><span class="o">.</span><span class="nc">Iterator</span><span class="o">&lt;</span><span class="nc">Product2</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;&gt;</span> <span class="n">records</span><span class="o">)</span> <span class="n">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">    <span class="c1">// Keep track of success so we know if we encountered an exception
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// We do this rather than a standard try/catch/re-throw to handle
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// generic throwables.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">boolean</span> <span class="n">success</span> <span class="k">=</span> <span class="kc">false</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">      <span class="k">while</span> <span class="o">(</span><span class="n">records</span><span class="o">.</span><span class="n">hasNext</span><span class="o">())</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="n">insertRecordIntoSorter</span><span class="o">(</span><span class="n">records</span><span class="o">.</span><span class="n">next</span><span class="o">());</span>
-</span></span><span class="line"><span class="cl">      <span class="o">}</span>
-</span></span><span class="line"><span class="cl">      <span class="n">closeAndWriteOutput</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">      <span class="n">success</span> <span class="k">=</span> <span class="kc">true</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">finally</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">sorter</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="k">try</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">          <span class="n">sorter</span><span class="o">.</span><span class="n">cleanupResources</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">          <span class="c1">// Only throw this error if we won&#39;t be masking another
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="c1">// error.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="k">if</span> <span class="o">(</span><span class="n">success</span><span class="o">)</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">            <span class="k">throw</span> <span class="n">e</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl">          <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">            <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="o">(</span><span class="s">&#34;In addition to a failure during writing, we failed during &#34;</span> <span class="o">+</span>
-</span></span><span class="line"><span class="cl">                         <span class="s">&#34;cleanup.&#34;</span><span class="o">,</span> <span class="n">e</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">          <span class="o">}</span>
-</span></span><span class="line"><span class="cl">        <span class="o">}</span>
-</span></span><span class="line"><span class="cl">      <span class="o">}</span>
-</span></span><span class="line"><span class="cl">    <span class="o">}</span>
-</span></span><span class="line"><span class="cl">  <span class="o">}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="nd">@VisibleForTesting</span>
-</span></span><span class="line"><span class="cl"><span class="n">void</span> <span class="n">insertRecordIntoSorter</span><span class="o">(</span><span class="nc">Product2</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">record</span><span class="o">)</span> <span class="n">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">  <span class="n">assert</span><span class="o">(</span><span class="n">sorter</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">  <span class="k">final</span> <span class="n">K</span> <span class="n">key</span> <span class="k">=</span> <span class="n">record</span><span class="o">.</span><span class="n">_1</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">  <span class="k">final</span> <span class="n">int</span> <span class="n">partitionId</span> <span class="k">=</span> <span class="n">partitioner</span><span class="o">.</span><span class="n">getPartition</span><span class="o">(</span><span class="n">key</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">  <span class="n">serBuffer</span><span class="o">.</span><span class="n">reset</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">  <span class="n">serOutputStream</span><span class="o">.</span><span class="n">writeKey</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="nc">OBJECT_CLASS_TAG</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">  <span class="n">serOutputStream</span><span class="o">.</span><span class="n">writeValue</span><span class="o">(</span><span class="n">record</span><span class="o">.</span><span class="n">_2</span><span class="o">(),</span> <span class="nc">OBJECT_CLASS_TAG</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">  <span class="n">serOutputStream</span><span class="o">.</span><span class="n">flush</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">  <span class="k">final</span> <span class="n">int</span> <span class="n">serializedRecordSize</span> <span class="k">=</span> <span class="n">serBuffer</span><span class="o">.</span><span class="n">size</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">  <span class="n">assert</span> <span class="o">(</span><span class="n">serializedRecordSize</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">  <span class="n">sorter</span><span class="o">.</span><span class="n">insertRecord</span><span class="o">(</span>
-</span></span><span class="line"><span class="cl">    <span class="n">serBuffer</span><span class="o">.</span><span class="n">getBuf</span><span class="o">(),</span> <span class="nc">Platform</span><span class="o">.</span><span class="nc">BYTE_ARRAY_OFFSET</span><span class="o">,</span> <span class="n">serializedRecordSize</span><span class="o">,</span> <span class="n">partitionId</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl"><span class="o">}</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>当shuffle后的分区数小于等于<code>sortShuffleManager</code>的最大分区数时，进行<code>unsafeShuffle</code>。主要步骤：</p>
+</h3><pre><code class="language-scala">@VisibleForTesting
+public void write(Iterator&lt;Product2&lt;K, V&gt;&gt; records) throws IOException {
+  write(JavaConverters.asScalaIteratorConverter(records).asScala());
+}
+@Override
+public void write(scala.collection.Iterator&lt;Product2&lt;K, V&gt;&gt; records) throws IOException {
+    // Keep track of success so we know if we encountered an exception
+    // We do this rather than a standard try/catch/re-throw to handle
+    // generic throwables.
+    boolean success = false;
+    try {
+      while (records.hasNext()) {
+        insertRecordIntoSorter(records.next());
+      }
+      closeAndWriteOutput();
+      success = true;
+    } finally {
+      if (sorter != null) {
+        try {
+          sorter.cleanupResources();
+        } catch (Exception e) {
+          // Only throw this error if we won't be masking another
+          // error.
+          if (success) {
+            throw e;
+          } else {
+            logger.error(&quot;In addition to a failure during writing, we failed during &quot; +
+                         &quot;cleanup.&quot;, e);
+          }
+        }
+      }
+    }
+  }
+
+@VisibleForTesting
+void insertRecordIntoSorter(Product2&lt;K, V&gt; record) throws IOException {
+  assert(sorter != null);
+  final K key = record._1();
+  final int partitionId = partitioner.getPartition(key);
+  serBuffer.reset();
+  serOutputStream.writeKey(key, OBJECT_CLASS_TAG);
+  serOutputStream.writeValue(record._2(), OBJECT_CLASS_TAG);
+  serOutputStream.flush();
+  final int serializedRecordSize = serBuffer.size();
+  assert (serializedRecordSize &gt; 0);
+  sorter.insertRecord(
+    serBuffer.getBuf(), Platform.BYTE_ARRAY_OFFSET, serializedRecordSize, partitionId);
+}
+</code></pre>
+<p>当shuffle后的分区数小于等于<code>sortShuffleManager</code>的最大分区数时，进行<code>unsafeShuffle</code>。主要步骤：</p>
 <ol>
 <li>将内存中的对象通过Java可迭代对象转换器转换为Scala的可迭代对象（并没有进行序列化相关操作，只是为了兼容性）</li>
 <li>判断排序器（<code>sorter</code>）是否为空，使用分区器(<code>partitioner</code>)确认记录所属分区</li>
@@ -713,131 +579,67 @@ Spark的某些配置参数可以影响排序行为。例如，spark.shuffle.sort
 在某些优化场景下，为了提高性能，Spark可能会选择不进行排序。</li>
 </ol>
 <h3 id="bypassmergesortshufflewriter">BypassMergeSortShuffleWriter
-</h3><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span><span class="lnt">44
-</span><span class="lnt">45
-</span><span class="lnt">46
-</span><span class="lnt">47
-</span><span class="lnt">48
-</span><span class="lnt">49
-</span><span class="lnt">50
-</span><span class="lnt">51
-</span><span class="lnt">52
-</span><span class="lnt">53
-</span><span class="lnt">54
-</span><span class="lnt">55
-</span><span class="lnt">56
-</span><span class="lnt">57
-</span><span class="lnt">58
-</span><span class="lnt">59
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="nd">@Override</span>
-</span></span><span class="line"><span class="cl">  <span class="n">public</span> <span class="n">void</span> <span class="n">write</span><span class="o">(</span><span class="nc">Iterator</span><span class="o">&lt;</span><span class="nc">Product2</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;&gt;</span> <span class="n">records</span><span class="o">)</span> <span class="n">throws</span> <span class="nc">IOException</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">    <span class="n">assert</span> <span class="o">(</span><span class="n">partitionWriters</span> <span class="o">==</span> <span class="kc">null</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">    <span class="nc">ShuffleMapOutputWriter</span> <span class="n">mapOutputWriter</span> <span class="k">=</span> <span class="n">shuffleExecutorComponents</span>
-</span></span><span class="line"><span class="cl">        <span class="o">.</span><span class="n">createMapOutputWriter</span><span class="o">(</span><span class="n">shuffleId</span><span class="o">,</span> <span class="n">mapId</span><span class="o">,</span> <span class="n">numPartitions</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(!</span><span class="n">records</span><span class="o">.</span><span class="n">hasNext</span><span class="o">())</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="n">partitionLengths</span> <span class="k">=</span> <span class="n">mapOutputWriter</span><span class="o">.</span><span class="n">commitAllPartitions</span><span class="o">(</span>
-</span></span><span class="line"><span class="cl">          <span class="nc">ShuffleChecksumHelper</span><span class="o">.</span><span class="nc">EMPTY_CHECKSUM_VALUE</span><span class="o">).</span><span class="n">getPartitionLengths</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">        <span class="n">mapStatus</span> <span class="k">=</span> <span class="nc">MapStatus</span><span class="n">$</span><span class="o">.</span><span class="nc">MODULE</span><span class="n">$</span><span class="o">.</span><span class="n">apply</span><span class="o">(</span>
-</span></span><span class="line"><span class="cl">          <span class="n">blockManager</span><span class="o">.</span><span class="n">shuffleServerId</span><span class="o">(),</span> <span class="n">partitionLengths</span><span class="o">,</span> <span class="n">mapId</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">        <span class="k">return</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl">      <span class="o">}</span>
-</span></span><span class="line"><span class="cl">      <span class="k">final</span> <span class="nc">SerializerInstance</span> <span class="n">serInstance</span> <span class="k">=</span> <span class="n">serializer</span><span class="o">.</span><span class="n">newInstance</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">      <span class="k">final</span> <span class="n">long</span> <span class="n">openStartTime</span> <span class="k">=</span> <span class="nc">System</span><span class="o">.</span><span class="n">nanoTime</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">      <span class="n">partitionWriters</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">DiskBlockObjectWriter</span><span class="o">[</span><span class="kt">numPartitions</span><span class="o">];</span>
-</span></span><span class="line"><span class="cl">      <span class="n">partitionWriterSegments</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">FileSegment</span><span class="o">[</span><span class="kt">numPartitions</span><span class="o">];</span>
-</span></span><span class="line"><span class="cl">      <span class="k">for</span> <span class="o">(</span><span class="n">int</span> <span class="n">i</span> <span class="k">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">numPartitions</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="k">final</span> <span class="nc">Tuple2</span><span class="o">&lt;</span><span class="nc">TempShuffleBlockId</span><span class="o">,</span> <span class="nc">File</span><span class="o">&gt;</span> <span class="n">tempShuffleBlockIdPlusFile</span> <span class="k">=</span>
-</span></span><span class="line"><span class="cl">            <span class="n">blockManager</span><span class="o">.</span><span class="n">diskBlockManager</span><span class="o">().</span><span class="n">createTempShuffleBlock</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">        <span class="k">final</span> <span class="nc">File</span> <span class="n">file</span> <span class="k">=</span> <span class="n">tempShuffleBlockIdPlusFile</span><span class="o">.</span><span class="n">_2</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">        <span class="k">final</span> <span class="nc">BlockId</span> <span class="n">blockId</span> <span class="k">=</span> <span class="n">tempShuffleBlockIdPlusFile</span><span class="o">.</span><span class="n">_1</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">        <span class="nc">DiskBlockObjectWriter</span> <span class="n">writer</span> <span class="k">=</span>
-</span></span><span class="line"><span class="cl">          <span class="n">blockManager</span><span class="o">.</span><span class="n">getDiskWriter</span><span class="o">(</span><span class="n">blockId</span><span class="o">,</span> <span class="n">file</span><span class="o">,</span> <span class="n">serInstance</span><span class="o">,</span> <span class="n">fileBufferSize</span><span class="o">,</span> <span class="n">writeMetrics</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">(</span><span class="n">partitionChecksums</span><span class="o">.</span><span class="n">length</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="o">)</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">          <span class="n">writer</span><span class="o">.</span><span class="n">setChecksum</span><span class="o">(</span><span class="n">partitionChecksums</span><span class="o">[</span><span class="kt">i</span><span class="o">]);</span>
-</span></span><span class="line"><span class="cl">        <span class="o">}</span>
-</span></span><span class="line"><span class="cl">        <span class="n">partitionWriters</span><span class="o">[</span><span class="kt">i</span><span class="o">]</span> <span class="k">=</span> <span class="n">writer</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl">      <span class="o">}</span>
-</span></span><span class="line"><span class="cl">      <span class="c1">// Creating the file to write to and creating a disk writer both involve interacting with
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// the disk, and can take a long time in aggregate when we open many files, so should be
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// included in the shuffle write time.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">writeMetrics</span><span class="o">.</span><span class="n">incWriteTime</span><span class="o">(</span><span class="nc">System</span><span class="o">.</span><span class="n">nanoTime</span><span class="o">()</span> <span class="o">-</span> <span class="n">openStartTime</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">      <span class="k">while</span> <span class="o">(</span><span class="n">records</span><span class="o">.</span><span class="n">hasNext</span><span class="o">())</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="k">final</span> <span class="nc">Product2</span><span class="o">&lt;</span><span class="n">K</span><span class="o">,</span> <span class="n">V</span><span class="o">&gt;</span> <span class="n">record</span> <span class="k">=</span> <span class="n">records</span><span class="o">.</span><span class="n">next</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">        <span class="k">final</span> <span class="n">K</span> <span class="n">key</span> <span class="k">=</span> <span class="n">record</span><span class="o">.</span><span class="n">_1</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">        <span class="n">partitionWriters</span><span class="o">[</span><span class="kt">partitioner.getPartition</span><span class="o">(</span><span class="kt">key</span><span class="o">)].</span><span class="n">write</span><span class="o">(</span><span class="n">key</span><span class="o">,</span> <span class="n">record</span><span class="o">.</span><span class="n">_2</span><span class="o">());</span>
-</span></span><span class="line"><span class="cl">      <span class="o">}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">      <span class="k">for</span> <span class="o">(</span><span class="n">int</span> <span class="n">i</span> <span class="k">=</span> <span class="mi">0</span><span class="o">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">numPartitions</span><span class="o">;</span> <span class="n">i</span><span class="o">++)</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="k">try</span> <span class="o">(</span><span class="nc">DiskBlockObjectWriter</span> <span class="n">writer</span> <span class="k">=</span> <span class="n">partitionWriters</span><span class="o">[</span><span class="kt">i</span><span class="o">])</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">          <span class="n">partitionWriterSegments</span><span class="o">[</span><span class="kt">i</span><span class="o">]</span> <span class="k">=</span> <span class="n">writer</span><span class="o">.</span><span class="n">commitAndGet</span><span class="o">();</span>
-</span></span><span class="line"><span class="cl">        <span class="o">}</span>
-</span></span><span class="line"><span class="cl">      <span class="o">}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">      <span class="n">partitionLengths</span> <span class="k">=</span> <span class="n">writePartitionedData</span><span class="o">(</span><span class="n">mapOutputWriter</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">      <span class="n">mapStatus</span> <span class="k">=</span> <span class="nc">MapStatus</span><span class="n">$</span><span class="o">.</span><span class="nc">MODULE</span><span class="n">$</span><span class="o">.</span><span class="n">apply</span><span class="o">(</span>
-</span></span><span class="line"><span class="cl">        <span class="n">blockManager</span><span class="o">.</span><span class="n">shuffleServerId</span><span class="o">(),</span> <span class="n">partitionLengths</span><span class="o">,</span> <span class="n">mapId</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e</span><span class="o">)</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">      <span class="k">try</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="n">mapOutputWriter</span><span class="o">.</span><span class="n">abort</span><span class="o">(</span><span class="n">e</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Exception</span> <span class="n">e2</span><span class="o">)</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="n">logger</span><span class="o">.</span><span class="n">error</span><span class="o">(</span><span class="s">&#34;Failed to abort the writer after failing to write map output.&#34;</span><span class="o">,</span> <span class="n">e2</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">        <span class="n">e</span><span class="o">.</span><span class="n">addSuppressed</span><span class="o">(</span><span class="n">e2</span><span class="o">);</span>
-</span></span><span class="line"><span class="cl">      <span class="o">}</span>
-</span></span><span class="line"><span class="cl">      <span class="k">throw</span> <span class="n">e</span><span class="o">;</span>
-</span></span><span class="line"><span class="cl">    <span class="o">}</span>
-</span></span><span class="line"><span class="cl">  <span class="o">}</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>BypassMergeSortShuffleWriter，专门用于处理小规模的 shuffle 操作。它通过绕过排序步骤来提高性能，适用于分区数较少的情况。</p>
+</h3><pre><code class="language-scala">@Override
+  public void write(Iterator&lt;Product2&lt;K, V&gt;&gt; records) throws IOException {
+    assert (partitionWriters == null);
+    ShuffleMapOutputWriter mapOutputWriter = shuffleExecutorComponents
+        .createMapOutputWriter(shuffleId, mapId, numPartitions);
+    try {
+      if (!records.hasNext()) {
+        partitionLengths = mapOutputWriter.commitAllPartitions(
+          ShuffleChecksumHelper.EMPTY_CHECKSUM_VALUE).getPartitionLengths();
+        mapStatus = MapStatus$.MODULE$.apply(
+          blockManager.shuffleServerId(), partitionLengths, mapId);
+        return;
+      }
+      final SerializerInstance serInstance = serializer.newInstance();
+      final long openStartTime = System.nanoTime();
+      partitionWriters = new DiskBlockObjectWriter[numPartitions];
+      partitionWriterSegments = new FileSegment[numPartitions];
+      for (int i = 0; i &lt; numPartitions; i++) {
+        final Tuple2&lt;TempShuffleBlockId, File&gt; tempShuffleBlockIdPlusFile =
+            blockManager.diskBlockManager().createTempShuffleBlock();
+        final File file = tempShuffleBlockIdPlusFile._2();
+        final BlockId blockId = tempShuffleBlockIdPlusFile._1();
+        DiskBlockObjectWriter writer =
+          blockManager.getDiskWriter(blockId, file, serInstance, fileBufferSize, writeMetrics);
+        if (partitionChecksums.length &gt; 0) {
+          writer.setChecksum(partitionChecksums[i]);
+        }
+        partitionWriters[i] = writer;
+      }
+      // Creating the file to write to and creating a disk writer both involve interacting with
+      // the disk, and can take a long time in aggregate when we open many files, so should be
+      // included in the shuffle write time.
+      writeMetrics.incWriteTime(System.nanoTime() - openStartTime);
+
+      while (records.hasNext()) {
+        final Product2&lt;K, V&gt; record = records.next();
+        final K key = record._1();
+        partitionWriters[partitioner.getPartition(key)].write(key, record._2());
+      }
+
+      for (int i = 0; i &lt; numPartitions; i++) {
+        try (DiskBlockObjectWriter writer = partitionWriters[i]) {
+          partitionWriterSegments[i] = writer.commitAndGet();
+        }
+      }
+
+      partitionLengths = writePartitionedData(mapOutputWriter);
+      mapStatus = MapStatus$.MODULE$.apply(
+        blockManager.shuffleServerId(), partitionLengths, mapId);
+    } catch (Exception e) {
+      try {
+        mapOutputWriter.abort(e);
+      } catch (Exception e2) {
+        logger.error(&quot;Failed to abort the writer after failing to write map output.&quot;, e2);
+        e.addSuppressed(e2);
+      }
+      throw e;
+    }
+  }
+</code></pre>
+<p>BypassMergeSortShuffleWriter，专门用于处理小规模的 shuffle 操作。它通过绕过排序步骤来提高性能，适用于分区数较少的情况。</p>
 <ol>
 <li>初始化和检查：确保在写入开始时，partitionWriters 为空，防止重复初始化，然后创建一个用于写入 shuffle 输出的对象(<code>ShuffleMapOutputWriter</code>)。</li>
 <li>处理空记录集：如果没有记录需要写入，更新 map 状态,直接向blockkManager提交所有分区并返回。</li>
@@ -865,57 +667,30 @@ Spark的某些配置参数可以影响排序行为。例如，spark.shuffle.sort
 </ol>
 <p>也即是，前一个stage写数据确定分区是通过分区器，而后一个stage读数据确定分区是通过<code>MapStatus</code>。</p>
 <h3 id="sortshufflewriter">SortShuffleWriter
-</h3><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">write</span><span class="o">(</span><span class="n">records</span><span class="k">:</span> <span class="kt">Iterator</span><span class="o">[</span><span class="kt">Product2</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">    <span class="n">sorter</span> <span class="k">=</span> <span class="k">if</span> <span class="o">(</span><span class="n">dep</span><span class="o">.</span><span class="n">mapSideCombine</span><span class="o">)</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">      <span class="k">new</span> <span class="nc">ExternalSorter</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span>, <span class="kt">C</span><span class="o">](</span>
-</span></span><span class="line"><span class="cl">        <span class="n">context</span><span class="o">,</span> <span class="n">dep</span><span class="o">.</span><span class="n">aggregator</span><span class="o">,</span> <span class="nc">Some</span><span class="o">(</span><span class="n">dep</span><span class="o">.</span><span class="n">partitioner</span><span class="o">),</span> <span class="n">dep</span><span class="o">.</span><span class="n">keyOrdering</span><span class="o">,</span> <span class="n">dep</span><span class="o">.</span><span class="n">serializer</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">      <span class="c1">// In this case we pass neither an aggregator nor an ordering to the sorter, because we don&#39;t
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// care whether the keys get sorted in each partition; that will be done on the reduce side
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="c1">// if the operation being run is sortByKey.
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">new</span> <span class="nc">ExternalSorter</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span>, <span class="kt">V</span><span class="o">](</span>
-</span></span><span class="line"><span class="cl">        <span class="n">context</span><span class="o">,</span> <span class="n">aggregator</span> <span class="k">=</span> <span class="nc">None</span><span class="o">,</span> <span class="nc">Some</span><span class="o">(</span><span class="n">dep</span><span class="o">.</span><span class="n">partitioner</span><span class="o">),</span> <span class="n">ordering</span> <span class="k">=</span> <span class="nc">None</span><span class="o">,</span> <span class="n">dep</span><span class="o">.</span><span class="n">serializer</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">    <span class="o">}</span>
-</span></span><span class="line"><span class="cl">    <span class="n">sorter</span><span class="o">.</span><span class="n">insertAll</span><span class="o">(</span><span class="n">records</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">    <span class="c1">// Don&#39;t bother including the time to open the merged output file in the shuffle write time,
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// because it just opens a single file, so is typically too fast to measure accurately
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="c1">// (see SPARK-3570).
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">mapOutputWriter</span> <span class="k">=</span> <span class="n">shuffleExecutorComponents</span><span class="o">.</span><span class="n">createMapOutputWriter</span><span class="o">(</span>
-</span></span><span class="line"><span class="cl">      <span class="n">dep</span><span class="o">.</span><span class="n">shuffleId</span><span class="o">,</span> <span class="n">mapId</span><span class="o">,</span> <span class="n">dep</span><span class="o">.</span><span class="n">partitioner</span><span class="o">.</span><span class="n">numPartitions</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">    <span class="n">sorter</span><span class="o">.</span><span class="n">writePartitionedMapOutput</span><span class="o">(</span><span class="n">dep</span><span class="o">.</span><span class="n">shuffleId</span><span class="o">,</span> <span class="n">mapId</span><span class="o">,</span> <span class="n">mapOutputWriter</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">    <span class="n">partitionLengths</span> <span class="k">=</span> <span class="n">mapOutputWriter</span><span class="o">.</span><span class="n">commitAllPartitions</span><span class="o">(</span><span class="n">sorter</span><span class="o">.</span><span class="n">getChecksums</span><span class="o">).</span><span class="n">getPartitionLengths</span>
-</span></span><span class="line"><span class="cl">    <span class="n">mapStatus</span> <span class="k">=</span> <span class="nc">MapStatus</span><span class="o">(</span><span class="n">blockManager</span><span class="o">.</span><span class="n">shuffleServerId</span><span class="o">,</span> <span class="n">partitionLengths</span><span class="o">,</span> <span class="n">mapId</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">  <span class="o">}</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><ol>
+</h3><pre><code class="language-scala">  override def write(records: Iterator[Product2[K, V]]): Unit = {
+    sorter = if (dep.mapSideCombine) {
+      new ExternalSorter[K, V, C](
+        context, dep.aggregator, Some(dep.partitioner), dep.keyOrdering, dep.serializer)
+    } else {
+      // In this case we pass neither an aggregator nor an ordering to the sorter, because we don't
+      // care whether the keys get sorted in each partition; that will be done on the reduce side
+      // if the operation being run is sortByKey.
+      new ExternalSorter[K, V, V](
+        context, aggregator = None, Some(dep.partitioner), ordering = None, dep.serializer)
+    }
+    sorter.insertAll(records)
+
+    // Don't bother including the time to open the merged output file in the shuffle write time,
+    // because it just opens a single file, so is typically too fast to measure accurately
+    // (see SPARK-3570).
+    val mapOutputWriter = shuffleExecutorComponents.createMapOutputWriter(
+      dep.shuffleId, mapId, dep.partitioner.numPartitions)
+    sorter.writePartitionedMapOutput(dep.shuffleId, mapId, mapOutputWriter)
+    partitionLengths = mapOutputWriter.commitAllPartitions(sorter.getChecksums).getPartitionLengths
+    mapStatus = MapStatus(blockManager.shuffleServerId, partitionLengths, mapId)
+  }
+</code></pre>
+<ol>
 <li>初始化一个sorter，如果map侧（上一个stage）需要聚合，那么就创建带<code>aggregater</code>并按键排序的sorter，否则创建一个不带<code>aggregater</code>的sorter;</li>
 <li>创建一个shuffleMapOutputWriter，写入器开启一个输出流，然后将给定reduce任务分区id的字节流持久化;</li>
 </ol>
@@ -949,77 +724,40 @@ The chunk corresponds to bytes in the given reduce partition. This will not be c
 <li>向blockManager提交分区数据，并更新<code>MapStatus</code></li>
 </ol>
 <h3 id="选择策略">选择策略
-</h3><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">getWriter</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">](</span>
-</span></span><span class="line"><span class="cl">      <span class="n">handle</span><span class="k">:</span> <span class="kt">ShuffleHandle</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">      <span class="n">mapId</span><span class="k">:</span> <span class="kt">Long</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">      <span class="n">context</span><span class="k">:</span> <span class="kt">TaskContext</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">      <span class="n">metrics</span><span class="k">:</span> <span class="kt">ShuffleWriteMetricsReporter</span><span class="o">)</span><span class="k">:</span> <span class="kt">ShuffleWriter</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">V</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">mapTaskIds</span> <span class="k">=</span> <span class="n">taskIdMapsForShuffle</span><span class="o">.</span><span class="n">computeIfAbsent</span><span class="o">(</span>
-</span></span><span class="line"><span class="cl">      <span class="n">handle</span><span class="o">.</span><span class="n">shuffleId</span><span class="o">,</span> <span class="k">_</span> <span class="k">=&gt;</span> <span class="k">new</span> <span class="nc">OpenHashSet</span><span class="o">[</span><span class="kt">Long</span><span class="o">](</span><span class="mi">16</span><span class="o">))</span>
-</span></span><span class="line"><span class="cl">    <span class="n">mapTaskIds</span><span class="o">.</span><span class="n">synchronized</span> <span class="o">{</span> <span class="n">mapTaskIds</span><span class="o">.</span><span class="n">add</span><span class="o">(</span><span class="n">mapId</span><span class="o">)</span> <span class="o">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">env</span> <span class="k">=</span> <span class="nc">SparkEnv</span><span class="o">.</span><span class="n">get</span>
-</span></span><span class="line"><span class="cl">    <span class="n">handle</span> <span class="k">match</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="n">unsafeShuffleHandle</span><span class="k">:</span> <span class="kt">SerializedShuffleHandle</span><span class="o">[</span><span class="kt">K</span> <span class="kt">@unchecked</span>, <span class="kt">V</span> <span class="kt">@unchecked</span><span class="o">]</span> <span class="k">=&gt;</span>
-</span></span><span class="line"><span class="cl">        <span class="k">new</span> <span class="nc">UnsafeShuffleWriter</span><span class="o">(</span>
-</span></span><span class="line"><span class="cl">          <span class="n">env</span><span class="o">.</span><span class="n">blockManager</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">          <span class="n">context</span><span class="o">.</span><span class="n">taskMemoryManager</span><span class="o">(),</span>
-</span></span><span class="line"><span class="cl">          <span class="n">unsafeShuffleHandle</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">          <span class="n">mapId</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">          <span class="n">context</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">          <span class="n">env</span><span class="o">.</span><span class="n">conf</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">          <span class="n">metrics</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">          <span class="n">shuffleExecutorComponents</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="n">bypassMergeSortHandle</span><span class="k">:</span> <span class="kt">BypassMergeSortShuffleHandle</span><span class="o">[</span><span class="kt">K</span> <span class="kt">@unchecked</span>, <span class="kt">V</span> <span class="kt">@unchecked</span><span class="o">]</span> <span class="k">=&gt;</span>
-</span></span><span class="line"><span class="cl">        <span class="k">new</span> <span class="nc">BypassMergeSortShuffleWriter</span><span class="o">(</span>
-</span></span><span class="line"><span class="cl">          <span class="n">env</span><span class="o">.</span><span class="n">blockManager</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">          <span class="n">bypassMergeSortHandle</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">          <span class="n">mapId</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">          <span class="n">env</span><span class="o">.</span><span class="n">conf</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">          <span class="n">metrics</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">          <span class="n">shuffleExecutorComponents</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="n">other</span><span class="k">:</span> <span class="kt">BaseShuffleHandle</span><span class="o">[</span><span class="kt">K</span> <span class="kt">@unchecked</span>, <span class="kt">V</span> <span class="kt">@unchecked</span>, <span class="k">_</span><span class="o">]</span> <span class="k">=&gt;</span>
-</span></span><span class="line"><span class="cl">        <span class="k">new</span> <span class="nc">SortShuffleWriter</span><span class="o">(</span><span class="n">other</span><span class="o">,</span> <span class="n">mapId</span><span class="o">,</span> <span class="n">context</span><span class="o">,</span> <span class="n">shuffleExecutorComponents</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">    <span class="o">}</span>
-</span></span><span class="line"><span class="cl">  <span class="o">}</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p> 由源码可以看出，Spark的shuffle选择<code>shuffleWriter</code>的策略是匹配shuffleHandle，依次匹配SerializedShuffleHandle、BypassMergeSortShuffleHandle、BaseShuffleHandle。</p>
+</h3><pre><code class="language-scala">  override def getWriter[K, V](
+      handle: ShuffleHandle,
+      mapId: Long,
+      context: TaskContext,
+      metrics: ShuffleWriteMetricsReporter): ShuffleWriter[K, V] = {
+    val mapTaskIds = taskIdMapsForShuffle.computeIfAbsent(
+      handle.shuffleId, _ =&gt; new OpenHashSet[Long](16))
+    mapTaskIds.synchronized { mapTaskIds.add(mapId) }
+    val env = SparkEnv.get
+    handle match {
+      case unsafeShuffleHandle: SerializedShuffleHandle[K @unchecked, V @unchecked] =&gt;
+        new UnsafeShuffleWriter(
+          env.blockManager,
+          context.taskMemoryManager(),
+          unsafeShuffleHandle,
+          mapId,
+          context,
+          env.conf,
+          metrics,
+          shuffleExecutorComponents)
+      case bypassMergeSortHandle: BypassMergeSortShuffleHandle[K @unchecked, V @unchecked] =&gt;
+        new BypassMergeSortShuffleWriter(
+          env.blockManager,
+          bypassMergeSortHandle,
+          mapId,
+          env.conf,
+          metrics,
+          shuffleExecutorComponents)
+      case other: BaseShuffleHandle[K @unchecked, V @unchecked, _] =&gt;
+        new SortShuffleWriter(other, mapId, context, shuffleExecutorComponents)
+    }
+  }
+</code></pre>
+<p> 由源码可以看出，Spark的shuffle选择<code>shuffleWriter</code>的策略是匹配shuffleHandle，依次匹配SerializedShuffleHandle、BypassMergeSortShuffleHandle、BaseShuffleHandle。</p>
 <p>而shuffleHandle的类型如下：</p>
 <ol>
 <li>SerializedShuffleHandle:适用于需要高效序列化的场景。通常与 UnsafeShuffleWriter 搭配使用。
@@ -1041,105 +779,55 @@ spark.shuffle.sort.bypassMergeThreshold: 这个参数决定了是否使用 Bypas
 spark.shuffle.manager: 这个参数可以配置 shuffle 的管理方式，影响 ShuffleHandle 的选择。</li>
 </ol>
 <p>相关代码位于<code>org.apache.spark.internal.config.package.scala</code>1497行</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl">  <span class="k">private</span><span class="o">[</span><span class="kt">spark</span><span class="o">]</span> <span class="k">val</span> <span class="nc">SHUFFLE_SORT_BYPASS_MERGE_THRESHOLD</span> <span class="k">=</span>
-</span></span><span class="line"><span class="cl">    <span class="nc">ConfigBuilder</span><span class="o">(</span><span class="s">&#34;spark.shuffle.sort.bypassMergeThreshold&#34;</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">      <span class="o">.</span><span class="n">doc</span><span class="o">(</span><span class="s">&#34;In the sort-based shuffle manager, avoid merge-sorting data if there is no &#34;</span> <span class="o">+</span>
-</span></span><span class="line"><span class="cl">        <span class="s">&#34;map-side aggregation and there are at most this many reduce partitions&#34;</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">      <span class="o">.</span><span class="n">version</span><span class="o">(</span><span class="s">&#34;1.1.1&#34;</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">      <span class="o">.</span><span class="n">intConf</span>
-</span></span><span class="line"><span class="cl">      <span class="o">.</span><span class="n">createWithDefault</span><span class="o">(</span><span class="mi">200</span><span class="o">)</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><ol start="3">
+<pre><code class="language-scala">  private[spark] val SHUFFLE_SORT_BYPASS_MERGE_THRESHOLD =
+    ConfigBuilder(&quot;spark.shuffle.sort.bypassMergeThreshold&quot;)
+      .doc(&quot;In the sort-based shuffle manager, avoid merge-sorting data if there is no &quot; +
+        &quot;map-side aggregation and there are at most this many reduce partitions&quot;)
+      .version(&quot;1.1.1&quot;)
+      .intConf
+      .createWithDefault(200)
+</code></pre>
+<ol start="3">
 <li>数据规模和分区数:
 小规模数据和少量分区通常会使用 BypassMergeSortShuffleHandle。
 大规模数据和大量分区通常会使用 SerializedShuffleHandle 或 BaseShuffleHandle。</li>
 </ol>
 <h2 id="shufflereader">ShuffleReader
-</h2><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl">  
-</span></span><span class="line"><span class="cl">  <span class="cm">/**
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * Get a reader for a range of reduce partitions (startPartition to endPartition-1, inclusive) to
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * read from a range of map outputs(startMapIndex to endMapIndex-1, inclusive).
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * If endMapIndex=Int.MaxValue, the actual endMapIndex will be changed to the length of total map
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * outputs of the shuffle in `getMapSizesByExecutorId`.
-</span></span></span><span class="line"><span class="cl"><span class="cm">   *
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * Called on executors by reduce tasks.
-</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
-</span></span><span class="line"><span class="cl">  <span class="k">override</span> <span class="k">def</span> <span class="n">getReader</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">](</span>
-</span></span><span class="line"><span class="cl">      <span class="n">handle</span><span class="k">:</span> <span class="kt">ShuffleHandle</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">      <span class="n">startMapIndex</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">      <span class="n">endMapIndex</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">      <span class="n">startPartition</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">      <span class="n">endPartition</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">      <span class="n">context</span><span class="k">:</span> <span class="kt">TaskContext</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">      <span class="n">metrics</span><span class="k">:</span> <span class="kt">ShuffleReadMetricsReporter</span><span class="o">)</span><span class="k">:</span> <span class="kt">ShuffleReader</span><span class="o">[</span><span class="kt">K</span>, <span class="kt">C</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">baseShuffleHandle</span> <span class="k">=</span> <span class="n">handle</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">BaseShuffleHandle</span><span class="o">[</span><span class="kt">K</span>, <span class="k">_</span>, <span class="kt">C</span><span class="o">]]</span>
-</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="o">(</span><span class="n">blocksByAddress</span><span class="o">,</span> <span class="n">canEnableBatchFetch</span><span class="o">)</span> <span class="k">=</span>
-</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">baseShuffleHandle</span><span class="o">.</span><span class="n">dependency</span><span class="o">.</span><span class="n">isShuffleMergeFinalizedMarked</span><span class="o">)</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="n">res</span> <span class="k">=</span> <span class="nc">SparkEnv</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">mapOutputTracker</span><span class="o">.</span><span class="n">getPushBasedShuffleMapSizesByExecutorId</span><span class="o">(</span>
-</span></span><span class="line"><span class="cl">          <span class="n">handle</span><span class="o">.</span><span class="n">shuffleId</span><span class="o">,</span> <span class="n">startMapIndex</span><span class="o">,</span> <span class="n">endMapIndex</span><span class="o">,</span> <span class="n">startPartition</span><span class="o">,</span> <span class="n">endPartition</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">        <span class="o">(</span><span class="n">res</span><span class="o">.</span><span class="n">iter</span><span class="o">,</span> <span class="n">res</span><span class="o">.</span><span class="n">enableBatchFetch</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="n">address</span> <span class="k">=</span> <span class="nc">SparkEnv</span><span class="o">.</span><span class="n">get</span><span class="o">.</span><span class="n">mapOutputTracker</span><span class="o">.</span><span class="n">getMapSizesByExecutorId</span><span class="o">(</span>
-</span></span><span class="line"><span class="cl">          <span class="n">handle</span><span class="o">.</span><span class="n">shuffleId</span><span class="o">,</span> <span class="n">startMapIndex</span><span class="o">,</span> <span class="n">endMapIndex</span><span class="o">,</span> <span class="n">startPartition</span><span class="o">,</span> <span class="n">endPartition</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">        <span class="o">(</span><span class="n">address</span><span class="o">,</span> <span class="kc">true</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">      <span class="o">}</span>
-</span></span><span class="line"><span class="cl">    <span class="k">new</span> <span class="nc">BlockStoreShuffleReader</span><span class="o">(</span>
-</span></span><span class="line"><span class="cl">      <span class="n">handle</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">BaseShuffleHandle</span><span class="o">[</span><span class="kt">K</span>, <span class="k">_</span>, <span class="kt">C</span><span class="o">]],</span> <span class="n">blocksByAddress</span><span class="o">,</span> <span class="n">context</span><span class="o">,</span> <span class="n">metrics</span><span class="o">,</span>
-</span></span><span class="line"><span class="cl">      <span class="n">shouldBatchFetch</span> <span class="k">=</span>
-</span></span><span class="line"><span class="cl">        <span class="n">canEnableBatchFetch</span> <span class="o">&amp;&amp;</span> <span class="n">canUseBatchFetch</span><span class="o">(</span><span class="n">startPartition</span><span class="o">,</span> <span class="n">endPartition</span><span class="o">,</span> <span class="n">context</span><span class="o">))</span>
-</span></span><span class="line"><span class="cl">  <span class="o">}</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>Spark的shuffleReader比起shuffleWriter来说就简单很多，只有一个<code>BlockStoreShuffleReader</code>子类。</p>
+</h2><pre><code class="language-scala">  
+  /**
+   * Get a reader for a range of reduce partitions (startPartition to endPartition-1, inclusive) to
+   * read from a range of map outputs(startMapIndex to endMapIndex-1, inclusive).
+   * If endMapIndex=Int.MaxValue, the actual endMapIndex will be changed to the length of total map
+   * outputs of the shuffle in `getMapSizesByExecutorId`.
+   *
+   * Called on executors by reduce tasks.
+   */
+  override def getReader[K, C](
+      handle: ShuffleHandle,
+      startMapIndex: Int,
+      endMapIndex: Int,
+      startPartition: Int,
+      endPartition: Int,
+      context: TaskContext,
+      metrics: ShuffleReadMetricsReporter): ShuffleReader[K, C] = {
+    val baseShuffleHandle = handle.asInstanceOf[BaseShuffleHandle[K, _, C]]
+    val (blocksByAddress, canEnableBatchFetch) =
+      if (baseShuffleHandle.dependency.isShuffleMergeFinalizedMarked) {
+        val res = SparkEnv.get.mapOutputTracker.getPushBasedShuffleMapSizesByExecutorId(
+          handle.shuffleId, startMapIndex, endMapIndex, startPartition, endPartition)
+        (res.iter, res.enableBatchFetch)
+      } else {
+        val address = SparkEnv.get.mapOutputTracker.getMapSizesByExecutorId(
+          handle.shuffleId, startMapIndex, endMapIndex, startPartition, endPartition)
+        (address, true)
+      }
+    new BlockStoreShuffleReader(
+      handle.asInstanceOf[BaseShuffleHandle[K, _, C]], blocksByAddress, context, metrics,
+      shouldBatchFetch =
+        canEnableBatchFetch &amp;&amp; canUseBatchFetch(startPartition, endPartition, context))
+  }
+</code></pre>
+<p>Spark的shuffleReader比起shuffleWriter来说就简单很多，只有一个<code>BlockStoreShuffleReader</code>子类。</p>
 <ol>
 <li>ShuffleHandle 转换：ShuffleHandle 被转换为 BaseShuffleHandle，以便访问 shuffle 依赖的详细信息。</li>
 <li>获取块地址和批量获取能力：

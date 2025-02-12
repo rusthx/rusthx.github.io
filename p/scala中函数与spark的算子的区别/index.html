@@ -12,7 +12,22 @@
 <meta property='og:site_name' content='rustWood'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Spark' /><meta property='article:tag' content='Scala' /><meta property='article:published_time' content='2024-09-07T11:46:08&#43;08:00'/><meta property='article:modified_time' content='2024-09-07T11:46:08&#43;08:00'/>
 <meta name="twitter:title" content="Scala中函数与Spark的算子的区别">
-<meta name="twitter:description" content="Scala中的部分函数和RDD中的部分算子名字一样，功能一样，用起来也差不多。但是为什么一个叫函数，一个却要叫算子，函数和算子的区别在哪，这让我有些好奇。于是查看了源码，对函数和算子进行了比较。下面以map为例。\n">        
+<meta name="twitter:description" content="Scala中的部分函数和RDD中的部分算子名字一样，功能一样，用起来也差不多。但是为什么一个叫函数，一个却要叫算子，函数和算子的区别在哪，这让我有些好奇。于是查看了源码，对函数和算子进行了比较。下面以map为例。\n">
+<link rel="stylesheet" href="/static/highlight/styles/github.min.css">
+<script src="/static/highlight/highlight.min.js"></script>
+<script src="/static/highlight/languages/java.min.js"></script>
+<script src="/static/highlight/languages/python.min.js"></script>
+<script src="/static/highlight/languages/bash.min.js"></script>
+<script src="/static/highlight/languages/shell.min.js"></script>
+<script src="/static/highlight/languages/scala.min.js"></script>
+<script src="/static/highlight/languages/sql.js"></script>
+<script src="/static/highlight/languages/xml.js"></script>
+<script src="/static/highlight/languages/yaml.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', (event) => {
+    hljs.highlightAll();
+  });
+</script>        
         
         <link rel="stylesheet" href="/highlight/styles/github.css">
          
@@ -342,43 +357,23 @@
 >
 具体实现以<code>List</code>中的<code>map</code>举例
 源码为</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl">  <span class="k">final</span> <span class="k">override</span> <span class="k">def</span> <span class="n">map</span><span class="o">[</span><span class="kt">B</span><span class="o">](</span><span class="n">f</span><span class="k">:</span> <span class="kt">A</span> <span class="o">=&gt;</span> <span class="n">B</span><span class="o">)</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">B</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">(</span><span class="k">this</span> <span class="n">eq</span> <span class="nc">Nil</span><span class="o">)</span> <span class="nc">Nil</span> <span class="k">else</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">      <span class="k">val</span> <span class="n">h</span> <span class="k">=</span> <span class="k">new</span> <span class="k">:</span><span class="kt">:</span><span class="o">[</span><span class="kt">B</span><span class="o">](</span><span class="n">f</span><span class="o">(</span><span class="n">head</span><span class="o">),</span> <span class="nc">Nil</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">      <span class="k">var</span> <span class="n">t</span><span class="k">:</span> <span class="kt">::</span><span class="o">[</span><span class="kt">B</span><span class="o">]</span> <span class="k">=</span> <span class="n">h</span>
-</span></span><span class="line"><span class="cl">      <span class="k">var</span> <span class="n">rest</span> <span class="k">=</span> <span class="n">tail</span>
-</span></span><span class="line"><span class="cl">      <span class="k">while</span> <span class="o">(</span><span class="n">rest</span> <span class="n">ne</span> <span class="nc">Nil</span><span class="o">)</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="k">val</span> <span class="n">nx</span> <span class="k">=</span> <span class="k">new</span> <span class="k">:</span><span class="kt">:</span><span class="o">(</span><span class="kt">f</span><span class="o">(</span><span class="kt">rest.head</span><span class="o">),</span> <span class="kt">Nil</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">        <span class="n">t</span><span class="o">.</span><span class="n">next</span> <span class="k">=</span> <span class="n">nx</span>
-</span></span><span class="line"><span class="cl">        <span class="n">t</span> <span class="k">=</span> <span class="n">nx</span>
-</span></span><span class="line"><span class="cl">        <span class="n">rest</span> <span class="k">=</span> <span class="n">rest</span><span class="o">.</span><span class="n">tail</span>
-</span></span><span class="line"><span class="cl">      <span class="o">}</span>
-</span></span><span class="line"><span class="cl">      <span class="n">releaseFence</span><span class="o">()</span>
-</span></span><span class="line"><span class="cl">      <span class="n">h</span>
-</span></span><span class="line"><span class="cl">    <span class="o">}</span>
-</span></span><span class="line"><span class="cl">  <span class="o">}</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><code>List</code>中的<code>map</code>重写了其父类<code>collection.IterableOnce</code>的<code>map</code>函数，定义了一个匿名函数<code>(f:A=&gt;B)</code>,对List中的每个元素A处理后输出B类型的<code>List</code>。比如<code>List[String]</code>经过<code>map</code>处理后可以变成<code>List[Interger]</code>
+<pre><code class="language-scala">  final override def map[B](f: A =&gt; B): List[B] = {
+    if (this eq Nil) Nil else {
+      val h = new ::[B](f(head), Nil)
+      var t: ::[B] = h
+      var rest = tail
+      while (rest ne Nil) {
+        val nx = new ::(f(rest.head), Nil)
+        t.next = nx
+        t = nx
+        rest = rest.tail
+      }
+      releaseFence()
+      h
+    }
+  }
+</code></pre>
+<p><code>List</code>中的<code>map</code>重写了其父类<code>collection.IterableOnce</code>的<code>map</code>函数，定义了一个匿名函数<code>(f:A=&gt;B)</code>,对List中的每个元素A处理后输出B类型的<code>List</code>。比如<code>List[String]</code>经过<code>map</code>处理后可以变成<code>List[Interger]</code>
 其他collection的代码可以自行查看，也可以查看Scala的官方文档</p>
 <blockquote>
 <p><a class="link" href="https://www.scala-lang.org/api/current/scala/collection"  target="_blank" rel="noopener"
@@ -387,27 +382,15 @@
 <h2 id="spark中的map算子">Spark中的map算子
 </h2><p>Spark中的算子分为转换算子（Transformations (return a new RDD)）和行动算子（Actions (launch a job to return a value to the user program)）， 转换算子根据数据处理方式的不同将算子整体上分为 Value 类型、双 Value 类型和 Key-Value 类型  。具体不再细讲，可以自行查询。
 RDD中的<code>map</code>代码如下：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl">  <span class="cm">/**
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * Return a new RDD by applying a function to all elements of this RDD.
-</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
-</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">map</span><span class="o">[</span><span class="kt">U:</span> <span class="kt">ClassTag</span><span class="o">](</span><span class="n">f</span><span class="k">:</span> <span class="kt">T</span> <span class="o">=&gt;</span> <span class="n">U</span><span class="o">)</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span> <span class="k">=</span> <span class="n">withScope</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">cleanF</span> <span class="k">=</span> <span class="n">sc</span><span class="o">.</span><span class="n">clean</span><span class="o">(</span><span class="n">f</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">    <span class="k">new</span> <span class="nc">MapPartitionsRDD</span><span class="o">[</span><span class="kt">U</span>, <span class="kt">T</span><span class="o">](</span><span class="k">this</span><span class="o">,</span> <span class="o">(</span><span class="k">_</span><span class="o">,</span> <span class="k">_</span><span class="o">,</span> <span class="n">iter</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">iter</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">cleanF</span><span class="o">))</span>
-</span></span><span class="line"><span class="cl">  <span class="o">}</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>可以看出，这里的<code>map</code>首先创建了一个<code>MapPartitionsRDD</code>并生成可迭代对象<code>iter</code>,然后调用了Scala的<code>map</code>函数处理<code>iter</code>。</p>
+<pre><code class="language-scala">  /**
+   * Return a new RDD by applying a function to all elements of this RDD.
+   */
+  def map[U: ClassTag](f: T =&gt; U): RDD[U] = withScope {
+    val cleanF = sc.clean(f)
+    new MapPartitionsRDD[U, T](this, (_, _, iter) =&gt; iter.map(cleanF))
+  }
+</code></pre>
+<p>可以看出，这里的<code>map</code>首先创建了一个<code>MapPartitionsRDD</code>并生成可迭代对象<code>iter</code>,然后调用了Scala的<code>map</code>函数处理<code>iter</code>。</p>
 <h2 id="结论">结论
 </h2><p>Scala里的<code>map</code>函数首先定义在<code>scala.collection</code>里，然后子类（<code>List</code>、<code>Set</code>）重写父类的函数。因为Scala里的类型是隐式的，并且查看源代码在一个子类里也只发现了一个<code>map</code>函数，所以Scala里的<code>map</code>并没有重载，而是通过定义父类，子类重写父类函数的方法实现对不同数据结构的操作。
 Spark里的<code>map</code>是对RDD进行操作的算子，实际使用了可迭代对象来调用Scala中的<code>map</code>函数。算子本身的定义就是对RDD操作的函数，所以算子应该也可以被称为是函数，但是为了区分Scala中的函数，所以使用了不同的名字。</p>

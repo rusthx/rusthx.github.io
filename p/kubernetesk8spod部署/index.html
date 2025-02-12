@@ -12,7 +12,22 @@
 <meta property='og:site_name' content='rustWood'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Kubernetes' /><meta property='article:published_time' content='2024-09-07T12:50:40&#43;08:00'/><meta property='article:modified_time' content='2024-09-07T12:50:40&#43;08:00'/>
 <meta name="twitter:title" content="Kubernetes（K8s）Pod部署">
-<meta name="twitter:description" content="这里以老师的指导文档为例，实现一个基于flask和redis的web网页，用户每输入网址浏览一次就加一次浏览量并显示在网页上。\nDocker拉取镜像 拉取Python镜像\n">        
+<meta name="twitter:description" content="这里以老师的指导文档为例，实现一个基于flask和redis的web网页，用户每输入网址浏览一次就加一次浏览量并显示在网页上。\nDocker拉取镜像 拉取Python镜像\n">
+<link rel="stylesheet" href="/static/highlight/styles/github.min.css">
+<script src="/static/highlight/highlight.min.js"></script>
+<script src="/static/highlight/languages/java.min.js"></script>
+<script src="/static/highlight/languages/python.min.js"></script>
+<script src="/static/highlight/languages/bash.min.js"></script>
+<script src="/static/highlight/languages/shell.min.js"></script>
+<script src="/static/highlight/languages/scala.min.js"></script>
+<script src="/static/highlight/languages/sql.js"></script>
+<script src="/static/highlight/languages/xml.js"></script>
+<script src="/static/highlight/languages/yaml.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', (event) => {
+    hljs.highlightAll();
+  });
+</script>        
         
         <link rel="stylesheet" href="/highlight/styles/github.css">
          
@@ -325,15 +340,9 @@
     <p>这里以老师的指导文档为例，实现一个基于flask和redis的web网页，用户每输入网址浏览一次就加一次浏览量并显示在网页上。</p>
 <h2 id="docker拉取镜像">Docker拉取镜像
 </h2><p>拉取Python镜像</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo docker pull python
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/1.png"
+<pre><code class="language-shell">sudo docker pull python
+</code></pre>
+<p><img src="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/1.png"
 	width="692"
 	height="344"
 	srcset="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/1_hu17224850590113109081.png 480w, /p/kubernetesk8spod%E9%83%A8%E7%BD%B2/1_hu15208621949751305477.png 1024w"
@@ -346,15 +355,9 @@
 	
 ></p>
 <p>拉取redis镜像</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo docker pull redis
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/2.png"
+<pre><code class="language-shell">sudo docker pull redis
+</code></pre>
+<p><img src="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/2.png"
 	width="692"
 	height="286"
 	srcset="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/2_hu9224429356178765712.png 480w, /p/kubernetesk8spod%E9%83%A8%E7%BD%B2/2_hu6767615337067811911.png 1024w"
@@ -367,15 +370,9 @@
 	
 ></p>
 <p>查看镜像</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">docker images
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/3.png"
+<pre><code class="language-shell">docker images
+</code></pre>
+<p><img src="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/3.png"
 	width="692"
 	height="92"
 	srcset="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/3_hu6709404302406711039.png 480w, /p/kubernetesk8spod%E9%83%A8%E7%BD%B2/3_hu8687149729500338510.png 1024w"
@@ -390,61 +387,32 @@
 <h2 id="编辑所需文件">编辑所需文件
 </h2><p>编辑Python程序，实现一个基于flask的web应用，在redis中存一个数值，初值为0，每访问一次网站，计数加1。
 代码如下：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">time</span>
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">redis</span>
-</span></span><span class="line"><span class="cl"><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Flask</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="n">app</span> <span class="o">=</span> <span class="n">Flask</span><span class="p">(</span><span class="vm">__name__</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="n">cache</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s1">&#39;127.0.0.1&#39;</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">6379</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">get_hit_count</span><span class="p">():</span>
-</span></span><span class="line"><span class="cl">    <span class="n">retries</span> <span class="o">=</span> <span class="mi">5</span>
-</span></span><span class="line"><span class="cl"><span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">    <span class="k">try</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">cache</span><span class="o">.</span><span class="n">incr</span><span class="p">(</span><span class="s1">&#39;hits&#39;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="k">except</span> <span class="n">redis</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ConnectionError</span> <span class="k">as</span> <span class="n">exc</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="n">retries</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
-</span></span><span class="line"><span class="cl">    <span class="k">raise</span> <span class="n">exc</span>
-</span></span><span class="line"><span class="cl"><span class="n">retries</span> <span class="o">-=</span> <span class="mi">1</span>
-</span></span><span class="line"><span class="cl"><span class="n">time</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="nd">@app.route</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">)</span>
-</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">hello</span><span class="p">():</span>
-</span></span><span class="line"><span class="cl">    <span class="n">count</span> <span class="o">=</span> <span class="n">get_hit_count</span><span class="p">()</span>
-</span></span><span class="line"><span class="cl"><span class="k">return</span> <span class="s1">&#39;Hello rust! Hello hx! I have been seen </span><span class="si">{}</span><span class="s1"> times.</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/4.png"
+<pre><code class="language-python">import time
+import redis
+from flask import Flask
+
+app = Flask(__name__)
+cache = redis.Redis(host='127.0.0.1', port=6379)
+
+
+def get_hit_count():
+    retries = 5
+while True:
+    try:
+        return cache.incr('hits')
+except redis.exceptions.ConnectionError as exc:
+if retries == 0:
+    raise exc
+retries -= 1
+time.sleep(0.5)
+
+
+@app.route('/')
+def hello():
+    count = get_hit_count()
+return 'Hello rust! Hello hx! I have been seen {} times.\n'.format(count)
+</code></pre>
+<p><img src="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/4.png"
 	width="692"
 	height="458"
 	srcset="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/4_hu16207471149684100048.png 480w, /p/kubernetesk8spod%E9%83%A8%E7%BD%B2/4_hu12052938835273320261.png 1024w"
@@ -457,29 +425,16 @@
 	
 >
 编写dockerfile</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span><span class="lnt">8
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-dockerfile" data-lang="dockerfile"><span class="line"><span class="cl"><span class="k">FROM</span><span class="s"> python:latest</span><span class="err">
-</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">WORKDIR</span><span class="s"> /code</span><span class="err">
-</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">ENV</span> FLASK_APP hxapp.py<span class="err">
-</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">ENV</span> FLASK_RUN_HOST 0.0.0.0<span class="err">
-</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">RUN</span> pip install redis flask -i https://mirror.baidu.com/pypi/simple<span class="err">
-</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">COPY</span> hxapp.py hxapp.py<span class="err">
-</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">EXPOSE</span><span class="s"> 5000</span><span class="err">
-</span></span></span><span class="line"><span class="cl"><span class="err"></span><span class="k">CMD</span> <span class="p">[</span><span class="s2">&#34;flask&#34;</span><span class="p">,</span><span class="s2">&#34;run&#34;</span><span class="p">]</span><span class="err">
-</span></span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/5.png"
+<pre><code class="language-dockerfile">FROM python:latest
+WORKDIR /code
+ENV FLASK_APP hxapp.py
+ENV FLASK_RUN_HOST 0.0.0.0
+RUN pip install redis flask -i https://mirror.baidu.com/pypi/simple
+COPY hxapp.py hxapp.py
+EXPOSE 5000
+CMD [&quot;flask&quot;,&quot;run&quot;]
+</code></pre>
+<p><img src="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/5.png"
 	width="693"
 	height="278"
 	srcset="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/5_hu7681217620921068937.png 480w, /p/kubernetesk8spod%E9%83%A8%E7%BD%B2/5_hu14004743042782580699.png 1024w"
@@ -505,15 +460,9 @@
 	
 ></p>
 <h2 id="生成新的镜像">生成新的镜像
-</h2><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo docker build -t onccn/myflask:v2 -f ./dockerfile .
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/7.png"
+</h2><pre><code class="language-shell">sudo docker build -t onccn/myflask:v2 -f ./dockerfile .
+</code></pre>
+<p><img src="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/7.png"
 	width="692"
 	height="282"
 	srcset="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/7_hu5912724497788295465.png 480w, /p/kubernetesk8spod%E9%83%A8%E7%BD%B2/7_hu9583242097064753180.png 1024w"
@@ -539,69 +488,37 @@
 ></p>
 <p>从kubernetes拉取docker本地镜像
 编辑flaskredisdeploy.yaml</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">apps/v1</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Deployment</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">flaskredis</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">flaskredis</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">labels</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">flaskredis</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">containers</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">flaskredis</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">onccn/myflask:v2</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l">Never</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">resources</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">limits</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;1500Mi&#34;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;1000m&#34;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">redis</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">redis:latest</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l">Never</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">resources</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">limits</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">memory</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;500Mi&#34;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">cpu</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;500m&#34;</span><span class="w">
-</span></span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/9.png"
+<pre><code class="language-yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flaskredis
+spec:
+  selector:
+    matchLabels:
+      app: flaskredis
+  template:
+    metadata:
+      labels:
+        app: flaskredis
+    spec:
+      containers:
+      - name: flaskredis
+        image: onccn/myflask:v2
+        imagePullPolicy: Never
+        resources:
+          limits:
+            memory: &quot;1500Mi&quot;
+            cpu: &quot;1000m&quot;
+      - name: redis
+        image: redis:latest
+        imagePullPolicy: Never
+        resources:
+          limits:
+            memory: &quot;500Mi&quot;
+            cpu: &quot;500m&quot;
+
+</code></pre>
+<p><img src="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/9.png"
 	width="692"
 	height="392"
 	srcset="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/9_hu14383955263462350083.png 480w, /p/kubernetesk8spod%E9%83%A8%E7%BD%B2/9_hu17025110178141396458.png 1024w"
@@ -613,15 +530,9 @@
 		data-flex-basis="423px"
 	
 ></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl apply -f flaskredisdeploy.yaml
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/10.png"
+<pre><code class="language-shell">kubectl apply -f flaskredisdeploy.yaml
+</code></pre>
+<p><img src="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/10.png"
 	width="692"
 	height="255"
 	srcset="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/10_hu5098089526256298034.png 480w, /p/kubernetesk8spod%E9%83%A8%E7%BD%B2/10_hu5465120606443743012.png 1024w"
@@ -648,47 +559,24 @@
 	
 ></p>
 <p>编辑service.yaml</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">gedit myflaskservice.yaml
-</span></span></code></pre></td></tr></table>
-</div>
-</div><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Service</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">myflaskservice</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">flaskredis</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">ports</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l">TCP</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="m">8080</span><span class="w">   </span><span class="c">#Service的端口号</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="m">5000</span><span class="w"> </span><span class="c">#容器暴露的真实端口号</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">nodePort</span><span class="p">:</span><span class="w"> </span><span class="m">30081</span><span class="w">  </span><span class="c">#node的真实端口号</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">type</span><span class="p">:</span><span class="w"> </span><span class="l">NodePort</span><span class="w">
-</span></span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/12.png"
+<pre><code class="language-shell">gedit myflaskservice.yaml
+</code></pre>
+<pre><code class="language-yaml">apiVersion: v1
+kind: Service
+metadata:
+  name: myflaskservice
+spec:
+  selector:
+    app: flaskredis
+  ports:
+    - protocol: TCP
+      port: 8080   #Service的端口号
+      targetPort: 5000 #容器暴露的真实端口号
+      nodePort: 30081  #node的真实端口号
+  type: NodePort
+
+</code></pre>
+<p><img src="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/12.png"
 	width="692"
 	height="549"
 	srcset="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/12_hu2051749534844109783.png 480w, /p/kubernetesk8spod%E9%83%A8%E7%BD%B2/12_hu5751389474008024197.png 1024w"
@@ -701,15 +589,9 @@
 	
 ></p>
 <p>创建service</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl apply -f myflaskservice.yaml
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>遇见报错,这个报错的意思是该端口已经被占用，修改端口号
+<pre><code class="language-shell">kubectl apply -f myflaskservice.yaml
+</code></pre>
+<p>遇见报错,这个报错的意思是该端口已经被占用，修改端口号
 <img src="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/13.png"
 	width="692"
 	height="46"
@@ -735,15 +617,9 @@
 	
 ></p>
 <p>成功创建service,查看service</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl get svc -o wide
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/15.png"
+<pre><code class="language-shell">kubectl get svc -o wide
+</code></pre>
+<p><img src="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/15.png"
 	width="692"
 	height="179"
 	srcset="/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/15_hu3938549974556256663.png 480w, /p/kubernetesk8spod%E9%83%A8%E7%BD%B2/15_hu4075962535945262445.png 1024w"

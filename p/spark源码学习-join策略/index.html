@@ -12,7 +12,22 @@
 <meta property='og:site_name' content='rustWood'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Spark' /><meta property='article:published_time' content='2024-11-17T23:55:36&#43;08:00'/><meta property='article:modified_time' content='2024-11-17T23:55:36&#43;08:00'/>
 <meta name="twitter:title" content="Spark源码学习 Join策略">
-<meta name="twitter:description" content="学习源码所用的Spark的版本是Spark3.3.2_2.12(Scala2.12写的Spark3.3.2)\n类别 Spark底层有五种join实现方式\n">        
+<meta name="twitter:description" content="学习源码所用的Spark的版本是Spark3.3.2_2.12(Scala2.12写的Spark3.3.2)\n类别 Spark底层有五种join实现方式\n">
+<link rel="stylesheet" href="/static/highlight/styles/github.min.css">
+<script src="/static/highlight/highlight.min.js"></script>
+<script src="/static/highlight/languages/java.min.js"></script>
+<script src="/static/highlight/languages/python.min.js"></script>
+<script src="/static/highlight/languages/bash.min.js"></script>
+<script src="/static/highlight/languages/shell.min.js"></script>
+<script src="/static/highlight/languages/scala.min.js"></script>
+<script src="/static/highlight/languages/sql.js"></script>
+<script src="/static/highlight/languages/xml.js"></script>
+<script src="/static/highlight/languages/yaml.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', (event) => {
+    hljs.highlightAll();
+  });
+</script>        
         
         <link rel="stylesheet" href="/highlight/styles/github.css">
          
@@ -525,51 +540,27 @@
 <li>Shuffle-and-replicate nested loop join (洗牌复制嵌套循环连接,又称笛卡尔积连接)： 支持等连接和非等连接。 只支持内同类连接。</li>
 </ul>
 <p>源码中关于等值连接选择join的机制介绍如下：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-text" data-lang="text"><span class="line"><span class="cl">If it is an equi-join, we first look at the join hints w.r.t. the following order:
-</span></span><span class="line"><span class="cl">   1. broadcast hint: pick broadcast hash join if the join type is supported. If both sides
-</span></span><span class="line"><span class="cl">      have the broadcast hints, choose the smaller side (based on stats) to broadcast.
-</span></span><span class="line"><span class="cl">   2. sort merge hint: pick sort merge join if join keys are sortable.
-</span></span><span class="line"><span class="cl">   3. shuffle hash hint: We pick shuffle hash join if the join type is supported. If both
-</span></span><span class="line"><span class="cl">      sides have the shuffle hash hints, choose the smaller side (based on stats) as the
-</span></span><span class="line"><span class="cl">      build side.
-</span></span><span class="line"><span class="cl">   4. shuffle replicate NL hint: pick cartesian product if join type is inner like.
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"> If there is no hint or the hints are not applicable, we follow these rules one by one:
-</span></span><span class="line"><span class="cl">   1. Pick broadcast hash join if one side is small enough to broadcast, and the join type
-</span></span><span class="line"><span class="cl">      is supported. If both sides are small, choose the smaller side (based on stats)
-</span></span><span class="line"><span class="cl">      to broadcast.
-</span></span><span class="line"><span class="cl">   2. Pick shuffle hash join if one side is small enough to build local hash map, and is
-</span></span><span class="line"><span class="cl">      much smaller than the other side, and `spark.sql.join.preferSortMergeJoin` is false.
-</span></span><span class="line"><span class="cl">   3. Pick sort merge join if the join keys are sortable.
-</span></span><span class="line"><span class="cl">   4. Pick cartesian product if join type is inner like.
-</span></span><span class="line"><span class="cl">   5. Pick broadcast nested loop join as the final solution. It may OOM but we don&#39;t have
-</span></span><span class="line"><span class="cl">      other choice.
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>翻译如下：</p>
+<pre><code class="language-text">If it is an equi-join, we first look at the join hints w.r.t. the following order:
+   1. broadcast hint: pick broadcast hash join if the join type is supported. If both sides
+      have the broadcast hints, choose the smaller side (based on stats) to broadcast.
+   2. sort merge hint: pick sort merge join if join keys are sortable.
+   3. shuffle hash hint: We pick shuffle hash join if the join type is supported. If both
+      sides have the shuffle hash hints, choose the smaller side (based on stats) as the
+      build side.
+   4. shuffle replicate NL hint: pick cartesian product if join type is inner like.
+
+ If there is no hint or the hints are not applicable, we follow these rules one by one:
+   1. Pick broadcast hash join if one side is small enough to broadcast, and the join type
+      is supported. If both sides are small, choose the smaller side (based on stats)
+      to broadcast.
+   2. Pick shuffle hash join if one side is small enough to build local hash map, and is
+      much smaller than the other side, and `spark.sql.join.preferSortMergeJoin` is false.
+   3. Pick sort merge join if the join keys are sortable.
+   4. Pick cartesian product if join type is inner like.
+   5. Pick broadcast nested loop join as the final solution. It may OOM but we don't have
+      other choice.
+</code></pre>
+<p>翻译如下：</p>
 <p>如果是等值连接，我们首先按以下顺序查看连接提示(join hints)：</p>
 <ol>
 <li>broadcast hint：如果支持广播散列连接(BHJ)，则选择广播散列连接。
@@ -592,57 +583,30 @@
 其他选择。</li>
 </ol>
 <p>相关关键源码如下：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">def</span> <span class="n">createJoinWithoutHint</span><span class="o">()</span> <span class="k">=</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">  <span class="n">createBroadcastHashJoin</span><span class="o">(</span><span class="kc">false</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">    <span class="o">.</span><span class="n">orElse</span><span class="o">(</span><span class="n">createShuffleHashJoin</span><span class="o">(</span><span class="kc">false</span><span class="o">))</span>
-</span></span><span class="line"><span class="cl">    <span class="o">.</span><span class="n">orElse</span><span class="o">(</span><span class="n">createSortMergeJoin</span><span class="o">())</span>
-</span></span><span class="line"><span class="cl">    <span class="o">.</span><span class="n">orElse</span><span class="o">(</span><span class="n">createCartesianProduct</span><span class="o">())</span>
-</span></span><span class="line"><span class="cl">    <span class="o">.</span><span class="n">getOrElse</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">      <span class="c1">// This join could be very slow or OOM
-</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">val</span> <span class="n">buildSide</span> <span class="k">=</span> <span class="n">getSmallerSide</span><span class="o">(</span><span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">      <span class="nc">Seq</span><span class="o">(</span><span class="n">joins</span><span class="o">.</span><span class="nc">BroadcastNestedLoopJoinExec</span><span class="o">(</span>
-</span></span><span class="line"><span class="cl">        <span class="n">planLater</span><span class="o">(</span><span class="n">left</span><span class="o">),</span> <span class="n">planLater</span><span class="o">(</span><span class="n">right</span><span class="o">),</span> <span class="n">buildSide</span><span class="o">,</span> <span class="n">joinType</span><span class="o">,</span> <span class="n">j</span><span class="o">.</span><span class="n">condition</span><span class="o">))</span>
-</span></span><span class="line"><span class="cl">    <span class="o">}</span>
-</span></span><span class="line"><span class="cl"><span class="o">}</span>
-</span></span><span class="line"><span class="cl">        
-</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="o">(</span><span class="n">hint</span><span class="o">.</span><span class="n">isEmpty</span><span class="o">)</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">  <span class="n">createJoinWithoutHint</span><span class="o">()</span>
-</span></span><span class="line"><span class="cl"><span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">  <span class="n">createBroadcastHashJoin</span><span class="o">(</span><span class="kc">true</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">    <span class="o">.</span><span class="n">orElse</span> <span class="o">{</span> <span class="k">if</span> <span class="o">(</span><span class="n">hintToSortMergeJoin</span><span class="o">(</span><span class="n">hint</span><span class="o">))</span> <span class="n">createSortMergeJoin</span><span class="o">()</span> <span class="k">else</span> <span class="nc">None</span> <span class="o">}</span>
-</span></span><span class="line"><span class="cl">    <span class="o">.</span><span class="n">orElse</span><span class="o">(</span><span class="n">createShuffleHashJoin</span><span class="o">(</span><span class="kc">true</span><span class="o">))</span>
-</span></span><span class="line"><span class="cl">    <span class="o">.</span><span class="n">orElse</span> <span class="o">{</span> <span class="k">if</span> <span class="o">(</span><span class="n">hintToShuffleReplicateNL</span><span class="o">(</span><span class="n">hint</span><span class="o">))</span> <span class="n">createCartesianProduct</span><span class="o">()</span> <span class="k">else</span> <span class="nc">None</span> <span class="o">}</span>
-</span></span><span class="line"><span class="cl">    <span class="o">.</span><span class="n">getOrElse</span><span class="o">(</span><span class="n">createJoinWithoutHint</span><span class="o">())</span>
-</span></span><span class="line"><span class="cl"><span class="o">}</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>综上所述：</p>
+<pre><code class="language-scala">def createJoinWithoutHint() = {
+  createBroadcastHashJoin(false)
+    .orElse(createShuffleHashJoin(false))
+    .orElse(createSortMergeJoin())
+    .orElse(createCartesianProduct())
+    .getOrElse {
+      // This join could be very slow or OOM
+      val buildSide = getSmallerSide(left, right)
+      Seq(joins.BroadcastNestedLoopJoinExec(
+        planLater(left), planLater(right), buildSide, joinType, j.condition))
+    }
+}
+        
+if (hint.isEmpty) {
+  createJoinWithoutHint()
+} else {
+  createBroadcastHashJoin(true)
+    .orElse { if (hintToSortMergeJoin(hint)) createSortMergeJoin() else None }
+    .orElse(createShuffleHashJoin(true))
+    .orElse { if (hintToShuffleReplicateNL(hint)) createCartesianProduct() else None }
+    .getOrElse(createJoinWithoutHint())
+}
+</code></pre>
+<p>综上所述：</p>
 <ol>
 <li>有连接提示时,优先级从高到低：BroadcastHashJoin &gt; SortMergeJoin &gt; ShuffledHashJoin &gt; CartesianProduct</li>
 <li>没有连接提示时，优先级从高到低(join代价从小到大)：BroadcastHashJoin &gt; ShuffledHashJoin &gt; SortMergeJoin &gt; CartesianProduct &gt; BroadcastNestedLoopJoin</li>
@@ -659,137 +623,70 @@
 <h2 id="补充rdd中的join">补充：RDD中的join
 </h2><p>前文中介绍的join都是SparkSQL中join的底层实现，但是在Spark的RDD中，也有一个join函数。
 具体实现如下：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span><span class="lnt">44
-</span><span class="lnt">45
-</span><span class="lnt">46
-</span><span class="lnt">47
-</span><span class="lnt">48
-</span><span class="lnt">49
-</span><span class="lnt">50
-</span><span class="lnt">51
-</span><span class="lnt">52
-</span><span class="lnt">53
-</span><span class="lnt">54
-</span><span class="lnt">55
-</span><span class="lnt">56
-</span><span class="lnt">57
-</span><span class="lnt">58
-</span><span class="lnt">59
-</span><span class="lnt">60
-</span><span class="lnt">61
-</span><span class="lnt">62
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl">  <span class="cm">/**
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * Return an RDD containing all pairs of elements with matching keys in `this` and `other`. Each
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * pair of elements will be returned as a (k, (v1, v2)) tuple, where (k, v1) is in `this` and
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * (k, v2) is in `other`. Uses the given Partitioner to partition the output RDD.
-</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
-</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">join</span><span class="o">[</span><span class="kt">W</span><span class="o">](</span><span class="n">other</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">W</span><span class="o">)],</span> <span class="n">partitioner</span><span class="k">:</span> <span class="kt">Partitioner</span><span class="o">)</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[(</span><span class="kt">K</span>, <span class="o">(</span><span class="kt">V</span>, <span class="kt">W</span><span class="o">))]</span> <span class="k">=</span> <span class="n">self</span><span class="o">.</span><span class="n">withScope</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">    <span class="k">this</span><span class="o">.</span><span class="n">cogroup</span><span class="o">(</span><span class="n">other</span><span class="o">,</span> <span class="n">partitioner</span><span class="o">).</span><span class="n">flatMapValues</span><span class="o">(</span> <span class="n">pair</span> <span class="k">=&gt;</span>
-</span></span><span class="line"><span class="cl">      <span class="k">for</span> <span class="o">(</span><span class="n">v</span> <span class="k">&lt;-</span> <span class="n">pair</span><span class="o">.</span><span class="n">_1</span><span class="o">.</span><span class="n">iterator</span><span class="o">;</span> <span class="n">w</span> <span class="k">&lt;-</span> <span class="n">pair</span><span class="o">.</span><span class="n">_2</span><span class="o">.</span><span class="n">iterator</span><span class="o">)</span> <span class="k">yield</span> <span class="o">(</span><span class="n">v</span><span class="o">,</span> <span class="n">w</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">    <span class="o">)</span>
-</span></span><span class="line"><span class="cl">  <span class="o">}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">  <span class="cm">/**
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * Perform a left outer join of `this` and `other`. For each element (k, v) in `this`, the
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * resulting RDD will either contain all pairs (k, (v, Some(w))) for w in `other`, or the
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * pair (k, (v, None)) if no elements in `other` have key k. Uses the given Partitioner to
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * partition the output RDD.
-</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
-</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">leftOuterJoin</span><span class="o">[</span><span class="kt">W</span><span class="o">](</span>
-</span></span><span class="line"><span class="cl">      <span class="n">other</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">W</span><span class="o">)],</span>
-</span></span><span class="line"><span class="cl">      <span class="n">partitioner</span><span class="k">:</span> <span class="kt">Partitioner</span><span class="o">)</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[(</span><span class="kt">K</span>, <span class="o">(</span><span class="kt">V</span>, <span class="kt">Option</span><span class="o">[</span><span class="kt">W</span><span class="o">]))]</span> <span class="k">=</span> <span class="n">self</span><span class="o">.</span><span class="n">withScope</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">    <span class="k">this</span><span class="o">.</span><span class="n">cogroup</span><span class="o">(</span><span class="n">other</span><span class="o">,</span> <span class="n">partitioner</span><span class="o">).</span><span class="n">flatMapValues</span> <span class="o">{</span> <span class="n">pair</span> <span class="k">=&gt;</span>
-</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">pair</span><span class="o">.</span><span class="n">_2</span><span class="o">.</span><span class="n">isEmpty</span><span class="o">)</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="n">pair</span><span class="o">.</span><span class="n">_1</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">v</span> <span class="k">=&gt;</span> <span class="o">(</span><span class="n">v</span><span class="o">,</span> <span class="nc">None</span><span class="o">))</span>
-</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(</span><span class="n">v</span> <span class="k">&lt;-</span> <span class="n">pair</span><span class="o">.</span><span class="n">_1</span><span class="o">.</span><span class="n">iterator</span><span class="o">;</span> <span class="n">w</span> <span class="k">&lt;-</span> <span class="n">pair</span><span class="o">.</span><span class="n">_2</span><span class="o">.</span><span class="n">iterator</span><span class="o">)</span> <span class="k">yield</span> <span class="o">(</span><span class="n">v</span><span class="o">,</span> <span class="nc">Some</span><span class="o">(</span><span class="n">w</span><span class="o">))</span>
-</span></span><span class="line"><span class="cl">      <span class="o">}</span>
-</span></span><span class="line"><span class="cl">    <span class="o">}</span>
-</span></span><span class="line"><span class="cl">  <span class="o">}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">  <span class="cm">/**
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * Perform a right outer join of `this` and `other`. For each element (k, w) in `other`, the
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * resulting RDD will either contain all pairs (k, (Some(v), w)) for v in `this`, or the
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * pair (k, (None, w)) if no elements in `this` have key k. Uses the given Partitioner to
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * partition the output RDD.
-</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
-</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">rightOuterJoin</span><span class="o">[</span><span class="kt">W</span><span class="o">](</span><span class="n">other</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">W</span><span class="o">)],</span> <span class="n">partitioner</span><span class="k">:</span> <span class="kt">Partitioner</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">      <span class="k">:</span> <span class="kt">RDD</span><span class="o">[(</span><span class="kt">K</span>, <span class="o">(</span><span class="kt">Option</span><span class="o">[</span><span class="kt">V</span><span class="o">]</span>, <span class="kt">W</span><span class="o">))]</span> <span class="k">=</span> <span class="n">self</span><span class="o">.</span><span class="n">withScope</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">    <span class="k">this</span><span class="o">.</span><span class="n">cogroup</span><span class="o">(</span><span class="n">other</span><span class="o">,</span> <span class="n">partitioner</span><span class="o">).</span><span class="n">flatMapValues</span> <span class="o">{</span> <span class="n">pair</span> <span class="k">=&gt;</span>
-</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">pair</span><span class="o">.</span><span class="n">_1</span><span class="o">.</span><span class="n">isEmpty</span><span class="o">)</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="n">pair</span><span class="o">.</span><span class="n">_2</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">w</span> <span class="k">=&gt;</span> <span class="o">(</span><span class="nc">None</span><span class="o">,</span> <span class="n">w</span><span class="o">))</span>
-</span></span><span class="line"><span class="cl">      <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(</span><span class="n">v</span> <span class="k">&lt;-</span> <span class="n">pair</span><span class="o">.</span><span class="n">_1</span><span class="o">.</span><span class="n">iterator</span><span class="o">;</span> <span class="n">w</span> <span class="k">&lt;-</span> <span class="n">pair</span><span class="o">.</span><span class="n">_2</span><span class="o">.</span><span class="n">iterator</span><span class="o">)</span> <span class="k">yield</span> <span class="o">(</span><span class="nc">Some</span><span class="o">(</span><span class="n">v</span><span class="o">),</span> <span class="n">w</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">      <span class="o">}</span>
-</span></span><span class="line"><span class="cl">    <span class="o">}</span>
-</span></span><span class="line"><span class="cl">  <span class="o">}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">  <span class="cm">/**
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * Perform a full outer join of `this` and `other`. For each element (k, v) in `this`, the
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * resulting RDD will either contain all pairs (k, (Some(v), Some(w))) for w in `other`, or
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * the pair (k, (Some(v), None)) if no elements in `other` have key k. Similarly, for each
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * element (k, w) in `other`, the resulting RDD will either contain all pairs
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * (k, (Some(v), Some(w))) for v in `this`, or the pair (k, (None, Some(w))) if no elements
-</span></span></span><span class="line"><span class="cl"><span class="cm">   * in `this` have key k. Uses the given Partitioner to partition the output RDD.
-</span></span></span><span class="line"><span class="cl"><span class="cm">   */</span>
-</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">fullOuterJoin</span><span class="o">[</span><span class="kt">W</span><span class="o">](</span><span class="n">other</span><span class="k">:</span> <span class="kt">RDD</span><span class="o">[(</span><span class="kt">K</span>, <span class="kt">W</span><span class="o">)],</span> <span class="n">partitioner</span><span class="k">:</span> <span class="kt">Partitioner</span><span class="o">)</span>
-</span></span><span class="line"><span class="cl">      <span class="k">:</span> <span class="kt">RDD</span><span class="o">[(</span><span class="kt">K</span>, <span class="o">(</span><span class="kt">Option</span><span class="o">[</span><span class="kt">V</span><span class="o">]</span>, <span class="kt">Option</span><span class="o">[</span><span class="kt">W</span><span class="o">]))]</span> <span class="k">=</span> <span class="n">self</span><span class="o">.</span><span class="n">withScope</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">    <span class="k">this</span><span class="o">.</span><span class="n">cogroup</span><span class="o">(</span><span class="n">other</span><span class="o">,</span> <span class="n">partitioner</span><span class="o">).</span><span class="n">flatMapValues</span> <span class="o">{</span>
-</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="o">(</span><span class="n">vs</span><span class="o">,</span> <span class="nc">Seq</span><span class="o">())</span> <span class="k">=&gt;</span> <span class="n">vs</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">v</span> <span class="k">=&gt;</span> <span class="o">(</span><span class="nc">Some</span><span class="o">(</span><span class="n">v</span><span class="o">),</span> <span class="nc">None</span><span class="o">))</span>
-</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="o">(</span><span class="nc">Seq</span><span class="o">(),</span> <span class="n">ws</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">ws</span><span class="o">.</span><span class="n">iterator</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="n">w</span> <span class="k">=&gt;</span> <span class="o">(</span><span class="nc">None</span><span class="o">,</span> <span class="nc">Some</span><span class="o">(</span><span class="n">w</span><span class="o">)))</span>
-</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="o">(</span><span class="n">vs</span><span class="o">,</span> <span class="n">ws</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="k">for</span> <span class="o">(</span><span class="n">v</span> <span class="k">&lt;-</span> <span class="n">vs</span><span class="o">.</span><span class="n">iterator</span><span class="o">;</span> <span class="n">w</span> <span class="k">&lt;-</span> <span class="n">ws</span><span class="o">.</span><span class="n">iterator</span><span class="o">)</span> <span class="k">yield</span> <span class="o">(</span><span class="nc">Some</span><span class="o">(</span><span class="n">v</span><span class="o">),</span> <span class="nc">Some</span><span class="o">(</span><span class="n">w</span><span class="o">))</span>
-</span></span><span class="line"><span class="cl">    <span class="o">}</span>
-</span></span><span class="line"><span class="cl">  <span class="o">}</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>RDD的join实际是匹配两个RDD,以join为例，遍历(iterator)两个RDD的分区，调用cogroup函数将两个RDD的相同分区联合成一个turple返回。</p>
+<pre><code class="language-scala">  /**
+   * Return an RDD containing all pairs of elements with matching keys in `this` and `other`. Each
+   * pair of elements will be returned as a (k, (v1, v2)) tuple, where (k, v1) is in `this` and
+   * (k, v2) is in `other`. Uses the given Partitioner to partition the output RDD.
+   */
+  def join[W](other: RDD[(K, W)], partitioner: Partitioner): RDD[(K, (V, W))] = self.withScope {
+    this.cogroup(other, partitioner).flatMapValues( pair =&gt;
+      for (v &lt;- pair._1.iterator; w &lt;- pair._2.iterator) yield (v, w)
+    )
+  }
+
+  /**
+   * Perform a left outer join of `this` and `other`. For each element (k, v) in `this`, the
+   * resulting RDD will either contain all pairs (k, (v, Some(w))) for w in `other`, or the
+   * pair (k, (v, None)) if no elements in `other` have key k. Uses the given Partitioner to
+   * partition the output RDD.
+   */
+  def leftOuterJoin[W](
+      other: RDD[(K, W)],
+      partitioner: Partitioner): RDD[(K, (V, Option[W]))] = self.withScope {
+    this.cogroup(other, partitioner).flatMapValues { pair =&gt;
+      if (pair._2.isEmpty) {
+        pair._1.iterator.map(v =&gt; (v, None))
+      } else {
+        for (v &lt;- pair._1.iterator; w &lt;- pair._2.iterator) yield (v, Some(w))
+      }
+    }
+  }
+
+  /**
+   * Perform a right outer join of `this` and `other`. For each element (k, w) in `other`, the
+   * resulting RDD will either contain all pairs (k, (Some(v), w)) for v in `this`, or the
+   * pair (k, (None, w)) if no elements in `this` have key k. Uses the given Partitioner to
+   * partition the output RDD.
+   */
+  def rightOuterJoin[W](other: RDD[(K, W)], partitioner: Partitioner)
+      : RDD[(K, (Option[V], W))] = self.withScope {
+    this.cogroup(other, partitioner).flatMapValues { pair =&gt;
+      if (pair._1.isEmpty) {
+        pair._2.iterator.map(w =&gt; (None, w))
+      } else {
+        for (v &lt;- pair._1.iterator; w &lt;- pair._2.iterator) yield (Some(v), w)
+      }
+    }
+  }
+
+  /**
+   * Perform a full outer join of `this` and `other`. For each element (k, v) in `this`, the
+   * resulting RDD will either contain all pairs (k, (Some(v), Some(w))) for w in `other`, or
+   * the pair (k, (Some(v), None)) if no elements in `other` have key k. Similarly, for each
+   * element (k, w) in `other`, the resulting RDD will either contain all pairs
+   * (k, (Some(v), Some(w))) for v in `this`, or the pair (k, (None, Some(w))) if no elements
+   * in `this` have key k. Uses the given Partitioner to partition the output RDD.
+   */
+  def fullOuterJoin[W](other: RDD[(K, W)], partitioner: Partitioner)
+      : RDD[(K, (Option[V], Option[W]))] = self.withScope {
+    this.cogroup(other, partitioner).flatMapValues {
+      case (vs, Seq()) =&gt; vs.iterator.map(v =&gt; (Some(v), None))
+      case (Seq(), ws) =&gt; ws.iterator.map(w =&gt; (None, Some(w)))
+      case (vs, ws) =&gt; for (v &lt;- vs.iterator; w &lt;- ws.iterator) yield (Some(v), Some(w))
+    }
+  }
+</code></pre>
+<p>RDD的join实际是匹配两个RDD,以join为例，遍历(iterator)两个RDD的分区，调用cogroup函数将两个RDD的相同分区联合成一个turple返回。</p>
 
 </section>
 

@@ -1,18 +1,33 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="安装依赖 使用以下命令安装依赖\n1 sudo apt-get install build-essential libssl-dev libffi-dev python3-dev python3-pip libsasl2-dev libldap2-dev default-libmysqlclient-dev 配置Superset元数据库 本教程使用MySQL数据库作为Superset的数据库（Superset支持MySQL和PostgreSQL)，安装完成后需进行以下配置。\n">
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="安装依赖 使用以下命令安装依赖\nsudo apt-get install build-essential libssl-dev libffi-dev python3-dev python3-pip libsasl2-dev libldap2-dev default-libmysqlclient-dev 配置Superset元数据库 本教程使用MySQL数据库作为Superset的数据库（Superset支持MySQL和PostgreSQL)，安装完成后需进行以下配置。\n">
 <title>Ubuntu 22.04部署Apache Superset</title>
 
 <link rel='canonical' href='https://rusthx.github.io/p/ubuntu-22.04%E9%83%A8%E7%BD%B2apache-superset/'>
 
 <link rel="stylesheet" href="/scss/style.min.725af1264ab3622779405835da58c5dd0a2906077996c89f3e27ba6359be149d.css"><meta property='og:title' content="Ubuntu 22.04部署Apache Superset">
-<meta property='og:description' content="安装依赖 使用以下命令安装依赖\n1 sudo apt-get install build-essential libssl-dev libffi-dev python3-dev python3-pip libsasl2-dev libldap2-dev default-libmysqlclient-dev 配置Superset元数据库 本教程使用MySQL数据库作为Superset的数据库（Superset支持MySQL和PostgreSQL)，安装完成后需进行以下配置。\n">
+<meta property='og:description' content="安装依赖 使用以下命令安装依赖\nsudo apt-get install build-essential libssl-dev libffi-dev python3-dev python3-pip libsasl2-dev libldap2-dev default-libmysqlclient-dev 配置Superset元数据库 本教程使用MySQL数据库作为Superset的数据库（Superset支持MySQL和PostgreSQL)，安装完成后需进行以下配置。\n">
 <meta property='og:url' content='https://rusthx.github.io/p/ubuntu-22.04%E9%83%A8%E7%BD%B2apache-superset/'>
 <meta property='og:site_name' content='rustWood'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Ubuntu' /><meta property='article:tag' content='VMvare' /><meta property='article:tag' content='Superset' /><meta property='article:published_time' content='2024-09-07T11:09:06&#43;08:00'/><meta property='article:modified_time' content='2024-09-07T11:09:06&#43;08:00'/>
 <meta name="twitter:title" content="Ubuntu 22.04部署Apache Superset">
-<meta name="twitter:description" content="安装依赖 使用以下命令安装依赖\n1 sudo apt-get install build-essential libssl-dev libffi-dev python3-dev python3-pip libsasl2-dev libldap2-dev default-libmysqlclient-dev 配置Superset元数据库 本教程使用MySQL数据库作为Superset的数据库（Superset支持MySQL和PostgreSQL)，安装完成后需进行以下配置。\n">        
+<meta name="twitter:description" content="安装依赖 使用以下命令安装依赖\nsudo apt-get install build-essential libssl-dev libffi-dev python3-dev python3-pip libsasl2-dev libldap2-dev default-libmysqlclient-dev 配置Superset元数据库 本教程使用MySQL数据库作为Superset的数据库（Superset支持MySQL和PostgreSQL)，安装完成后需进行以下配置。\n">
+<link rel="stylesheet" href="/static/highlight/styles/github.min.css">
+<script src="/static/highlight/highlight.min.js"></script>
+<script src="/static/highlight/languages/java.min.js"></script>
+<script src="/static/highlight/languages/python.min.js"></script>
+<script src="/static/highlight/languages/bash.min.js"></script>
+<script src="/static/highlight/languages/shell.min.js"></script>
+<script src="/static/highlight/languages/scala.min.js"></script>
+<script src="/static/highlight/languages/sql.js"></script>
+<script src="/static/highlight/languages/xml.js"></script>
+<script src="/static/highlight/languages/yaml.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', (event) => {
+    hljs.highlightAll();
+  });
+</script>        
         
         <link rel="stylesheet" href="/highlight/styles/github.css">
          
@@ -329,332 +344,163 @@
     
     <h2 id="安装依赖">安装依赖
 </h2><p>使用以下命令安装依赖</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo apt-get install build-essential libssl-dev libffi-dev python3-dev python3-pip libsasl2-dev libldap2-dev default-libmysqlclient-dev 
-</span></span></code></pre></td></tr></table>
-</div>
-</div><h2 id="配置superset元数据库">配置Superset元数据库
+<pre><code class="language-bash">sudo apt-get install build-essential libssl-dev libffi-dev python3-dev python3-pip libsasl2-dev libldap2-dev default-libmysqlclient-dev 
+</code></pre>
+<h2 id="配置superset元数据库">配置Superset元数据库
 </h2><p>本教程使用MySQL数据库作为Superset的数据库（Superset支持MySQL和PostgreSQL)，安装完成后需进行以下配置。</p>
 <ol>
 <li>在MySQL中创建Superset元数据库</li>
 </ol>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">CREATE</span><span class="w"> </span><span class="k">DATABASE</span><span class="w"> </span><span class="n">superset</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="nb">CHARACTER</span><span class="w"> </span><span class="k">SET</span><span class="w"> </span><span class="n">utf8</span><span class="w"> </span><span class="k">DEFAULT</span><span class="w"> </span><span class="k">COLLATE</span><span class="w"> </span><span class="n">utf8_general_ci</span><span class="p">;</span><span class="w">
-</span></span></span></code></pre></td></tr></table>
-</div>
-</div><ol start="2">
+<pre><code class="language-sql">CREATE DATABASE superset DEFAULT CHARACTER SET utf8 DEFAULT COLLATE utf8_general_ci;
+</code></pre>
+<ol start="2">
 <li>创建Superset用户，用户名为superset,密码为superset。superset用户拥有所有数据库的全部权限。</li>
 </ol>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">create</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="n">superset</span><span class="o">@</span><span class="s1">&#39;%&#39;</span><span class="w"> </span><span class="n">identified</span><span class="w"> </span><span class="k">WITH</span><span class="w"> </span><span class="n">mysql_native_password</span><span class="w"> </span><span class="k">BY</span><span class="w"> </span><span class="s1">&#39;superset&#39;</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">grant</span><span class="w"> </span><span class="k">all</span><span class="w"> </span><span class="k">privileges</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="o">*</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="n">superset</span><span class="o">@</span><span class="s1">&#39;%&#39;</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="k">grant</span><span class="w"> </span><span class="k">option</span><span class="p">;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">flush</span><span class="w"> </span><span class="k">privileges</span><span class="p">;</span><span class="w">
-</span></span></span></code></pre></td></tr></table>
-</div>
-</div><h2 id="为superset创建python虚拟环境">为Superset创建Python虚拟环境
+<pre><code class="language-sql">create user superset@'%' identified WITH mysql_native_password BY 'superset';
+grant all privileges on *.* to superset@'%' with grant option;
+flush privileges;
+</code></pre>
+<h2 id="为superset创建python虚拟环境">为Superset创建Python虚拟环境
 </h2><ol>
 <li>更新pip</li>
 </ol>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo pip install --upgrade pip
-</span></span></code></pre></td></tr></table>
-</div>
-</div><ol start="2">
+<pre><code class="language-bash">sudo pip install --upgrade pip
+</code></pre>
+<ol start="2">
 <li>下载必要的虚拟环境包</li>
 </ol>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo pip install virtualenv -i https://pypi.tuna.tsinghua.edu.cn/simple
-</span></span></code></pre></td></tr></table>
-</div>
-</div><ol start="3">
+<pre><code class="language-bash">sudo pip install virtualenv -i https://pypi.tuna.tsinghua.edu.cn/simple
+</code></pre>
+<ol start="3">
 <li>创建虚拟环境</li>
 </ol>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">virtualenv superset
-</span></span></code></pre></td></tr></table>
-</div>
-</div><ol start="4">
+<pre><code class="language-bash">virtualenv superset
+</code></pre>
+<ol start="4">
 <li>激活虚拟环境</li>
 </ol>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="nb">source</span> superset/bin/activate
-</span></span></code></pre></td></tr></table>
-</div>
-</div><ol start="5">
+<pre><code class="language-bash">source superset/bin/activate
+</code></pre>
+<ol start="5">
 <li>安装Superset</li>
 </ol>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">pip install apache-superset -i https://pypi.tuna.tsinghua.edu.cn/simple
-</span></span></code></pre></td></tr></table>
-</div>
-</div><ol start="6">
+<pre><code class="language-bash">pip install apache-superset -i https://pypi.tuna.tsinghua.edu.cn/simple
+</code></pre>
+<ol start="6">
 <li>安装其他Python依赖</li>
 </ol>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">pip install gunicorn pymysql mysqlclient -i https://pypi.tuna.tsinghua.edu.cn/simple
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>说明：gunicorn是一个Python Web Server，可以和java中的TomCat类比</p>
+<pre><code class="language-bash">pip install gunicorn pymysql mysqlclient -i https://pypi.tuna.tsinghua.edu.cn/simple
+</code></pre>
+<p>说明：gunicorn是一个Python Web Server，可以和java中的TomCat类比</p>
 <h2 id="配置superset">配置Superset
 </h2><p>在~/superset/bin目录下创建superset配置文件superset_config.py，详细配置可参考官方文档（<a class="link" href="https://superset.apache.org/docs/installation/configuring-superset/"  target="_blank" rel="noopener"
     >https://superset.apache.org/docs/installation/configuring-superset/</a>）或者GitHub（<a class="link" href="https://github.com/apache/superset/"  target="_blank" rel="noopener"
     >https://github.com/apache/superset/</a>）</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span><span class="lnt">44
-</span><span class="lnt">45
-</span><span class="lnt">46
-</span><span class="lnt">47
-</span><span class="lnt">48
-</span><span class="lnt">49
-</span><span class="lnt">50
-</span><span class="lnt">51
-</span><span class="lnt">52
-</span><span class="lnt">53
-</span><span class="lnt">54
-</span><span class="lnt">55
-</span><span class="lnt">56
-</span><span class="lnt">57
-</span><span class="lnt">58
-</span><span class="lnt">59
-</span><span class="lnt">60
-</span><span class="lnt">61
-</span><span class="lnt">62
-</span><span class="lnt">63
-</span><span class="lnt">64
-</span><span class="lnt">65
-</span><span class="lnt">66
-</span><span class="lnt">67
-</span><span class="lnt">68
-</span><span class="lnt">69
-</span><span class="lnt">70
-</span><span class="lnt">71
-</span><span class="lnt">72
-</span><span class="lnt">73
-</span><span class="lnt">74
-</span><span class="lnt">75
-</span><span class="lnt">76
-</span><span class="lnt">77
-</span><span class="lnt">78
-</span><span class="lnt">79
-</span><span class="lnt">80
-</span><span class="lnt">81
-</span><span class="lnt">82
-</span><span class="lnt">83
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-python" data-lang="python"><span class="line"><span class="cl"><span class="c1"># Superset specific config</span>
-</span></span><span class="line"><span class="cl"><span class="n">ROW_LIMIT</span> <span class="o">=</span> <span class="mi">5000</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">#SUPERSET_WEBSERVER_PORT = 8088</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># Flask App Builder configuration</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># Your App secret key will be used for securely signing the session cookie</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># and encrypting sensitive information on the database</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># Make sure you are changing this key for your deployment with a strong key.</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># You can generate a strong key using `openssl rand -base64 42`</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="s1">&#39;&#39;&#39;
-</span></span></span><span class="line"><span class="cl"><span class="s1">使用命令“openssl rand -base64 42”创建SECRET_KEY填写到下面&#39;&#39;&#39;</span>
-</span></span><span class="line"><span class="cl"><span class="n">SECRET_KEY</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># The SQLAlchemy connection string to your database backend</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># This connection defines the path to the database that stores your</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># superset metadata (slices, connections, tables, dashboards, ...).</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># Note that the connection information to connect to the datasources</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># you want to explore are managed directly in the web UI</span>
-</span></span><span class="line"><span class="cl"><span class="s1">&#39;&#39;&#39;
-</span></span></span><span class="line"><span class="cl"><span class="s1">数据库连接，我是用的是MySQL数据库
-</span></span></span><span class="line"><span class="cl"><span class="s1">链接字符串：mysql+pymysql://&lt;数据库用户&gt;:&lt;密码&gt;@&lt;主机名/ip&gt;/&lt;数据库名&gt;&#39;&#39;&#39;</span>
-</span></span><span class="line"><span class="cl"><span class="n">SQLALCHEMY_DATABASE_URI</span> <span class="o">=</span> <span class="s1">&#39;mysql+pymysql://superset:superset@hadoop01:3306/superset?charset=utf8&#39;</span>
-</span></span><span class="line"><span class="cl"><span class="n">ENABLE_CSRF_PROTECTION</span> <span class="o">=</span> <span class="kc">True</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># Flask-WTF flag for CSRF</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="n">WTF_CSRF_ENABLED</span> <span class="o">=</span> <span class="kc">True</span>
-</span></span><span class="line"><span class="cl"><span class="n">WTF_CSRF_CHECK_DEFAULT</span> <span class="o">=</span> <span class="kc">True</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># Add endpoints that need to be exempt from CSRF protection</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#WTF_CSRF_EXEMPT_LIST = []</span>
-</span></span><span class="line"><span class="cl"><span class="c1"># A CSRF token that expires in 1 year</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#WTF_CSRF_TIME_LIMIT = 60 * 60 * 24 * 365</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">#不填这个会出现登录界面输入正确的用户名和密码后登录无反应的现象</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#但是关掉这个可能会降低安全性，可能是superset版本太新（3.0.0），旧版本貌似没有这个问题</span>
-</span></span><span class="line"><span class="cl"><span class="n">TALISMAN_ENABLED</span><span class="o">=</span><span class="kc">False</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># Set this API key to enable Mapbox visualizations</span>
-</span></span><span class="line"><span class="cl"><span class="n">MAPBOX_API_KEY</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="n">COMPRESS_REGISTER</span> <span class="o">=</span> <span class="kc">False</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">#默认中文</span>
-</span></span><span class="line"><span class="cl"><span class="n">BABEL_DEFAULT_LOCALE</span> <span class="o">=</span> <span class="s2">&#34;zh&#34;</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#superset支持的语言</span>
-</span></span><span class="line"><span class="cl"><span class="n">LANGUAGES</span> <span class="o">=</span> <span class="p">{</span>
-</span></span><span class="line"><span class="cl">    <span class="s2">&#34;en&#34;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&#34;flag&#34;</span><span class="p">:</span> <span class="s2">&#34;us&#34;</span><span class="p">,</span> <span class="s2">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;English&#34;</span><span class="p">},</span>
-</span></span><span class="line"><span class="cl">    <span class="s2">&#34;es&#34;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&#34;flag&#34;</span><span class="p">:</span> <span class="s2">&#34;es&#34;</span><span class="p">,</span> <span class="s2">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;Spanish&#34;</span><span class="p">},</span>
-</span></span><span class="line"><span class="cl">    <span class="s2">&#34;it&#34;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&#34;flag&#34;</span><span class="p">:</span> <span class="s2">&#34;it&#34;</span><span class="p">,</span> <span class="s2">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;Italian&#34;</span><span class="p">},</span>
-</span></span><span class="line"><span class="cl">    <span class="s2">&#34;fr&#34;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&#34;flag&#34;</span><span class="p">:</span> <span class="s2">&#34;fr&#34;</span><span class="p">,</span> <span class="s2">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;French&#34;</span><span class="p">},</span>
-</span></span><span class="line"><span class="cl">    <span class="s2">&#34;zh&#34;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&#34;flag&#34;</span><span class="p">:</span> <span class="s2">&#34;cn&#34;</span><span class="p">,</span> <span class="s2">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;Chinese&#34;</span><span class="p">},</span>
-</span></span><span class="line"><span class="cl">    <span class="s2">&#34;ja&#34;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&#34;flag&#34;</span><span class="p">:</span> <span class="s2">&#34;jp&#34;</span><span class="p">,</span> <span class="s2">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;Japanese&#34;</span><span class="p">},</span>
-</span></span><span class="line"><span class="cl">    <span class="s2">&#34;de&#34;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&#34;flag&#34;</span><span class="p">:</span> <span class="s2">&#34;de&#34;</span><span class="p">,</span> <span class="s2">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;German&#34;</span><span class="p">},</span>
-</span></span><span class="line"><span class="cl">    <span class="s2">&#34;pt&#34;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&#34;flag&#34;</span><span class="p">:</span> <span class="s2">&#34;pt&#34;</span><span class="p">,</span> <span class="s2">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;Portuguese&#34;</span><span class="p">},</span>
-</span></span><span class="line"><span class="cl">    <span class="s2">&#34;pt_BR&#34;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&#34;flag&#34;</span><span class="p">:</span> <span class="s2">&#34;br&#34;</span><span class="p">,</span> <span class="s2">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;Brazilian Portuguese&#34;</span><span class="p">},</span>
-</span></span><span class="line"><span class="cl">    <span class="s2">&#34;ru&#34;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&#34;flag&#34;</span><span class="p">:</span> <span class="s2">&#34;ru&#34;</span><span class="p">,</span> <span class="s2">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;Russian&#34;</span><span class="p">},</span>
-</span></span><span class="line"><span class="cl">    <span class="s2">&#34;ko&#34;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&#34;flag&#34;</span><span class="p">:</span> <span class="s2">&#34;kr&#34;</span><span class="p">,</span> <span class="s2">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;Korean&#34;</span><span class="p">},</span>
-</span></span><span class="line"><span class="cl">    <span class="s2">&#34;sk&#34;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&#34;flag&#34;</span><span class="p">:</span> <span class="s2">&#34;sk&#34;</span><span class="p">,</span> <span class="s2">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;Slovak&#34;</span><span class="p">},</span>
-</span></span><span class="line"><span class="cl">    <span class="s2">&#34;sl&#34;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&#34;flag&#34;</span><span class="p">:</span> <span class="s2">&#34;si&#34;</span><span class="p">,</span> <span class="s2">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;Slovenian&#34;</span><span class="p">},</span>
-</span></span><span class="line"><span class="cl">    <span class="s2">&#34;nl&#34;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&#34;flag&#34;</span><span class="p">:</span> <span class="s2">&#34;nl&#34;</span><span class="p">,</span> <span class="s2">&#34;name&#34;</span><span class="p">:</span> <span class="s2">&#34;Dutch&#34;</span><span class="p">},</span>
-</span></span><span class="line"><span class="cl"><span class="p">}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="n">SHOW_STACKTRACE</span> <span class="o">=</span> <span class="kc">False</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="n">DEBUG</span> <span class="o">=</span> <span class="kc">False</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="n">APP_NAME</span> <span class="o">=</span> <span class="s2">&#34;Superset&#34;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1">#不填这个会导致报错如下</span>
-</span></span><span class="line"><span class="cl"><span class="c1">#ModuleNotFoundError: No module named &#39;MySQL_db&#39;</span>
-</span></span><span class="line"><span class="cl"><span class="n">SQLALCHEMY_TRACK_MODIFICATIONS</span> <span class="o">=</span> <span class="kc">False</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">logging</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="n">LOG_LEVEL</span> <span class="o">=</span> <span class="s1">&#39;DEBUG&#39;</span>  <span class="c1"># 设置日志级别为DEBUG可以获得最详细的日志信息</span>
-</span></span><span class="line"><span class="cl"><span class="n">LOG_FILE</span> <span class="o">=</span> <span class="s1">&#39;/home/rust/superset/superset_logfile.log&#39;</span>  <span class="c1"># 指定日志文件路径</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="n">logging</span><span class="o">.</span><span class="n">basicConfig</span><span class="p">(</span>
-</span></span><span class="line"><span class="cl">    <span class="n">filename</span><span class="o">=</span><span class="n">LOG_FILE</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="n">level</span><span class="o">=</span><span class="n">LOG_LEVEL</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl">    <span class="nb">format</span><span class="o">=</span><span class="s1">&#39;</span><span class="si">%(asctime)s</span><span class="s1"> </span><span class="si">%(levelname)s</span><span class="s1"> </span><span class="si">%(name)s</span><span class="s1"> </span><span class="si">%(threadName)s</span><span class="s1"> : </span><span class="si">%(message)s</span><span class="s1">&#39;</span><span class="p">,</span>
-</span></span><span class="line"><span class="cl"><span class="p">)</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><h2 id="初始化superset">初始化Superset
+<pre><code class="language-python"># Superset specific config
+ROW_LIMIT = 5000
+
+#SUPERSET_WEBSERVER_PORT = 8088
+
+# Flask App Builder configuration
+# Your App secret key will be used for securely signing the session cookie
+# and encrypting sensitive information on the database
+# Make sure you are changing this key for your deployment with a strong key.
+# You can generate a strong key using `openssl rand -base64 42`
+
+'''
+使用命令“openssl rand -base64 42”创建SECRET_KEY填写到下面'''
+SECRET_KEY = ''
+
+# The SQLAlchemy connection string to your database backend
+# This connection defines the path to the database that stores your
+# superset metadata (slices, connections, tables, dashboards, ...).
+# Note that the connection information to connect to the datasources
+# you want to explore are managed directly in the web UI
+'''
+数据库连接，我是用的是MySQL数据库
+链接字符串：mysql+pymysql://&lt;数据库用户&gt;:&lt;密码&gt;@&lt;主机名/ip&gt;/&lt;数据库名&gt;'''
+SQLALCHEMY_DATABASE_URI = 'mysql+pymysql://superset:superset@hadoop01:3306/superset?charset=utf8'
+ENABLE_CSRF_PROTECTION = True
+# Flask-WTF flag for CSRF
+
+WTF_CSRF_ENABLED = True
+WTF_CSRF_CHECK_DEFAULT = True
+# Add endpoints that need to be exempt from CSRF protection
+#WTF_CSRF_EXEMPT_LIST = []
+# A CSRF token that expires in 1 year
+#WTF_CSRF_TIME_LIMIT = 60 * 60 * 24 * 365
+
+#不填这个会出现登录界面输入正确的用户名和密码后登录无反应的现象
+#但是关掉这个可能会降低安全性，可能是superset版本太新（3.0.0），旧版本貌似没有这个问题
+TALISMAN_ENABLED=False
+
+# Set this API key to enable Mapbox visualizations
+MAPBOX_API_KEY = ''
+
+COMPRESS_REGISTER = False
+
+#默认中文
+BABEL_DEFAULT_LOCALE = &quot;zh&quot;
+#superset支持的语言
+LANGUAGES = {
+    &quot;en&quot;: {&quot;flag&quot;: &quot;us&quot;, &quot;name&quot;: &quot;English&quot;},
+    &quot;es&quot;: {&quot;flag&quot;: &quot;es&quot;, &quot;name&quot;: &quot;Spanish&quot;},
+    &quot;it&quot;: {&quot;flag&quot;: &quot;it&quot;, &quot;name&quot;: &quot;Italian&quot;},
+    &quot;fr&quot;: {&quot;flag&quot;: &quot;fr&quot;, &quot;name&quot;: &quot;French&quot;},
+    &quot;zh&quot;: {&quot;flag&quot;: &quot;cn&quot;, &quot;name&quot;: &quot;Chinese&quot;},
+    &quot;ja&quot;: {&quot;flag&quot;: &quot;jp&quot;, &quot;name&quot;: &quot;Japanese&quot;},
+    &quot;de&quot;: {&quot;flag&quot;: &quot;de&quot;, &quot;name&quot;: &quot;German&quot;},
+    &quot;pt&quot;: {&quot;flag&quot;: &quot;pt&quot;, &quot;name&quot;: &quot;Portuguese&quot;},
+    &quot;pt_BR&quot;: {&quot;flag&quot;: &quot;br&quot;, &quot;name&quot;: &quot;Brazilian Portuguese&quot;},
+    &quot;ru&quot;: {&quot;flag&quot;: &quot;ru&quot;, &quot;name&quot;: &quot;Russian&quot;},
+    &quot;ko&quot;: {&quot;flag&quot;: &quot;kr&quot;, &quot;name&quot;: &quot;Korean&quot;},
+    &quot;sk&quot;: {&quot;flag&quot;: &quot;sk&quot;, &quot;name&quot;: &quot;Slovak&quot;},
+    &quot;sl&quot;: {&quot;flag&quot;: &quot;si&quot;, &quot;name&quot;: &quot;Slovenian&quot;},
+    &quot;nl&quot;: {&quot;flag&quot;: &quot;nl&quot;, &quot;name&quot;: &quot;Dutch&quot;},
+}
+
+SHOW_STACKTRACE = False
+
+DEBUG = False
+
+APP_NAME = &quot;Superset&quot;
+
+#不填这个会导致报错如下
+#ModuleNotFoundError: No module named 'MySQL_db'
+SQLALCHEMY_TRACK_MODIFICATIONS = False
+
+import logging
+
+LOG_LEVEL = 'DEBUG'  # 设置日志级别为DEBUG可以获得最详细的日志信息
+LOG_FILE = '/home/rust/superset/superset_logfile.log'  # 指定日志文件路径
+
+logging.basicConfig(
+    filename=LOG_FILE,
+    level=LOG_LEVEL,
+    format='%(asctime)s %(levelname)s %(name)s %(threadName)s : %(message)s',
+)
+</code></pre>
+<h2 id="初始化superset">初始化Superset
 </h2><ol>
 <li>初始化数据库</li>
 </ol>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">(</span>superset<span class="o">)</span> rust@hadoop01:~$ <span class="nb">export</span> <span class="nv">FLASK_APP</span><span class="o">=</span>superset
-</span></span><span class="line"><span class="cl"><span class="o">(</span>superset<span class="o">)</span> rust@hadoop01:~$ superset db upgrade
-</span></span></code></pre></td></tr></table>
-</div>
-</div><ol start="2">
+<pre><code class="language-bash">(superset) rust@hadoop01:~$ export FLASK_APP=superset
+(superset) rust@hadoop01:~$ superset db upgrade
+</code></pre>
+<ol start="2">
 <li>在元数据库中创建一个superset管理员用户</li>
 </ol>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">(</span>superset<span class="o">)</span> rust@hadoop01:~$ superset fab create-admin
-</span></span></code></pre></td></tr></table>
-</div>
-</div><ol start="3">
+<pre><code class="language-bash">(superset) rust@hadoop01:~$ superset fab create-admin
+</code></pre>
+<ol start="3">
 <li>初始化superset</li>
 </ol>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">(</span>superset<span class="o">)</span> rust@hadoop01:~$ superset init
-</span></span></code></pre></td></tr></table>
-</div>
-</div><h2 id="启动superset">启动Superset
-</h2><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"> <span class="o">(</span>superset<span class="o">)</span> rust@hadoop01:~<span class="nv">$gunicorn</span> --workers <span class="m">5</span> --timeout <span class="m">120</span> --bind hadoop01:8787  <span class="s2">&#34;superset.app:create_app()&#34;</span> --daemon
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>说明：
+<pre><code class="language-bash">(superset) rust@hadoop01:~$ superset init
+</code></pre>
+<h2 id="启动superset">启动Superset
+</h2><pre><code class="language-bash"> (superset) rust@hadoop01:~$gunicorn --workers 5 --timeout 120 --bind hadoop01:8787  &quot;superset.app:create_app()&quot; --daemon
+</code></pre>
+<p>说明：
 &ndash;workers：指定进程个数
 &ndash;timeout：worker进程超时时间，超时会自动重启
 &ndash;bind：绑定本机地址，即为Superset访问地址
@@ -666,183 +512,91 @@
 </h2><ol>
 <li>停止gunicorn进程</li>
 </ol>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">(</span>superset<span class="o">)</span> rust@hadoop01:~$ ps -ef <span class="p">|</span> awk <span class="s1">&#39;/superset/ &amp;&amp; !/awk/{print $2}&#39;</span> <span class="p">|</span> xargs <span class="nb">kill</span> -9
-</span></span></code></pre></td></tr></table>
-</div>
-</div><ol start="2">
+<pre><code class="language-bash">(superset) rust@hadoop01:~$ ps -ef | awk '/superset/ &amp;&amp; !/awk/{print $2}' | xargs kill -9
+</code></pre>
+<ol start="2">
 <li>退出superset虚拟环境</li>
 </ol>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="o">(</span>superset<span class="o">)</span> rust@hadoop01:~$ ps -ef <span class="p">|</span>grep superst
-</span></span><span class="line"><span class="cl"><span class="c1">#查到进程号后杀掉进程</span>
-</span></span><span class="line"><span class="cl"><span class="o">(</span>superset<span class="o">)</span> rust@hadoop01:~$ <span class="nb">kill</span> -9 pid
-</span></span></code></pre></td></tr></table>
-</div>
-</div><h2 id="superset启停脚本">Superset启停脚本
+<pre><code class="language-bash">(superset) rust@hadoop01:~$ ps -ef |grep superst
+#查到进程号后杀掉进程
+(superset) rust@hadoop01:~$ kill -9 pid
+</code></pre>
+<h2 id="superset启停脚本">Superset启停脚本
 </h2><ol>
 <li>创建superset.sh文件</li>
 </ol>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">vim superset.sh
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>内容如下</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
-</span><span class="lnt">11
-</span><span class="lnt">12
-</span><span class="lnt">13
-</span><span class="lnt">14
-</span><span class="lnt">15
-</span><span class="lnt">16
-</span><span class="lnt">17
-</span><span class="lnt">18
-</span><span class="lnt">19
-</span><span class="lnt">20
-</span><span class="lnt">21
-</span><span class="lnt">22
-</span><span class="lnt">23
-</span><span class="lnt">24
-</span><span class="lnt">25
-</span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
-</span><span class="lnt">32
-</span><span class="lnt">33
-</span><span class="lnt">34
-</span><span class="lnt">35
-</span><span class="lnt">36
-</span><span class="lnt">37
-</span><span class="lnt">38
-</span><span class="lnt">39
-</span><span class="lnt">40
-</span><span class="lnt">41
-</span><span class="lnt">42
-</span><span class="lnt">43
-</span><span class="lnt">44
-</span><span class="lnt">45
-</span><span class="lnt">46
-</span><span class="lnt">47
-</span><span class="lnt">48
-</span><span class="lnt">49
-</span><span class="lnt">50
-</span><span class="lnt">51
-</span><span class="lnt">52
-</span><span class="lnt">53
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="cp">#!/bin/bash
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
-</span></span><span class="line"><span class="cl">superset_status<span class="o">(){</span>
-</span></span><span class="line"><span class="cl">    <span class="nv">result</span><span class="o">=</span><span class="sb">`</span>ps -ef <span class="p">|</span> awk <span class="s1">&#39;/gunicorn/ &amp;&amp; !/awk/{print $2}&#39;</span> <span class="p">|</span> wc -l<span class="sb">`</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">[[</span> <span class="nv">$result</span> -eq <span class="m">0</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
-</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="m">0</span>
-</span></span><span class="line"><span class="cl">    <span class="k">else</span>
-</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="m">1</span>
-</span></span><span class="line"><span class="cl">    <span class="k">fi</span>
-</span></span><span class="line"><span class="cl"><span class="o">}</span>
-</span></span><span class="line"><span class="cl">superset_start<span class="o">(){</span>
-</span></span><span class="line"><span class="cl">        <span class="nb">source</span> ~/.bashrc
-</span></span><span class="line"><span class="cl">        superset_status &gt;/dev/null 2&gt;<span class="p">&amp;</span><span class="m">1</span>
-</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">[[</span> <span class="nv">$?</span> -eq <span class="m">0</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
-</span></span><span class="line"><span class="cl">            <span class="nb">source</span> ~/superset/bin/activate <span class="p">;</span> gunicorn --workers <span class="m">5</span> --timeout <span class="m">120</span> --bind hadoop01:8787 --daemon <span class="s1">&#39;superset.app:create_app()&#39;</span>
-</span></span><span class="line"><span class="cl">        <span class="k">else</span>
-</span></span><span class="line"><span class="cl">            <span class="nb">echo</span> <span class="s2">&#34;superset正在运行&#34;</span>
-</span></span><span class="line"><span class="cl">        <span class="k">fi</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="o">}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">superset_stop<span class="o">(){</span>
-</span></span><span class="line"><span class="cl">    superset_status &gt;/dev/null 2&gt;<span class="p">&amp;</span><span class="m">1</span>
-</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">[[</span> <span class="nv">$?</span> -eq <span class="m">0</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
-</span></span><span class="line"><span class="cl">        <span class="nb">echo</span> <span class="s2">&#34;superset未在运行&#34;</span>
-</span></span><span class="line"><span class="cl">    <span class="k">else</span>
-</span></span><span class="line"><span class="cl">        ps -ef <span class="p">|</span> awk <span class="s1">&#39;/gunicorn/ &amp;&amp; !/awk/{print $2}&#39;</span> <span class="p">|</span> xargs <span class="nb">kill</span> -9
-</span></span><span class="line"><span class="cl">    <span class="k">fi</span>
-</span></span><span class="line"><span class="cl"><span class="o">}</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="k">case</span> <span class="nv">$1</span> in
-</span></span><span class="line"><span class="cl">    start <span class="o">)</span>
-</span></span><span class="line"><span class="cl">        <span class="nb">echo</span> <span class="s2">&#34;启动Superset&#34;</span>
-</span></span><span class="line"><span class="cl">        superset_start
-</span></span><span class="line"><span class="cl">    <span class="p">;;</span>
-</span></span><span class="line"><span class="cl">    stop <span class="o">)</span>
-</span></span><span class="line"><span class="cl">        <span class="nb">echo</span> <span class="s2">&#34;停止Superset&#34;</span>
-</span></span><span class="line"><span class="cl">        superset_stop
-</span></span><span class="line"><span class="cl">    <span class="p">;;</span>
-</span></span><span class="line"><span class="cl">    restart <span class="o">)</span>
-</span></span><span class="line"><span class="cl">        <span class="nb">echo</span> <span class="s2">&#34;重启Superset&#34;</span>
-</span></span><span class="line"><span class="cl">        superset_stop
-</span></span><span class="line"><span class="cl">        superset_start
-</span></span><span class="line"><span class="cl">    <span class="p">;;</span>
-</span></span><span class="line"><span class="cl">    status <span class="o">)</span>
-</span></span><span class="line"><span class="cl">        superset_status &gt;/dev/null 2&gt;<span class="p">&amp;</span><span class="m">1</span>
-</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="o">[[</span> <span class="nv">$?</span> -eq <span class="m">0</span> <span class="o">]]</span><span class="p">;</span> <span class="k">then</span>
-</span></span><span class="line"><span class="cl">            <span class="nb">echo</span> <span class="s2">&#34;superset未在运行&#34;</span>
-</span></span><span class="line"><span class="cl">        <span class="k">else</span>
-</span></span><span class="line"><span class="cl">            <span class="nb">echo</span> <span class="s2">&#34;superset正在运行&#34;</span>
-</span></span><span class="line"><span class="cl">        <span class="k">fi</span>
-</span></span><span class="line"><span class="cl"><span class="k">esac</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><ol start="2">
+<pre><code class="language-bash">vim superset.sh
+</code></pre>
+<p>内容如下</p>
+<pre><code class="language-bash">#!/bin/bash
+
+superset_status(){
+    result=`ps -ef | awk '/gunicorn/ &amp;&amp; !/awk/{print $2}' | wc -l`
+    if [[ $result -eq 0 ]]; then
+        return 0
+    else
+        return 1
+    fi
+}
+superset_start(){
+        source ~/.bashrc
+        superset_status &gt;/dev/null 2&gt;&amp;1
+        if [[ $? -eq 0 ]]; then
+            source ~/superset/bin/activate ; gunicorn --workers 5 --timeout 120 --bind hadoop01:8787 --daemon 'superset.app:create_app()'
+        else
+            echo &quot;superset正在运行&quot;
+        fi
+
+}
+
+superset_stop(){
+    superset_status &gt;/dev/null 2&gt;&amp;1
+    if [[ $? -eq 0 ]]; then
+        echo &quot;superset未在运行&quot;
+    else
+        ps -ef | awk '/gunicorn/ &amp;&amp; !/awk/{print $2}' | xargs kill -9
+    fi
+}
+
+
+case $1 in
+    start )
+        echo &quot;启动Superset&quot;
+        superset_start
+    ;;
+    stop )
+        echo &quot;停止Superset&quot;
+        superset_stop
+    ;;
+    restart )
+        echo &quot;重启Superset&quot;
+        superset_stop
+        superset_start
+    ;;
+    status )
+        superset_status &gt;/dev/null 2&gt;&amp;1
+        if [[ $? -eq 0 ]]; then
+            echo &quot;superset未在运行&quot;
+        else
+            echo &quot;superset正在运行&quot;
+        fi
+esac
+
+</code></pre>
+<ol start="2">
 <li>加执行权限</li>
 </ol>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl">sudo chmod +x superset.sh
-</span></span></code></pre></td></tr></table>
-</div>
-</div><ol start="3">
+<pre><code class="language-bash">sudo chmod +x superset.sh
+</code></pre>
+<ol start="3">
 <li>测试</li>
 </ol>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-bash" data-lang="bash"><span class="line"><span class="cl"><span class="c1">#启动superset</span>
-</span></span><span class="line"><span class="cl">superset.sh start
-</span></span><span class="line"><span class="cl"><span class="c1">#停止superset</span>
-</span></span><span class="line"><span class="cl">superset.sh stop
-</span></span></code></pre></td></tr></table>
-</div>
-</div>
+<pre><code class="language-bash">#启动superset
+superset.sh start
+#停止superset
+superset.sh stop
+</code></pre>
+
 </section>
 
 

@@ -1,18 +1,33 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content=" 参考资料:https://cloud.tencent.com/developer/article/2347138\n禁用Ubuntu Swap 1 sudo gedit /etc/fatab Ubuntu安装网桥工具 1 sudo apt-get install bridge-utils -y 添加k8s镜像源 1 2 3 4 5 sudo curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add - sudo add-apt-repository &#34;deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable&#34; sudo curl -fsSL https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | sudo apt-key add - sudo add-apt-repository &#34;deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main&#34; 配置containerd 这里需要安装containerd，但是我在docker安装的时候已经装好了，相关命令为\n">
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content=" 参考资料:https://cloud.tencent.com/developer/article/2347138\n禁用Ubuntu Swap sudo gedit /etc/fatab Ubuntu安装网桥工具 sudo apt-get install bridge-utils -y 添加k8s镜像源 sudo curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add - sudo add-apt-repository &quot;deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable&quot; sudo curl -fsSL https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | sudo apt-key add - sudo add-apt-repository &quot;deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main&quot; 配置containerd 这里需要安装containerd，但是我在docker安装的时候已经装好了，相关命令为\n">
 <title>Kubernetes（K8s）集群安装</title>
 
 <link rel='canonical' href='https://rusthx.github.io/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/'>
 
 <link rel="stylesheet" href="/scss/style.min.725af1264ab3622779405835da58c5dd0a2906077996c89f3e27ba6359be149d.css"><meta property='og:title' content="Kubernetes（K8s）集群安装">
-<meta property='og:description' content=" 参考资料:https://cloud.tencent.com/developer/article/2347138\n禁用Ubuntu Swap 1 sudo gedit /etc/fatab Ubuntu安装网桥工具 1 sudo apt-get install bridge-utils -y 添加k8s镜像源 1 2 3 4 5 sudo curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add - sudo add-apt-repository &#34;deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable&#34; sudo curl -fsSL https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | sudo apt-key add - sudo add-apt-repository &#34;deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main&#34; 配置containerd 这里需要安装containerd，但是我在docker安装的时候已经装好了，相关命令为\n">
+<meta property='og:description' content=" 参考资料:https://cloud.tencent.com/developer/article/2347138\n禁用Ubuntu Swap sudo gedit /etc/fatab Ubuntu安装网桥工具 sudo apt-get install bridge-utils -y 添加k8s镜像源 sudo curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add - sudo add-apt-repository &quot;deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable&quot; sudo curl -fsSL https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | sudo apt-key add - sudo add-apt-repository &quot;deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main&quot; 配置containerd 这里需要安装containerd，但是我在docker安装的时候已经装好了，相关命令为\n">
 <meta property='og:url' content='https://rusthx.github.io/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/'>
 <meta property='og:site_name' content='rustWood'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Kubernetes' /><meta property='article:tag' content='Ubuntu' /><meta property='article:published_time' content='2024-09-07T12:35:29&#43;08:00'/><meta property='article:modified_time' content='2024-09-07T12:35:29&#43;08:00'/>
 <meta name="twitter:title" content="Kubernetes（K8s）集群安装">
-<meta name="twitter:description" content=" 参考资料:https://cloud.tencent.com/developer/article/2347138\n禁用Ubuntu Swap 1 sudo gedit /etc/fatab Ubuntu安装网桥工具 1 sudo apt-get install bridge-utils -y 添加k8s镜像源 1 2 3 4 5 sudo curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add - sudo add-apt-repository &#34;deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable&#34; sudo curl -fsSL https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | sudo apt-key add - sudo add-apt-repository &#34;deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main&#34; 配置containerd 这里需要安装containerd，但是我在docker安装的时候已经装好了，相关命令为\n">        
+<meta name="twitter:description" content=" 参考资料:https://cloud.tencent.com/developer/article/2347138\n禁用Ubuntu Swap sudo gedit /etc/fatab Ubuntu安装网桥工具 sudo apt-get install bridge-utils -y 添加k8s镜像源 sudo curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add - sudo add-apt-repository &quot;deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable&quot; sudo curl -fsSL https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | sudo apt-key add - sudo add-apt-repository &quot;deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main&quot; 配置containerd 这里需要安装containerd，但是我在docker安装的时候已经装好了，相关命令为\n">
+<link rel="stylesheet" href="/static/highlight/styles/github.min.css">
+<script src="/static/highlight/highlight.min.js"></script>
+<script src="/static/highlight/languages/java.min.js"></script>
+<script src="/static/highlight/languages/python.min.js"></script>
+<script src="/static/highlight/languages/bash.min.js"></script>
+<script src="/static/highlight/languages/shell.min.js"></script>
+<script src="/static/highlight/languages/scala.min.js"></script>
+<script src="/static/highlight/languages/sql.js"></script>
+<script src="/static/highlight/languages/xml.js"></script>
+<script src="/static/highlight/languages/yaml.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', (event) => {
+    hljs.highlightAll();
+  });
+</script>        
         
         <link rel="stylesheet" href="/highlight/styles/github.css">
          
@@ -336,15 +351,9 @@
     >https://cloud.tencent.com/developer/article/2347138</a></p>
 </blockquote>
 <h3 id="禁用ubuntu-swap">禁用Ubuntu Swap
-</h3><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo gedit /etc/fatab
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/1.png"
+</h3><pre><code class="language-shell">sudo gedit /etc/fatab
+</code></pre>
+<p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/1.png"
 	width="692"
 	height="260"
 	srcset="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/1_hu960321138255286551.png 480w, /p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/1_hu13096675886114765677.png 1024w"
@@ -357,15 +366,9 @@
 	
 ></p>
 <h3 id="ubuntu安装网桥工具">Ubuntu安装网桥工具
-</h3><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo apt-get install bridge-utils -y
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/2.png"
+</h3><pre><code class="language-shell">sudo apt-get install bridge-utils -y
+</code></pre>
+<p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/2.png"
 	width="542"
 	height="210"
 	srcset="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/2_hu4363660471933497727.png 480w, /p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/2_hu1379285999777841885.png 1024w"
@@ -378,52 +381,26 @@
 	
 ></p>
 <h3 id="添加k8s镜像源">添加k8s镜像源
-</h3><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg <span class="p">|</span> sudo apt-key add - 
-</span></span><span class="line"><span class="cl">sudo add-apt-repository <span class="s2">&#34;deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu </span><span class="k">$(</span>lsb_release -cs<span class="k">)</span><span class="s2"> stable&#34;</span>
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">sudo curl -fsSL https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg <span class="p">|</span> sudo apt-key add -
-</span></span><span class="line"><span class="cl">sudo add-apt-repository <span class="s2">&#34;deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main&#34;</span>
-</span></span></code></pre></td></tr></table>
-</div>
-</div><h3 id="配置containerd">配置containerd
+</h3><pre><code class="language-shell">sudo curl -fsSL https://mirrors.aliyun.com/docker-ce/linux/ubuntu/gpg | sudo apt-key add - 
+sudo add-apt-repository &quot;deb [arch=amd64] http://mirrors.aliyun.com/docker-ce/linux/ubuntu $(lsb_release -cs) stable&quot;
+
+sudo curl -fsSL https://mirrors.aliyun.com/kubernetes/apt/doc/apt-key.gpg | sudo apt-key add -
+sudo add-apt-repository &quot;deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main&quot;
+</code></pre>
+<h3 id="配置containerd">配置containerd
 </h3><p>这里需要安装containerd，但是我在docker安装的时候已经装好了，相关命令为</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo apt-get install containerd.io
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>（1）Containerd安装完成后，其自带的配置文件/etc/containerd/config.toml中的内容，需要用打印出的containerd默认配置替换。
+<pre><code class="language-shell">sudo apt-get install containerd.io
+</code></pre>
+<p>（1）Containerd安装完成后，其自带的配置文件/etc/containerd/config.toml中的内容，需要用打印出的containerd默认配置替换。
 （2）Containerd的Cgroup设为systemd，以和k8s默认的Cgroup保持一致。
 （3）pause镜像路径改为国内源registry.aliyuncs.com/google_containers/pause:3.9。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo cp /etc/containerd/config.toml /etc/containerd/config.toml.ori
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">sudo chmod <span class="m">777</span> /etc/containerd/config.toml
-</span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl">sudo containerd config default &gt; /etc/containerd/config.toml
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/3.png"
+<pre><code class="language-shell">sudo cp /etc/containerd/config.toml /etc/containerd/config.toml.ori
+
+sudo chmod 777 /etc/containerd/config.toml
+
+sudo containerd config default &gt; /etc/containerd/config.toml
+</code></pre>
+<p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/3.png"
 	width="692"
 	height="110"
 	srcset="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/3_hu5948125076381310860.png 480w, /p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/3_hu12071304055539246676.png 1024w"
@@ -435,15 +412,9 @@
 		data-flex-basis="1509px"
 	
 ></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo gedit /etc/containerd/config.toml
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/4.png"
+<pre><code class="language-shell">sudo gedit /etc/containerd/config.toml
+</code></pre>
+<p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/4.png"
 	width="693"
 	height="422"
 	srcset="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/4_hu4342215343925311415.png 480w, /p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/4_hu10284808613042401377.png 1024w"
@@ -468,17 +439,10 @@
 	
 >
 配置后，重启containerd服务，并保证containerd状态正确</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo systemctl restart containerd.service
-</span></span><span class="line"><span class="cl">sudo systemctl status containerd.service
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/6.png"
+<pre><code class="language-shell">sudo systemctl restart containerd.service
+sudo systemctl status containerd.service
+</code></pre>
+<p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/6.png"
 	width="692"
 	height="240"
 	srcset="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/6_hu10178921285458368139.png 480w, /p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/6_hu1283971055959109204.png 1024w"
@@ -492,15 +456,9 @@
 ></p>
 <h3 id="安装kubernetes">安装Kubernetes
 </h3><p>安装k8s软件，这里会默认下载最新的kubernetes（阿里云镜像源上的），后面指定版本时需要根据自己的版本进行修改。这里也可以手动指定kubernetes版本。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo apt install kubelet kubeadm kubectl
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/7.png"
+<pre><code class="language-shell">sudo apt install kubelet kubeadm kubectl
+</code></pre>
+<p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/7.png"
 	width="681"
 	height="309"
 	srcset="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/7_hu133096450219194195.png 480w, /p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/7_hu943012349230082445.png 1024w"
@@ -515,15 +473,9 @@
 此时k8s没有启动成功是正常的，因为kubelet服务成功启动的先决条件，需要kubelet的配置文件，所在目录/var/lib/kubelet还没有建立。</p>
 <h3 id="k8s配置单机节点">k8s配置单机节点
 </h3><p>查看k8s版本</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubeadm config images list
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/8.png"
+<pre><code class="language-shell">kubeadm config images list
+</code></pre>
+<p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/8.png"
 	width="692"
 	height="155"
 	srcset="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/8_hu16011733915408332467.png 480w, /p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/8_hu11774022554876676733.png 1024w"
@@ -536,15 +488,9 @@
 	
 >
 将kubernetes的控制面的几个镜像拉到本地，为了保证镜像和安装的k8s软件版本严格一致，这里的镜像拉取时，显性指定版本。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo kubeadm config images pull --kubernetes-version v1.28.10 --image-repository registry.aliyuncs.com/google_containers
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/9.png"
+<pre><code class="language-shell">sudo kubeadm config images pull --kubernetes-version v1.28.10 --image-repository registry.aliyuncs.com/google_containers
+</code></pre>
+<p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/9.png"
 	width="692"
 	height="126"
 	srcset="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/9_hu17903787922349183279.png 480w, /p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/9_hu2508715440186311029.png 1024w"
@@ -569,15 +515,9 @@ kubernetes初始化
 		data-flex-basis="364px"
 	
 ></p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo kubeadm init --control-plane-endpoint<span class="o">=</span>192.168.146.111 --kubernetes-version v1.28.10 --image-repository registry.cn-hangzhou.aliyuncs.com/google_containers
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/11.png"
+<pre><code class="language-shell">sudo kubeadm init --control-plane-endpoint=192.168.146.111 --kubernetes-version v1.28.10 --image-repository registry.cn-hangzhou.aliyuncs.com/google_containers
+</code></pre>
+<p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/11.png"
 	width="691"
 	height="311"
 	srcset="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/11_hu16605176183490767431.png 480w, /p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/11_hu18240599072829478421.png 1024w"
@@ -646,19 +586,11 @@ kubernetes初始化
 ></p>
 <h3 id="配置kubernetes集群">配置Kubernetes集群
 </h3><p>在主节点上跟着初始化成功后的提示继续后续工作</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">mkdir -p <span class="nv">$HOME</span>/.kube
-</span></span><span class="line"><span class="cl">sudo cp -i /etc/kubernetes/admin.conf <span class="nv">$HOME</span>/.kube/config
-</span></span><span class="line"><span class="cl">sudo chown <span class="k">$(</span>id -u<span class="k">)</span>:<span class="k">$(</span>id -g<span class="k">)</span> <span class="nv">$HOME</span>/.kube/config
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/16.png"
+<pre><code class="language-shell">mkdir -p $HOME/.kube
+sudo cp -i /etc/kubernetes/admin.conf $HOME/.kube/config
+sudo chown $(id -u):$(id -g) $HOME/.kube/config
+</code></pre>
+<p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/16.png"
 	width="693"
 	height="75"
 	srcset="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/16_hu18369258952975439918.png 480w, /p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/16_hu2228434490561084348.png 1024w"
@@ -671,17 +603,10 @@ kubernetes初始化
 	
 >
 查看集群状态</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl cluster-info
-</span></span><span class="line"><span class="cl">kubectl get nodes
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/17.png"
+<pre><code class="language-shell">kubectl cluster-info
+kubectl get nodes
+</code></pre>
+<p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/17.png"
 	width="692"
 	height="144"
 	srcset="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/17_hu13183444003692171499.png 480w, /p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/17_hu8659039121958339604.png 1024w"
@@ -694,15 +619,9 @@ kubernetes初始化
 	
 >
 在k8s1上创建永久token</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubeadm token create --print-join-command
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/18.png"
+<pre><code class="language-shell">kubeadm token create --print-join-command
+</code></pre>
+<p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/18.png"
 	width="683"
 	height="102"
 	srcset="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/18_hu15068319352070513315.png 480w, /p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/18_hu3237205269493155798.png 1024w"
@@ -729,17 +648,10 @@ kubernetes初始化
 >
 原因：拷贝虚拟机时已完成k8s集群配置文件创建，应该在初始化后，配置文件创建前进行克隆。
 解决办法：在虚拟机重置节点后加入集群。这个重置节点的命令也可以在后续k8s出现问题时恢复默认设置重做时使用。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo rm -rf /etc/kubernetes/kubelet.conf /etc/kubernetes/pki/ca.crt
-</span></span><span class="line"><span class="cl">sudo kubeadm reset
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/20.png"
+<pre><code class="language-shell">sudo rm -rf /etc/kubernetes/kubelet.conf /etc/kubernetes/pki/ca.crt
+sudo kubeadm reset
+</code></pre>
+<p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/20.png"
 	width="692"
 	height="446"
 	srcset="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/20_hu8412896920310934657.png 480w, /p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/20_hu2418707555263233963.png 1024w"
@@ -792,17 +704,10 @@ kubernetes初始化
 	
 ></p>
 <h3 id="配置kubernetes网络插件calico">配置Kubernetes网络插件Calico
-</h3><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl https://projectcalico.docs.tigera.io/manifests/calico.yaml -O
-</span></span><span class="line"><span class="cl">kubectl apply -f calico.yaml
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>成功截图如下（我这里因为网络问题没有成功，姑且偷一张图），如果失败可以使用另外一种手动方法如下（我的办法）。
+</h3><pre><code class="language-shell">curl https://projectcalico.docs.tigera.io/manifests/calico.yaml -O
+kubectl apply -f calico.yaml
+</code></pre>
+<p>成功截图如下（我这里因为网络问题没有成功，姑且偷一张图），如果失败可以使用另外一种手动方法如下（我的办法）。
 <img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/24.png"
 	width="874"
 	height="547"
@@ -821,15 +726,9 @@ kubernetes初始化
     >https://projectcalico.docs.tigera.io/manifests/calico.yaml</a>
 全选复制，粘贴到<code>~/calico.yaml</code>
 重新执行</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl apply -f calico.yaml
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/25.png"
+<pre><code class="language-shell">kubectl apply -f calico.yaml
+</code></pre>
+<p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/25.png"
 	width="692"
 	height="482"
 	srcset="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/25_hu15229060625230529289.png 480w, /p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/25_hu13953004651531133457.png 1024w"
@@ -842,17 +741,10 @@ kubernetes初始化
 	
 >
 成功截图，这里要看见所有的pod状态都为Running才是成功，如果是ContainerCreating则表明正在制作容器，需要稍等一会（可能会很慢，但也不会超过十分钟）。如果过了很久还没Running，可以通过<code>kubectl describe pods &lt;pod-name&gt; -n kube-system</code> 查看pod进度。 -n的意思是指定命名空间（namespace），默认的pod命名空间是default，所以使用<code>kubectl get pods</code>会得到defalut下的pods。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl get pods -n kube-system
-</span></span><span class="line"><span class="cl">kubectl get nodes
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/26.png"
+<pre><code class="language-shell">kubectl get pods -n kube-system
+kubectl get nodes
+</code></pre>
+<p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/26.png"
 	width="692"
 	height="485"
 	srcset="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/26_hu11831354582053368319.png 480w, /p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/26_hu379460734182305715.png 1024w"
@@ -865,15 +757,9 @@ kubernetes初始化
 	
 >
 k8s命名空间查看，更多命令及参数可以通过<code>kubectl --help</code>查看</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl get namespace
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/27.png"
+<pre><code class="language-shell">kubectl get namespace
+</code></pre>
+<p><img src="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/27.png"
 	width="325"
 	height="203"
 	srcset="/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/27_hu7219520315083393518.png 480w, /p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/27_hu1706513173492984095.png 1024w"
