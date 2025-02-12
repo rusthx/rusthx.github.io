@@ -454,11 +454,13 @@ set hive.groupby.skewindata= true;
     document.addEventListener('DOMContentLoaded', function() {
         
         document.querySelectorAll('pre code').forEach((block) => {
+            
+            block.parentElement.removeAttribute('data-highlighted');
             hljs.highlightElement(block);
         });
 
         
-        hljs.initLineNumbersOnLoad();
+        hljs.addPlugin(new window.hljs.LineNumbers());
 
         
         var codeBlocks = document.querySelectorAll('pre');

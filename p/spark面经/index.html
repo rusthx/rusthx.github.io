@@ -567,11 +567,13 @@ Map 算子因为类似于串行操作，所以性能比较低，而是 mapPartit
     document.addEventListener('DOMContentLoaded', function() {
         
         document.querySelectorAll('pre code').forEach((block) => {
+            
+            block.parentElement.removeAttribute('data-highlighted');
             hljs.highlightElement(block);
         });
 
         
-        hljs.initLineNumbersOnLoad();
+        hljs.addPlugin(new window.hljs.LineNumbers());
 
         
         var codeBlocks = document.querySelectorAll('pre');

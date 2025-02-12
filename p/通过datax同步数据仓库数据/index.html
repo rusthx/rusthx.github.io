@@ -443,11 +443,13 @@ crontab [-u &lt;用户名称&gt;][配置文件] 或 crontab { -l | -r | -e }
     document.addEventListener('DOMContentLoaded', function() {
         
         document.querySelectorAll('pre code').forEach((block) => {
+            
+            block.parentElement.removeAttribute('data-highlighted');
             hljs.highlightElement(block);
         });
 
         
-        hljs.initLineNumbersOnLoad();
+        hljs.addPlugin(new window.hljs.LineNumbers());
 
         
         var codeBlocks = document.querySelectorAll('pre');

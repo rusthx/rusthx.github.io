@@ -866,11 +866,13 @@ ExternalSorter 可以处理大规模数据集，通过将数据溢出到磁盘�
     document.addEventListener('DOMContentLoaded', function() {
         
         document.querySelectorAll('pre code').forEach((block) => {
+            
+            block.parentElement.removeAttribute('data-highlighted');
             hljs.highlightElement(block);
         });
 
         
-        hljs.initLineNumbersOnLoad();
+        hljs.addPlugin(new window.hljs.LineNumbers());
 
         
         var codeBlocks = document.querySelectorAll('pre');

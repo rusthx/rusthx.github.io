@@ -531,11 +531,13 @@ MySQL的查询优化器通常会选择使用索引来优化关联查询。将小
     document.addEventListener('DOMContentLoaded', function() {
         
         document.querySelectorAll('pre code').forEach((block) => {
+            
+            block.parentElement.removeAttribute('data-highlighted');
             hljs.highlightElement(block);
         });
 
         
-        hljs.initLineNumbersOnLoad();
+        hljs.addPlugin(new window.hljs.LineNumbers());
 
         
         var codeBlocks = document.querySelectorAll('pre');
