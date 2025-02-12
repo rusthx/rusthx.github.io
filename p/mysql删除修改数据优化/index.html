@@ -6,27 +6,13 @@
 
 <link rel='canonical' href='https://rusthx.github.io/p/mysql%E5%88%A0%E9%99%A4%E4%BF%AE%E6%94%B9%E6%95%B0%E6%8D%AE%E4%BC%98%E5%8C%96/'>
 
-<link rel="stylesheet" href="/scss/style.min.57d2a86910760b72c5cf00f5c12e666a025617f78d3b87f19f8c65a883e1a5bf.css"><meta property='og:title' content="MySQL删除修改数据优化">
+<link rel="stylesheet" href="/scss/style.min.725af1264ab3622779405835da58c5dd0a2906077996c89f3e27ba6359be149d.css"><meta property='og:title' content="MySQL删除修改数据优化">
 <meta property='og:description' content="删除 删除未在他表出现的数据 下面有一条效率较差的删除语句，主要功能是将t1表中id未出现在t2表的记录删除。效率差的原因是in中用了子查询，导致删除语句不会走索引，从而导致锁全表，继而导致删除效率差。\n">
 <meta property='og:url' content='https://rusthx.github.io/p/mysql%E5%88%A0%E9%99%A4%E4%BF%AE%E6%94%B9%E6%95%B0%E6%8D%AE%E4%BC%98%E5%8C%96/'>
 <meta property='og:site_name' content='rustWood'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='MySQL' /><meta property='article:tag' content='SQL' /><meta property='article:published_time' content='2024-09-12T22:15:33&#43;08:00'/><meta property='article:modified_time' content='2024-09-12T22:15:33&#43;08:00'/>
 <meta name="twitter:title" content="MySQL删除修改数据优化">
-<meta name="twitter:description" content="删除 删除未在他表出现的数据 下面有一条效率较差的删除语句，主要功能是将t1表中id未出现在t2表的记录删除。效率差的原因是in中用了子查询，导致删除语句不会走索引，从而导致锁全表，继而导致删除效率差。\n"><link rel="stylesheet" href="/highlight/styles/github.min.css">
-<script src="/highlight/highlight.min.js"></script>
-<script src="/highlight/languages/java.min.js"></script>
-<script src="/highlight/languages/python.min.js"></script>
-<script src="/highlight/languages/bash.min.js"></script>
-<script src="/highlight/languages/shell.min.js"></script>
-<script src="/highlight/languages/scala.min.js"></script>
-<script src="/highlight/languages/sql.min.js"></script>
-<script src="/highlight/languages/xml.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        hljs.highlightAll();
-    });
-</script>        
+<meta name="twitter:description" content="删除 删除未在他表出现的数据 下面有一条效率较差的删除语句，主要功能是将t1表中id未出现在t2表的记录删除。效率差的原因是in中用了子查询，导致删除语句不会走索引，从而导致锁全表，继而导致删除效率差。\n">        
         
         <link rel="stylesheet" href="/highlight/styles/github.css">
          
@@ -344,45 +330,95 @@
     <h2 id="删除">删除
 </h2><h3 id="删除未在他表出现的数据">删除未在他表出现的数据
 </h3><p>下面有一条效率较差的删除语句，主要功能是将t1表中id未出现在t2表的记录删除。效率差的原因是in中用了子查询，导致删除语句不会走索引，从而导致锁全表，继而导致删除效率差。</p>
-<pre><code class="language-SQL">delete from t1 
-  where id not in 
-  (
-    select id from t2
-  )
-
-</code></pre>
-<p>优化方法:取消子查询，改用关联删除，这样就可以使用建在id列上的索引。关联删除/更新在建立索引的情况下效率远高于<code>in/exists</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">delete</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t1</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">where</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">not</span><span class="w"> </span><span class="k">in</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">select</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>优化方法:取消子查询，改用关联删除，这样就可以使用建在id列上的索引。关联删除/更新在建立索引的情况下效率远高于<code>in/exists</code></p>
 <p>优化后的SQL语句如下：</p>
-<pre><code class="language-SQL">delete t1 
-  from t1 left join t2 on t1.id=t2.id
-  where t2.id is null
-</code></pre>
-<p>注：上面这条是MySQL独有的优化，达梦数据库和Oracle中可用如下语句。（拾人牙慧，未经验证，用这两个数据库的朋友可以自行验证一下）<code>(+)</code>表示单侧关联，该符号在哪边哪边就是副表。</p>
-<pre><code class="language-SQl">delete from t1
-  where rowid in(
-    select t1.rowid 
-      from t1,t2
-      where t2.id(+)=t1.id and t2.id is null
-  )
-</code></pre>
-<h3 id="删除多表相同数据">删除多表相同数据
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">delete</span><span class="w"> </span><span class="n">t1</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">from</span><span class="w"> </span><span class="n">t1</span><span class="w"> </span><span class="k">left</span><span class="w"> </span><span class="k">join</span><span class="w"> </span><span class="n">t2</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">t1</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">t2</span><span class="p">.</span><span class="n">id</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">where</span><span class="w"> </span><span class="n">t2</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="k">null</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>注：上面这条是MySQL独有的优化，达梦数据库和Oracle中可用如下语句。（拾人牙慧，未经验证，用这两个数据库的朋友可以自行验证一下）<code>(+)</code>表示单侧关联，该符号在哪边哪边就是副表。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-SQl" data-lang="SQl"><span class="line"><span class="cl"><span class="k">delete</span><span class="w"> </span><span class="k">from</span><span class="w"> </span><span class="n">t1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">where</span><span class="w"> </span><span class="n">rowid</span><span class="w"> </span><span class="k">in</span><span class="p">(</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="k">select</span><span class="w"> </span><span class="n">t1</span><span class="p">.</span><span class="n">rowid</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">from</span><span class="w"> </span><span class="n">t1</span><span class="p">,</span><span class="n">t2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="k">where</span><span class="w"> </span><span class="n">t2</span><span class="p">.</span><span class="n">id</span><span class="p">(</span><span class="o">+</span><span class="p">)</span><span class="o">=</span><span class="n">t1</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="k">and</span><span class="w"> </span><span class="n">t2</span><span class="p">.</span><span class="n">id</span><span class="w"> </span><span class="k">is</span><span class="w"> </span><span class="k">null</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="删除多表相同数据">删除多表相同数据
 </h3><p>好的删除语句如下：</p>
-<pre><code class="language-SQl">delete t1,t2
-  from t1,t2
-  where t1.id=t2.id
-</code></pre>
-<p>这样可以同时删除从主从表删除。比如一条记录记录在多张表中，删除这条记录需要同时删除两张表的记录。这样可以保证要么全部删除，要么全部不删，间接满足了事务一致性。（数据库只会从一个状态转移至另外一个状态，即拥有这条记录和没有这条记录的两个状态。这一条记录可以看成是一个入库记录、一张支票）</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-SQl" data-lang="SQl"><span class="line"><span class="cl"><span class="k">delete</span><span class="w"> </span><span class="n">t1</span><span class="p">,</span><span class="n">t2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">from</span><span class="w"> </span><span class="n">t1</span><span class="p">,</span><span class="n">t2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">where</span><span class="w"> </span><span class="n">t1</span><span class="p">.</span><span class="n">id</span><span class="o">=</span><span class="n">t2</span><span class="p">.</span><span class="n">id</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>这样可以同时删除从主从表删除。比如一条记录记录在多张表中，删除这条记录需要同时删除两张表的记录。这样可以保证要么全部删除，要么全部不删，间接满足了事务一致性。（数据库只会从一个状态转移至另外一个状态，即拥有这条记录和没有这条记录的两个状态。这一条记录可以看成是一个入库记录、一张支票）</p>
 <h3 id="删除全表数据">删除全表数据
 </h3><p>用truncate替代delete。这里涉及delete的机制，delete并不是直接在磁盘中删除记录，而是将记录加一个标记，并设置为不可见，然后在数据库压力小时异步删除磁盘中的数据。但是这样有一个问题，虽然标记为删除后，查询表记录不可见。但是记录仍然占有着磁盘空间，这会拖慢查询数据库的速度。</p>
-<pre><code class="language-SQL">truncate table t1;
-</code></pre>
-<h2 id="更新">更新
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">truncate</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">t1</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="更新">更新
 </h2><p>差的更新语句如下：</p>
-<pre><code class="language-SQL">update t1
-  set c1=''
-  where id in (...)
-</code></pre>
-<p>如删除篇中所说，由于in中属性过多，in不会再走索引（当属性值大于4个后就不会再走索引，in中是子查询的话就不会走索引）。所以这里的更新效率慢，并且还会锁住整表。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">update</span><span class="w"> </span><span class="n">t1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">set</span><span class="w"> </span><span class="n">c1</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">where</span><span class="w"> </span><span class="n">id</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="p">(...)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>如删除篇中所说，由于in中属性过多，in不会再走索引（当属性值大于4个后就不会再走索引，in中是子查询的话就不会走索引）。所以这里的更新效率慢，并且还会锁住整表。</p>
 <blockquote>
 <p>关于为什么全表扫描会锁住整张表可以看小林的教程：<a class="link" href="https://xiaolincoding.com/mysql/lock/update_index.html"  target="_blank" rel="noopener"
     >update 没加索引会锁全表？</a></p>
@@ -398,143 +434,85 @@
 <blockquote>
 <p>注：使用此语句时，必须在表中定义主键或唯一约束</p>
 </blockquote>
-<pre><code class="language-SQL">insert into [table_name] (column1,column2,column3...)
-  values (values1,values2,values3...)
-  on duplicate key update
-  column1 = values(column1),
-  column2 = values(column2),...
-
-</code></pre>
-<p>例如：</p>
-<pre><code class="language-SQL">insert into users (id,`name`)
-  values (1,'Alice')
-  on duplicate key update
-  name = values(`name`)
-</code></pre>
-<p>PostgreSQL中用法如下：</p>
-<pre><code class="language-SQL">insert into users (id,`name`)
-  values (1,'Alice')
-  on conflicate (id) do 
-  update set name = excluded.name
-</code></pre>
-<p>如果想同时修改多个字段也可用下面的写法</p>
-<pre><code class="language-SQL">insert into users (id,`name`，age)
-  values (1,'Alice',18)
-  on conflicate (id) do 
-  update set (`name`,age) = excluded.(`name`,age)
-</code></pre>
-<p>如果想遇见冲突主键不做处理可用如下语句</p>
-<pre><code class="language-SQL">insert into users (id,`name`)
-  values (1,'Alice')
-  on conflicate (id) do 
-  nothing
-</code></pre>
-
-
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        
-        document.querySelectorAll('pre code').forEach((block) => {
-            
-            block.parentElement.removeAttribute('data-highlighted');
-            hljs.highlightElement(block);
-        });
-
-        
-        hljs.addPlugin(new window.hljs.LineNumbers());
-
-        
-        var codeBlocks = document.querySelectorAll('pre');
-        codeBlocks.forEach(function(block, index) {
-            
-            var copyBtn = document.createElement('button');
-            copyBtn.className = 'copy-btn';
-            copyBtn.setAttribute('data-clipboard-action', 'copy');
-            copyBtn.textContent = 'Copy';
-
-            
-            block.id = 'code-block-' + index;
-            copyBtn.setAttribute('data-clipboard-target', '#' + block.id);
-
-            
-            block.insertBefore(copyBtn, block.firstChild);
-        });
-
-        
-        new ClipboardJS('.copy-btn');
-
-        
-        var clipboard = new ClipboardJS('.copy-btn');
-        clipboard.on('success', function(e) {
-            e.clearSelection();
-            e.trigger.textContent = 'Copied!';
-            setTimeout(function() {
-                e.trigger.textContent = 'Copy';
-            }, 2000);
-        });
-    });
-    </script>
-
-    <style>
-     
-    .copy-btn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background-color: #f3f3f3;  
-        color: #333;  
-        border: none;
-        padding: 8px 12px;
-        font-size: 0.9em;
-        cursor: pointer;
-        border-radius: 4px;
-        transition: all 0.3s ease;  
-        z-index: 10;  
-    }
-
-     
-    .copy-btn:hover {
-        background-color: #ddd;  
-    }
-
-     
-    .copy-btn:active {
-        transform: translateY(1px);  
-    }
-
-     
-    @media (prefers-color-scheme: dark) {
-        .copy-btn {
-            background-color: #444;  
-            color: #fff;  
-        }
-
-        .copy-btn:hover {
-            background-color: #555;  
-        }
-    }
-
-     
-    pre {
-        position: relative;
-        margin: 0;
-        overflow-x: auto;
-        border-radius: 6px;
-        line-height: 1.5;
-        padding: 16px;
-    }
-
-     
-
-     
-    @media (prefers-color-scheme: dark) {
-        pre {
-            background-color: #2d2d2d;  
-            color: #e0e0e0;  
-        }
-    }
-    </style>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="p">[</span><span class="k">table_name</span><span class="p">]</span><span class="w"> </span><span class="p">(</span><span class="n">column1</span><span class="p">,</span><span class="n">column2</span><span class="p">,</span><span class="n">column3</span><span class="p">...)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">values</span><span class="w"> </span><span class="p">(</span><span class="n">values1</span><span class="p">,</span><span class="n">values2</span><span class="p">,</span><span class="n">values3</span><span class="p">...)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">on</span><span class="w"> </span><span class="n">duplicate</span><span class="w"> </span><span class="k">key</span><span class="w"> </span><span class="k">update</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">column1</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">values</span><span class="p">(</span><span class="n">column1</span><span class="p">),</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">column2</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">values</span><span class="p">(</span><span class="n">column2</span><span class="p">),...</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>例如：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="p">,</span><span class="o">`</span><span class="n">name</span><span class="o">`</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">values</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;Alice&#39;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">on</span><span class="w"> </span><span class="n">duplicate</span><span class="w"> </span><span class="k">key</span><span class="w"> </span><span class="k">update</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">values</span><span class="p">(</span><span class="o">`</span><span class="n">name</span><span class="o">`</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>PostgreSQL中用法如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="p">,</span><span class="o">`</span><span class="n">name</span><span class="o">`</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">values</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;Alice&#39;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">on</span><span class="w"> </span><span class="n">conflicate</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="k">do</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">update</span><span class="w"> </span><span class="k">set</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">excluded</span><span class="p">.</span><span class="n">name</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果想同时修改多个字段也可用下面的写法</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="p">,</span><span class="o">`</span><span class="n">name</span><span class="o">`</span><span class="err">，</span><span class="n">age</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">values</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;Alice&#39;</span><span class="p">,</span><span class="mi">18</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">on</span><span class="w"> </span><span class="n">conflicate</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="k">do</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">update</span><span class="w"> </span><span class="k">set</span><span class="w"> </span><span class="p">(</span><span class="o">`</span><span class="n">name</span><span class="o">`</span><span class="p">,</span><span class="n">age</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">excluded</span><span class="p">.(</span><span class="o">`</span><span class="n">name</span><span class="o">`</span><span class="p">,</span><span class="n">age</span><span class="p">)</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果想遇见冲突主键不做处理可用如下语句</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-SQL" data-lang="SQL"><span class="line"><span class="cl"><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="n">users</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="p">,</span><span class="o">`</span><span class="n">name</span><span class="o">`</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">values</span><span class="w"> </span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;Alice&#39;</span><span class="p">)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">on</span><span class="w"> </span><span class="n">conflicate</span><span class="w"> </span><span class="p">(</span><span class="n">id</span><span class="p">)</span><span class="w"> </span><span class="k">do</span><span class="w"> 
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="k">nothing</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
 </section>
+
 
     <footer class="article-footer">
     

@@ -1,32 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前置准备：配置Hive的MySQL连接用户 MySQL的配置可参考我的教程 MySQL安装教程\n创建Hive元数据库 create database metastore; 创建用户hive，设置密码为123456 create user 'hive'@'%' identified by '123456'; grant all privileges on metastore.* to 'hive'@'%' with grant option; flush privileges; 安装Hive 参考资料：B站尚硅谷 062.Hive的安装部署_哔哩哔哩_bilibili\n">
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="前置准备：配置Hive的MySQL连接用户 MySQL的配置可参考我的教程 MySQL安装教程\n创建Hive元数据库 1 create database metastore; 创建用户hive，设置密码为123456 1 2 3 create user &#39;hive&#39;@&#39;%&#39; identified by &#39;123456&#39;; grant all privileges on metastore.* to &#39;hive&#39;@&#39;%&#39; with grant option; flush privileges; 安装Hive 参考资料：B站尚硅谷 062.Hive的安装部署_哔哩哔哩_bilibili\n">
 <title>Ubuntu22.04配置Hive及Hive on Spark</title>
 
 <link rel='canonical' href='https://rusthx.github.io/p/ubuntu22.04%E9%85%8D%E7%BD%AEhive%E5%8F%8Ahive-on-spark/'>
 
-<link rel="stylesheet" href="/scss/style.min.57d2a86910760b72c5cf00f5c12e666a025617f78d3b87f19f8c65a883e1a5bf.css"><meta property='og:title' content="Ubuntu22.04配置Hive及Hive on Spark">
-<meta property='og:description' content="前置准备：配置Hive的MySQL连接用户 MySQL的配置可参考我的教程 MySQL安装教程\n创建Hive元数据库 create database metastore; 创建用户hive，设置密码为123456 create user 'hive'@'%' identified by '123456'; grant all privileges on metastore.* to 'hive'@'%' with grant option; flush privileges; 安装Hive 参考资料：B站尚硅谷 062.Hive的安装部署_哔哩哔哩_bilibili\n">
+<link rel="stylesheet" href="/scss/style.min.725af1264ab3622779405835da58c5dd0a2906077996c89f3e27ba6359be149d.css"><meta property='og:title' content="Ubuntu22.04配置Hive及Hive on Spark">
+<meta property='og:description' content="前置准备：配置Hive的MySQL连接用户 MySQL的配置可参考我的教程 MySQL安装教程\n创建Hive元数据库 1 create database metastore; 创建用户hive，设置密码为123456 1 2 3 create user &#39;hive&#39;@&#39;%&#39; identified by &#39;123456&#39;; grant all privileges on metastore.* to &#39;hive&#39;@&#39;%&#39; with grant option; flush privileges; 安装Hive 参考资料：B站尚硅谷 062.Hive的安装部署_哔哩哔哩_bilibili\n">
 <meta property='og:url' content='https://rusthx.github.io/p/ubuntu22.04%E9%85%8D%E7%BD%AEhive%E5%8F%8Ahive-on-spark/'>
 <meta property='og:site_name' content='rustWood'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Ubuntu' /><meta property='article:tag' content='Hive' /><meta property='article:tag' content='Spark' /><meta property='article:published_time' content='2024-09-07T11:15:48&#43;08:00'/><meta property='article:modified_time' content='2024-09-07T11:15:48&#43;08:00'/>
 <meta name="twitter:title" content="Ubuntu22.04配置Hive及Hive on Spark">
-<meta name="twitter:description" content="前置准备：配置Hive的MySQL连接用户 MySQL的配置可参考我的教程 MySQL安装教程\n创建Hive元数据库 create database metastore; 创建用户hive，设置密码为123456 create user 'hive'@'%' identified by '123456'; grant all privileges on metastore.* to 'hive'@'%' with grant option; flush privileges; 安装Hive 参考资料：B站尚硅谷 062.Hive的安装部署_哔哩哔哩_bilibili\n"><link rel="stylesheet" href="/highlight/styles/github.min.css">
-<script src="/highlight/highlight.min.js"></script>
-<script src="/highlight/languages/java.min.js"></script>
-<script src="/highlight/languages/python.min.js"></script>
-<script src="/highlight/languages/bash.min.js"></script>
-<script src="/highlight/languages/shell.min.js"></script>
-<script src="/highlight/languages/scala.min.js"></script>
-<script src="/highlight/languages/sql.min.js"></script>
-<script src="/highlight/languages/xml.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        hljs.highlightAll();
-    });
-</script>        
+<meta name="twitter:description" content="前置准备：配置Hive的MySQL连接用户 MySQL的配置可参考我的教程 MySQL安装教程\n创建Hive元数据库 1 create database metastore; 创建用户hive，设置密码为123456 1 2 3 create user &#39;hive&#39;@&#39;%&#39; identified by &#39;123456&#39;; grant all privileges on metastore.* to &#39;hive&#39;@&#39;%&#39; with grant option; flush privileges; 安装Hive 参考资料：B站尚硅谷 062.Hive的安装部署_哔哩哔哩_bilibili\n">        
         
         <link rel="stylesheet" href="/highlight/styles/github.css">
          
@@ -344,16 +330,30 @@
 <ol>
 <li>创建Hive元数据库</li>
 </ol>
-<pre><code class="language-sql">create database metastore;
-</code></pre>
-<ol start="2">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">create</span><span class="w"> </span><span class="k">database</span><span class="w"> </span><span class="n">metastore</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="2">
 <li>创建用户hive，设置密码为123456</li>
 </ol>
-<pre><code class="language-sql">create user 'hive'@'%' identified by '123456';
-grant all privileges on metastore.* to 'hive'@'%' with grant option;
-flush privileges;
-</code></pre>
-<h2 id="安装hive">安装Hive
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">create</span><span class="w"> </span><span class="k">user</span><span class="w"> </span><span class="s1">&#39;hive&#39;</span><span class="o">@</span><span class="s1">&#39;%&#39;</span><span class="w"> </span><span class="n">identified</span><span class="w"> </span><span class="k">by</span><span class="w"> </span><span class="s1">&#39;123456&#39;</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="k">grant</span><span class="w"> </span><span class="k">all</span><span class="w"> </span><span class="k">privileges</span><span class="w"> </span><span class="k">on</span><span class="w"> </span><span class="n">metastore</span><span class="p">.</span><span class="o">*</span><span class="w"> </span><span class="k">to</span><span class="w"> </span><span class="s1">&#39;hive&#39;</span><span class="o">@</span><span class="s1">&#39;%&#39;</span><span class="w"> </span><span class="k">with</span><span class="w"> </span><span class="k">grant</span><span class="w"> </span><span class="k">option</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="n">flush</span><span class="w"> </span><span class="k">privileges</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="安装hive">安装Hive
 </h2><p>参考资料：B站尚硅谷
 <a class="link" href="https://www.bilibili.com/video/BV1mG411o7Lt?p=62&amp;vd_source=2db7c64d895a2907954a5b8725db55d5"  target="_blank" rel="noopener"
     >062.Hive的安装部署_哔哩哔哩_bilibili</a></p>
@@ -364,100 +364,205 @@ flush privileges;
 <ol start="2">
 <li>修改配置文件（cd 到hive下的conf文件夹，这里我已经将Hive安装包改名为hive并移动到/usr/local/下）</li>
 </ol>
-<pre><code class="language-shell">sudo mv hive-default.xml.template hive-default.xml
-sudo vim hive-site.xml
-</code></pre>
-<p>将以下内容写入文件</p>
-<pre><code class="language-xml">&lt;?xml version=&quot;1.0&quot;?&gt;
-&lt;?xml-stylesheet type=&quot;text/xsl&quot; href=&quot;configuration.xsl&quot;?&gt;
-
-&lt;configuration&gt;
-    &lt;!-- jdbc连接的URL --&gt;
-    &lt;property&gt;
-        &lt;name&gt;javax.jdo.option.ConnectionURL&lt;/name&gt;
-        &lt;value&gt;jdbc:mysql://hadoop1:3306/metastore?useUnicode=true&amp;amp;characterEncodeing=UTF-8&amp;amp;allowPublicKeyRetrieval=true&amp;amp;useSSL=false&amp;amp;serverTimezone=GMT&lt;/value&gt;
-    &lt;/property&gt;
-    
-    &lt;!-- jdbc连接的Driver--&gt;
-    &lt;property&gt;
-        &lt;name&gt;javax.jdo.option.ConnectionDriverName&lt;/name&gt;
-        &lt;value&gt;com.mysql.jdbc.Driver&lt;/value&gt;
-    &lt;/property&gt;
-    
-	&lt;!-- jdbc连接的username--&gt;
-    &lt;property&gt;
-        &lt;name&gt;javax.jdo.option.ConnectionUserName&lt;/name&gt;
-        &lt;value&gt;hive&lt;/value&gt;
-    &lt;/property&gt;
-
-    &lt;!-- jdbc连接的password --&gt;
-    &lt;property&gt;
-        &lt;name&gt;javax.jdo.option.ConnectionPassword&lt;/name&gt;
-        &lt;value&gt;123456&lt;/value&gt;
-    &lt;/property&gt;
-    
-    &lt;!-- Hive默认在HDFS的工作目录 --&gt;
-    &lt;property&gt;
-        &lt;name&gt;hive.metastore.warehouse.dir&lt;/name&gt;
-        &lt;value&gt;/user/hive/warehouse&lt;/value&gt;
-    &lt;/property&gt;
-    
-        &lt;!-- 指定存储元数据要连接的地址 --&gt;
-    &lt;property&gt;
-	&lt;name&gt;hive.metastore.uris&lt;/name&gt;
-	&lt;value&gt;thrift://hadoop1:9083&lt;/value&gt;
-    &lt;/property&gt;
-    
-    &lt;!-- 指定hiveserver2连接的host --&gt;
-    &lt;property&gt;
-	&lt;name&gt;hive.server2.thrift.bind.host&lt;/name&gt;
-	&lt;value&gt;hadoop1&lt;/value&gt;
-    &lt;/property&gt;
-
-    &lt;!-- 指定hiveserver2连接的端口号 --&gt;
-    &lt;property&gt;
-	&lt;name&gt;hive.server2.thrift.port&lt;/name&gt;
-	&lt;value&gt;10000&lt;/value&gt;
-    &lt;/property&gt;
-
-    &lt;!-- hiveserver2的高可用参数，开启此参数可以提高hiveserver2的启动速度 --&gt;
-    &lt;property&gt;
-	&lt;name&gt;hive.server2.active.passive.ha.enable&lt;/name&gt;
-	&lt;value&gt;true&lt;/value&gt;
-    &lt;/property&gt;
-    &lt;property&gt;
-	&lt;name&gt;hive.cli.print.header&lt;/name&gt;
-	&lt;value&gt;true&lt;/value&gt;
-    &lt;/property&gt;
-
-    &lt;property&gt;
-	&lt;name&gt;hive.cli.print.current.db&lt;/name&gt;
-	&lt;value&gt;true&lt;/value&gt;
-    &lt;/property&gt;
-&lt;/configuration&gt;
-</code></pre>
-<ol start="3">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo mv hive-default.xml.template hive-default.xml
+</span></span><span class="line"><span class="cl">sudo vim hive-site.xml
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>将以下内容写入文件</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;?xml-stylesheet type=&#34;text/xsl&#34; href=&#34;configuration.xsl&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;configuration&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="c">&lt;!-- jdbc连接的URL --&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;name&gt;</span>javax.jdo.option.ConnectionURL<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;value&gt;</span>jdbc:mysql://hadoop1:3306/metastore?useUnicode=true<span class="ni">&amp;amp;</span>characterEncodeing=UTF-8<span class="ni">&amp;amp;</span>allowPublicKeyRetrieval=true<span class="ni">&amp;amp;</span>useSSL=false<span class="ni">&amp;amp;</span>serverTimezone=GMT<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c">&lt;!-- jdbc连接的Driver--&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;name&gt;</span>javax.jdo.option.ConnectionDriverName<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;value&gt;</span>com.mysql.jdbc.Driver<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">	<span class="c">&lt;!-- jdbc连接的username--&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;name&gt;</span>javax.jdo.option.ConnectionUserName<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;value&gt;</span>hive<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c">&lt;!-- jdbc连接的password --&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;name&gt;</span>javax.jdo.option.ConnectionPassword<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;value&gt;</span>123456<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c">&lt;!-- Hive默认在HDFS的工作目录 --&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;name&gt;</span>hive.metastore.warehouse.dir<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;value&gt;</span>/user/hive/warehouse<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">        <span class="c">&lt;!-- 指定存储元数据要连接的地址 --&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;name&gt;</span>hive.metastore.uris<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;value&gt;</span>thrift://hadoop1:9083<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c">&lt;!-- 指定hiveserver2连接的host --&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;name&gt;</span>hive.server2.thrift.bind.host<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;value&gt;</span>hadoop1<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c">&lt;!-- 指定hiveserver2连接的端口号 --&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;name&gt;</span>hive.server2.thrift.port<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;value&gt;</span>10000<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c">&lt;!-- hiveserver2的高可用参数，开启此参数可以提高hiveserver2的启动速度 --&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;name&gt;</span>hive.server2.active.passive.ha.enable<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;value&gt;</span>true<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;name&gt;</span>hive.cli.print.header<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;value&gt;</span>true<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;name&gt;</span>hive.cli.print.current.db<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;value&gt;</span>true<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/configuration&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="3">
 <li>配置环境变量</li>
 </ol>
-<pre><code class="language-shell">sudo vim ~/.bashrc
-</code></pre>
-<p>在下面添加</p>
-<pre><code class="language-shell">export HIVE_HOME=/usr/local/hive
-export PATH=$PATH:$HIVE_HOME/bin
-</code></pre>
-<h2 id="启动hive">启动Hive
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo vim ~/.bashrc
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在下面添加</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HIVE_HOME</span><span class="o">=</span>/usr/local/hive
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:<span class="nv">$HIVE_HOME</span>/bin
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="启动hive">启动Hive
 </h2><ol>
 <li>启动Hadoop</li>
 </ol>
-<pre><code class="language-shell">start-all.sh
-</code></pre>
-<ol start="2">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">start-all.sh
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="2">
 <li>初始化Hive</li>
 </ol>
-<pre><code class="language-shell">cd /usr/local/hive
-./bin/schematool -dbType mysql -initSchema
-</code></pre>
-<p>正常初始化会日志刷屏并出现大片空白，然后最后一行出现succeed或者complete的字样
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">cd</span> /usr/local/hive
+</span></span><span class="line"><span class="cl">./bin/schematool -dbType mysql -initSchema
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>正常初始化会日志刷屏并出现大片空白，然后最后一行出现succeed或者complete的字样
 如果没有正常初始化就复制最下面几行中的报错信息，粘贴到必应进行查找</p>
 <ol start="3">
 <li>启动Hive</li>
@@ -465,29 +570,65 @@ export PATH=$PATH:$HIVE_HOME/bin
 <p>启动Hive前需要先启动Hive的元数据库metastore和hiveserver2
 注意：这里的metastore和hiveserver2每个都要单独开启一个终端，开启一个后再开一个新的终端进行命令
 日志被重定向到了logs文件夹下，需要查看日志可以在这个文件夹下查看</p>
-<pre><code class="language-shell">cd /usr/local/hive/
-hive --service metastore &gt;logs/metastore.log 2&gt;&amp;1
-hive --service hiveserver2 &gt;logs/hiveServer2.log 2&gt;&amp;1
-</code></pre>
-<pre><code class="language-shell">bin/hive
-</code></pre>
-<p>正常启动会出现一个交互界面如下：</p>
-<pre><code class="language-shell">hive(default)&gt;
-</code></pre>
-<ol start="4">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">cd</span> /usr/local/hive/
+</span></span><span class="line"><span class="cl">hive --service metastore &gt;logs/metastore.log 2&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span></span><span class="line"><span class="cl">hive --service hiveserver2 &gt;logs/hiveServer2.log 2&gt;<span class="p">&amp;</span><span class="m">1</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">bin/hive
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>正常启动会出现一个交互界面如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">hive<span class="o">(</span>default<span class="o">)</span>&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="4">
 <li>解决Hive shell中打印大量日志的问题</li>
 </ol>
 <p>当在Hive的命令行中查询时出现大量日志时，可以在conf下新建日志配置文件如下</p>
-<pre><code class="language-shell">cd /usr/local/conf/
-vim log4j.properties
-</code></pre>
-<p>粘贴如下内容</p>
-<pre><code class="language-shell">log4j.rootLogger=WARN, CA
-log4j.appender.CA=org.apache.log4j.ConsoleAppender
-log4j.appender.CA.layout=org.apache.log4j.PatternLayout
-log4j.appender.CA.layout.ConversionPattern=%-4r [%t] %-5p %c %x - %m%n
-</code></pre>
-<h2 id="hive-on-spark配置">Hive on Spark配置
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">cd</span> /usr/local/conf/
+</span></span><span class="line"><span class="cl">vim log4j.properties
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>粘贴如下内容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">log4j.rootLogger<span class="o">=</span>WARN, CA
+</span></span><span class="line"><span class="cl">log4j.appender.CA<span class="o">=</span>org.apache.log4j.ConsoleAppender
+</span></span><span class="line"><span class="cl">log4j.appender.CA.layout<span class="o">=</span>org.apache.log4j.PatternLayout
+</span></span><span class="line"><span class="cl">log4j.appender.CA.layout.ConversionPattern<span class="o">=</span>%-4r <span class="o">[</span>%t<span class="o">]</span> %-5p %c %x - %m%n
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="hive-on-spark配置">Hive on Spark配置
 </h2><ol>
 <li>在官网下载纯净版Spark（不带Hadoop依赖的）</li>
 </ol>
@@ -496,92 +637,201 @@ log4j.appender.CA.layout.ConversionPattern=%-4r [%t] %-5p %c %x - %m%n
 <ol start="2">
 <li>解压Spark</li>
 </ol>
-<pre><code class="language-shell">tar -zxvf spark-3.3.1-bin-without-hadoop.tgz -C /usr/local/
-mv /usr/local/spark-3.3.1-bin-without-hadoop /usr/local/spark
-</code></pre>
-<ol start="3">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">tar -zxvf spark-3.3.1-bin-without-hadoop.tgz -C /usr/local/
+</span></span><span class="line"><span class="cl">mv /usr/local/spark-3.3.1-bin-without-hadoop /usr/local/spark
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="3">
 <li>修改spark-env.sh配置文件</li>
 </ol>
-<pre><code class="language-shell">mv /usr/local/spark/conf/spark-env.sh.template /usr/local/spark/conf/spark-env.sh
-vim /usr/local/spark/conf/spark-env.sh
-</code></pre>
-<p>增添下面内容</p>
-<pre><code class="language-shell">export SPARK_DIST_CLASSPATH=$(hadoop classpath)
-</code></pre>
-<ol start="4">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">mv /usr/local/spark/conf/spark-env.sh.template /usr/local/spark/conf/spark-env.sh
+</span></span><span class="line"><span class="cl">vim /usr/local/spark/conf/spark-env.sh
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>增添下面内容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">SPARK_DIST_CLASSPATH</span><span class="o">=</span><span class="k">$(</span>hadoop classpath<span class="k">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="4">
 <li>配置Spark环境变量</li>
 </ol>
-<pre><code class="language-shell">sudo vim ~/.bashrc
-</code></pre>
-<p>添加下列内容</p>
-<pre><code class="language-shell">export SPARK_HOME=/usr/local/spark
-export PATH=$PATH:$SPARK_HOME/bin
-</code></pre>
-<ol start="5">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo vim ~/.bashrc
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>添加下列内容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">SPARK_HOME</span><span class="o">=</span>/usr/local/spark
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:<span class="nv">$SPARK_HOME</span>/bin
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="5">
 <li>在Hive中创建spark配置文件</li>
 </ol>
-<pre><code class="language-shell">vim /usr/local/hive/conf/spark-defaults.conf
-</code></pre>
-<p>添加如下内容</p>
-<pre><code class="language-shell">spark.master                               yarn
-spark.eventLog.enabled                   true
-spark.eventLog.dir                        hdfs://hadoop1:8020/spark-history
-spark.executor.memory                    1g
-spark.driver.memory					     1g
-</code></pre>
-<p>在HDFS中创建如下路径，用于存储历史日志</p>
-<pre><code class="language-shell">hadoop fs -mkdir /spark-history
-</code></pre>
-<ol start="6">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">vim /usr/local/hive/conf/spark-defaults.conf
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>添加如下内容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">spark.master                               yarn
+</span></span><span class="line"><span class="cl">spark.eventLog.enabled                   <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">spark.eventLog.dir                        hdfs://hadoop1:8020/spark-history
+</span></span><span class="line"><span class="cl">spark.executor.memory                    1g
+</span></span><span class="line"><span class="cl">spark.driver.memory					     1g
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在HDFS中创建如下路径，用于存储历史日志</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">hadoop fs -mkdir /spark-history
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="6">
 <li>向HDFS上传Spark纯净版jar包</li>
 </ol>
 <p>说明1：采用Spark纯净版jar包，不包含hadoop和hive相关依赖，能避免依赖冲突。
 说明2：Hive任务最终由Spark来执行，Spark任务资源分配由Yarn来调度，该任务有可能被分配到集群的任何一个节点。所以需要将Spark的依赖上传到HDFS集群路径，这样集群中任何一个节点都能获取到</p>
-<pre><code class="language-shell">hadoop fs -mkdir /spark-jars
-hadoop fs -put /usr/local/spark/jars/* /spark-jars
-</code></pre>
-<ol start="7">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">hadoop fs -mkdir /spark-jars
+</span></span><span class="line"><span class="cl">hadoop fs -put /usr/local/spark/jars/* /spark-jars
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="7">
 <li>修改hive-site.xml文件</li>
 </ol>
-<pre><code class="language-shell">vim /usr/local/hive/conf/hive-site.xml
-</code></pre>
-<p>添加如下内容</p>
-<pre><code class="language-xml">&lt;!--Spark依赖位置（注意：端口号8020必须和namenode的端口号一致）--&gt;
-&lt;property&gt;
-  &lt;name&gt;spark.yarn.jars&lt;/name&gt;
-  &lt;value&gt;hdfs://hadoop1:8020/spark-jars/*&lt;/value&gt;
-&lt;/property&gt;
-
-&lt;!--Hive执行引擎--&gt;
-&lt;property&gt;
-  &lt;name&gt;hive.execution.engine&lt;/name&gt;
-  &lt;value&gt;spark&lt;/value&gt;
-&lt;/property&gt;
-
-&lt;!--连接超时时间--&gt;
-&lt;property&gt;
-  &lt;name&gt;hive.spark.client.connect.timeout&lt;/name&gt;
-  &lt;value&gt;30000ms&lt;/value&gt;
-&lt;/property&gt;
-</code></pre>
-<h2 id="hive-on-spark测试">Hive on Spark测试
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">vim /usr/local/hive/conf/hive-site.xml
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>添加如下内容</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="c">&lt;!--Spark依赖位置（注意：端口号8020必须和namenode的端口号一致）--&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;name&gt;</span>spark.yarn.jars<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;value&gt;</span>hdfs://hadoop1:8020/spark-jars/*<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c">&lt;!--Hive执行引擎--&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;name&gt;</span>hive.execution.engine<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;value&gt;</span>spark<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c">&lt;!--连接超时时间--&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;name&gt;</span>hive.spark.client.connect.timeout<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;value&gt;</span>30000ms<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/property&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="hive-on-spark测试">Hive on Spark测试
 </h2><ol>
 <li>启动hive客户端</li>
 </ol>
-<pre><code class="language-shell">cd /usr/local/hive/
-bin/hive
-</code></pre>
-<ol start="2">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">cd</span> /usr/local/hive/
+</span></span><span class="line"><span class="cl">bin/hive
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="2">
 <li>创建一张测试表</li>
 </ol>
-<pre><code class="language-sql">hive (default)&gt; create table student(id int, name string);
-</code></pre>
-<ol start="3">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="n">hive</span><span class="w"> </span><span class="p">(</span><span class="k">default</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="k">create</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">student</span><span class="p">(</span><span class="n">id</span><span class="w"> </span><span class="nb">int</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="w"> </span><span class="n">string</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="3">
 <li>通过insert测试效果</li>
 </ol>
-<pre><code class="language-sql">hive (default)&gt; insert into table student values(1,'abc');
-</code></pre>
-<p>结果如下则配置成功
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="n">hive</span><span class="w"> </span><span class="p">(</span><span class="k">default</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="k">insert</span><span class="w"> </span><span class="k">into</span><span class="w"> </span><span class="k">table</span><span class="w"> </span><span class="n">student</span><span class="w"> </span><span class="k">values</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="s1">&#39;abc&#39;</span><span class="p">);</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>结果如下则配置成功
 <img src="/p/ubuntu22.04%E9%85%8D%E7%BD%AEhive%E5%8F%8Ahive-on-spark/1.png"
 	width="1643"
 	height="686"
@@ -613,130 +863,55 @@ bin/hive
 <ol>
 <li>在hadoop1的/usr/local/hadoop/etc/hadoop/capacity-scheduler.xml文件中<strong>修改</strong>如下参数值</li>
 </ol>
-<pre><code class="language-shell">vim capacity-scheduler.xml
-</code></pre>
-<pre><code class="language-shell">&lt;property&gt;
-   &lt;name&gt;yarn.scheduler.capacity.maximum-am-resource-percent&lt;/name&gt;
-    &lt;value&gt;0.8&lt;/value&gt;
-&lt;/property
-</code></pre>
-<ol start="2">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">vim capacity-scheduler.xml
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">&lt;property&gt;
+</span></span><span class="line"><span class="cl">   &lt;name&gt;yarn.scheduler.capacity.maximum-am-resource-percent&lt;/name&gt;
+</span></span><span class="line"><span class="cl">    &lt;value&gt;0.8&lt;/value&gt;
+</span></span><span class="line"><span class="cl">&lt;/property
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="2">
 <li>分发capacity-scheduler.xml配置文件</li>
 </ol>
-<pre><code class="language-shell">xsync capacity-scheduler.xml
-</code></pre>
-<ol start="3">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">xsync capacity-scheduler.xml
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="3">
 <li>重启集群</li>
 </ol>
-<pre><code class="language-shell">stop-all.sh
-start-all.sh
-</code></pre>
-
-
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        
-        document.querySelectorAll('pre code').forEach((block) => {
-            
-            block.parentElement.removeAttribute('data-highlighted');
-            hljs.highlightElement(block);
-        });
-
-        
-        hljs.addPlugin(new window.hljs.LineNumbers());
-
-        
-        var codeBlocks = document.querySelectorAll('pre');
-        codeBlocks.forEach(function(block, index) {
-            
-            var copyBtn = document.createElement('button');
-            copyBtn.className = 'copy-btn';
-            copyBtn.setAttribute('data-clipboard-action', 'copy');
-            copyBtn.textContent = 'Copy';
-
-            
-            block.id = 'code-block-' + index;
-            copyBtn.setAttribute('data-clipboard-target', '#' + block.id);
-
-            
-            block.insertBefore(copyBtn, block.firstChild);
-        });
-
-        
-        new ClipboardJS('.copy-btn');
-
-        
-        var clipboard = new ClipboardJS('.copy-btn');
-        clipboard.on('success', function(e) {
-            e.clearSelection();
-            e.trigger.textContent = 'Copied!';
-            setTimeout(function() {
-                e.trigger.textContent = 'Copy';
-            }, 2000);
-        });
-    });
-    </script>
-
-    <style>
-     
-    .copy-btn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background-color: #f3f3f3;  
-        color: #333;  
-        border: none;
-        padding: 8px 12px;
-        font-size: 0.9em;
-        cursor: pointer;
-        border-radius: 4px;
-        transition: all 0.3s ease;  
-        z-index: 10;  
-    }
-
-     
-    .copy-btn:hover {
-        background-color: #ddd;  
-    }
-
-     
-    .copy-btn:active {
-        transform: translateY(1px);  
-    }
-
-     
-    @media (prefers-color-scheme: dark) {
-        .copy-btn {
-            background-color: #444;  
-            color: #fff;  
-        }
-
-        .copy-btn:hover {
-            background-color: #555;  
-        }
-    }
-
-     
-    pre {
-        position: relative;
-        margin: 0;
-        overflow-x: auto;
-        border-radius: 6px;
-        line-height: 1.5;
-        padding: 16px;
-    }
-
-     
-
-     
-    @media (prefers-color-scheme: dark) {
-        pre {
-            background-color: #2d2d2d;  
-            color: #e0e0e0;  
-        }
-    }
-    </style>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">stop-all.sh
+</span></span><span class="line"><span class="cl">start-all.sh
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
 </section>
+
 
     <footer class="article-footer">
     

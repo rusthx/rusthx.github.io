@@ -6,27 +6,13 @@
 
 <link rel='canonical' href='https://rusthx.github.io/p/java%E9%9A%8F%E6%9C%BA%E4%BA%A4%E6%8D%A2%E6%B4%97%E7%89%8C/'>
 
-<link rel="stylesheet" href="/scss/style.min.57d2a86910760b72c5cf00f5c12e666a025617f78d3b87f19f8c65a883e1a5bf.css"><meta property='og:title' content="Java随机交换(洗牌)">
+<link rel="stylesheet" href="/scss/style.min.725af1264ab3622779405835da58c5dd0a2906077996c89f3e27ba6359be149d.css"><meta property='og:title' content="Java随机交换(洗牌)">
 <meta property='og:description' content="题目 给定一个整数数组，进行随机交换，要求交换后的数组中每个元素都不在其原来的位置上\n思路 1.遍历数组，随机一个不为当前下标的下标，将两个位置的元素交换位置\n">
 <meta property='og:url' content='https://rusthx.github.io/p/java%E9%9A%8F%E6%9C%BA%E4%BA%A4%E6%8D%A2%E6%B4%97%E7%89%8C/'>
 <meta property='og:site_name' content='rustWood'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Java' /><meta property='article:published_time' content='2024-09-11T14:43:00&#43;08:00'/><meta property='article:modified_time' content='2024-09-11T14:43:00&#43;08:00'/>
 <meta name="twitter:title" content="Java随机交换(洗牌)">
-<meta name="twitter:description" content="题目 给定一个整数数组，进行随机交换，要求交换后的数组中每个元素都不在其原来的位置上\n思路 1.遍历数组，随机一个不为当前下标的下标，将两个位置的元素交换位置\n"><link rel="stylesheet" href="/highlight/styles/github.min.css">
-<script src="/highlight/highlight.min.js"></script>
-<script src="/highlight/languages/java.min.js"></script>
-<script src="/highlight/languages/python.min.js"></script>
-<script src="/highlight/languages/bash.min.js"></script>
-<script src="/highlight/languages/shell.min.js"></script>
-<script src="/highlight/languages/scala.min.js"></script>
-<script src="/highlight/languages/sql.min.js"></script>
-<script src="/highlight/languages/xml.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        hljs.highlightAll();
-    });
-</script>        
+<meta name="twitter:description" content="题目 给定一个整数数组，进行随机交换，要求交换后的数组中每个元素都不在其原来的位置上\n思路 1.遍历数组，随机一个不为当前下标的下标，将两个位置的元素交换位置\n">        
         
         <link rel="stylesheet" href="/highlight/styles/github.css">
          
@@ -342,194 +328,183 @@
 <p>2.可能会出现某个元素交换多次后又回到原位置的情况，所有需要再遍历一遍数组，如果出现此情况就将交换过的数组再递归交换，直到没有这种情况</p>
 <h2 id="答案">答案
 </h2><p>注意：数组在交换前需要先拷贝一份，这样才能验证每个元素是否在原位置上</p>
-<pre><code class="language-Java">    public static int[] randomSwap(int[] nums){
-        int[] arr = nums.clone();
-        Random random = new Random();
-        for (int i = 0; i &lt; nums.length; i++) {
-            int j=i;
-            while(j==i){
-                j=random.nextInt(nums.length-1);
-            }
-            int temp =arr[j];
-            arr[j]=arr[i];
-            arr[i]=temp;
-        }
-        for (int i = 0; i &lt; nums.length; i++) {
-            if (arr[i] == nums[i]) {
-                return randomSwap(nums);
-            }
-        }
-        return arr;
-    }
-
-</code></pre>
-<pre><code class="language-Python">import random
-
-def derange_array(array):
-    n = len(array)
-    result = array[:]
-    
-    for i in range(n):
-        j = i
-        while j == i:
-            j = random.randint(0, n - 1)
-        # 交换元素
-        result[i], result[j] = result[j], result[i]
-    
-    # 确保没有元素在其原来的位置上
-    for i in range(n):
-        if result[i] == array[i]:
-            return derange_array(array)  # 如果有元素在原来位置上就递归交换
-    
-    return result
-
-# 验证测试
-array = [1, 2, 3, 4, 5]
-result = derange_array(array)
-print(result)
-</code></pre>
-<pre><code class="language-Scala">import scala.util.Random
-
-object Derangement {
-  def main(args: Array[String]): Unit = {
-    val array = Array(1, 2, 3, 4, 5)
-    val result = derangeArray(array)
-    println(result.mkString(&quot;, &quot;))
-  }
-
-  def derangeArray(array: Array[Int]): Array[Int] = {
-    val n = array.length
-    val result = array.clone()
-    val rand = new Random()
-
-    for (i &lt;- 0 until n) {
-      var j = i
-      while (j == i) {
-        j = rand.nextInt(n)
-      }
-      // 交换元素
-      val temp = result(i)
-      result(i) = result(j)
-      result(j) = temp
-    }
-
-    // 确保没有元素在其原来的位置上
-    for (i &lt;- 0 until n) {
-      if (result(i) == array(i)) {
-        return derangeArray(array) // 如果有元素在原来位置上就递归交换
-      }
-    }
-
-    result
-  }
-}
-</code></pre>
-
-
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        
-        document.querySelectorAll('pre code').forEach((block) => {
-            
-            block.parentElement.removeAttribute('data-highlighted');
-            hljs.highlightElement(block);
-        });
-
-        
-        hljs.addPlugin(new window.hljs.LineNumbers());
-
-        
-        var codeBlocks = document.querySelectorAll('pre');
-        codeBlocks.forEach(function(block, index) {
-            
-            var copyBtn = document.createElement('button');
-            copyBtn.className = 'copy-btn';
-            copyBtn.setAttribute('data-clipboard-action', 'copy');
-            copyBtn.textContent = 'Copy';
-
-            
-            block.id = 'code-block-' + index;
-            copyBtn.setAttribute('data-clipboard-target', '#' + block.id);
-
-            
-            block.insertBefore(copyBtn, block.firstChild);
-        });
-
-        
-        new ClipboardJS('.copy-btn');
-
-        
-        var clipboard = new ClipboardJS('.copy-btn');
-        clipboard.on('success', function(e) {
-            e.clearSelection();
-            e.trigger.textContent = 'Copied!';
-            setTimeout(function() {
-                e.trigger.textContent = 'Copy';
-            }, 2000);
-        });
-    });
-    </script>
-
-    <style>
-     
-    .copy-btn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background-color: #f3f3f3;  
-        color: #333;  
-        border: none;
-        padding: 8px 12px;
-        font-size: 0.9em;
-        cursor: pointer;
-        border-radius: 4px;
-        transition: all 0.3s ease;  
-        z-index: 10;  
-    }
-
-     
-    .copy-btn:hover {
-        background-color: #ddd;  
-    }
-
-     
-    .copy-btn:active {
-        transform: translateY(1px);  
-    }
-
-     
-    @media (prefers-color-scheme: dark) {
-        .copy-btn {
-            background-color: #444;  
-            color: #fff;  
-        }
-
-        .copy-btn:hover {
-            background-color: #555;  
-        }
-    }
-
-     
-    pre {
-        position: relative;
-        margin: 0;
-        overflow-x: auto;
-        border-radius: 6px;
-        line-height: 1.5;
-        padding: 16px;
-    }
-
-     
-
-     
-    @media (prefers-color-scheme: dark) {
-        pre {
-            background-color: #2d2d2d;  
-            color: #e0e0e0;  
-        }
-    }
-    </style>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Java" data-lang="Java"><span class="line"><span class="cl"><span class="w">    </span><span class="kd">public</span><span class="w"> </span><span class="kd">static</span><span class="w"> </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="nf">randomSwap</span><span class="p">(</span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">nums</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="kt">int</span><span class="o">[]</span><span class="w"> </span><span class="n">arr</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">nums</span><span class="p">.</span><span class="na">clone</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="n">Random</span><span class="w"> </span><span class="n">random</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="k">new</span><span class="w"> </span><span class="n">Random</span><span class="p">();</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">nums</span><span class="p">.</span><span class="na">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">j</span><span class="o">=</span><span class="n">i</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">while</span><span class="p">(</span><span class="n">j</span><span class="o">==</span><span class="n">i</span><span class="p">){</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="n">j</span><span class="o">=</span><span class="n">random</span><span class="p">.</span><span class="na">nextInt</span><span class="p">(</span><span class="n">nums</span><span class="p">.</span><span class="na">length</span><span class="o">-</span><span class="n">1</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="kt">int</span><span class="w"> </span><span class="n">temp</span><span class="w"> </span><span class="o">=</span><span class="n">arr</span><span class="o">[</span><span class="n">j</span><span class="o">]</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">arr</span><span class="o">[</span><span class="n">j</span><span class="o">]=</span><span class="n">arr</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="n">arr</span><span class="o">[</span><span class="n">i</span><span class="o">]=</span><span class="n">temp</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">for</span><span class="w"> </span><span class="p">(</span><span class="kt">int</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">0</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">nums</span><span class="p">.</span><span class="na">length</span><span class="p">;</span><span class="w"> </span><span class="n">i</span><span class="o">++</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="k">if</span><span class="w"> </span><span class="p">(</span><span class="n">arr</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="w"> </span><span class="o">==</span><span class="w"> </span><span class="n">nums</span><span class="o">[</span><span class="n">i</span><span class="o">]</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">                </span><span class="k">return</span><span class="w"> </span><span class="n">randomSwap</span><span class="p">(</span><span class="n">nums</span><span class="p">);</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="p">}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="k">return</span><span class="w"> </span><span class="n">arr</span><span class="p">;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="p">}</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Python" data-lang="Python"><span class="line"><span class="cl"><span class="kn">import</span> <span class="nn">random</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">def</span> <span class="nf">derange_array</span><span class="p">(</span><span class="n">array</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">result</span> <span class="o">=</span> <span class="n">array</span><span class="p">[:]</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="n">j</span> <span class="o">=</span> <span class="n">i</span>
+</span></span><span class="line"><span class="cl">        <span class="k">while</span> <span class="n">j</span> <span class="o">==</span> <span class="n">i</span><span class="p">:</span>
+</span></span><span class="line"><span class="cl">            <span class="n">j</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 交换元素</span>
+</span></span><span class="line"><span class="cl">        <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">result</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="c1"># 确保没有元素在其原来的位置上</span>
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+</span></span><span class="line"><span class="cl">        <span class="k">if</span> <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">==</span> <span class="n">array</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+</span></span><span class="line"><span class="cl">            <span class="k">return</span> <span class="n">derange_array</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>  <span class="c1"># 如果有元素在原来位置上就递归交换</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="k">return</span> <span class="n">result</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 验证测试</span>
+</span></span><span class="line"><span class="cl"><span class="n">array</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="n">result</span> <span class="o">=</span> <span class="n">derange_array</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-Scala" data-lang="Scala"><span class="line"><span class="cl"><span class="k">import</span> <span class="nn">scala.util.Random</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">object</span> <span class="nc">Derangement</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">array</span> <span class="k">=</span> <span class="nc">Array</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="mi">2</span><span class="o">,</span> <span class="mi">3</span><span class="o">,</span> <span class="mi">4</span><span class="o">,</span> <span class="mi">5</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">result</span> <span class="k">=</span> <span class="n">derangeArray</span><span class="o">(</span><span class="n">array</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">println</span><span class="o">(</span><span class="n">result</span><span class="o">.</span><span class="n">mkString</span><span class="o">(</span><span class="s">&#34;, &#34;</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">derangeArray</span><span class="o">(</span><span class="n">array</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">Int</span><span class="o">])</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">n</span> <span class="k">=</span> <span class="n">array</span><span class="o">.</span><span class="n">length</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">result</span> <span class="k">=</span> <span class="n">array</span><span class="o">.</span><span class="n">clone</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">rand</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Random</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">for</span> <span class="o">(</span><span class="n">i</span> <span class="k">&lt;-</span> <span class="mi">0</span> <span class="n">until</span> <span class="n">n</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">var</span> <span class="n">j</span> <span class="k">=</span> <span class="n">i</span>
+</span></span><span class="line"><span class="cl">      <span class="k">while</span> <span class="o">(</span><span class="n">j</span> <span class="o">==</span> <span class="n">i</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">j</span> <span class="k">=</span> <span class="n">rand</span><span class="o">.</span><span class="n">nextInt</span><span class="o">(</span><span class="n">n</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 交换元素
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">val</span> <span class="n">temp</span> <span class="k">=</span> <span class="n">result</span><span class="o">(</span><span class="n">i</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="n">result</span><span class="o">(</span><span class="n">i</span><span class="o">)</span> <span class="k">=</span> <span class="n">result</span><span class="o">(</span><span class="n">j</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="n">result</span><span class="o">(</span><span class="n">j</span><span class="o">)</span> <span class="k">=</span> <span class="n">temp</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 确保没有元素在其原来的位置上
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">for</span> <span class="o">(</span><span class="n">i</span> <span class="k">&lt;-</span> <span class="mi">0</span> <span class="n">until</span> <span class="n">n</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">if</span> <span class="o">(</span><span class="n">result</span><span class="o">(</span><span class="n">i</span><span class="o">)</span> <span class="o">==</span> <span class="n">array</span><span class="o">(</span><span class="n">i</span><span class="o">))</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        <span class="k">return</span> <span class="n">derangeArray</span><span class="o">(</span><span class="n">array</span><span class="o">)</span> <span class="c1">// 如果有元素在原来位置上就递归交换
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">result</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div>
 </section>
+
 
     <footer class="article-footer">
     

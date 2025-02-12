@@ -6,27 +6,13 @@
 
 <link rel='canonical' href='https://rusthx.github.io/p/datax-%E7%BC%96%E8%AF%91%E6%8F%92%E4%BB%B6/'>
 
-<link rel="stylesheet" href="/scss/style.min.57d2a86910760b72c5cf00f5c12e666a025617f78d3b87f19f8c65a883e1a5bf.css"><meta property='og:title' content="DataX 编译插件">
+<link rel="stylesheet" href="/scss/style.min.725af1264ab3622779405835da58c5dd0a2906077996c89f3e27ba6359be149d.css"><meta property='og:title' content="DataX 编译插件">
 <meta property='og:description' content="我出于自身需要，已经编译好了doriswriter和clickhousewriter，有相同需求的可以直接云盘下载。\nhttps://wwsx.lanzouw.com/b00y9w9ovg 密码:byxl\n前置准备工作：准备一个JDK8及以上，安装好maven。\n">
 <meta property='og:url' content='https://rusthx.github.io/p/datax-%E7%BC%96%E8%AF%91%E6%8F%92%E4%BB%B6/'>
 <meta property='og:site_name' content='rustWood'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:published_time' content='2025-02-02T22:44:44&#43;08:00'/><meta property='article:modified_time' content='2025-02-02T22:44:44&#43;08:00'/>
 <meta name="twitter:title" content="DataX 编译插件">
-<meta name="twitter:description" content="我出于自身需要，已经编译好了doriswriter和clickhousewriter，有相同需求的可以直接云盘下载。\nhttps://wwsx.lanzouw.com/b00y9w9ovg 密码:byxl\n前置准备工作：准备一个JDK8及以上，安装好maven。\n"><link rel="stylesheet" href="/highlight/styles/github.min.css">
-<script src="/highlight/highlight.min.js"></script>
-<script src="/highlight/languages/java.min.js"></script>
-<script src="/highlight/languages/python.min.js"></script>
-<script src="/highlight/languages/bash.min.js"></script>
-<script src="/highlight/languages/shell.min.js"></script>
-<script src="/highlight/languages/scala.min.js"></script>
-<script src="/highlight/languages/sql.min.js"></script>
-<script src="/highlight/languages/xml.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        hljs.highlightAll();
-    });
-</script>        
+<meta name="twitter:description" content="我出于自身需要，已经编译好了doriswriter和clickhousewriter，有相同需求的可以直接云盘下载。\nhttps://wwsx.lanzouw.com/b00y9w9ovg 密码:byxl\n前置准备工作：准备一个JDK8及以上，安装好maven。\n">        
         
         <link rel="stylesheet" href="/highlight/styles/github.css">
          
@@ -359,10 +345,17 @@
 <li>拉取源代码
 建立一个空文件夹，然后在文件夹内执行如下命令：</li>
 </ol>
-<pre><code class="language-shell">git clone https://github.com/alibaba/DataX.git
-cd DataX
-</code></pre>
-<ol start="2">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">git clone https://github.com/alibaba/DataX.git
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> DataX
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="2">
 <li>下载源码
 直接下载压缩包，然后解压打开文件夹即可。</li>
 </ol>
@@ -379,149 +372,301 @@ cd DataX
 那我就需要自行编译<code>doriswriter</code>插件，然后将编译好的jar包替换尚硅谷提供的压缩包里的jar包。</p>
 <p>在doriswriter目录下执行<code>mvn clean package -DskipTests</code>就可以得到所需jar包。</p>
 <p>然后就遇见了以下报错：</p>
-<pre><code class="language-shell">[ERROR] Failed to execute goal on project doriswriter: Could not resolve dependencies for project com.alibaba.datax:doriswriter:jar:0.0.1-SNAPSHOT: The following artifacts could not be
- resolved: com.alibaba.datax:datax-common:jar:0.0.1-SNAPSHOT, com.alibaba.datax:plugin-rdbms-util:jar:0.0.1-SNAPSHOT: Could not find artifact com.alibaba.datax:datax-common:jar:0.0.1-S
-NAPSHOT in central (https://maven.aliyun.com/repository/central) -&gt; [Help 1]
-</code></pre>
-<p>从错误信息来看，Maven 在尝试编译 doriswriter 插件时无法找到依赖项 datax-common 和 plugin-rdbms-util。这是因为这些依赖项没有在中央仓库中可用，它们是 DataX 项目内部的模块。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>ERROR<span class="o">]</span> Failed to execute goal on project doriswriter: Could not resolve dependencies <span class="k">for</span> project com.alibaba.datax:doriswriter:jar:0.0.1-SNAPSHOT: The following artifacts could not be
+</span></span><span class="line"><span class="cl"> resolved: com.alibaba.datax:datax-common:jar:0.0.1-SNAPSHOT, com.alibaba.datax:plugin-rdbms-util:jar:0.0.1-SNAPSHOT: Could not find artifact com.alibaba.datax:datax-common:jar:0.0.1-S
+</span></span><span class="line"><span class="cl">NAPSHOT in central <span class="o">(</span>https://maven.aliyun.com/repository/central<span class="o">)</span> -&gt; <span class="o">[</span>Help 1<span class="o">]</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>从错误信息来看，Maven 在尝试编译 doriswriter 插件时无法找到依赖项 datax-common 和 plugin-rdbms-util。这是因为这些依赖项没有在中央仓库中可用，它们是 DataX 项目内部的模块。</p>
 <p>所以需要先确保 DorisWriter 插件依赖的模块（ datax-common 和 plugin-rdbms-util）已经被正确安装到本地 Maven 仓库中。</p>
-<pre><code class="language-shell">cd common
-mvn clean install -DskipTests
-
-cd ../plugin-rdbms-util
-mvn clean install -DskipTests
-
-cd ../doriswriter/
-mvn clean package -DskipTests
-</code></pre>
-<pre><code class="language-shell">D:\DeskTop\煊\笔记\DataX\DataX-datax_v202309\common&gt;mvn clean install -DskipTests
-[INFO] Scanning for projects...
-[INFO]
-[INFO] -------------------&lt; com.alibaba.datax:datax-common &gt;-------------------
-[INFO] Building datax-common 0.0.1-SNAPSHOT
-[INFO] --------------------------------[ jar ]---------------------------------
-[INFO]
-[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ datax-common ---
-[INFO] Deleting D:\DeskTop\煊\笔记\DataX\DataX-datax_v202309\common\target
-[INFO]
-[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ datax-common ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] Copying 6 resources
-[INFO]
-[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ datax-common ---
-[INFO] Compiling 45 source files to D:\DeskTop\煊\笔记\DataX\DataX-datax_v202309\common\target\classes
-[INFO]
-[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ datax-common ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory D:\DeskTop\煊\笔记\DataX\DataX-datax_v202309\common\src\test\resources
-[INFO]
-[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ datax-common ---
-[INFO] No sources to compile
-[INFO]
-[INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ datax-common ---
-[INFO] Tests are skipped.
-[INFO]
-[INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ datax-common ---
-[INFO] Building jar: D:\DeskTop\煊\笔记\DataX\DataX-datax_v202309\common\target\datax-common-0.0.1-SNAPSHOT.jar
-[INFO]
-[INFO] --- maven-install-plugin:2.4:install (default-install) @ datax-common ---
-[INFO] Installing D:\DeskTop\煊\笔记\DataX\DataX-datax_v202309\common\target\datax-common-0.0.1-SNAPSHOT.jar to D:\maven-3.8.6\respository\com\alibaba\datax\datax-common\0.0.1-SNAPSHOT\datax-common-0.0.1-SNAPSHOT.jar
-[INFO] Installing D:\DeskTop\煊\笔记\DataX\DataX-datax_v202309\common\pom.xml to D:\maven-3.8.6\respository\com\alibaba\datax\datax-common\0.0.1-SNAPSHOT\datax-common-0.0.1-SNAPSHOT.pom
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time:  2.041 s
-[INFO] Finished at: 2025-02-03T17:26:33+08:00
-[INFO] ------------------------------------------------------------------------
-
-D:\DeskTop\煊\笔记\DataX\DataX-datax_v202309\common&gt;cd ../plugin-rdbms-util
-
-D:\DeskTop\煊\笔记\DataX\DataX-datax_v202309\plugin-rdbms-util&gt;mvn clean install -DskipTests
-[INFO] Scanning for projects...
-[INFO]
-[INFO] ----------------&lt; com.alibaba.datax:plugin-rdbms-util &gt;-----------------
-[INFO] Building plugin-rdbms-util 0.0.1-SNAPSHOT
-[INFO] --------------------------------[ jar ]---------------------------------
-Downloading from spring: https://maven.aliyun.com/repository/spring/com/alibaba/datax/datax-all/0.0.1-SNAPSHOT/maven-metadata.xml
-Downloading from central: https://maven.aliyun.com/repository/central/com/alibaba/datax/datax-all/0.0.1-SNAPSHOT/maven-metadata.xml
-[INFO]
-[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ plugin-rdbms-util ---
-[INFO] Deleting D:\DeskTop\煊\笔记\DataX\DataX-datax_v202309\plugin-rdbms-util\target
-[INFO]
-[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ plugin-rdbms-util ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] Copying 0 resource
-[INFO]
-[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ plugin-rdbms-util ---
-[INFO] Compiling 25 source files to D:\DeskTop\煊\笔记\DataX\DataX-datax_v202309\plugin-rdbms-util\target\classes
-[INFO]
-[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ plugin-rdbms-util ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory D:\DeskTop\煊\笔记\DataX\DataX-datax_v202309\plugin-rdbms-util\src\test\resources
-[INFO]
-[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ plugin-rdbms-util ---
-[INFO] No sources to compile
-[INFO]
-[INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ plugin-rdbms-util ---
-[INFO] Tests are skipped.
-[INFO]
-[INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ plugin-rdbms-util ---
-[INFO] Building jar: D:\DeskTop\煊\笔记\DataX\DataX-datax_v202309\plugin-rdbms-util\target\plugin-rdbms-util-0.0.1-SNAPSHOT.jar
-[INFO]
-[INFO] --- maven-install-plugin:2.4:install (default-install) @ plugin-rdbms-util ---
-[INFO] Installing D:\DeskTop\煊\笔记\DataX\DataX-datax_v202309\plugin-rdbms-util\target\plugin-rdbms-util-0.0.1-SNAPSHOT.jar to D:\maven-3.8.6\respository\com\alibaba\datax\plugin-rdbms-util\0.0.1-SNAPSHOT\plugin-rdbms-util-0.0.1-SNAPSHOT.jar
-[INFO] Installing D:\DeskTop\煊\笔记\DataX\DataX-datax_v202309\plugin-rdbms-util\pom.xml to D:\maven-3.8.6\respository\com\alibaba\datax\plugin-rdbms-util\0.0.1-SNAPSHOT\plugin-rdbms-util-0.0.1-SNAPSHOT.pom
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time:  2.183 s
-[INFO] Finished at: 2025-02-03T17:27:38+08:00
-[INFO] ------------------------------------------------------------------------
-
-D:\DeskTop\煊\笔记\DataX\DataX-datax_v202309\plugin-rdbms-util&gt;cd ../doriswriter/
-
-D:\DeskTop\煊\笔记\DataX\DataX-datax_v202309\doriswriter&gt;mvn clean package -DskipTests
-[INFO] Scanning for projects...
-[INFO]
-[INFO] -------------------&lt; com.alibaba.datax:doriswriter &gt;--------------------
-[INFO] Building doriswriter 0.0.1-SNAPSHOT
-[INFO] --------------------------------[ jar ]---------------------------------
-[INFO]
-[INFO] --- maven-clean-plugin:2.5:clean (default-clean) @ doriswriter ---
-[INFO] Deleting D:\DeskTop\煊\笔记\DataX\DataX-datax_v202309\doriswriter\target
-[INFO]
-[INFO] --- maven-resources-plugin:2.6:resources (default-resources) @ doriswriter ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] Copying 0 resource
-[INFO]
-[INFO] --- maven-compiler-plugin:2.3.2:compile (default-compile) @ doriswriter ---
-[INFO] Compiling 13 source files to D:\DeskTop\煊\笔记\DataX\DataX-datax_v202309\doriswriter\target\classes
-[INFO]
-[INFO] --- maven-resources-plugin:2.6:testResources (default-testResources) @ doriswriter ---
-[INFO] Using 'UTF-8' encoding to copy filtered resources.
-[INFO] skip non existing resourceDirectory D:\DeskTop\煊\笔记\DataX\DataX-datax_v202309\doriswriter\src\test\resources
-[INFO]
-[INFO] --- maven-compiler-plugin:2.3.2:testCompile (default-testCompile) @ doriswriter ---
-[INFO] No sources to compile
-[INFO]
-[INFO] --- maven-surefire-plugin:2.12.4:test (default-test) @ doriswriter ---
-[INFO] Tests are skipped.
-[INFO]
-[INFO] --- maven-jar-plugin:2.4:jar (default-jar) @ doriswriter ---
-[INFO] Building jar: D:\DeskTop\煊\笔记\DataX\DataX-datax_v202309\doriswriter\target\doriswriter-0.0.1-SNAPSHOT.jar
-[INFO]
-[INFO] --- maven-assembly-plugin:2.2-beta-5:single (dwzip) @ doriswriter ---
-[INFO] Reading assembly descriptor: src/main/assembly/package.xml
-[INFO] Copying files to D:\DeskTop\煊\笔记\DataX\DataX-datax_v202309\doriswriter\target\datax
-[WARNING] Assembly file: D:\DeskTop\煊\笔记\DataX\DataX-datax_v202309\doriswriter\target\datax is not a regular file (it may be a directory). It cannot be attached to the project build for installation or deployment.
-[INFO] ------------------------------------------------------------------------
-[INFO] BUILD SUCCESS
-[INFO] ------------------------------------------------------------------------
-[INFO] Total time:  2.912 s
-[INFO] Finished at: 2025-02-03T17:28:12+08:00
-[INFO] ------------------------------------------------------------------------
-</code></pre>
-<p>成功完成编译，这时候就可以在<code>doriswriter/target</code>目录下看到生成的 JAR 文件
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">cd</span> common
+</span></span><span class="line"><span class="cl">mvn clean install -DskipTests
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> ../plugin-rdbms-util
+</span></span><span class="line"><span class="cl">mvn clean install -DskipTests
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> ../doriswriter/
+</span></span><span class="line"><span class="cl">mvn clean package -DskipTests
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span><span class="lnt">120
+</span><span class="lnt">121
+</span><span class="lnt">122
+</span><span class="lnt">123
+</span><span class="lnt">124
+</span><span class="lnt">125
+</span><span class="lnt">126
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">D:<span class="se">\D</span>eskTop<span class="se">\煊\笔</span>记<span class="se">\D</span>ataX<span class="se">\D</span>ataX-datax_v202309<span class="se">\c</span>ommon&gt;mvn clean install -DskipTests
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Scanning <span class="k">for</span> projects...
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> -------------------&lt; com.alibaba.datax:datax-common &gt;-------------------
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Building datax-common 0.0.1-SNAPSHOT
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --------------------------------<span class="o">[</span> jar <span class="o">]</span>---------------------------------
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --- maven-clean-plugin:2.5:clean <span class="o">(</span>default-clean<span class="o">)</span> @ datax-common ---
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Deleting D:<span class="se">\D</span>eskTop<span class="se">\煊\笔</span>记<span class="se">\D</span>ataX<span class="se">\D</span>ataX-datax_v202309<span class="se">\c</span>ommon<span class="se">\t</span>arget
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --- maven-resources-plugin:2.6:resources <span class="o">(</span>default-resources<span class="o">)</span> @ datax-common ---
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Using <span class="s1">&#39;UTF-8&#39;</span> encoding to copy filtered resources.
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Copying <span class="m">6</span> resources
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --- maven-compiler-plugin:2.3.2:compile <span class="o">(</span>default-compile<span class="o">)</span> @ datax-common ---
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Compiling <span class="m">45</span> <span class="nb">source</span> files to D:<span class="se">\D</span>eskTop<span class="se">\煊\笔</span>记<span class="se">\D</span>ataX<span class="se">\D</span>ataX-datax_v202309<span class="se">\c</span>ommon<span class="se">\t</span>arget<span class="se">\c</span>lasses
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --- maven-resources-plugin:2.6:testResources <span class="o">(</span>default-testResources<span class="o">)</span> @ datax-common ---
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Using <span class="s1">&#39;UTF-8&#39;</span> encoding to copy filtered resources.
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> skip non existing resourceDirectory D:<span class="se">\D</span>eskTop<span class="se">\煊\笔</span>记<span class="se">\D</span>ataX<span class="se">\D</span>ataX-datax_v202309<span class="se">\c</span>ommon<span class="se">\s</span>rc<span class="se">\t</span>est<span class="se">\r</span>esources
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --- maven-compiler-plugin:2.3.2:testCompile <span class="o">(</span>default-testCompile<span class="o">)</span> @ datax-common ---
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> No sources to compile
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --- maven-surefire-plugin:2.12.4:test <span class="o">(</span>default-test<span class="o">)</span> @ datax-common ---
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Tests are skipped.
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --- maven-jar-plugin:2.4:jar <span class="o">(</span>default-jar<span class="o">)</span> @ datax-common ---
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Building jar: D:<span class="se">\D</span>eskTop<span class="se">\煊\笔</span>记<span class="se">\D</span>ataX<span class="se">\D</span>ataX-datax_v202309<span class="se">\c</span>ommon<span class="se">\t</span>arget<span class="se">\d</span>atax-common-0.0.1-SNAPSHOT.jar
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --- maven-install-plugin:2.4:install <span class="o">(</span>default-install<span class="o">)</span> @ datax-common ---
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Installing D:<span class="se">\D</span>eskTop<span class="se">\煊\笔</span>记<span class="se">\D</span>ataX<span class="se">\D</span>ataX-datax_v202309<span class="se">\c</span>ommon<span class="se">\t</span>arget<span class="se">\d</span>atax-common-0.0.1-SNAPSHOT.jar to D:<span class="se">\m</span>aven-3.8.6<span class="se">\r</span>espository<span class="se">\c</span>om<span class="se">\a</span>libaba<span class="se">\d</span>atax<span class="se">\d</span>atax-common<span class="se">\0</span>.0.1-SNAPSHOT<span class="se">\d</span>atax-common-0.0.1-SNAPSHOT.jar
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Installing D:<span class="se">\D</span>eskTop<span class="se">\煊\笔</span>记<span class="se">\D</span>ataX<span class="se">\D</span>ataX-datax_v202309<span class="se">\c</span>ommon<span class="se">\p</span>om.xml to D:<span class="se">\m</span>aven-3.8.6<span class="se">\r</span>espository<span class="se">\c</span>om<span class="se">\a</span>libaba<span class="se">\d</span>atax<span class="se">\d</span>atax-common<span class="se">\0</span>.0.1-SNAPSHOT<span class="se">\d</span>atax-common-0.0.1-SNAPSHOT.pom
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> ------------------------------------------------------------------------
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> BUILD SUCCESS
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> ------------------------------------------------------------------------
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Total time:  2.041 s
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Finished at: 2025-02-03T17:26:33+08:00
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> ------------------------------------------------------------------------
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">D:<span class="se">\D</span>eskTop<span class="se">\煊\笔</span>记<span class="se">\D</span>ataX<span class="se">\D</span>ataX-datax_v202309<span class="se">\c</span>ommon&gt;cd ../plugin-rdbms-util
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">D:<span class="se">\D</span>eskTop<span class="se">\煊\笔</span>记<span class="se">\D</span>ataX<span class="se">\D</span>ataX-datax_v202309<span class="se">\p</span>lugin-rdbms-util&gt;mvn clean install -DskipTests
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Scanning <span class="k">for</span> projects...
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> ----------------&lt; com.alibaba.datax:plugin-rdbms-util &gt;-----------------
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Building plugin-rdbms-util 0.0.1-SNAPSHOT
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --------------------------------<span class="o">[</span> jar <span class="o">]</span>---------------------------------
+</span></span><span class="line"><span class="cl">Downloading from spring: https://maven.aliyun.com/repository/spring/com/alibaba/datax/datax-all/0.0.1-SNAPSHOT/maven-metadata.xml
+</span></span><span class="line"><span class="cl">Downloading from central: https://maven.aliyun.com/repository/central/com/alibaba/datax/datax-all/0.0.1-SNAPSHOT/maven-metadata.xml
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --- maven-clean-plugin:2.5:clean <span class="o">(</span>default-clean<span class="o">)</span> @ plugin-rdbms-util ---
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Deleting D:<span class="se">\D</span>eskTop<span class="se">\煊\笔</span>记<span class="se">\D</span>ataX<span class="se">\D</span>ataX-datax_v202309<span class="se">\p</span>lugin-rdbms-util<span class="se">\t</span>arget
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --- maven-resources-plugin:2.6:resources <span class="o">(</span>default-resources<span class="o">)</span> @ plugin-rdbms-util ---
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Using <span class="s1">&#39;UTF-8&#39;</span> encoding to copy filtered resources.
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Copying <span class="m">0</span> resource
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --- maven-compiler-plugin:2.3.2:compile <span class="o">(</span>default-compile<span class="o">)</span> @ plugin-rdbms-util ---
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Compiling <span class="m">25</span> <span class="nb">source</span> files to D:<span class="se">\D</span>eskTop<span class="se">\煊\笔</span>记<span class="se">\D</span>ataX<span class="se">\D</span>ataX-datax_v202309<span class="se">\p</span>lugin-rdbms-util<span class="se">\t</span>arget<span class="se">\c</span>lasses
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --- maven-resources-plugin:2.6:testResources <span class="o">(</span>default-testResources<span class="o">)</span> @ plugin-rdbms-util ---
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Using <span class="s1">&#39;UTF-8&#39;</span> encoding to copy filtered resources.
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> skip non existing resourceDirectory D:<span class="se">\D</span>eskTop<span class="se">\煊\笔</span>记<span class="se">\D</span>ataX<span class="se">\D</span>ataX-datax_v202309<span class="se">\p</span>lugin-rdbms-util<span class="se">\s</span>rc<span class="se">\t</span>est<span class="se">\r</span>esources
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --- maven-compiler-plugin:2.3.2:testCompile <span class="o">(</span>default-testCompile<span class="o">)</span> @ plugin-rdbms-util ---
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> No sources to compile
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --- maven-surefire-plugin:2.12.4:test <span class="o">(</span>default-test<span class="o">)</span> @ plugin-rdbms-util ---
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Tests are skipped.
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --- maven-jar-plugin:2.4:jar <span class="o">(</span>default-jar<span class="o">)</span> @ plugin-rdbms-util ---
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Building jar: D:<span class="se">\D</span>eskTop<span class="se">\煊\笔</span>记<span class="se">\D</span>ataX<span class="se">\D</span>ataX-datax_v202309<span class="se">\p</span>lugin-rdbms-util<span class="se">\t</span>arget<span class="se">\p</span>lugin-rdbms-util-0.0.1-SNAPSHOT.jar
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --- maven-install-plugin:2.4:install <span class="o">(</span>default-install<span class="o">)</span> @ plugin-rdbms-util ---
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Installing D:<span class="se">\D</span>eskTop<span class="se">\煊\笔</span>记<span class="se">\D</span>ataX<span class="se">\D</span>ataX-datax_v202309<span class="se">\p</span>lugin-rdbms-util<span class="se">\t</span>arget<span class="se">\p</span>lugin-rdbms-util-0.0.1-SNAPSHOT.jar to D:<span class="se">\m</span>aven-3.8.6<span class="se">\r</span>espository<span class="se">\c</span>om<span class="se">\a</span>libaba<span class="se">\d</span>atax<span class="se">\p</span>lugin-rdbms-util<span class="se">\0</span>.0.1-SNAPSHOT<span class="se">\p</span>lugin-rdbms-util-0.0.1-SNAPSHOT.jar
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Installing D:<span class="se">\D</span>eskTop<span class="se">\煊\笔</span>记<span class="se">\D</span>ataX<span class="se">\D</span>ataX-datax_v202309<span class="se">\p</span>lugin-rdbms-util<span class="se">\p</span>om.xml to D:<span class="se">\m</span>aven-3.8.6<span class="se">\r</span>espository<span class="se">\c</span>om<span class="se">\a</span>libaba<span class="se">\d</span>atax<span class="se">\p</span>lugin-rdbms-util<span class="se">\0</span>.0.1-SNAPSHOT<span class="se">\p</span>lugin-rdbms-util-0.0.1-SNAPSHOT.pom
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> ------------------------------------------------------------------------
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> BUILD SUCCESS
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> ------------------------------------------------------------------------
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Total time:  2.183 s
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Finished at: 2025-02-03T17:27:38+08:00
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> ------------------------------------------------------------------------
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">D:<span class="se">\D</span>eskTop<span class="se">\煊\笔</span>记<span class="se">\D</span>ataX<span class="se">\D</span>ataX-datax_v202309<span class="se">\p</span>lugin-rdbms-util&gt;cd ../doriswriter/
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">D:<span class="se">\D</span>eskTop<span class="se">\煊\笔</span>记<span class="se">\D</span>ataX<span class="se">\D</span>ataX-datax_v202309<span class="se">\d</span>oriswriter&gt;mvn clean package -DskipTests
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Scanning <span class="k">for</span> projects...
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> -------------------&lt; com.alibaba.datax:doriswriter &gt;--------------------
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Building doriswriter 0.0.1-SNAPSHOT
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --------------------------------<span class="o">[</span> jar <span class="o">]</span>---------------------------------
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --- maven-clean-plugin:2.5:clean <span class="o">(</span>default-clean<span class="o">)</span> @ doriswriter ---
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Deleting D:<span class="se">\D</span>eskTop<span class="se">\煊\笔</span>记<span class="se">\D</span>ataX<span class="se">\D</span>ataX-datax_v202309<span class="se">\d</span>oriswriter<span class="se">\t</span>arget
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --- maven-resources-plugin:2.6:resources <span class="o">(</span>default-resources<span class="o">)</span> @ doriswriter ---
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Using <span class="s1">&#39;UTF-8&#39;</span> encoding to copy filtered resources.
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Copying <span class="m">0</span> resource
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --- maven-compiler-plugin:2.3.2:compile <span class="o">(</span>default-compile<span class="o">)</span> @ doriswriter ---
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Compiling <span class="m">13</span> <span class="nb">source</span> files to D:<span class="se">\D</span>eskTop<span class="se">\煊\笔</span>记<span class="se">\D</span>ataX<span class="se">\D</span>ataX-datax_v202309<span class="se">\d</span>oriswriter<span class="se">\t</span>arget<span class="se">\c</span>lasses
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --- maven-resources-plugin:2.6:testResources <span class="o">(</span>default-testResources<span class="o">)</span> @ doriswriter ---
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Using <span class="s1">&#39;UTF-8&#39;</span> encoding to copy filtered resources.
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> skip non existing resourceDirectory D:<span class="se">\D</span>eskTop<span class="se">\煊\笔</span>记<span class="se">\D</span>ataX<span class="se">\D</span>ataX-datax_v202309<span class="se">\d</span>oriswriter<span class="se">\s</span>rc<span class="se">\t</span>est<span class="se">\r</span>esources
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --- maven-compiler-plugin:2.3.2:testCompile <span class="o">(</span>default-testCompile<span class="o">)</span> @ doriswriter ---
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> No sources to compile
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --- maven-surefire-plugin:2.12.4:test <span class="o">(</span>default-test<span class="o">)</span> @ doriswriter ---
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Tests are skipped.
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --- maven-jar-plugin:2.4:jar <span class="o">(</span>default-jar<span class="o">)</span> @ doriswriter ---
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Building jar: D:<span class="se">\D</span>eskTop<span class="se">\煊\笔</span>记<span class="se">\D</span>ataX<span class="se">\D</span>ataX-datax_v202309<span class="se">\d</span>oriswriter<span class="se">\t</span>arget<span class="se">\d</span>oriswriter-0.0.1-SNAPSHOT.jar
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> --- maven-assembly-plugin:2.2-beta-5:single <span class="o">(</span>dwzip<span class="o">)</span> @ doriswriter ---
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Reading assembly descriptor: src/main/assembly/package.xml
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Copying files to D:<span class="se">\D</span>eskTop<span class="se">\煊\笔</span>记<span class="se">\D</span>ataX<span class="se">\D</span>ataX-datax_v202309<span class="se">\d</span>oriswriter<span class="se">\t</span>arget<span class="se">\d</span>atax
+</span></span><span class="line"><span class="cl"><span class="o">[</span>WARNING<span class="o">]</span> Assembly file: D:<span class="se">\D</span>eskTop<span class="se">\煊\笔</span>记<span class="se">\D</span>ataX<span class="se">\D</span>ataX-datax_v202309<span class="se">\d</span>oriswriter<span class="se">\t</span>arget<span class="se">\d</span>atax is not a regular file <span class="o">(</span>it may be a directory<span class="o">)</span>. It cannot be attached to the project build <span class="k">for</span> installation or deployment.
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> ------------------------------------------------------------------------
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> BUILD SUCCESS
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> ------------------------------------------------------------------------
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Total time:  2.912 s
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> Finished at: 2025-02-03T17:28:12+08:00
+</span></span><span class="line"><span class="cl"><span class="o">[</span>INFO<span class="o">]</span> ------------------------------------------------------------------------
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>成功完成编译，这时候就可以在<code>doriswriter/target</code>目录下看到生成的 JAR 文件
 <img src="/p/datax-%E7%BC%96%E8%AF%91%E6%8F%92%E4%BB%B6/2.png"
 	width="892"
 	height="329"
@@ -538,131 +683,51 @@ D:\DeskTop\煊\笔记\DataX\DataX-datax_v202309\doriswriter&gt;mvn clean package
 注意不是在<code>datax\plugin\writer\doriswriter</code>里。</p>
 <h2 id="补充报错">补充报错
 </h2><p>实际在使用时还遇见了找不到 com.alibaba.fastjson2.JSON 类。的报错。这个错误通常是由于缺少必要的依赖库或版本不匹配导致的。</p>
-<pre><code class="language-shell">DataX运行报错Exception in thread &quot;Thread-1&quot; java.lang.NoClassDefFoundError: com/alibaba/fastjson2/JSON
-	at com.alibaba.datax.plugin.writer.doriswriter.DorisStreamLoadObserver.put(DorisStreamLoadObserver.java:186)
-	at com.alibaba.datax.plugin.writer.doriswriter.DorisStreamLoadObserver.streamLoad(DorisStreamLoadObserver.java:63)
-	at com.alibaba.datax.plugin.writer.doriswriter.DorisWriterManager.asyncFlush(DorisWriterManager.java:163)
-	at com.alibaba.datax.plugin.writer.doriswriter.DorisWriterManager.access$000(DorisWriterManager.java:19)
-	at com.alibaba.datax.plugin.writer.doriswriter.DorisWriterManager$1.run(DorisWriterManager.java:134)
-	at java.lang.Thread.run(Thread.java:750)
-Caused by: java.lang.ClassNotFoundException: com.alibaba.fastjson2.JSON
-	at java.net.URLClassLoader.findClass(URLClassLoader.java:387)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:418)
-	at java.lang.ClassLoader.loadClass(ClassLoader.java:351)
-	... 6 more
-</code></pre>
-<p>在<code>datax\datax\plugin\writer\doriswriter\lib</code>下有Doris插件所需的工具包，这里有一个<code>fastjson-1.1.46.sec10.jar</code>。果然是版本依赖错误。
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">DataX运行报错Exception in thread <span class="s2">&#34;Thread-1&#34;</span> java.lang.NoClassDefFoundError: com/alibaba/fastjson2/JSON
+</span></span><span class="line"><span class="cl">	at com.alibaba.datax.plugin.writer.doriswriter.DorisStreamLoadObserver.put<span class="o">(</span>DorisStreamLoadObserver.java:186<span class="o">)</span>
+</span></span><span class="line"><span class="cl">	at com.alibaba.datax.plugin.writer.doriswriter.DorisStreamLoadObserver.streamLoad<span class="o">(</span>DorisStreamLoadObserver.java:63<span class="o">)</span>
+</span></span><span class="line"><span class="cl">	at com.alibaba.datax.plugin.writer.doriswriter.DorisWriterManager.asyncFlush<span class="o">(</span>DorisWriterManager.java:163<span class="o">)</span>
+</span></span><span class="line"><span class="cl">	at com.alibaba.datax.plugin.writer.doriswriter.DorisWriterManager.access<span class="nv">$000</span><span class="o">(</span>DorisWriterManager.java:19<span class="o">)</span>
+</span></span><span class="line"><span class="cl">	at com.alibaba.datax.plugin.writer.doriswriter.DorisWriterManager<span class="nv">$1</span>.run<span class="o">(</span>DorisWriterManager.java:134<span class="o">)</span>
+</span></span><span class="line"><span class="cl">	at java.lang.Thread.run<span class="o">(</span>Thread.java:750<span class="o">)</span>
+</span></span><span class="line"><span class="cl">Caused by: java.lang.ClassNotFoundException: com.alibaba.fastjson2.JSON
+</span></span><span class="line"><span class="cl">	at java.net.URLClassLoader.findClass<span class="o">(</span>URLClassLoader.java:387<span class="o">)</span>
+</span></span><span class="line"><span class="cl">	at java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java:418<span class="o">)</span>
+</span></span><span class="line"><span class="cl">	at java.lang.ClassLoader.loadClass<span class="o">(</span>ClassLoader.java:351<span class="o">)</span>
+</span></span><span class="line"><span class="cl">	... <span class="m">6</span> more
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在<code>datax\datax\plugin\writer\doriswriter\lib</code>下有Doris插件所需的工具包，这里有一个<code>fastjson-1.1.46.sec10.jar</code>。果然是版本依赖错误。
 直接下载最新版本的fastjson2，替换这个jar包。
 下面这个命令直接在lib文件夹下执行，会直接下在jar包到当前目录下。下载好后记得删除或者将原来的jar包改后缀。</p>
-<pre><code class="language-shell">wget https://repo1.maven.org/maven2/com/alibaba/fastjson2/fastjson2/2.0.3/fastjson2-2.0.3.jar
-</code></pre>
-<p>然后就能正常执行了。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">wget https://repo1.maven.org/maven2/com/alibaba/fastjson2/fastjson2/2.0.3/fastjson2-2.0.3.jar
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>然后就能正常执行了。</p>
 
-
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        
-        document.querySelectorAll('pre code').forEach((block) => {
-            
-            block.parentElement.removeAttribute('data-highlighted');
-            hljs.highlightElement(block);
-        });
-
-        
-        hljs.addPlugin(new window.hljs.LineNumbers());
-
-        
-        var codeBlocks = document.querySelectorAll('pre');
-        codeBlocks.forEach(function(block, index) {
-            
-            var copyBtn = document.createElement('button');
-            copyBtn.className = 'copy-btn';
-            copyBtn.setAttribute('data-clipboard-action', 'copy');
-            copyBtn.textContent = 'Copy';
-
-            
-            block.id = 'code-block-' + index;
-            copyBtn.setAttribute('data-clipboard-target', '#' + block.id);
-
-            
-            block.insertBefore(copyBtn, block.firstChild);
-        });
-
-        
-        new ClipboardJS('.copy-btn');
-
-        
-        var clipboard = new ClipboardJS('.copy-btn');
-        clipboard.on('success', function(e) {
-            e.clearSelection();
-            e.trigger.textContent = 'Copied!';
-            setTimeout(function() {
-                e.trigger.textContent = 'Copy';
-            }, 2000);
-        });
-    });
-    </script>
-
-    <style>
-     
-    .copy-btn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background-color: #f3f3f3;  
-        color: #333;  
-        border: none;
-        padding: 8px 12px;
-        font-size: 0.9em;
-        cursor: pointer;
-        border-radius: 4px;
-        transition: all 0.3s ease;  
-        z-index: 10;  
-    }
-
-     
-    .copy-btn:hover {
-        background-color: #ddd;  
-    }
-
-     
-    .copy-btn:active {
-        transform: translateY(1px);  
-    }
-
-     
-    @media (prefers-color-scheme: dark) {
-        .copy-btn {
-            background-color: #444;  
-            color: #fff;  
-        }
-
-        .copy-btn:hover {
-            background-color: #555;  
-        }
-    }
-
-     
-    pre {
-        position: relative;
-        margin: 0;
-        overflow-x: auto;
-        border-radius: 6px;
-        line-height: 1.5;
-        padding: 16px;
-    }
-
-     
-
-     
-    @media (prefers-color-scheme: dark) {
-        pre {
-            background-color: #2d2d2d;  
-            color: #e0e0e0;  
-        }
-    }
-    </style>
 </section>
+
 
     <footer class="article-footer">
     

@@ -6,27 +6,13 @@
 
 <link rel='canonical' href='https://rusthx.github.io/p/%E8%BF%90%E7%BB%B4%E9%9D%A2%E7%BB%8F/'>
 
-<link rel="stylesheet" href="/scss/style.min.57d2a86910760b72c5cf00f5c12e666a025617f78d3b87f19f8c65a883e1a5bf.css"><meta property='og:title' content="运维面经">
+<link rel="stylesheet" href="/scss/style.min.725af1264ab3622779405835da58c5dd0a2906077996c89f3e27ba6359be149d.css"><meta property='og:title' content="运维面经">
 <meta property='og:description' content="2025/01/13 腾讯音乐运维一面\nLinux Linux启动顺序 BIOS/UEFI阶段 BIOS(Basic Input Output System)：基本输入输出系统。它是一组固化到计算机内主板上一个daoROM芯片上的程序，它保存着计算机最重要的基本输入输出的程序、系统设置信息、开机后自检程序和系统自启动程序。 其主要功能是为计算机提供最底层的、最直接的硬件设置和控制。BIOS应该是连接软件程序与硬件设备的一座&quot;桥梁&quot;，负责解决硬件的即时要求。简单地说，BIOS就是一个加载在计算机主板上最基础的一段程序，负责最基础的硬件控制和设置。\n">
 <meta property='og:url' content='https://rusthx.github.io/p/%E8%BF%90%E7%BB%B4%E9%9D%A2%E7%BB%8F/'>
 <meta property='og:site_name' content='rustWood'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='运维' /><meta property='article:published_time' content='2025-01-13T14:58:48&#43;08:00'/><meta property='article:modified_time' content='2025-01-13T14:58:48&#43;08:00'/>
 <meta name="twitter:title" content="运维面经">
-<meta name="twitter:description" content="2025/01/13 腾讯音乐运维一面\nLinux Linux启动顺序 BIOS/UEFI阶段 BIOS(Basic Input Output System)：基本输入输出系统。它是一组固化到计算机内主板上一个daoROM芯片上的程序，它保存着计算机最重要的基本输入输出的程序、系统设置信息、开机后自检程序和系统自启动程序。 其主要功能是为计算机提供最底层的、最直接的硬件设置和控制。BIOS应该是连接软件程序与硬件设备的一座&quot;桥梁&quot;，负责解决硬件的即时要求。简单地说，BIOS就是一个加载在计算机主板上最基础的一段程序，负责最基础的硬件控制和设置。\n"><link rel="stylesheet" href="/highlight/styles/github.min.css">
-<script src="/highlight/highlight.min.js"></script>
-<script src="/highlight/languages/java.min.js"></script>
-<script src="/highlight/languages/python.min.js"></script>
-<script src="/highlight/languages/bash.min.js"></script>
-<script src="/highlight/languages/shell.min.js"></script>
-<script src="/highlight/languages/scala.min.js"></script>
-<script src="/highlight/languages/sql.min.js"></script>
-<script src="/highlight/languages/xml.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        hljs.highlightAll();
-    });
-</script>        
+<meta name="twitter:description" content="2025/01/13 腾讯音乐运维一面\nLinux Linux启动顺序 BIOS/UEFI阶段 BIOS(Basic Input Output System)：基本输入输出系统。它是一组固化到计算机内主板上一个daoROM芯片上的程序，它保存着计算机最重要的基本输入输出的程序、系统设置信息、开机后自检程序和系统自启动程序。 其主要功能是为计算机提供最底层的、最直接的硬件设置和控制。BIOS应该是连接软件程序与硬件设备的一座&quot;桥梁&quot;，负责解决硬件的即时要求。简单地说，BIOS就是一个加载在计算机主板上最基础的一段程序，负责最基础的硬件控制和设置。\n">        
         
         <link rel="stylesheet" href="/highlight/styles/github.css">
          
@@ -425,39 +411,79 @@ GPT (GUID Partition Table)支持超过2TB的硬盘（最大18EB）;支持最多1
 <ol>
 <li>在<code>/etc/systemd/system/</code>下创建nginx.service文件</li>
 </ol>
-<pre><code class="language-shell">cd /etc/systemd/system/
-vim nginx.service
-</code></pre>
-<p>写入如下内容：</p>
-<pre><code class="language-shell">[Unit]
-Description=nginx - high performance web server
-After=nginx.service
-[Service]
-Type=forking
-ExecStart=/usr/local/nginx/sbin/nginx
-ExecReload=/usr/local/nginx/sbin/nginx -s reload
-ExecStop=/usr/local/nginx/sbin/nginx -s stop
-Execenable=/usr/local/nginx/sbin/nginx
-[Install]
-WantedBy=multi-user.target
-</code></pre>
-<ol start="2">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">cd</span> /etc/systemd/system/
+</span></span><span class="line"><span class="cl">vim nginx.service
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>写入如下内容：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>Unit<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="nv">Description</span><span class="o">=</span>nginx - high performance web server
+</span></span><span class="line"><span class="cl"><span class="nv">After</span><span class="o">=</span>nginx.service
+</span></span><span class="line"><span class="cl"><span class="o">[</span>Service<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="nv">Type</span><span class="o">=</span>forking
+</span></span><span class="line"><span class="cl"><span class="nv">ExecStart</span><span class="o">=</span>/usr/local/nginx/sbin/nginx
+</span></span><span class="line"><span class="cl"><span class="nv">ExecReload</span><span class="o">=</span>/usr/local/nginx/sbin/nginx -s reload
+</span></span><span class="line"><span class="cl"><span class="nv">ExecStop</span><span class="o">=</span>/usr/local/nginx/sbin/nginx -s stop
+</span></span><span class="line"><span class="cl"><span class="nv">Execenable</span><span class="o">=</span>/usr/local/nginx/sbin/nginx
+</span></span><span class="line"><span class="cl"><span class="o">[</span>Install<span class="o">]</span>
+</span></span><span class="line"><span class="cl"><span class="nv">WantedBy</span><span class="o">=</span>multi-user.target
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="2">
 <li>设置开机自启</li>
 </ol>
-<pre><code class="language-shell"># 设置开机启动
-systemctl enable nginx
-# 取消开机自启动
-#systemctl disable nginx
-# 查看服务当前状态
-systemctl status nginx
-# 启动nginx服务
-systemctl start nginx
-# 停止nginx服务
-systemctl stop nginx
-# 重启nginx服务
-systemctl restart nginx
-</code></pre>
-<h4 id="用户级别">用户级别
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 设置开机启动</span>
+</span></span><span class="line"><span class="cl">systemctl <span class="nb">enable</span> nginx
+</span></span><span class="line"><span class="cl"><span class="c1"># 取消开机自启动</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#systemctl disable nginx</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 查看服务当前状态</span>
+</span></span><span class="line"><span class="cl">systemctl status nginx
+</span></span><span class="line"><span class="cl"><span class="c1"># 启动nginx服务</span>
+</span></span><span class="line"><span class="cl">systemctl start nginx
+</span></span><span class="line"><span class="cl"><span class="c1"># 停止nginx服务</span>
+</span></span><span class="line"><span class="cl">systemctl stop nginx
+</span></span><span class="line"><span class="cl"><span class="c1"># 重启nginx服务</span>
+</span></span><span class="line"><span class="cl">systemctl restart nginx
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="用户级别">用户级别
 </h4><p>将需要自启动的命令写入<code>~/.bashrc</code>中，即可实现用户级开机自启。具体操作时如果命令较为简单，比如使用<code>alias</code>给命令指定别名或者<code>ulimit -n 65536</code>修改最大打开文件句柄数（我的Ubuntu不知道为什么永久修改怎么也修改不成功，只能通过这种方式曲线救国），就可以直接把命令写到<code>~/.bashrc</code>中。如果命令比较复杂，可以考虑将命令打包成脚本，然后在<code>~/.bashrc</code>中执行启动脚本的命令。</p>
 <h4 id="桌面级别">桌面级别
 </h4><p>大体步骤类似系统级自启动：切换到<code>/etc/xdg/autostart/</code>目录，创建后缀为desktop的文件，编辑并保存。重启生效。
@@ -542,18 +568,39 @@ binlog 信息写入 relay log 的中继日志里，再返回给主库&quot;复�
 一般情况下，使用STATEMENT模式保存binlog，对于无法准确复制的操作则使用ROW模式</p>
 <p><strong>配置和查看Binlog</strong></p>
 <p>要开启和配置Binlog，可以修改MySQL的配置文件 my.cnf</p>
-<pre><code class="language-shell">[mysqld]
-log-bin=ON
-binlog_format=mixed
-server-id=1
-</code></pre>
-<p>查看Binlog日志可以使用 mysqlbinlog 工具</p>
-<pre><code class="language-shell">mysqlbinlog mysql-bin.000001
-</code></pre>
-<p>或者使用SQL命令查看事件：</p>
-<pre><code class="language-sql">SHOW BINLOG EVENTS IN 'mysql-bin.000001';
-</code></pre>
-<p>通过合理选择和配置Binlog模式，可以有效提高MySQL的性能和数据一致性</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="o">[</span>mysqld<span class="o">]</span>
+</span></span><span class="line"><span class="cl">log-bin<span class="o">=</span>ON
+</span></span><span class="line"><span class="cl"><span class="nv">binlog_format</span><span class="o">=</span>mixed
+</span></span><span class="line"><span class="cl">server-id<span class="o">=</span><span class="m">1</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>查看Binlog日志可以使用 mysqlbinlog 工具</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">mysqlbinlog mysql-bin.000001
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>或者使用SQL命令查看事件：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-sql" data-lang="sql"><span class="line"><span class="cl"><span class="k">SHOW</span><span class="w"> </span><span class="n">BINLOG</span><span class="w"> </span><span class="n">EVENTS</span><span class="w"> </span><span class="k">IN</span><span class="w"> </span><span class="s1">&#39;mysql-bin.000001&#39;</span><span class="p">;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>通过合理选择和配置Binlog模式，可以有效提高MySQL的性能和数据一致性</p>
 <h3 id="mysql-备份逻辑备份与物理备份">MySQL 备份，逻辑备份与物理备份
 </h3><p>MySQL的物理备份和逻辑备份的主要区别在于备份文件的形式和备份恢复的灵活性。
 物理备份直接复制数据库的二进制文件(binlog)，备份文件较大，恢复时只能在相同架构的MySQL服务器上使用。
@@ -566,84 +613,164 @@ server-id=1
 <p>k8s集群中的node节点要升级内存，以应对服务迁入、pod扩缩容导致的资源短缺，需要对node节点进行停机维护。此时就需要对pod进行迁移。</p>
 <h4 id="默认迁移">默认迁移
 </h4><p>当node节点关机后，k8s集群并没有立刻发生任何自动迁移动作，如果该node节点上的副本数为1，则会出现服务中断的情况。其实事实并非如此，k8s在等待5分钟后，会自动将停机node节点上的pod自动迁移到其他node节点上。</p>
-<pre><code class="language-shell"># 1.模拟node节点停机，停止kubelet
-systemctl stop kubelet
-
-# 2.集群状态
-# 此时停机的node点处于NotReady状态
-# kubectl get node
-NAME                STATUS     ROLES     AGE   VERSION
-k8s-3-217   Ready        master     88d   v1.18.2
-k8s-3-218   NotReady   &lt;none&gt;   88d   v1.18.2
-k8s-3-219   Ready        &lt;none&gt;   88d   v1.18.2
-
-# 3.监控pod状态，大约等待5分钟左右，集群开始有动作
-# kubectl get pod -n test -o wide -n test -w
-NAME                                   READY   STATUS    RESTARTS   AGE   IP             NODE           NOMINATED NODE   READINESS GATES
-helloworld-79956d95b4-q7jjg            1/1     Running   0          19h   10.244.1.154   k8s-3-218   &lt;none&gt;           &lt;none&gt;
-helloworld-79956d95b4-q7jjg            1/1     Running   0          19h   10.244.1.154   k8s-3-218   &lt;none&gt;           &lt;none&gt;
-# 5分钟后，pod终止并进行重建
-helloworld-79956d95b4-q7jjg            1/1     Terminating   0          19h   10.244.1.154   k8s-3-218   &lt;none&gt;           &lt;none&gt;
-helloworld-79956d95b4-nnlrq            0/1     Pending       0          0s    &lt;none&gt;         &lt;none&gt;         &lt;none&gt;           &lt;none&gt;
-helloworld-79956d95b4-nnlrq            0/1     Pending       0          0s    &lt;none&gt;         k8s-3-219   &lt;none&gt;           &lt;none&gt;
-helloworld-79956d95b4-nnlrq            0/1     ContainerCreating   0          1s    &lt;none&gt;         k8s-3-219   &lt;none&gt;           &lt;none&gt;
-
-helloworld-79956d95b4-nnlrq            0/1     Running             0          3s    10.244.2.215   k8s-3-219   &lt;none&gt;           &lt;none&gt;
-helloworld-79956d95b4-nnlrq            1/1     Running             0          66s   10.244.2.215   k8s-3-219   &lt;none&gt;           &lt;none&gt;
-
-# 4.访问测试：在pod重新迁移到其他node节点时，服务是不可用的。
-# curl -x 192.168.3.219:80 hello.test.cn
-&lt;html&gt;
-&lt;head&gt;&lt;title&gt;503 Service Temporarily Unavailable&lt;/title&gt;&lt;/head&gt;
-&lt;body&gt;
-&lt;center&gt;&lt;h1&gt;503 Service Temporarily Unavailable&lt;/h1&gt;&lt;/center&gt;
-&lt;hr&gt;&lt;center&gt;nginx/1.17.8&lt;/center&gt;
-
-# 5.迁移完毕：服务正常访问
-# curl -x 192.168.3.219:80 hello.test.cn
-Hello,world!
-
-</code></pre>
-<p>从以上过程看出，停机node节点上的pod在5分钟后先终止再重建，直到pod在新节点启动并由readiness探针检测正常后并处于1\1 Running状态才可以正式对外提供服务。因此<strong>服务中断时间=停机等待5分钟时间+重建时间+服务启动时间+readiness探针检测正常时间。</strong></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 1.模拟node节点停机，停止kubelet</span>
+</span></span><span class="line"><span class="cl">systemctl stop kubelet
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 2.集群状态</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 此时停机的node点处于NotReady状态</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl get node</span>
+</span></span><span class="line"><span class="cl">NAME                STATUS     ROLES     AGE   VERSION
+</span></span><span class="line"><span class="cl">k8s-3-217   Ready        master     88d   v1.18.2
+</span></span><span class="line"><span class="cl">k8s-3-218   NotReady   &lt;none&gt;   88d   v1.18.2
+</span></span><span class="line"><span class="cl">k8s-3-219   Ready        &lt;none&gt;   88d   v1.18.2
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 3.监控pod状态，大约等待5分钟左右，集群开始有动作</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl get pod -n test -o wide -n test -w</span>
+</span></span><span class="line"><span class="cl">NAME                                   READY   STATUS    RESTARTS   AGE   IP             NODE           NOMINATED NODE   READINESS GATES
+</span></span><span class="line"><span class="cl">helloworld-79956d95b4-q7jjg            1/1     Running   <span class="m">0</span>          19h   10.244.1.154   k8s-3-218   &lt;none&gt;           &lt;none&gt;
+</span></span><span class="line"><span class="cl">helloworld-79956d95b4-q7jjg            1/1     Running   <span class="m">0</span>          19h   10.244.1.154   k8s-3-218   &lt;none&gt;           &lt;none&gt;
+</span></span><span class="line"><span class="cl"><span class="c1"># 5分钟后，pod终止并进行重建</span>
+</span></span><span class="line"><span class="cl">helloworld-79956d95b4-q7jjg            1/1     Terminating   <span class="m">0</span>          19h   10.244.1.154   k8s-3-218   &lt;none&gt;           &lt;none&gt;
+</span></span><span class="line"><span class="cl">helloworld-79956d95b4-nnlrq            0/1     Pending       <span class="m">0</span>          0s    &lt;none&gt;         &lt;none&gt;         &lt;none&gt;           &lt;none&gt;
+</span></span><span class="line"><span class="cl">helloworld-79956d95b4-nnlrq            0/1     Pending       <span class="m">0</span>          0s    &lt;none&gt;         k8s-3-219   &lt;none&gt;           &lt;none&gt;
+</span></span><span class="line"><span class="cl">helloworld-79956d95b4-nnlrq            0/1     ContainerCreating   <span class="m">0</span>          1s    &lt;none&gt;         k8s-3-219   &lt;none&gt;           &lt;none&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">helloworld-79956d95b4-nnlrq            0/1     Running             <span class="m">0</span>          3s    10.244.2.215   k8s-3-219   &lt;none&gt;           &lt;none&gt;
+</span></span><span class="line"><span class="cl">helloworld-79956d95b4-nnlrq            1/1     Running             <span class="m">0</span>          66s   10.244.2.215   k8s-3-219   &lt;none&gt;           &lt;none&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 4.访问测试：在pod重新迁移到其他node节点时，服务是不可用的。</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># curl -x 192.168.3.219:80 hello.test.cn</span>
+</span></span><span class="line"><span class="cl">&lt;html&gt;
+</span></span><span class="line"><span class="cl">&lt;head&gt;&lt;title&gt;503 Service Temporarily Unavailable&lt;/title&gt;&lt;/head&gt;
+</span></span><span class="line"><span class="cl">&lt;body&gt;
+</span></span><span class="line"><span class="cl">&lt;center&gt;&lt;h1&gt;503 Service Temporarily Unavailable&lt;/h1&gt;&lt;/center&gt;
+</span></span><span class="line"><span class="cl">&lt;hr&gt;&lt;center&gt;nginx/1.17.8&lt;/center&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 5.迁移完毕：服务正常访问</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># curl -x 192.168.3.219:80 hello.test.cn</span>
+</span></span><span class="line"><span class="cl">Hello,world!
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>从以上过程看出，停机node节点上的pod在5分钟后先终止再重建，直到pod在新节点启动并由readiness探针检测正常后并处于1\1 Running状态才可以正式对外提供服务。因此<strong>服务中断时间=停机等待5分钟时间+重建时间+服务启动时间+readiness探针检测正常时间。</strong></p>
 <p>为什么pod在5分钟后开始迁移呢?
 此时需要涉及到k8s中的Taint（污点）和 Toleration（容忍），这是从Kubernetes 1.6开始提供的高级调度功能。Taint和Toleration相互配合，可以避免pod被分配到不合适的节点上。每个节点上都可以应用一个或多个Taint，这表示对于那些不能容忍Taint的pod，是不会被该节点接受的。如果将Toleration应用于pod上，则表示这些pod可以（但不要求）被调度到具有匹配Taint的节点上。</p>
-<pre><code class="language-shell"># 1.查看停止服务节点的状态
-# kubelet停止后，node节点自动添加了Taints；
-# kubectl describe node k8s-3-218
-
-Name:               k8s-3-218
-Roles:              &lt;none&gt;
-CreationTimestamp:  Fri, 22 May 2020 11:36:16 +0800
-Taints:             node.kubernetes.io/unreachable:NoExecute
-                    node.kubernetes.io/unreachable:NoSchedule
-Unschedulable:      false
-Lease:
-  HolderIdentity:  k8s-3-218
-  AcquireTime:     &lt;unset&gt;
-  RenewTime:       Wed, 19 Aug 2020 09:31:22 +0800
-Conditions:
-  Type                 Status    LastHeartbeatTime                 LastTransitionTime                Reason              Message
-  ----                 ------    -----------------                 ------------------                ------              -------
-  NetworkUnavailable   False     Tue, 18 Aug 2020 09:07:59 +0800   Tue, 18 Aug 2020 09:07:59 +0800   FlannelIsUp         Flannel is running on this node
-  MemoryPressure       Unknown   Wed, 19 Aug 2020 09:29:56 +0800   Wed, 19 Aug 2020 09:32:07 +0800   NodeStatusUnknown   Kubelet stopped posting node status.
-  DiskPressure         Unknown   Wed, 19 Aug 2020 09:29:56 +0800   Wed, 19 Aug 2020 09:32:07 +0800   NodeStatusUnknown   Kubelet stopped posting node status.
-  PIDPressure          Unknown   Wed, 19 Aug 2020 09:29:56 +0800   Wed, 19 Aug 2020 09:32:07 +0800   NodeStatusUnknown   Kubelet stopped posting node status.
-  Ready                Unknown   Wed, 19 Aug 2020 09:29:56 +0800   Wed, 19 Aug 2020 09:32:07 +0800   NodeStatusUnknown   Kubelet stopped posting node status.
-...省略...
-Events:              &lt;none&gt;
-
-# 2.查看pod状态
-# kubectl describe pod helloworld-8565c4687b-rrfmj -n test
-Name:                      helloworld-8565c4687b-rrfmj
-Namespace:                 test
-Priority:                  0
-......
-Node-Selectors:  &lt;none&gt;
-Tolerations:     node.kubernetes.io/not-ready:NoExecute for 300s
-                 node.kubernetes.io/unreachable:NoExecute for 300s
-Events:          &lt;none&gt;
-</code></pre>
-<p>此时pod的Tolerations 默认对于具有相应Taint的node节点容忍时间为300s，超过此时间pod将会被驱逐到其他可用node节点上。因此5分钟后node节点上所有的pod重新被调度，在此期间服务是中断的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 1.查看停止服务节点的状态</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubelet停止后，node节点自动添加了Taints；</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl describe node k8s-3-218</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Name:               k8s-3-218
+</span></span><span class="line"><span class="cl">Roles:              &lt;none&gt;
+</span></span><span class="line"><span class="cl">CreationTimestamp:  Fri, <span class="m">22</span> May <span class="m">2020</span> 11:36:16 +0800
+</span></span><span class="line"><span class="cl">Taints:             node.kubernetes.io/unreachable:NoExecute
+</span></span><span class="line"><span class="cl">                    node.kubernetes.io/unreachable:NoSchedule
+</span></span><span class="line"><span class="cl">Unschedulable:      <span class="nb">false</span>
+</span></span><span class="line"><span class="cl">Lease:
+</span></span><span class="line"><span class="cl">  HolderIdentity:  k8s-3-218
+</span></span><span class="line"><span class="cl">  AcquireTime:     &lt;unset&gt;
+</span></span><span class="line"><span class="cl">  RenewTime:       Wed, <span class="m">19</span> Aug <span class="m">2020</span> 09:31:22 +0800
+</span></span><span class="line"><span class="cl">Conditions:
+</span></span><span class="line"><span class="cl">  Type                 Status    LastHeartbeatTime                 LastTransitionTime                Reason              Message
+</span></span><span class="line"><span class="cl">  ----                 ------    -----------------                 ------------------                ------              -------
+</span></span><span class="line"><span class="cl">  NetworkUnavailable   False     Tue, <span class="m">18</span> Aug <span class="m">2020</span> 09:07:59 +0800   Tue, <span class="m">18</span> Aug <span class="m">2020</span> 09:07:59 +0800   FlannelIsUp         Flannel is running on this node
+</span></span><span class="line"><span class="cl">  MemoryPressure       Unknown   Wed, <span class="m">19</span> Aug <span class="m">2020</span> 09:29:56 +0800   Wed, <span class="m">19</span> Aug <span class="m">2020</span> 09:32:07 +0800   NodeStatusUnknown   Kubelet stopped posting node status.
+</span></span><span class="line"><span class="cl">  DiskPressure         Unknown   Wed, <span class="m">19</span> Aug <span class="m">2020</span> 09:29:56 +0800   Wed, <span class="m">19</span> Aug <span class="m">2020</span> 09:32:07 +0800   NodeStatusUnknown   Kubelet stopped posting node status.
+</span></span><span class="line"><span class="cl">  PIDPressure          Unknown   Wed, <span class="m">19</span> Aug <span class="m">2020</span> 09:29:56 +0800   Wed, <span class="m">19</span> Aug <span class="m">2020</span> 09:32:07 +0800   NodeStatusUnknown   Kubelet stopped posting node status.
+</span></span><span class="line"><span class="cl">  Ready                Unknown   Wed, <span class="m">19</span> Aug <span class="m">2020</span> 09:29:56 +0800   Wed, <span class="m">19</span> Aug <span class="m">2020</span> 09:32:07 +0800   NodeStatusUnknown   Kubelet stopped posting node status.
+</span></span><span class="line"><span class="cl">...省略...
+</span></span><span class="line"><span class="cl">Events:              &lt;none&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 2.查看pod状态</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl describe pod helloworld-8565c4687b-rrfmj -n test</span>
+</span></span><span class="line"><span class="cl">Name:                      helloworld-8565c4687b-rrfmj
+</span></span><span class="line"><span class="cl">Namespace:                 <span class="nb">test</span>
+</span></span><span class="line"><span class="cl">Priority:                  <span class="m">0</span>
+</span></span><span class="line"><span class="cl">......
+</span></span><span class="line"><span class="cl">Node-Selectors:  &lt;none&gt;
+</span></span><span class="line"><span class="cl">Tolerations:     node.kubernetes.io/not-ready:NoExecute <span class="k">for</span> 300s
+</span></span><span class="line"><span class="cl">                 node.kubernetes.io/unreachable:NoExecute <span class="k">for</span> 300s
+</span></span><span class="line"><span class="cl">Events:          &lt;none&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>此时pod的Tolerations 默认对于具有相应Taint的node节点容忍时间为300s，超过此时间pod将会被驱逐到其他可用node节点上。因此5分钟后node节点上所有的pod重新被调度，在此期间服务是中断的。</p>
 <h4 id="手动迁移">手动迁移
 </h4><p>默认的pod迁移无法避免服务中断，那么我们在node节点停机前，我们可以手动迁移。
 为避免等待默认的5分钟，我们还可以使用cordon、drain、uncordor三个命令实现节点的主动维护。此时需要用到以下三个命令：</p>
@@ -653,94 +780,185 @@ Events:          &lt;none&gt;
 <li><code>uncordon</code>:标记节点可调度
 具体操作如下：</li>
 </ul>
-<pre><code class="language-shell"># 1.标记节点不可调度
-# kubectl cordon k8s-3-219
-node/k8s-3-219 cordoned
-
-# 查看节点状态，此时219被标记为不可调度
-# kubectl get node
-NAME           STATUS                     ROLES    AGE   VERSION
-k8s-3-217   Ready                      master   89d   v1.18.2
-k8s-3-218   Ready                      &lt;none&gt;   88d   v1.18.2
-k8s-3-219   Ready,SchedulingDisabled   &lt;none&gt;   88d   v1.18.2
-
-# 2.驱逐pod
-# kubectl drain k8s-3-219 --delete-local-data --ignore-daemonsets --force
-node/k8s-3-219 already cordoned
-WARNING: ignoring DaemonSet-managed Pods: ingress-nginx/nginx-ingress-controller-gmzq6, kube-system/kube-flannel-ds-amd64-5gfwh, kube-system/kube-proxy-vdckk
-evicting pod kube-system/tiller-deploy-6c65968d87-75pfm
-evicting pod kube-system/metrics-server-7f96bbcc66-bgt7j
-evicting pod test/helloworld-79956d95b4-nnlrq
-
-# 参数如下：
---delete-local-data  删除本地数据，即使emptyDir也将删除；
---ignore-daemonsets  忽略DeamonSet，否则DeamonSet被删除后，仍会自动重建；
---force  不加force参数只会删除该node节点上的ReplicationController, ReplicaSet, DaemonSet,StatefulSet or Job，加上后所有pod都将删除；
-
-# 3. 查看驱逐，219上的pod迁移到218上了。
-# kubectl get pod -n test -o wide
-NAME                                   READY   STATUS        RESTARTS   AGE   IP             NODE           NOMINATED NODE   READINESS GATES
-helloworld-79956d95b4-gg58c            0/1     Running       0          20s   10.244.1.165   k8s-3-218   &lt;none&gt;           &lt;none&gt;
-helloworld-79956d95b4-nnlrq            1/1     Terminating   0          77m   10.244.2.215   k8s-3-219   &lt;none&gt;           &lt;none&gt;
-</code></pre>
-<p>此时与默认迁移不同的是，pod会先重建再终止，此时的<strong>服务中断时间=重建时间+服务启动时间+readiness探针检测正常时间</strong>，必须等到1/1 Running服务才会正常。因此在单副本时迁移时，服务中断是不可避免的。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 1.标记节点不可调度</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl cordon k8s-3-219</span>
+</span></span><span class="line"><span class="cl">node/k8s-3-219 cordoned
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 查看节点状态，此时219被标记为不可调度</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl get node</span>
+</span></span><span class="line"><span class="cl">NAME           STATUS                     ROLES    AGE   VERSION
+</span></span><span class="line"><span class="cl">k8s-3-217   Ready                      master   89d   v1.18.2
+</span></span><span class="line"><span class="cl">k8s-3-218   Ready                      &lt;none&gt;   88d   v1.18.2
+</span></span><span class="line"><span class="cl">k8s-3-219   Ready,SchedulingDisabled   &lt;none&gt;   88d   v1.18.2
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 2.驱逐pod</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl drain k8s-3-219 --delete-local-data --ignore-daemonsets --force</span>
+</span></span><span class="line"><span class="cl">node/k8s-3-219 already cordoned
+</span></span><span class="line"><span class="cl">WARNING: ignoring DaemonSet-managed Pods: ingress-nginx/nginx-ingress-controller-gmzq6, kube-system/kube-flannel-ds-amd64-5gfwh, kube-system/kube-proxy-vdckk
+</span></span><span class="line"><span class="cl">evicting pod kube-system/tiller-deploy-6c65968d87-75pfm
+</span></span><span class="line"><span class="cl">evicting pod kube-system/metrics-server-7f96bbcc66-bgt7j
+</span></span><span class="line"><span class="cl">evicting pod test/helloworld-79956d95b4-nnlrq
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 参数如下：</span>
+</span></span><span class="line"><span class="cl">--delete-local-data  删除本地数据，即使emptyDir也将删除；
+</span></span><span class="line"><span class="cl">--ignore-daemonsets  忽略DeamonSet，否则DeamonSet被删除后，仍会自动重建；
+</span></span><span class="line"><span class="cl">--force  不加force参数只会删除该node节点上的ReplicationController, ReplicaSet, DaemonSet,StatefulSet or Job，加上后所有pod都将删除；
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 3. 查看驱逐，219上的pod迁移到218上了。</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl get pod -n test -o wide</span>
+</span></span><span class="line"><span class="cl">NAME                                   READY   STATUS        RESTARTS   AGE   IP             NODE           NOMINATED NODE   READINESS GATES
+</span></span><span class="line"><span class="cl">helloworld-79956d95b4-gg58c            0/1     Running       <span class="m">0</span>          20s   10.244.1.165   k8s-3-218   &lt;none&gt;           &lt;none&gt;
+</span></span><span class="line"><span class="cl">helloworld-79956d95b4-nnlrq            1/1     Terminating   <span class="m">0</span>          77m   10.244.2.215   k8s-3-219   &lt;none&gt;           &lt;none&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>此时与默认迁移不同的是，pod会先重建再终止，此时的<strong>服务中断时间=重建时间+服务启动时间+readiness探针检测正常时间</strong>，必须等到1/1 Running服务才会正常。因此在单副本时迁移时，服务中断是不可避免的。</p>
 <h4 id="平滑迁移">平滑迁移
 </h4><p>要做到平滑迁移就需要用的pdb(PodDisruptionBudget)，即主动驱逐保护。无论是默认迁移和手动迁移，都会导致服务中断，而pdb能可以实现节点维护期间不低于一定数量的pod正常运行，从而保证服务的可用性。</p>
 <p>在仍以helloworld为例，由于只有一个副本，因此需要保证维护期间这个副本在迁移完成后，才会终止。</p>
-<pre><code class="language-shell"># 从218 驱逐到 219
-# 1.标记节点不可调度
-# kubectl cordon k8s-3-218
-node/k8s-3-218 cordoned
-
-# 2.新建pdb
-vim pdb-test.yaml
-apiVersion: policy/v1beta1
-kind: PodDisruptionBudget
-metadata:
-  name: pdb-test
-  namespace: test
-spec:
-  minAvailable: 1
-  selector:
-    matchLabels:
-      app: helloworld
-
-# 2.应用并查看状态
-# kubectl apply -f pdb-test.yaml
-# kubectl get pdb -n test
-NAME       MIN AVAILABLE   MAX UNAVAILABLE   ALLOWED DISRUPTIONS   AGE
-pdb-test   1                         N/A                          0                                       7s
-
-# 3.驱逐
-# kubectl drain k8s-3-218 --delete-local-data --ignore-daemonsets --force
-node/k8s-3-218 already cordoned
-WARNING: ignoring DaemonSet-managed Pods: ingress-nginx/nginx-ingress-controller-hhb6h, kube-system/kube-flannel-ds-amd64-pb4d7, kube-system/kube-proxy-rzdcj
-evicting pod kube-system/tiller-deploy-6c65968d87-ktqmm
-evicting pod kube-system/metrics-server-7f96bbcc66-6p6wm
-evicting pod test/helloworld-79956d95b4-gg58c
-error when evicting pod &quot;helloworld-79956d95b4-gg58c&quot; (will retry after 5s): Cannot evict pod as it would violate the pod's disruption budget.
-evicting pod test/helloworld-79956d95b4-gg58c
-error when evicting pod &quot;helloworld-79956d95b4-gg58c&quot; (will retry after 5s): Cannot evict pod as it would violate the pod's disruption budget.
-pod/tiller-deploy-6c65968d87-ktqmm evicted
-
-#此时由于只有一个副本，最小可用为1，则ALLOWED就为0，因此在一个副本通过pdb是不会发生驱逐的。我们需要先扩容，将副本数调整为大于1。
-
-# 3.手动调整副本数，将replicas为2
-kubectl edit deploy helloworld -n test
-# 再次查看pdb
-# kubectl get pdb -n test
-NAME       MIN AVAILABLE   MAX UNAVAILABLE   ALLOWED DISRUPTIONS   AGE
-pdb-test   1               N/A               1                     13m
-
-#此时最小可用为1 ，ALLOWED为1，此时是数量会自动计算。
-
-# 4.驱逐
-# kubectl drain k8s-3-218 --delete-local-data --ignore-daemonsets --force
-
-# 5.维护完毕，将node调整为可调度
-# kubectl uncordon k8s-3-218
-</code></pre>
-<p>本次驱逐，由于helloworld始终保持有一个pod在提供服务，因此服务是不中断的。
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 从218 驱逐到 219</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 1.标记节点不可调度</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl cordon k8s-3-218</span>
+</span></span><span class="line"><span class="cl">node/k8s-3-218 cordoned
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 2.新建pdb</span>
+</span></span><span class="line"><span class="cl">vim pdb-test.yaml
+</span></span><span class="line"><span class="cl">apiVersion: policy/v1beta1
+</span></span><span class="line"><span class="cl">kind: PodDisruptionBudget
+</span></span><span class="line"><span class="cl">metadata:
+</span></span><span class="line"><span class="cl">  name: pdb-test
+</span></span><span class="line"><span class="cl">  namespace: <span class="nb">test</span>
+</span></span><span class="line"><span class="cl">spec:
+</span></span><span class="line"><span class="cl">  minAvailable: <span class="m">1</span>
+</span></span><span class="line"><span class="cl">  selector:
+</span></span><span class="line"><span class="cl">    matchLabels:
+</span></span><span class="line"><span class="cl">      app: helloworld
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 2.应用并查看状态</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl apply -f pdb-test.yaml</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl get pdb -n test</span>
+</span></span><span class="line"><span class="cl">NAME       MIN AVAILABLE   MAX UNAVAILABLE   ALLOWED DISRUPTIONS   AGE
+</span></span><span class="line"><span class="cl">pdb-test   <span class="m">1</span>                         N/A                          <span class="m">0</span>                                       7s
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 3.驱逐</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl drain k8s-3-218 --delete-local-data --ignore-daemonsets --force</span>
+</span></span><span class="line"><span class="cl">node/k8s-3-218 already cordoned
+</span></span><span class="line"><span class="cl">WARNING: ignoring DaemonSet-managed Pods: ingress-nginx/nginx-ingress-controller-hhb6h, kube-system/kube-flannel-ds-amd64-pb4d7, kube-system/kube-proxy-rzdcj
+</span></span><span class="line"><span class="cl">evicting pod kube-system/tiller-deploy-6c65968d87-ktqmm
+</span></span><span class="line"><span class="cl">evicting pod kube-system/metrics-server-7f96bbcc66-6p6wm
+</span></span><span class="line"><span class="cl">evicting pod test/helloworld-79956d95b4-gg58c
+</span></span><span class="line"><span class="cl">error when evicting pod <span class="s2">&#34;helloworld-79956d95b4-gg58c&#34;</span> <span class="o">(</span>will retry after 5s<span class="o">)</span>: Cannot evict pod as it would violate the pod<span class="s1">&#39;s disruption budget.
+</span></span></span><span class="line"><span class="cl"><span class="s1">evicting pod test/helloworld-79956d95b4-gg58c
+</span></span></span><span class="line"><span class="cl"><span class="s1">error when evicting pod &#34;helloworld-79956d95b4-gg58c&#34; (will retry after 5s): Cannot evict pod as it would violate the pod&#39;</span>s disruption budget.
+</span></span><span class="line"><span class="cl">pod/tiller-deploy-6c65968d87-ktqmm evicted
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#此时由于只有一个副本，最小可用为1，则ALLOWED就为0，因此在一个副本通过pdb是不会发生驱逐的。我们需要先扩容，将副本数调整为大于1。</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 3.手动调整副本数，将replicas为2</span>
+</span></span><span class="line"><span class="cl">kubectl edit deploy helloworld -n <span class="nb">test</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 再次查看pdb</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl get pdb -n test</span>
+</span></span><span class="line"><span class="cl">NAME       MIN AVAILABLE   MAX UNAVAILABLE   ALLOWED DISRUPTIONS   AGE
+</span></span><span class="line"><span class="cl">pdb-test   <span class="m">1</span>               N/A               <span class="m">1</span>                     13m
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#此时最小可用为1 ，ALLOWED为1，此时是数量会自动计算。</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 4.驱逐</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl drain k8s-3-218 --delete-local-data --ignore-daemonsets --force</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 5.维护完毕，将node调整为可调度</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># kubectl uncordon k8s-3-218</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>本次驱逐，由于helloworld始终保持有一个pod在提供服务，因此服务是不中断的。
 最后将副本数可以调节为1并将node节点调整为可调度，维护完毕。</p>
 <p><strong>总结</strong>:通过简单了解了Taint（污点）和 Toleration（容忍）作用，我们既可以通过设置tolerationSeconds来缩短等待时间，也可以自行定义匹配规则实现符合实际情况的调度规则。</p>
 <p>另外还要注意先重建再终止和先终止再重建，在此过程中服务启动时间和探针检测时间决定你的服务中断时间。</p>
@@ -769,26 +987,49 @@ pdb-test   1               N/A               1                     13m
 <p>示例：更新 Deployment 中的镜像
 假设我们有一个名为 example-deployment 的 Deployment，其中定义了一个容器镜像 myapp:v1.0。我们将镜像版本更新为 myapp:v2.0，并通过 kubectl apply 命令触发更新。</p>
 <p>修改 Deployment 配置文件 deployment.yaml 中的镜像版本：</p>
-<pre><code class="language-yaml">apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: example-deployment
-spec:
-  replicas: 3
-  selector:
-    matchLabels:
-      app: example
-  template:
-    metadata:
-      labels:
-        app: example
-    spec:
-      containers:
-      - name: example-container
-        image: myapp:v2.0  # 修改为新的镜像版本
-        imagePullPolicy: IfNotPresent
-</code></pre>
-<p>执行 kubectl apply 命令将变更推送到集群：
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">apps/v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Deployment</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">example-deployment</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="m">3</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">example</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">labels</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">example</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">containers</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">example-container</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">myapp:v2.0 </span><span class="w"> </span><span class="c"># 修改为新的镜像版本</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">imagePullPolicy</span><span class="p">:</span><span class="w"> </span><span class="l">IfNotPresent</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>执行 kubectl apply 命令将变更推送到集群：
 kubectl apply -f deployment.yaml
 在执行该命令后，Kubernetes 会根据定义的镜像更新策略（例如，imagePullPolicy: IfNotPresent）决定是否从仓库拉取新的镜像，并按滚动更新的方式逐步替换旧版本的容器实例。</p>
 <p>滚动更新控制
@@ -798,25 +1039,46 @@ kubectl apply -f deployment.yaml
 <li><code>maxSurge</code>：定义在更新过程中可以超出期望副本数的最大 Pod 数量，帮助提升更新的速度。
 合理设置这两个参数可以在保证服务可用性的同时加速或控制更新过程。例如：</li>
 </ul>
-<pre><code class="language-yaml">spec:
-  replicas: 3
-  strategy:
-    rollingUpdate:
-      maxUnavailable: 1  # 最多允许 1 个 Pod 不可用
-      maxSurge: 1        # 可以增加 1 个 Pod 以加速更新
-</code></pre>
-<p>通过设置这些参数，您可以精细控制容器的滚动更新行为，以平衡服务可用性和更新速度。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="m">3</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">strategy</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">rollingUpdate</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">maxUnavailable</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">  </span><span class="c"># 最多允许 1 个 Pod 不可用</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">maxSurge</span><span class="p">:</span><span class="w"> </span><span class="m">1</span><span class="w">        </span><span class="c"># 可以增加 1 个 Pod 以加速更新</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>通过设置这些参数，您可以精细控制容器的滚动更新行为，以平衡服务可用性和更新速度。</p>
 <p>这种修订版本提供了更为清晰的策略解释、更新的实践方法和对滚动更新的详细控制，适用于生产环境中的实际操作。</p>
 <h3 id="k8s镜像仓库">k8s镜像仓库
 </h3><p>k8s镜像仓库分为远程仓库和本地仓库。本地仓库就是存储在本机的镜像文件，可以通过工具(如Docker Registry、Harbor)搭建，用于管理和分发镜像；</p>
 <p>由于 Kubernetes 使用的是容器运行时(如 containerd),直接在 Docker 中构建的镜像无法直接被 Kubernetes 使用。需要将镜像导入到对应的容器运行时中。</p>
-<pre><code class="language-shell"># containerd：使用 ctr 工具导入镜像
-ctr -n k8s.io images import my-image.tar
-
-# CRI-O：使用 skopeo 或 crictl 工具导入镜像
-crictl load my-image.tar
-</code></pre>
-<ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># containerd：使用 ctr 工具导入镜像</span>
+</span></span><span class="line"><span class="cl">ctr -n k8s.io images import my-image.tar
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># CRI-O：使用 skopeo 或 crictl 工具导入镜像</span>
+</span></span><span class="line"><span class="cl">crictl load my-image.tar
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol>
 <li>Kubernetes 较新版本（1.24+）已移除对 Docker 的支持，转为使用 containerd 或 CRI-O。</li>
 <li>不同运行时的镜像存储路径如下：</li>
 </ol>
@@ -882,111 +1144,8 @@ Kubernetes 配置文件中需设置 imagePullPolicy 为 Never，并确保所有�
 </blockquote>
 <h2 id="nginx">nginx
 </h2>
-
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        
-        document.querySelectorAll('pre code').forEach((block) => {
-            
-            block.parentElement.removeAttribute('data-highlighted');
-            hljs.highlightElement(block);
-        });
-
-        
-        hljs.addPlugin(new window.hljs.LineNumbers());
-
-        
-        var codeBlocks = document.querySelectorAll('pre');
-        codeBlocks.forEach(function(block, index) {
-            
-            var copyBtn = document.createElement('button');
-            copyBtn.className = 'copy-btn';
-            copyBtn.setAttribute('data-clipboard-action', 'copy');
-            copyBtn.textContent = 'Copy';
-
-            
-            block.id = 'code-block-' + index;
-            copyBtn.setAttribute('data-clipboard-target', '#' + block.id);
-
-            
-            block.insertBefore(copyBtn, block.firstChild);
-        });
-
-        
-        new ClipboardJS('.copy-btn');
-
-        
-        var clipboard = new ClipboardJS('.copy-btn');
-        clipboard.on('success', function(e) {
-            e.clearSelection();
-            e.trigger.textContent = 'Copied!';
-            setTimeout(function() {
-                e.trigger.textContent = 'Copy';
-            }, 2000);
-        });
-    });
-    </script>
-
-    <style>
-     
-    .copy-btn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background-color: #f3f3f3;  
-        color: #333;  
-        border: none;
-        padding: 8px 12px;
-        font-size: 0.9em;
-        cursor: pointer;
-        border-radius: 4px;
-        transition: all 0.3s ease;  
-        z-index: 10;  
-    }
-
-     
-    .copy-btn:hover {
-        background-color: #ddd;  
-    }
-
-     
-    .copy-btn:active {
-        transform: translateY(1px);  
-    }
-
-     
-    @media (prefers-color-scheme: dark) {
-        .copy-btn {
-            background-color: #444;  
-            color: #fff;  
-        }
-
-        .copy-btn:hover {
-            background-color: #555;  
-        }
-    }
-
-     
-    pre {
-        position: relative;
-        margin: 0;
-        overflow-x: auto;
-        border-radius: 6px;
-        line-height: 1.5;
-        padding: 16px;
-    }
-
-     
-
-     
-    @media (prefers-color-scheme: dark) {
-        pre {
-            background-color: #2d2d2d;  
-            color: #e0e0e0;  
-        }
-    }
-    </style>
 </section>
+
 
     <footer class="article-footer">
     

@@ -6,27 +6,13 @@
 
 <link rel='canonical' href='https://rusthx.github.io/p/sparkstreaming%E4%BD%BF%E7%94%A8socket/'>
 
-<link rel="stylesheet" href="/scss/style.min.57d2a86910760b72c5cf00f5c12e666a025617f78d3b87f19f8c65a883e1a5bf.css"><meta property='og:title' content="SparkStreaming使用socket">
+<link rel="stylesheet" href="/scss/style.min.725af1264ab3622779405835da58c5dd0a2906077996c89f3e27ba6359be149d.css"><meta property='og:title' content="SparkStreaming使用socket">
 <meta property='og:description' content=" 参考：https://www.bilibili.com/video/BV11A411L7CK?p=188&amp;vd_source=2db7c64d895a2907954a5b8725db55d5\n终端打印大量日志影响结果查看可以看我首页的博客解决。 踩坑如下： 1.socket编程不会，写socket发送数据查了很多资料才写出来 2.Windows没有netcat命令，但是MACOS和Ubuntu有,所以理所当然的想到用虚拟机的端口来收集数据和输入数据，事实上这个想法确实没有问题，分别做的话是能正常实现的，但是这也为后续的错误埋下了大坑。想当然的把socket当成kafka用（producer和consumer），是我踩坑的一大原因。 3.被教程误导，socket发送数据到端口，但是不知道socket有服务器和客户端之分，发送数据和处理数据的都是客户端，导致发送端可以和nc -lk 结合使用，能正常监听到数据；接收端也能和nc -lk 结合使用，在监听的端口出输入数据可以正常计算；但是两者结合就没办法计算了\n">
 <meta property='og:url' content='https://rusthx.github.io/p/sparkstreaming%E4%BD%BF%E7%94%A8socket/'>
 <meta property='og:site_name' content='rustWood'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Spark' /><meta property='article:tag' content='socket' /><meta property='article:tag' content='SparkStreaming' /><meta property='article:published_time' content='2024-09-07T11:55:09&#43;08:00'/><meta property='article:modified_time' content='2024-09-07T11:55:09&#43;08:00'/>
 <meta name="twitter:title" content="SparkStreaming使用socket">
-<meta name="twitter:description" content=" 参考：https://www.bilibili.com/video/BV11A411L7CK?p=188&amp;vd_source=2db7c64d895a2907954a5b8725db55d5\n终端打印大量日志影响结果查看可以看我首页的博客解决。 踩坑如下： 1.socket编程不会，写socket发送数据查了很多资料才写出来 2.Windows没有netcat命令，但是MACOS和Ubuntu有,所以理所当然的想到用虚拟机的端口来收集数据和输入数据，事实上这个想法确实没有问题，分别做的话是能正常实现的，但是这也为后续的错误埋下了大坑。想当然的把socket当成kafka用（producer和consumer），是我踩坑的一大原因。 3.被教程误导，socket发送数据到端口，但是不知道socket有服务器和客户端之分，发送数据和处理数据的都是客户端，导致发送端可以和nc -lk 结合使用，能正常监听到数据；接收端也能和nc -lk 结合使用，在监听的端口出输入数据可以正常计算；但是两者结合就没办法计算了\n"><link rel="stylesheet" href="/highlight/styles/github.min.css">
-<script src="/highlight/highlight.min.js"></script>
-<script src="/highlight/languages/java.min.js"></script>
-<script src="/highlight/languages/python.min.js"></script>
-<script src="/highlight/languages/bash.min.js"></script>
-<script src="/highlight/languages/shell.min.js"></script>
-<script src="/highlight/languages/scala.min.js"></script>
-<script src="/highlight/languages/sql.min.js"></script>
-<script src="/highlight/languages/xml.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
-<script>
-    document.addEventListener('DOMContentLoaded', function() {
-        hljs.highlightAll();
-    });
-</script>        
+<meta name="twitter:description" content=" 参考：https://www.bilibili.com/video/BV11A411L7CK?p=188&amp;vd_source=2db7c64d895a2907954a5b8725db55d5\n终端打印大量日志影响结果查看可以看我首页的博客解决。 踩坑如下： 1.socket编程不会，写socket发送数据查了很多资料才写出来 2.Windows没有netcat命令，但是MACOS和Ubuntu有,所以理所当然的想到用虚拟机的端口来收集数据和输入数据，事实上这个想法确实没有问题，分别做的话是能正常实现的，但是这也为后续的错误埋下了大坑。想当然的把socket当成kafka用（producer和consumer），是我踩坑的一大原因。 3.被教程误导，socket发送数据到端口，但是不知道socket有服务器和客户端之分，发送数据和处理数据的都是客户端，导致发送端可以和nc -lk 结合使用，能正常监听到数据；接收端也能和nc -lk 结合使用，在监听的端口出输入数据可以正常计算；但是两者结合就没办法计算了\n">        
         
         <link rel="stylesheet" href="/highlight/styles/github.css">
          
@@ -377,92 +363,189 @@
 </h2><p>题目：1）写一个应用程序利用套接字每隔2秒生成20条大学主页用户访问日志（可以自定义内容），数据形式如下：“系统时间戳，位置城市，用户ID+姓名，访问大学主页”。其中城市自定义 9个，用户ID 10个，大学主页 7个。
 2）写第二个程序每隔2秒不断获取套接字产生的数据，并将词频统计结果打印出来。
 导入依赖</p>
-<pre><code class="language-xml">&lt;dependency&gt;
-   &lt;groupId&gt;org.apache.spark&lt;/groupId&gt;
-   &lt;artifactId&gt;spark-streaming_2.12&lt;/artifactId&gt;
-   &lt;version&gt;3.3.2&lt;/version&gt;
-&lt;/dependency&gt;
-</code></pre>
-<pre><code class="language-scala">package SparkStreaming1
-
-import java.io.{BufferedWriter, IOException, OutputStreamWriter}
-import java.net.ServerSocket
-import scala.util.Random
-
-object task11 {
-  def main(args: Array[String]): Unit = {
-
-    // 定义城市和用户ID
-    val cities = Seq(&quot;杭州&quot;, &quot;南京&quot;, &quot;长沙&quot;, &quot;天津&quot;, &quot;北京&quot;, &quot;上海&quot;, &quot;成都&quot;, &quot;广州&quot;, &quot;深圳&quot;)
-    val userIds = Seq(&quot;0:阿良良木历&quot;, &quot;1:忍野忍&quot;, &quot;2:战场原黑仪&quot;, &quot;3:羽川翼&quot;, &quot;4:八九寺真宵&quot;,
-      &quot;5:神原骏河&quot;, &quot;6:千石抚子&quot;, &quot;7:阿良良木火怜&quot;, &quot;8:阿良良木月火&quot;, &quot;9:姬丝秀忒·雅赛劳拉莉昂·刃下心&quot;)
-    val universityUrls = Seq(&quot;www.nju.edu.cn&quot;, &quot;www.ustc.edu.cn&quot;,
-      &quot;www.zju.edu.cn&quot;, &quot;www.fudan.edu.cn&quot;, &quot;www.tsinghua.edu.cn&quot;, &quot;www.pku.edu.cn&quot;, &quot;www.scu.edu.cn&quot;)
-
-    try {
-      // 创建一个 socket 连接
-//      val socket = new Socket(&quot;hadoop3&quot;, 9765)
-      val socketServer = new ServerSocket(9765)
-      val client = socketServer.accept()
-      println(&quot;连接！&quot;)
-      val out = new BufferedWriter(new OutputStreamWriter(client.getOutputStream))
-//val in = new BufferedReader(new InputStreamReader(client.getInputStream))
-      while (true){
-        for (_ &lt;- 1 to 20) {
-          // 发送多条数据
-          val currentTime = System.currentTimeMillis()
-          val city = cities(Random.nextInt(cities.length))
-          val userId = userIds(Random.nextInt(userIds.length))
-          val universityUrl = universityUrls(Random.nextInt(universityUrls.length))
-          val logLine = s&quot;$currentTime $city $userId $universityUrl&quot;
-
-          out.write(logLine + &quot;\n&quot;) // 添加换行符以区分消息
-          out.flush() // 确保数据被发送出去
-          println(logLine)
-        }
-        Thread.sleep(2000) // 休眠2秒，模拟连续发送
-      }
-
-      // 关闭 socket
-      out.close()
-//      socket.close()
-      client.close()
-    } catch {
-      case e: IOException =&gt;
-        e.printStackTrace()
-    }
-
-  }
-}
-</code></pre>
-<pre><code class="language-scala">package SparkStreaming1
-
-import org.apache.spark.SparkConf
-import org.apache.spark.sql.SparkSession
-import org.apache.spark.streaming.{Seconds, StreamingContext}
-
-
-object task12{
-  def main(args: Array[String]): Unit = {
-    val sparkConf: SparkConf = new SparkConf().setMaster(&quot;local[*]&quot;).setAppName(&quot;job7task12&quot;)
-    val spark = SparkSession.builder().config(sparkConf).getOrCreate()
-    val ssc = new StreamingContext(spark.sparkContext, Seconds(2))
-
-    // 从套接字获取数据流
-    val lines = ssc.socketTextStream(&quot;localhost&quot;, 9765)
-    
-    lines.map(_.split(&quot; &quot;)(2))
-      .map((_, 1))
-      .reduceByKey(_ + _)
-      .print()
-    
-    ssc.start()
-
-    ssc.awaitTermination()
-  }
-}
-</code></pre>
-<p>启动时需要先启动数据计算程序，再启动数据发送程序。
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="nt">&lt;dependency&gt;</span>
+</span></span><span class="line"><span class="cl">   <span class="nt">&lt;groupId&gt;</span>org.apache.spark<span class="nt">&lt;/groupId&gt;</span>
+</span></span><span class="line"><span class="cl">   <span class="nt">&lt;artifactId&gt;</span>spark-streaming_2.12<span class="nt">&lt;/artifactId&gt;</span>
+</span></span><span class="line"><span class="cl">   <span class="nt">&lt;version&gt;</span>3.3.2<span class="nt">&lt;/version&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/dependency&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">package</span> <span class="nn">SparkStreaming1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">import</span> <span class="nn">java.io.</span><span class="o">{</span><span class="nc">BufferedWriter</span><span class="o">,</span> <span class="nc">IOException</span><span class="o">,</span> <span class="nc">OutputStreamWriter</span><span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">import</span> <span class="nn">java.net.ServerSocket</span>
+</span></span><span class="line"><span class="cl"><span class="k">import</span> <span class="nn">scala.util.Random</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">object</span> <span class="nc">task11</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 定义城市和用户ID
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">cities</span> <span class="k">=</span> <span class="nc">Seq</span><span class="o">(</span><span class="s">&#34;杭州&#34;</span><span class="o">,</span> <span class="s">&#34;南京&#34;</span><span class="o">,</span> <span class="s">&#34;长沙&#34;</span><span class="o">,</span> <span class="s">&#34;天津&#34;</span><span class="o">,</span> <span class="s">&#34;北京&#34;</span><span class="o">,</span> <span class="s">&#34;上海&#34;</span><span class="o">,</span> <span class="s">&#34;成都&#34;</span><span class="o">,</span> <span class="s">&#34;广州&#34;</span><span class="o">,</span> <span class="s">&#34;深圳&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">userIds</span> <span class="k">=</span> <span class="nc">Seq</span><span class="o">(</span><span class="s">&#34;0:阿良良木历&#34;</span><span class="o">,</span> <span class="s">&#34;1:忍野忍&#34;</span><span class="o">,</span> <span class="s">&#34;2:战场原黑仪&#34;</span><span class="o">,</span> <span class="s">&#34;3:羽川翼&#34;</span><span class="o">,</span> <span class="s">&#34;4:八九寺真宵&#34;</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="s">&#34;5:神原骏河&#34;</span><span class="o">,</span> <span class="s">&#34;6:千石抚子&#34;</span><span class="o">,</span> <span class="s">&#34;7:阿良良木火怜&#34;</span><span class="o">,</span> <span class="s">&#34;8:阿良良木月火&#34;</span><span class="o">,</span> <span class="s">&#34;9:姬丝秀忒·雅赛劳拉莉昂·刃下心&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">universityUrls</span> <span class="k">=</span> <span class="nc">Seq</span><span class="o">(</span><span class="s">&#34;www.nju.edu.cn&#34;</span><span class="o">,</span> <span class="s">&#34;www.ustc.edu.cn&#34;</span><span class="o">,</span>
+</span></span><span class="line"><span class="cl">      <span class="s">&#34;www.zju.edu.cn&#34;</span><span class="o">,</span> <span class="s">&#34;www.fudan.edu.cn&#34;</span><span class="o">,</span> <span class="s">&#34;www.tsinghua.edu.cn&#34;</span><span class="o">,</span> <span class="s">&#34;www.pku.edu.cn&#34;</span><span class="o">,</span> <span class="s">&#34;www.scu.edu.cn&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="k">try</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="c1">// 创建一个 socket 连接
+</span></span></span><span class="line"><span class="cl"><span class="c1">//      val socket = new Socket(&#34;hadoop3&#34;, 9765)
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">val</span> <span class="n">socketServer</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">ServerSocket</span><span class="o">(</span><span class="mi">9765</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">val</span> <span class="n">client</span> <span class="k">=</span> <span class="n">socketServer</span><span class="o">.</span><span class="n">accept</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">      <span class="n">println</span><span class="o">(</span><span class="s">&#34;连接！&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="k">val</span> <span class="n">out</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">BufferedWriter</span><span class="o">(</span><span class="k">new</span> <span class="nc">OutputStreamWriter</span><span class="o">(</span><span class="n">client</span><span class="o">.</span><span class="n">getOutputStream</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//val in = new BufferedReader(new InputStreamReader(client.getInputStream))
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="k">while</span> <span class="o">(</span><span class="kc">true</span><span class="o">){</span>
+</span></span><span class="line"><span class="cl">        <span class="k">for</span> <span class="o">(</span><span class="k">_</span> <span class="k">&lt;-</span> <span class="mi">1</span> <span class="n">to</span> <span class="mi">20</span><span class="o">)</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">          <span class="c1">// 发送多条数据
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="k">val</span> <span class="n">currentTime</span> <span class="k">=</span> <span class="nc">System</span><span class="o">.</span><span class="n">currentTimeMillis</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">          <span class="k">val</span> <span class="n">city</span> <span class="k">=</span> <span class="n">cities</span><span class="o">(</span><span class="nc">Random</span><span class="o">.</span><span class="n">nextInt</span><span class="o">(</span><span class="n">cities</span><span class="o">.</span><span class="n">length</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">          <span class="k">val</span> <span class="n">userId</span> <span class="k">=</span> <span class="n">userIds</span><span class="o">(</span><span class="nc">Random</span><span class="o">.</span><span class="n">nextInt</span><span class="o">(</span><span class="n">userIds</span><span class="o">.</span><span class="n">length</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">          <span class="k">val</span> <span class="n">universityUrl</span> <span class="k">=</span> <span class="n">universityUrls</span><span class="o">(</span><span class="nc">Random</span><span class="o">.</span><span class="n">nextInt</span><span class="o">(</span><span class="n">universityUrls</span><span class="o">.</span><span class="n">length</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">          <span class="k">val</span> <span class="n">logLine</span> <span class="k">=</span> <span class="s">s&#34;</span><span class="si">$currentTime</span><span class="s"> </span><span class="si">$city</span><span class="s"> </span><span class="si">$userId</span><span class="s"> </span><span class="si">$universityUrl</span><span class="s">&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">          <span class="n">out</span><span class="o">.</span><span class="n">write</span><span class="o">(</span><span class="n">logLine</span> <span class="o">+</span> <span class="s">&#34;\n&#34;</span><span class="o">)</span> <span class="c1">// 添加换行符以区分消息
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="n">out</span><span class="o">.</span><span class="n">flush</span><span class="o">()</span> <span class="c1">// 确保数据被发送出去
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>          <span class="n">println</span><span class="o">(</span><span class="n">logLine</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">        <span class="o">}</span>
+</span></span><span class="line"><span class="cl">        <span class="nc">Thread</span><span class="o">.</span><span class="n">sleep</span><span class="o">(</span><span class="mi">2000</span><span class="o">)</span> <span class="c1">// 休眠2秒，模拟连续发送
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">      <span class="c1">// 关闭 socket
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">out</span><span class="o">.</span><span class="n">close</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl"><span class="c1">//      socket.close()
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>      <span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span> <span class="k">catch</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">      <span class="k">case</span> <span class="n">e</span><span class="k">:</span> <span class="kt">IOException</span> <span class="o">=&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">e</span><span class="o">.</span><span class="n">printStackTrace</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-scala" data-lang="scala"><span class="line"><span class="cl"><span class="k">package</span> <span class="nn">SparkStreaming1</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">import</span> <span class="nn">org.apache.spark.SparkConf</span>
+</span></span><span class="line"><span class="cl"><span class="k">import</span> <span class="nn">org.apache.spark.sql.SparkSession</span>
+</span></span><span class="line"><span class="cl"><span class="k">import</span> <span class="nn">org.apache.spark.streaming.</span><span class="o">{</span><span class="nc">Seconds</span><span class="o">,</span> <span class="nc">StreamingContext</span><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="k">object</span> <span class="nc">task12</span><span class="o">{</span>
+</span></span><span class="line"><span class="cl">  <span class="k">def</span> <span class="n">main</span><span class="o">(</span><span class="n">args</span><span class="k">:</span> <span class="kt">Array</span><span class="o">[</span><span class="kt">String</span><span class="o">])</span><span class="k">:</span> <span class="kt">Unit</span> <span class="o">=</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">sparkConf</span><span class="k">:</span> <span class="kt">SparkConf</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">SparkConf</span><span class="o">().</span><span class="n">setMaster</span><span class="o">(</span><span class="s">&#34;local[*]&#34;</span><span class="o">).</span><span class="n">setAppName</span><span class="o">(</span><span class="s">&#34;job7task12&#34;</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">spark</span> <span class="k">=</span> <span class="nc">SparkSession</span><span class="o">.</span><span class="n">builder</span><span class="o">().</span><span class="n">config</span><span class="o">(</span><span class="n">sparkConf</span><span class="o">).</span><span class="n">getOrCreate</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    <span class="k">val</span> <span class="n">ssc</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">StreamingContext</span><span class="o">(</span><span class="n">spark</span><span class="o">.</span><span class="n">sparkContext</span><span class="o">,</span> <span class="nc">Seconds</span><span class="o">(</span><span class="mi">2</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">// 从套接字获取数据流
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="k">val</span> <span class="n">lines</span> <span class="k">=</span> <span class="n">ssc</span><span class="o">.</span><span class="n">socketTextStream</span><span class="o">(</span><span class="s">&#34;localhost&#34;</span><span class="o">,</span> <span class="mi">9765</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="n">lines</span><span class="o">.</span><span class="n">map</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">split</span><span class="o">(</span><span class="s">&#34; &#34;</span><span class="o">)(</span><span class="mi">2</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">      <span class="o">.</span><span class="n">map</span><span class="o">((</span><span class="k">_</span><span class="o">,</span> <span class="mi">1</span><span class="o">))</span>
+</span></span><span class="line"><span class="cl">      <span class="o">.</span><span class="n">reduceByKey</span><span class="o">(</span><span class="k">_</span> <span class="o">+</span> <span class="k">_</span><span class="o">)</span>
+</span></span><span class="line"><span class="cl">      <span class="o">.</span><span class="n">print</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">    
+</span></span><span class="line"><span class="cl">    <span class="n">ssc</span><span class="o">.</span><span class="n">start</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">ssc</span><span class="o">.</span><span class="n">awaitTermination</span><span class="o">()</span>
+</span></span><span class="line"><span class="cl">  <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>启动时需要先启动数据计算程序，再启动数据发送程序。
 成功运行截图：
 <img src="/p/sparkstreaming%E4%BD%BF%E7%94%A8socket/3.png"
 	width="692"
@@ -477,111 +560,8 @@ object task12{
 	
 ></p>
 
-
-    <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        
-        document.querySelectorAll('pre code').forEach((block) => {
-            
-            block.parentElement.removeAttribute('data-highlighted');
-            hljs.highlightElement(block);
-        });
-
-        
-        hljs.addPlugin(new window.hljs.LineNumbers());
-
-        
-        var codeBlocks = document.querySelectorAll('pre');
-        codeBlocks.forEach(function(block, index) {
-            
-            var copyBtn = document.createElement('button');
-            copyBtn.className = 'copy-btn';
-            copyBtn.setAttribute('data-clipboard-action', 'copy');
-            copyBtn.textContent = 'Copy';
-
-            
-            block.id = 'code-block-' + index;
-            copyBtn.setAttribute('data-clipboard-target', '#' + block.id);
-
-            
-            block.insertBefore(copyBtn, block.firstChild);
-        });
-
-        
-        new ClipboardJS('.copy-btn');
-
-        
-        var clipboard = new ClipboardJS('.copy-btn');
-        clipboard.on('success', function(e) {
-            e.clearSelection();
-            e.trigger.textContent = 'Copied!';
-            setTimeout(function() {
-                e.trigger.textContent = 'Copy';
-            }, 2000);
-        });
-    });
-    </script>
-
-    <style>
-     
-    .copy-btn {
-        position: absolute;
-        top: 10px;
-        right: 10px;
-        background-color: #f3f3f3;  
-        color: #333;  
-        border: none;
-        padding: 8px 12px;
-        font-size: 0.9em;
-        cursor: pointer;
-        border-radius: 4px;
-        transition: all 0.3s ease;  
-        z-index: 10;  
-    }
-
-     
-    .copy-btn:hover {
-        background-color: #ddd;  
-    }
-
-     
-    .copy-btn:active {
-        transform: translateY(1px);  
-    }
-
-     
-    @media (prefers-color-scheme: dark) {
-        .copy-btn {
-            background-color: #444;  
-            color: #fff;  
-        }
-
-        .copy-btn:hover {
-            background-color: #555;  
-        }
-    }
-
-     
-    pre {
-        position: relative;
-        margin: 0;
-        overflow-x: auto;
-        border-radius: 6px;
-        line-height: 1.5;
-        padding: 16px;
-    }
-
-     
-
-     
-    @media (prefers-color-scheme: dark) {
-        pre {
-            background-color: #2d2d2d;  
-            color: #e0e0e0;  
-        }
-    }
-    </style>
 </section>
+
 
     <footer class="article-footer">
     
