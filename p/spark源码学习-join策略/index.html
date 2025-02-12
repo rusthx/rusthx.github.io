@@ -6,7 +6,7 @@
 
 <link rel='canonical' href='https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-join%E7%AD%96%E7%95%A5/'>
 
-<link rel="stylesheet" href="/scss/style.min.94f255611c80e6587a3521a5094a74fdbb62a824250cec2e8192093d7b505f2f.css"><meta property='og:title' content="Spark源码学习 Join策略">
+<link rel="stylesheet" href="/scss/style.min.57d2a86910760b72c5cf00f5c12e666a025617f78d3b87f19f8c65a883e1a5bf.css"><meta property='og:title' content="Spark源码学习 Join策略">
 <meta property='og:description' content="学习源码所用的Spark的版本是Spark3.3.2_2.12(Scala2.12写的Spark3.3.2)\n类别 Spark底层有五种join实现方式\n">
 <meta property='og:url' content='https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-join%E7%AD%96%E7%95%A5/'>
 <meta property='og:site_name' content='rustWood'>
@@ -21,11 +21,11 @@
 <script src="/highlight/languages/scala.min.js"></script>
 <script src="/highlight/languages/sql.min.js"></script>
 <script src="/highlight/languages/xml.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', (event) => {
-    hljs.highlightAll();
-  });
+    document.addEventListener('DOMContentLoaded', function() {
+        hljs.highlightAll();
+    });
 </script>        
         
         <link rel="stylesheet" href="/highlight/styles/github.css">
@@ -687,8 +687,109 @@ if (hint.isEmpty) {
 </code></pre>
 <p>RDD的join实际是匹配两个RDD,以join为例，遍历(iterator)两个RDD的分区，调用cogroup函数将两个RDD的相同分区联合成一个turple返回。</p>
 
-</section>
 
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightElement(block);
+        });
+
+        
+        hljs.initLineNumbersOnLoad();
+
+        
+        var codeBlocks = document.querySelectorAll('pre');
+        codeBlocks.forEach(function(block, index) {
+            
+            var copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-btn';
+            copyBtn.setAttribute('data-clipboard-action', 'copy');
+            copyBtn.textContent = 'Copy';
+
+            
+            block.id = 'code-block-' + index;
+            copyBtn.setAttribute('data-clipboard-target', '#' + block.id);
+
+            
+            block.insertBefore(copyBtn, block.firstChild);
+        });
+
+        
+        new ClipboardJS('.copy-btn');
+
+        
+        var clipboard = new ClipboardJS('.copy-btn');
+        clipboard.on('success', function(e) {
+            e.clearSelection();
+            e.trigger.textContent = 'Copied!';
+            setTimeout(function() {
+                e.trigger.textContent = 'Copy';
+            }, 2000);
+        });
+    });
+    </script>
+
+    <style>
+     
+    .copy-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #f3f3f3;  
+        color: #333;  
+        border: none;
+        padding: 8px 12px;
+        font-size: 0.9em;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: all 0.3s ease;  
+        z-index: 10;  
+    }
+
+     
+    .copy-btn:hover {
+        background-color: #ddd;  
+    }
+
+     
+    .copy-btn:active {
+        transform: translateY(1px);  
+    }
+
+     
+    @media (prefers-color-scheme: dark) {
+        .copy-btn {
+            background-color: #444;  
+            color: #fff;  
+        }
+
+        .copy-btn:hover {
+            background-color: #555;  
+        }
+    }
+
+     
+    pre {
+        position: relative;
+        margin: 0;
+        overflow-x: auto;
+        border-radius: 6px;
+        line-height: 1.5;
+        padding: 16px;
+    }
+
+     
+
+     
+    @media (prefers-color-scheme: dark) {
+        pre {
+            background-color: #2d2d2d;  
+            color: #e0e0e0;  
+        }
+    }
+    </style>
+</section>
 
     <footer class="article-footer">
     

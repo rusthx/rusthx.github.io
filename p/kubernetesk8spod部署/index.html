@@ -6,7 +6,7 @@
 
 <link rel='canonical' href='https://rusthx.github.io/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/'>
 
-<link rel="stylesheet" href="/scss/style.min.94f255611c80e6587a3521a5094a74fdbb62a824250cec2e8192093d7b505f2f.css"><meta property='og:title' content="Kubernetes（K8s）Pod部署">
+<link rel="stylesheet" href="/scss/style.min.57d2a86910760b72c5cf00f5c12e666a025617f78d3b87f19f8c65a883e1a5bf.css"><meta property='og:title' content="Kubernetes（K8s）Pod部署">
 <meta property='og:description' content="这里以老师的指导文档为例，实现一个基于flask和redis的web网页，用户每输入网址浏览一次就加一次浏览量并显示在网页上。\nDocker拉取镜像 拉取Python镜像\n">
 <meta property='og:url' content='https://rusthx.github.io/p/kubernetesk8spod%E9%83%A8%E7%BD%B2/'>
 <meta property='og:site_name' content='rustWood'>
@@ -21,11 +21,11 @@
 <script src="/highlight/languages/scala.min.js"></script>
 <script src="/highlight/languages/sql.min.js"></script>
 <script src="/highlight/languages/xml.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', (event) => {
-    hljs.highlightAll();
-  });
+    document.addEventListener('DOMContentLoaded', function() {
+        hljs.highlightAll();
+    });
 </script>        
         
         <link rel="stylesheet" href="/highlight/styles/github.css">
@@ -645,8 +645,109 @@ ip地址为node的地址（k8s集群中应用service的节点）
 	
 ></p>
 
-</section>
 
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightElement(block);
+        });
+
+        
+        hljs.initLineNumbersOnLoad();
+
+        
+        var codeBlocks = document.querySelectorAll('pre');
+        codeBlocks.forEach(function(block, index) {
+            
+            var copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-btn';
+            copyBtn.setAttribute('data-clipboard-action', 'copy');
+            copyBtn.textContent = 'Copy';
+
+            
+            block.id = 'code-block-' + index;
+            copyBtn.setAttribute('data-clipboard-target', '#' + block.id);
+
+            
+            block.insertBefore(copyBtn, block.firstChild);
+        });
+
+        
+        new ClipboardJS('.copy-btn');
+
+        
+        var clipboard = new ClipboardJS('.copy-btn');
+        clipboard.on('success', function(e) {
+            e.clearSelection();
+            e.trigger.textContent = 'Copied!';
+            setTimeout(function() {
+                e.trigger.textContent = 'Copy';
+            }, 2000);
+        });
+    });
+    </script>
+
+    <style>
+     
+    .copy-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #f3f3f3;  
+        color: #333;  
+        border: none;
+        padding: 8px 12px;
+        font-size: 0.9em;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: all 0.3s ease;  
+        z-index: 10;  
+    }
+
+     
+    .copy-btn:hover {
+        background-color: #ddd;  
+    }
+
+     
+    .copy-btn:active {
+        transform: translateY(1px);  
+    }
+
+     
+    @media (prefers-color-scheme: dark) {
+        .copy-btn {
+            background-color: #444;  
+            color: #fff;  
+        }
+
+        .copy-btn:hover {
+            background-color: #555;  
+        }
+    }
+
+     
+    pre {
+        position: relative;
+        margin: 0;
+        overflow-x: auto;
+        border-radius: 6px;
+        line-height: 1.5;
+        padding: 16px;
+    }
+
+     
+
+     
+    @media (prefers-color-scheme: dark) {
+        pre {
+            background-color: #2d2d2d;  
+            color: #e0e0e0;  
+        }
+    }
+    </style>
+</section>
 
     <footer class="article-footer">
     

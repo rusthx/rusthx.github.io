@@ -6,7 +6,7 @@
 
 <link rel='canonical' href='https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E7%B4%AF%E5%8A%A0%E5%99%A8/'>
 
-<link rel="stylesheet" href="/scss/style.min.94f255611c80e6587a3521a5094a74fdbb62a824250cec2e8192093d7b505f2f.css"><meta property='og:title' content="Spark源码学习 累加器">
+<link rel="stylesheet" href="/scss/style.min.57d2a86910760b72c5cf00f5c12e666a025617f78d3b87f19f8c65a883e1a5bf.css"><meta property='og:title' content="Spark源码学习 累加器">
 <meta property='og:description' content="简介 累加器用来把 Executor 端变量信息聚合到 Driver 端。在 Driver 程序中定义的变量，在 Executor 端的每个 Task 都会得到这个变量的一份新的副本，每个 task 更新这些副本的值后， 传回 Driver 端进行 merge。\n">
 <meta property='og:url' content='https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-%E7%B4%AF%E5%8A%A0%E5%99%A8/'>
 <meta property='og:site_name' content='rustWood'>
@@ -21,11 +21,11 @@
 <script src="/highlight/languages/scala.min.js"></script>
 <script src="/highlight/languages/sql.min.js"></script>
 <script src="/highlight/languages/xml.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', (event) => {
-    hljs.highlightAll();
-  });
+    document.addEventListener('DOMContentLoaded', function() {
+        hljs.highlightAll();
+    });
 </script>        
         
         <link rel="stylesheet" href="/highlight/styles/github.css">
@@ -706,8 +706,109 @@ class CollectionAccumulator[T] extends AccumulatorV2[T, java.util.List[T]] {
 <p><code>value</code>方法:返回累积列表的不可修改视图。</p>
 <p><code>setValue</code>方法:重置累加器并设置为新的元素列表。</p>
 
-</section>
 
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightElement(block);
+        });
+
+        
+        hljs.initLineNumbersOnLoad();
+
+        
+        var codeBlocks = document.querySelectorAll('pre');
+        codeBlocks.forEach(function(block, index) {
+            
+            var copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-btn';
+            copyBtn.setAttribute('data-clipboard-action', 'copy');
+            copyBtn.textContent = 'Copy';
+
+            
+            block.id = 'code-block-' + index;
+            copyBtn.setAttribute('data-clipboard-target', '#' + block.id);
+
+            
+            block.insertBefore(copyBtn, block.firstChild);
+        });
+
+        
+        new ClipboardJS('.copy-btn');
+
+        
+        var clipboard = new ClipboardJS('.copy-btn');
+        clipboard.on('success', function(e) {
+            e.clearSelection();
+            e.trigger.textContent = 'Copied!';
+            setTimeout(function() {
+                e.trigger.textContent = 'Copy';
+            }, 2000);
+        });
+    });
+    </script>
+
+    <style>
+     
+    .copy-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #f3f3f3;  
+        color: #333;  
+        border: none;
+        padding: 8px 12px;
+        font-size: 0.9em;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: all 0.3s ease;  
+        z-index: 10;  
+    }
+
+     
+    .copy-btn:hover {
+        background-color: #ddd;  
+    }
+
+     
+    .copy-btn:active {
+        transform: translateY(1px);  
+    }
+
+     
+    @media (prefers-color-scheme: dark) {
+        .copy-btn {
+            background-color: #444;  
+            color: #fff;  
+        }
+
+        .copy-btn:hover {
+            background-color: #555;  
+        }
+    }
+
+     
+    pre {
+        position: relative;
+        margin: 0;
+        overflow-x: auto;
+        border-radius: 6px;
+        line-height: 1.5;
+        padding: 16px;
+    }
+
+     
+
+     
+    @media (prefers-color-scheme: dark) {
+        pre {
+            background-color: #2d2d2d;  
+            color: #e0e0e0;  
+        }
+    }
+    </style>
+</section>
 
     <footer class="article-footer">
     

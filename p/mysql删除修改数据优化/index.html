@@ -6,7 +6,7 @@
 
 <link rel='canonical' href='https://rusthx.github.io/p/mysql%E5%88%A0%E9%99%A4%E4%BF%AE%E6%94%B9%E6%95%B0%E6%8D%AE%E4%BC%98%E5%8C%96/'>
 
-<link rel="stylesheet" href="/scss/style.min.94f255611c80e6587a3521a5094a74fdbb62a824250cec2e8192093d7b505f2f.css"><meta property='og:title' content="MySQL删除修改数据优化">
+<link rel="stylesheet" href="/scss/style.min.57d2a86910760b72c5cf00f5c12e666a025617f78d3b87f19f8c65a883e1a5bf.css"><meta property='og:title' content="MySQL删除修改数据优化">
 <meta property='og:description' content="删除 删除未在他表出现的数据 下面有一条效率较差的删除语句，主要功能是将t1表中id未出现在t2表的记录删除。效率差的原因是in中用了子查询，导致删除语句不会走索引，从而导致锁全表，继而导致删除效率差。\n">
 <meta property='og:url' content='https://rusthx.github.io/p/mysql%E5%88%A0%E9%99%A4%E4%BF%AE%E6%94%B9%E6%95%B0%E6%8D%AE%E4%BC%98%E5%8C%96/'>
 <meta property='og:site_name' content='rustWood'>
@@ -21,11 +21,11 @@
 <script src="/highlight/languages/scala.min.js"></script>
 <script src="/highlight/languages/sql.min.js"></script>
 <script src="/highlight/languages/xml.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', (event) => {
-    hljs.highlightAll();
-  });
+    document.addEventListener('DOMContentLoaded', function() {
+        hljs.highlightAll();
+    });
 </script>        
         
         <link rel="stylesheet" href="/highlight/styles/github.css">
@@ -430,8 +430,109 @@
   nothing
 </code></pre>
 
-</section>
 
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightElement(block);
+        });
+
+        
+        hljs.initLineNumbersOnLoad();
+
+        
+        var codeBlocks = document.querySelectorAll('pre');
+        codeBlocks.forEach(function(block, index) {
+            
+            var copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-btn';
+            copyBtn.setAttribute('data-clipboard-action', 'copy');
+            copyBtn.textContent = 'Copy';
+
+            
+            block.id = 'code-block-' + index;
+            copyBtn.setAttribute('data-clipboard-target', '#' + block.id);
+
+            
+            block.insertBefore(copyBtn, block.firstChild);
+        });
+
+        
+        new ClipboardJS('.copy-btn');
+
+        
+        var clipboard = new ClipboardJS('.copy-btn');
+        clipboard.on('success', function(e) {
+            e.clearSelection();
+            e.trigger.textContent = 'Copied!';
+            setTimeout(function() {
+                e.trigger.textContent = 'Copy';
+            }, 2000);
+        });
+    });
+    </script>
+
+    <style>
+     
+    .copy-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #f3f3f3;  
+        color: #333;  
+        border: none;
+        padding: 8px 12px;
+        font-size: 0.9em;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: all 0.3s ease;  
+        z-index: 10;  
+    }
+
+     
+    .copy-btn:hover {
+        background-color: #ddd;  
+    }
+
+     
+    .copy-btn:active {
+        transform: translateY(1px);  
+    }
+
+     
+    @media (prefers-color-scheme: dark) {
+        .copy-btn {
+            background-color: #444;  
+            color: #fff;  
+        }
+
+        .copy-btn:hover {
+            background-color: #555;  
+        }
+    }
+
+     
+    pre {
+        position: relative;
+        margin: 0;
+        overflow-x: auto;
+        border-radius: 6px;
+        line-height: 1.5;
+        padding: 16px;
+    }
+
+     
+
+     
+    @media (prefers-color-scheme: dark) {
+        pre {
+            background-color: #2d2d2d;  
+            color: #e0e0e0;  
+        }
+    }
+    </style>
+</section>
 
     <footer class="article-footer">
     

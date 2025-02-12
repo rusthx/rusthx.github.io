@@ -6,7 +6,7 @@
 
 <link rel='canonical' href='https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/'>
 
-<link rel="stylesheet" href="/scss/style.min.94f255611c80e6587a3521a5094a74fdbb62a824250cec2e8192093d7b505f2f.css"><meta property='og:title' content="VMvare安装配置Ubuntu虚拟机">
+<link rel="stylesheet" href="/scss/style.min.57d2a86910760b72c5cf00f5c12e666a025617f78d3b87f19f8c65a883e1a5bf.css"><meta property='og:title' content="VMvare安装配置Ubuntu虚拟机">
 <meta property='og:description' content="安装虚拟机 下载vmvare https://www.vmware.com/products/desktop-hypervisor.html 现在的vmvare安装变得麻烦起来了，还要登陆网站。这里我用的是我之前下载的vmvare16pro。如果官网下载不太容易也可以直接搜索vmvare16安装，浏览器上应该还有留存的资源。\n">
 <meta property='og:url' content='https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/'>
 <meta property='og:site_name' content='rustWood'>
@@ -21,11 +21,11 @@
 <script src="/highlight/languages/scala.min.js"></script>
 <script src="/highlight/languages/sql.min.js"></script>
 <script src="/highlight/languages/xml.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', (event) => {
-    hljs.highlightAll();
-  });
+    document.addEventListener('DOMContentLoaded', function() {
+        hljs.highlightAll();
+    });
 </script>        
         
         <link rel="stylesheet" href="/highlight/styles/github.css">
@@ -1080,8 +1080,109 @@ java -version  #查看安装是否成功
 	
 ></p>
 
-</section>
 
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightElement(block);
+        });
+
+        
+        hljs.initLineNumbersOnLoad();
+
+        
+        var codeBlocks = document.querySelectorAll('pre');
+        codeBlocks.forEach(function(block, index) {
+            
+            var copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-btn';
+            copyBtn.setAttribute('data-clipboard-action', 'copy');
+            copyBtn.textContent = 'Copy';
+
+            
+            block.id = 'code-block-' + index;
+            copyBtn.setAttribute('data-clipboard-target', '#' + block.id);
+
+            
+            block.insertBefore(copyBtn, block.firstChild);
+        });
+
+        
+        new ClipboardJS('.copy-btn');
+
+        
+        var clipboard = new ClipboardJS('.copy-btn');
+        clipboard.on('success', function(e) {
+            e.clearSelection();
+            e.trigger.textContent = 'Copied!';
+            setTimeout(function() {
+                e.trigger.textContent = 'Copy';
+            }, 2000);
+        });
+    });
+    </script>
+
+    <style>
+     
+    .copy-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #f3f3f3;  
+        color: #333;  
+        border: none;
+        padding: 8px 12px;
+        font-size: 0.9em;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: all 0.3s ease;  
+        z-index: 10;  
+    }
+
+     
+    .copy-btn:hover {
+        background-color: #ddd;  
+    }
+
+     
+    .copy-btn:active {
+        transform: translateY(1px);  
+    }
+
+     
+    @media (prefers-color-scheme: dark) {
+        .copy-btn {
+            background-color: #444;  
+            color: #fff;  
+        }
+
+        .copy-btn:hover {
+            background-color: #555;  
+        }
+    }
+
+     
+    pre {
+        position: relative;
+        margin: 0;
+        overflow-x: auto;
+        border-radius: 6px;
+        line-height: 1.5;
+        padding: 16px;
+    }
+
+     
+
+     
+    @media (prefers-color-scheme: dark) {
+        pre {
+            background-color: #2d2d2d;  
+            color: #e0e0e0;  
+        }
+    }
+    </style>
+</section>
 
     <footer class="article-footer">
     

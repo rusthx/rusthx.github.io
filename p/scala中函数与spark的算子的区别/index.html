@@ -6,7 +6,7 @@
 
 <link rel='canonical' href='https://rusthx.github.io/p/scala%E4%B8%AD%E5%87%BD%E6%95%B0%E4%B8%8Espark%E7%9A%84%E7%AE%97%E5%AD%90%E7%9A%84%E5%8C%BA%E5%88%AB/'>
 
-<link rel="stylesheet" href="/scss/style.min.94f255611c80e6587a3521a5094a74fdbb62a824250cec2e8192093d7b505f2f.css"><meta property='og:title' content="Scala中函数与Spark的算子的区别">
+<link rel="stylesheet" href="/scss/style.min.57d2a86910760b72c5cf00f5c12e666a025617f78d3b87f19f8c65a883e1a5bf.css"><meta property='og:title' content="Scala中函数与Spark的算子的区别">
 <meta property='og:description' content="Scala中的部分函数和RDD中的部分算子名字一样，功能一样，用起来也差不多。但是为什么一个叫函数，一个却要叫算子，函数和算子的区别在哪，这让我有些好奇。于是查看了源码，对函数和算子进行了比较。下面以map为例。\n">
 <meta property='og:url' content='https://rusthx.github.io/p/scala%E4%B8%AD%E5%87%BD%E6%95%B0%E4%B8%8Espark%E7%9A%84%E7%AE%97%E5%AD%90%E7%9A%84%E5%8C%BA%E5%88%AB/'>
 <meta property='og:site_name' content='rustWood'>
@@ -21,11 +21,11 @@
 <script src="/highlight/languages/scala.min.js"></script>
 <script src="/highlight/languages/sql.min.js"></script>
 <script src="/highlight/languages/xml.min.js"></script>
-
+<script src="https://cdn.jsdelivr.net/npm/clipboard@2/dist/clipboard.min.js"></script>
 <script>
-  document.addEventListener('DOMContentLoaded', (event) => {
-    hljs.highlightAll();
-  });
+    document.addEventListener('DOMContentLoaded', function() {
+        hljs.highlightAll();
+    });
 </script>        
         
         <link rel="stylesheet" href="/highlight/styles/github.css">
@@ -344,14 +344,16 @@
 </blockquote>
 <p><strong>注意</strong>：<code>List</code>属于<code>scala.collection.immutable</code>的子类，而<code>Map、Seq、Set</code>属于<code>scala.collection</code>的子类
 <code>map</code>函数最底层的源码应该是<code>scala.collection</code>里的如下代码
-<img src="https://img2024.cnblogs.com/blog/3289663/202404/3289663-20240414125942145-277602576.png"
-	
-	
-	
+<img src="/p/scala%E4%B8%AD%E5%87%BD%E6%95%B0%E4%B8%8Espark%E7%9A%84%E7%AE%97%E5%AD%90%E7%9A%84%E5%8C%BA%E5%88%AB/1.png"
+	width="958"
+	height="855"
+	srcset="/p/scala%E4%B8%AD%E5%87%BD%E6%95%B0%E4%B8%8Espark%E7%9A%84%E7%AE%97%E5%AD%90%E7%9A%84%E5%8C%BA%E5%88%AB/1_hu9843272686499372415.png 480w, /p/scala%E4%B8%AD%E5%87%BD%E6%95%B0%E4%B8%8Espark%E7%9A%84%E7%AE%97%E5%AD%90%E7%9A%84%E5%8C%BA%E5%88%AB/1_hu11302242169032022826.png 1024w"
 	loading="lazy"
 	
-		alt="image.png"
 	
+		class="gallery-image" 
+		data-flex-grow="112"
+		data-flex-basis="268px"
 	
 >
 具体实现以<code>List</code>中的<code>map</code>举例
@@ -398,8 +400,109 @@ Spark里的<code>map</code>是对RDD进行操作的算子，实际使用了可�
 行动算子需要进行<code>shuffle</code>操作，在<code>shuffle</code>时需要按键分区，对每个分区进行操作后输出。Scala中并没有<code>Shuffle</code>操作，所以行动算子没有同名函数。
 而转换算子是生成RDD或者将RDD转换成另外的RDD，Scala本身也有将<code>collection</code>转换为<code>collection</code>的函数，并且转换算子本身就调用了Scala的函数，所以有同名的也正常。</p>
 
-</section>
 
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        
+        document.querySelectorAll('pre code').forEach((block) => {
+            hljs.highlightElement(block);
+        });
+
+        
+        hljs.initLineNumbersOnLoad();
+
+        
+        var codeBlocks = document.querySelectorAll('pre');
+        codeBlocks.forEach(function(block, index) {
+            
+            var copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-btn';
+            copyBtn.setAttribute('data-clipboard-action', 'copy');
+            copyBtn.textContent = 'Copy';
+
+            
+            block.id = 'code-block-' + index;
+            copyBtn.setAttribute('data-clipboard-target', '#' + block.id);
+
+            
+            block.insertBefore(copyBtn, block.firstChild);
+        });
+
+        
+        new ClipboardJS('.copy-btn');
+
+        
+        var clipboard = new ClipboardJS('.copy-btn');
+        clipboard.on('success', function(e) {
+            e.clearSelection();
+            e.trigger.textContent = 'Copied!';
+            setTimeout(function() {
+                e.trigger.textContent = 'Copy';
+            }, 2000);
+        });
+    });
+    </script>
+
+    <style>
+     
+    .copy-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: #f3f3f3;  
+        color: #333;  
+        border: none;
+        padding: 8px 12px;
+        font-size: 0.9em;
+        cursor: pointer;
+        border-radius: 4px;
+        transition: all 0.3s ease;  
+        z-index: 10;  
+    }
+
+     
+    .copy-btn:hover {
+        background-color: #ddd;  
+    }
+
+     
+    .copy-btn:active {
+        transform: translateY(1px);  
+    }
+
+     
+    @media (prefers-color-scheme: dark) {
+        .copy-btn {
+            background-color: #444;  
+            color: #fff;  
+        }
+
+        .copy-btn:hover {
+            background-color: #555;  
+        }
+    }
+
+     
+    pre {
+        position: relative;
+        margin: 0;
+        overflow-x: auto;
+        border-radius: 6px;
+        line-height: 1.5;
+        padding: 16px;
+    }
+
+     
+
+     
+    @media (prefers-color-scheme: dark) {
+        pre {
+            background-color: #2d2d2d;  
+            color: #e0e0e0;  
+        }
+    }
+    </style>
+</section>
 
     <footer class="article-footer">
     

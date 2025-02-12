@@ -348,14 +348,16 @@ df.write.mode(SaveMode.Overwrite).jdbc(jdbcUrl,&amp;quot;company&amp;quot;,conne
 &lt;/blockquote&gt;
 &lt;p&gt;&lt;strong&gt;注意&lt;/strong&gt;：&lt;code&gt;List&lt;/code&gt;属于&lt;code&gt;scala.collection.immutable&lt;/code&gt;的子类，而&lt;code&gt;Map、Seq、Set&lt;/code&gt;属于&lt;code&gt;scala.collection&lt;/code&gt;的子类
 &lt;code&gt;map&lt;/code&gt;函数最底层的源码应该是&lt;code&gt;scala.collection&lt;/code&gt;里的如下代码
-&lt;img src=&#34;https://img2024.cnblogs.com/blog/3289663/202404/3289663-20240414125942145-277602576.png&#34;
-	
-	
-	
+&lt;img src=&#34;https://rusthx.github.io/p/scala%E4%B8%AD%E5%87%BD%E6%95%B0%E4%B8%8Espark%E7%9A%84%E7%AE%97%E5%AD%90%E7%9A%84%E5%8C%BA%E5%88%AB/1.png&#34;
+	width=&#34;958&#34;
+	height=&#34;855&#34;
+	srcset=&#34;https://rusthx.github.io/p/scala%E4%B8%AD%E5%87%BD%E6%95%B0%E4%B8%8Espark%E7%9A%84%E7%AE%97%E5%AD%90%E7%9A%84%E5%8C%BA%E5%88%AB/1_hu9843272686499372415.png 480w, https://rusthx.github.io/p/scala%E4%B8%AD%E5%87%BD%E6%95%B0%E4%B8%8Espark%E7%9A%84%E7%AE%97%E5%AD%90%E7%9A%84%E5%8C%BA%E5%88%AB/1_hu11302242169032022826.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
-		alt=&#34;image.png&#34;
 	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;112&#34;
+		data-flex-basis=&#34;268px&#34;
 	
 &gt;
 具体实现以&lt;code&gt;List&lt;/code&gt;中的&lt;code&gt;map&lt;/code&gt;举例
