@@ -12,17 +12,16 @@
 <meta property='og:site_name' content='rustWood'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='MySQL' /><meta property='article:tag' content='SQL' /><meta property='article:published_time' content='2024-09-12T22:15:33&#43;08:00'/><meta property='article:modified_time' content='2024-09-12T22:15:33&#43;08:00'/>
 <meta name="twitter:title" content="MySQL删除修改数据优化">
-<meta name="twitter:description" content="删除 删除未在他表出现的数据 下面有一条效率较差的删除语句，主要功能是将t1表中id未出现在t2表的记录删除。效率差的原因是in中用了子查询，导致删除语句不会走索引，从而导致锁全表，继而导致删除效率差。\n">
-<link rel="stylesheet" href="/highlight/styles/github.min.css">
+<meta name="twitter:description" content="删除 删除未在他表出现的数据 下面有一条效率较差的删除语句，主要功能是将t1表中id未出现在t2表的记录删除。效率差的原因是in中用了子查询，导致删除语句不会走索引，从而导致锁全表，继而导致删除效率差。\n"><link rel="stylesheet" href="/highlight/styles/github.min.css">
 <script src="/highlight/highlight.min.js"></script>
 <script src="/highlight/languages/java.min.js"></script>
 <script src="/highlight/languages/python.min.js"></script>
 <script src="/highlight/languages/bash.min.js"></script>
 <script src="/highlight/languages/shell.min.js"></script>
 <script src="/highlight/languages/scala.min.js"></script>
-<script src="/highlight/languages/sql.js"></script>
-<script src="/highlight/languages/xml.js"></script>
-<script src="/highlight/languages/yaml.js"></script>
+<script src="/highlight/languages/sql.min.js"></script>
+<script src="/highlight/languages/xml.min.js"></script>
+
 <script>
   document.addEventListener('DOMContentLoaded', (event) => {
     hljs.highlightAll();

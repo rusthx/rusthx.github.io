@@ -12,17 +12,16 @@
 <meta property='og:site_name' content='rustWood'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Spark' /><meta property='article:published_time' content='2024-11-09T20:39:50&#43;08:00'/><meta property='article:modified_time' content='2024-11-09T20:39:50&#43;08:00'/>
 <meta name="twitter:title" content="Spark源码学习 累加器">
-<meta name="twitter:description" content="简介 累加器用来把 Executor 端变量信息聚合到 Driver 端。在 Driver 程序中定义的变量，在 Executor 端的每个 Task 都会得到这个变量的一份新的副本，每个 task 更新这些副本的值后， 传回 Driver 端进行 merge。\n">
-<link rel="stylesheet" href="/highlight/styles/github.min.css">
+<meta name="twitter:description" content="简介 累加器用来把 Executor 端变量信息聚合到 Driver 端。在 Driver 程序中定义的变量，在 Executor 端的每个 Task 都会得到这个变量的一份新的副本，每个 task 更新这些副本的值后， 传回 Driver 端进行 merge。\n"><link rel="stylesheet" href="/highlight/styles/github.min.css">
 <script src="/highlight/highlight.min.js"></script>
 <script src="/highlight/languages/java.min.js"></script>
 <script src="/highlight/languages/python.min.js"></script>
 <script src="/highlight/languages/bash.min.js"></script>
 <script src="/highlight/languages/shell.min.js"></script>
 <script src="/highlight/languages/scala.min.js"></script>
-<script src="/highlight/languages/sql.js"></script>
-<script src="/highlight/languages/xml.js"></script>
-<script src="/highlight/languages/yaml.js"></script>
+<script src="/highlight/languages/sql.min.js"></script>
+<script src="/highlight/languages/xml.min.js"></script>
+
 <script>
   document.addEventListener('DOMContentLoaded', (event) => {
     hljs.highlightAll();

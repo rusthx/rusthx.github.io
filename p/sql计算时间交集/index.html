@@ -12,17 +12,16 @@
 <meta property='og:site_name' content='rustWood'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='SQL' /><meta property='article:tag' content='MySQL' /><meta property='article:tag' content='POstgreSQL' /><meta property='article:published_time' content='2024-09-08T10:15:20&#43;08:00'/><meta property='article:modified_time' content='2024-09-08T10:15:20&#43;08:00'/>
 <meta name="twitter:title" content="SQL计算时间交集">
-<meta name="twitter:description" content=" 参考资料：《SQL进阶》P106 (鹿书)\n关系（表）结构 现有一张住宿表(stay_people)如下\nguest(入住客人) start_date(入住时间) end_date(退房时间) 阿良良木历 2006-10-26 2006-10-27 阿良良木月火 2006-10-28 2006-10-31 阿良良木火怜 2006-10-31 2006-11-01 忍野忍 2006-10-29 2006-11-01 忍野扇 2006-10-28 2006-11-02 战场原黑仪 2006-10-28 2006-10-30 千石抚子 2006-10-30 2006-11-02 问题：判断这些客人住店时间存在重叠，如果存在重叠，则展示客人的名字、入住时间和退房时间\n">
-<link rel="stylesheet" href="/highlight/styles/github.min.css">
+<meta name="twitter:description" content=" 参考资料：《SQL进阶》P106 (鹿书)\n关系（表）结构 现有一张住宿表(stay_people)如下\nguest(入住客人) start_date(入住时间) end_date(退房时间) 阿良良木历 2006-10-26 2006-10-27 阿良良木月火 2006-10-28 2006-10-31 阿良良木火怜 2006-10-31 2006-11-01 忍野忍 2006-10-29 2006-11-01 忍野扇 2006-10-28 2006-11-02 战场原黑仪 2006-10-28 2006-10-30 千石抚子 2006-10-30 2006-11-02 问题：判断这些客人住店时间存在重叠，如果存在重叠，则展示客人的名字、入住时间和退房时间\n"><link rel="stylesheet" href="/highlight/styles/github.min.css">
 <script src="/highlight/highlight.min.js"></script>
 <script src="/highlight/languages/java.min.js"></script>
 <script src="/highlight/languages/python.min.js"></script>
 <script src="/highlight/languages/bash.min.js"></script>
 <script src="/highlight/languages/shell.min.js"></script>
 <script src="/highlight/languages/scala.min.js"></script>
-<script src="/highlight/languages/sql.js"></script>
-<script src="/highlight/languages/xml.js"></script>
-<script src="/highlight/languages/yaml.js"></script>
+<script src="/highlight/languages/sql.min.js"></script>
+<script src="/highlight/languages/xml.min.js"></script>
+
 <script>
   document.addEventListener('DOMContentLoaded', (event) => {
     hljs.highlightAll();
