@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
-    <head>
-	<meta name="generator" content="Hugo 0.139.2"><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="演示说明">
-<title>Pager 3 - rustWood</title>
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="Android studio每次新建项目都要下载gradle，挂了代理也老是下载失败。更换阿里的镜像源也一直报错。直到接触到了腾子的大手……\n修改图中的两个文件。/gradle/wrapper.gradle-wrapper.properties、settings.gradle.kts\n">
+<title>Andorid Studio2024.1配置腾讯镜像源</title>
 
-<link rel='canonical' href='https://rusthx.github.io/'>
+<link rel='canonical' href='https://rusthx.github.io/p/andorid-studio2024.1%E9%85%8D%E7%BD%AE%E8%85%BE%E8%AE%AF%E9%95%9C%E5%83%8F%E6%BA%90/'>
 
-<link rel="stylesheet" href="/scss/style.min.f88e0ff8bfb43bef18eec2559d462f612719fb375decfc40b3869dca992f1fa4.css"><meta property='og:title' content="rustWood">
-<meta property='og:description' content="演示说明">
-<meta property='og:url' content='https://rusthx.github.io/'>
+<link rel="stylesheet" href="/scss/style.min.f88e0ff8bfb43bef18eec2559d462f612719fb375decfc40b3869dca992f1fa4.css"><meta property='og:title' content="Andorid Studio2024.1配置腾讯镜像源">
+<meta property='og:description' content="Android studio每次新建项目都要下载gradle，挂了代理也老是下载失败。更换阿里的镜像源也一直报错。直到接触到了腾子的大手……\n修改图中的两个文件。/gradle/wrapper.gradle-wrapper.properties、settings.gradle.kts\n">
+<meta property='og:url' content='https://rusthx.github.io/p/andorid-studio2024.1%E9%85%8D%E7%BD%AE%E8%85%BE%E8%AE%AF%E9%95%9C%E5%83%8F%E6%BA%90/'>
 <meta property='og:site_name' content='rustWood'>
-<meta property='og:type' content='website'><meta property='og:updated_time' content=' 2025-03-22T16:32:44&#43;08:00 '/>
-<meta name="twitter:title" content="rustWood">
-<meta name="twitter:description" content="演示说明"><link rel="alternate" type="application/rss&#43;xml" href="https://rusthx.github.io/index.xml">        
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Android' /><meta property='article:published_time' content='2025-03-22T16:32:44&#43;08:00'/><meta property='article:modified_time' content='2025-03-22T16:32:44&#43;08:00'/>
+<meta name="twitter:title" content="Andorid Studio2024.1配置腾讯镜像源">
+<meta name="twitter:description" content="Android studio每次新建项目都要下载gradle，挂了代理也老是下载失败。更换阿里的镜像源也一直报错。直到接触到了腾子的大手……\n修改图中的两个文件。/gradle/wrapper.gradle-wrapper.properties、settings.gradle.kts\n">        
     </head>
-    <body class="">
+    <body class="
+    article-page
+    ">
     <script>
         (function() {
             const colorSchemeKey = 'StackColorScheme';
@@ -109,7 +110,7 @@
         
         
         
-        <li  class='current' >
+        <li >
             <a href='/' >
                 
                 
@@ -234,141 +235,10 @@
     </ol>
 </aside>
 
-    <aside class="sidebar right-sidebar sticky">
-        
-            
-                <form action="/search/" class="search-form widget" >
-        <p>
-            <label>搜索</label>
-            <input name="keyword" required placeholder="输入关键词..." />
-        
-            <button title="搜索">
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <circle cx="10" cy="10" r="7" />
-  <line x1="21" y1="21" x2="15" y2="15" />
-</svg>
-
-
-
-            </button>
-        </p>
-    </form>
-            
-        
-            
-                <section class="widget archives">
-        <div class="widget-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-infinity" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M9.828 9.172a4 4 0 1 0 0 5.656 a10 10 0 0 0 2.172 -2.828a10 10 0 0 1 2.172 -2.828 a4 4 0 1 1 0 5.656a10 10 0 0 1 -2.172 -2.828a10 10 0 0 0 -2.172 -2.828" />
-</svg>
-
-
-
-        </div>
-        <h2 class="widget-title section-title">归档</h2>
-
-        
-        
-        
-        
-        
-        <div class="widget-archive--list">
-            <div class="archives-year">
-                    <a href="/archives/#2025">
-                        
-                            <span class="year">2025</span>
-                            <span class="count">4</span>
-                        
-                    </a> 
-                </div>
-            <div class="archives-year">
-                    <a href="/archives/#2024">
-                        
-                            <span class="year">2024</span>
-                            <span class="count">30</span>
-                        
-                    </a> 
-                </div>
-            
-        </div>
-    </section>
-            
-        
-            
-                <section class="widget tagCloud">
-    <div class="widget-icon">
-        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-tag" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11 3L20 12a1.5 1.5 0 0 1 0 2L14 20a1.5 1.5 0 0 1 -2 0L3 11v-4a4 4 0 0 1 4 -4h4" />
-  <circle cx="9" cy="9" r="2" />
-</svg>
-
-
-
-    </div>
-    <h2 class="widget-title section-title">标签云</h2>
-
-    <div class="tagCloud-tags">
-        
-            <a href="/tags/spark/" class="font_size_9">
-                Spark
-            </a>
-        
-            <a href="/tags/mysql/" class="font_size_8">
-                MySQL
-            </a>
-        
-            <a href="/tags/ubuntu/" class="font_size_8">
-                Ubuntu
-            </a>
-        
-            <a href="/tags/hive/" class="font_size_4">
-                Hive
-            </a>
-        
-            <a href="/tags/vmvare/" class="font_size_4">
-                VMvare
-            </a>
-        
-            <a href="/tags/kubernetes/" class="font_size_3">
-                Kubernetes
-            </a>
-        
-            <a href="/tags/sql/" class="font_size_3">
-                SQL
-            </a>
-        
-            <a href="/tags/docker/" class="font_size_2">
-                Docker
-            </a>
-        
-            <a href="/tags/java/" class="font_size_2">
-                Java
-            </a>
-        
-            <a href="/tags/scala/" class="font_size_2">
-                Scala
-            </a>
-        
-    </div>
-</section>
-            
-        
-    </aside>
-
+    
 
             <main class="main full-width">
-    
-    
-    
-    
-
-    <section class="article-list">
-        
-            
-<article class="">
+    <article class="main-article">
     <header class="article-header">
 
     <div class="article-details">
@@ -376,7 +246,7 @@
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/p/spark%E9%9D%A2%E7%BB%8F/">Spark面经</a>
+            <a href="/p/andorid-studio2024.1%E9%85%8D%E7%BD%AE%E8%85%BE%E8%AE%AF%E9%95%9C%E5%83%8F%E6%BA%90/">Andorid Studio2024.1配置腾讯镜像源</a>
         </h2>
     
         
@@ -398,7 +268,7 @@
   <path d="M3 11h16" />
   <path d="M18 16.496v1.504l1 1" />
 </svg>
-                <time class="article-time--published">2024-10-27</time>
+                <time class="article-time--published">2025-03-22</time>
             </div>
         
 
@@ -410,191 +280,161 @@
 </div>
 
 </header>
-</article>
-        
-            
-<article class="">
-    <header class="article-header">
 
-    <div class="article-details">
-    
-
-    <div class="article-title-wrapper">
-        <h2 class="article-title">
-            <a href="/p/java%E9%9D%A2%E7%BB%8F%E5%A4%87%E5%BF%98%E5%BD%95/">Java面经备忘录</a>
-        </h2>
-    
-        
-    </div>
-
+    <section class="article-content">
     
     
-    
-    
-    <footer class="article-time">
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
-  <circle cx="18" cy="18" r="4" />
-  <path d="M15 3v4" />
-  <path d="M7 3v4" />
-  <path d="M3 11h16" />
-  <path d="M18 16.496v1.504l1 1" />
-</svg>
-                <time class="article-time--published">2024-10-25</time>
-            </div>
-        
-
-        
-    </footer>
-    
-
-    
+    <p>Android studio每次新建项目都要下载gradle，挂了代理也老是下载失败。更换阿里的镜像源也一直报错。直到接触到了腾子的大手……</p>
+<p><img src="/p/andorid-studio2024.1%E9%85%8D%E7%BD%AE%E8%85%BE%E8%AE%AF%E9%95%9C%E5%83%8F%E6%BA%90/1.png"
+	width="1920"
+	height="1030"
+	srcset="/p/andorid-studio2024.1%E9%85%8D%E7%BD%AE%E8%85%BE%E8%AE%AF%E9%95%9C%E5%83%8F%E6%BA%90/1_hu6203909744067075219.png 480w, /p/andorid-studio2024.1%E9%85%8D%E7%BD%AE%E8%85%BE%E8%AE%AF%E9%95%9C%E5%83%8F%E6%BA%90/1_hu5868986759041182198.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="186"
+		data-flex-basis="447px"
+	
+>
+修改图中的两个文件。<code>/gradle/wrapper.gradle-wrapper.properties</code>、<code>settings.gradle.kts</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-properties" data-lang="properties"><span class="line"><span class="cl"><span class="c1">#Sat Mar 22 15:05:59 CST 2025</span>
+</span></span><span class="line"><span class="cl"><span class="na">distributionBase</span><span class="o">=</span><span class="s">GRADLE_USER_HOME</span>
+</span></span><span class="line"><span class="cl"><span class="na">distributionPath</span><span class="o">=</span><span class="s">wrapper/dists</span>
+</span></span><span class="line"><span class="cl"><span class="na">distributionUrl</span><span class="o">=</span><span class="s">https://mirrors.cloud.tencent.com/gradle/gradle-8.7-bin.zip</span>
+</span></span><span class="line"><span class="cl"><span class="na">zipStoreBase</span><span class="o">=</span><span class="s">GRADLE_USER_HOME</span>
+</span></span><span class="line"><span class="cl"><span class="na">zipStorePath</span><span class="o">=</span><span class="s">wrapper/dists</span>
+</span></span></code></pre></td></tr></table>
 </div>
-
-</header>
-</article>
-        
-            
-<article class="">
-    <header class="article-header">
-
-    <div class="article-details">
-    
-
-    <div class="article-title-wrapper">
-        <h2 class="article-title">
-            <a href="/p/hive%E5%90%AF%E5%8A%A8%E5%8F%82%E6%95%B0/">Hive启动参数</a>
-        </h2>
-    
-        
-    </div>
-
-    
-    
-    
-    
-    <footer class="article-time">
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
-  <circle cx="18" cy="18" r="4" />
-  <path d="M15 3v4" />
-  <path d="M7 3v4" />
-  <path d="M3 11h16" />
-  <path d="M18 16.496v1.504l1 1" />
-</svg>
-                <time class="article-time--published">2024-10-25</time>
-            </div>
-        
-
-        
-    </footer>
-    
-
-    
+</div><p><img src="/p/andorid-studio2024.1%E9%85%8D%E7%BD%AE%E8%85%BE%E8%AE%AF%E9%95%9C%E5%83%8F%E6%BA%90/2.png"
+	width="1920"
+	height="1030"
+	srcset="/p/andorid-studio2024.1%E9%85%8D%E7%BD%AE%E8%85%BE%E8%AE%AF%E9%95%9C%E5%83%8F%E6%BA%90/2_hu11964642512206797835.png 480w, /p/andorid-studio2024.1%E9%85%8D%E7%BD%AE%E8%85%BE%E8%AE%AF%E9%95%9C%E5%83%8F%E6%BA%90/2_hu7658741020090816691.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="186"
+		data-flex-basis="447px"
+	
+>
+修改url那一项，注意gradle要改成自己的项目所用版本。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">pluginManagement {
+</span></span><span class="line"><span class="cl">    repositories {
+</span></span><span class="line"><span class="cl">        maven { url = uri(&#34;https://mirrors.cloud.tencent.com/nexus/repository/maven-public/&#34;) }
+</span></span><span class="line"><span class="cl">        mavenCentral()
+</span></span><span class="line"><span class="cl">        gradlePluginPortal()
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">dependencyResolutionManagement {
+</span></span><span class="line"><span class="cl">    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+</span></span><span class="line"><span class="cl">    repositories {
+</span></span><span class="line"><span class="cl">        google()
+</span></span><span class="line"><span class="cl">        mavenCentral()
+</span></span><span class="line"><span class="cl">    }
+</span></span><span class="line"><span class="cl">}
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rootProject.name = &#34;AcivateTry&#34;
+</span></span><span class="line"><span class="cl">include(&#34;:app&#34;)
+</span></span></code></pre></td></tr></table>
 </div>
+</div><p><img src="/p/andorid-studio2024.1%E9%85%8D%E7%BD%AE%E8%85%BE%E8%AE%AF%E9%95%9C%E5%83%8F%E6%BA%90/3.png"
+	width="1920"
+	height="1030"
+	srcset="/p/andorid-studio2024.1%E9%85%8D%E7%BD%AE%E8%85%BE%E8%AE%AF%E9%95%9C%E5%83%8F%E6%BA%90/3_hu4233601299658444623.png 480w, /p/andorid-studio2024.1%E9%85%8D%E7%BD%AE%E8%85%BE%E8%AE%AF%E9%95%9C%E5%83%8F%E6%BA%90/3_hu10162300196403435335.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="186"
+		data-flex-basis="447px"
+	
+>
+修改图中的镜像仓库链接部分。</p>
 
-</header>
-</article>
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
         
-            
-<article class="">
-    <header class="article-header">
-
-    <div class="article-details">
-    
-
-    <div class="article-title-wrapper">
-        <h2 class="article-title">
-            <a href="/p/%E6%95%B0%E6%8D%AE%E5%BA%93%E6%AD%BB%E9%94%81/">数据库死锁</a>
-        </h2>
-    
-        
-    </div>
-
-    
-    
-    
-    
-    <footer class="article-time">
-        
-            <div>
-                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
-  <path stroke="none" d="M0 0h24v24H0z"/>
-  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
-  <circle cx="18" cy="18" r="4" />
-  <path d="M15 3v4" />
-  <path d="M7 3v4" />
-  <path d="M3 11h16" />
-  <path d="M18 16.496v1.504l1 1" />
-</svg>
-                <time class="article-time--published">2024-10-13</time>
-            </div>
-        
-
-        
-    </footer>
-    
-
-    
-</div>
-
-</header>
-</article>
+            <a href="/tags/android/">Android</a>
         
     </section>
-    <nav class='pagination'>
-        
-        
 
-        
-            
-                    <a class='page-link' href='/'>1</a>
-                
-            
-            
-                    <a class='page-link' href='/page/2/'>2</a>
-                
-            
-            
-                <span class='page-link current'>3</span>
-                
-            
-            
-                    <a class='page-link' href='/page/4/'>4</a>
-                
-            
-            
-                    
-                        
-                        <span class='page-link dots'>&hellip;</span>
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    
-                
-            
-            
-                    <a class='page-link' href='/page/9/'>9</a>
-                
-            
-    </nav>
 
-<footer class="site-footer">
+    </footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
     <section class="copyright">
         &copy; 
         
@@ -613,6 +453,85 @@
         页面浏览量<span id="busuanzi_value_page_pv">Loading</span>
     </section>
 </footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
 
             </main>
         </div>
