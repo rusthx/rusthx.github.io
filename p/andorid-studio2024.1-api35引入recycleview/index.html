@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="修改app/builde.gradle.kts和gadle/libs.versions.toml如下即可引入依赖（以RecylceView）为例\n">
+<title>Andorid Studio2024.1 API35引入RecycleView</title>
+
+<link rel='canonical' href='https://rusthx.github.io/p/andorid-studio2024.1-api35%E5%BC%95%E5%85%A5recycleview/'>
+
+<link rel="stylesheet" href="/scss/style.min.f88e0ff8bfb43bef18eec2559d462f612719fb375decfc40b3869dca992f1fa4.css"><meta property='og:title' content="Andorid Studio2024.1 API35引入RecycleView">
+<meta property='og:description' content="修改app/builde.gradle.kts和gadle/libs.versions.toml如下即可引入依赖（以RecylceView）为例\n">
+<meta property='og:url' content='https://rusthx.github.io/p/andorid-studio2024.1-api35%E5%BC%95%E5%85%A5recycleview/'>
+<meta property='og:site_name' content='rustWood'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Android' /><meta property='article:published_time' content='2025-03-28T22:15:11&#43;08:00'/><meta property='article:modified_time' content='2025-03-28T22:15:11&#43;08:00'/>
+<meta name="twitter:title" content="Andorid Studio2024.1 API35引入RecycleView">
+<meta name="twitter:description" content="修改app/builde.gradle.kts和gadle/libs.versions.toml如下即可引入依赖（以RecylceView）为例\n">        
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu290319576234017586.png" width="300"
+                            height="302" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">rustWood</a></h1>
+            <h2 class="site-description">江上何人初见月，江月何年初照人</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/rusthx'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://www.cnblogs.com/rusthx'
+                        target="_blank"
+                        title="博客园"
+                        rel="me"
+                    >
+                        
+                        
+                            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1725698578146" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1508" width="24" height="24" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M478.71488 33.88416c-75.76064 36.6592-123.11552 117.31456-114.82624 194.82624 8.28416 67.03616 43.8016 120.45824 104.17152 156.06784 187.03872 109.98272 419.05664-79.60576 316.06784-258.71872C722.57536 20.26496 591.17568-19.53792 478.71488 33.88416z m187.03872 67.03616c85.23264 52.37248 80.49664 188.53888-9.472 229.39136-104.17152 48.18432-213.07904-15.71328-213.07904-125.696 0-41.89696 5.91872-54.46656 40.24832-84.84352s48.5376-35.61472 98.2528-35.61472c33.14688 0.00512 68.6592 7.33696 84.04992 16.76288z" fill="#707070" p-id="1509"></path><path d="M797.15328 340.7872c-63.9232 115.22048-89.96864 148.736-164.54656 217.87136-75.76064 71.22432-105.35424 90.08128-209.53088 135.12192-67.47648 29.32736-132.5824 50.2784-147.97312 48.18432-22.49216-2.09408-36.69504-25.1392-88.78592-139.31008C120.02816 458.10176 53.73952 333.45536 25.32864 298.89024c-16.57344-19.90144-17.75616-18.85184-11.83744 10.47552 27.22304 156.06784 119.56224 465.06496 147.97312 494.39232 15.39072 17.80736 295.94624 18.85184 456.93952 2.09408 190.58688-19.90144 170.46528-27.23328-121.92768-47.13472l-106.54208-7.33184 102.9888-24.0896c114.82624-27.23328 177.56672-52.37248 261.61664-105.79456 31.96416-19.90144 62.74048-34.56512 69.84192-32.47104 5.91872 2.09408 49.72032 98.46272 94.70464 212.6336 46.16704 115.22048 86.41536 212.6336 91.15136 216.82176 11.83744 11.52-8.28416-233.57952-28.41088-358.22592-10.65472-60.75392-39.0656-187.4944-63.9232-282.81344l-44.98432-172.83072-75.76576 136.17152z" fill="#707070" p-id="1510"></path></svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/andorid-studio2024.1-api35%E5%BC%95%E5%85%A5recycleview/">Andorid Studio2024.1 API35引入RecycleView</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-03-28</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <p>修改<code>app/builde.gradle.kts</code>和<code>gadle/libs.versions.toml</code>如下即可引入依赖（以RecylceView）为例</p>
+<blockquote>
+<p>我的Java版本是Java17,注意修改为自己的版本。</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-kotlin" data-lang="kotlin"><span class="line"><span class="cl"><span class="n">plugins</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">alias</span><span class="p">(</span><span class="n">libs</span><span class="p">.</span><span class="n">plugins</span><span class="p">.</span><span class="n">android</span><span class="p">.</span><span class="n">application</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">alias</span><span class="p">(</span><span class="n">libs</span><span class="p">.</span><span class="n">plugins</span><span class="p">.</span><span class="n">jetbrains</span><span class="p">.</span><span class="n">kotlin</span><span class="p">.</span><span class="n">android</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">android</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">namespace</span> <span class="p">=</span> <span class="s2">&#34;com.example.uibestpractice&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="n">compileSdk</span> <span class="p">=</span> <span class="m">34</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">defaultConfig</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">applicationId</span> <span class="p">=</span> <span class="s2">&#34;com.example.uibestpractice&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="n">minSdk</span> <span class="p">=</span> <span class="m">30</span>
+</span></span><span class="line"><span class="cl">        <span class="n">targetSdk</span> <span class="p">=</span> <span class="m">34</span>
+</span></span><span class="line"><span class="cl">        <span class="n">versionCode</span> <span class="p">=</span> <span class="m">1</span>
+</span></span><span class="line"><span class="cl">        <span class="n">versionName</span> <span class="p">=</span> <span class="s2">&#34;1.0&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">        <span class="n">testInstrumentationRunner</span> <span class="p">=</span> <span class="s2">&#34;androidx.test.runner.AndroidJUnitRunner&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">buildTypes</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">release</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">            <span class="n">isMinifyEnabled</span> <span class="p">=</span> <span class="k">false</span>
+</span></span><span class="line"><span class="cl">            <span class="n">proguardFiles</span><span class="p">(</span>
+</span></span><span class="line"><span class="cl">                <span class="n">getDefaultProguardFile</span><span class="p">(</span><span class="s2">&#34;proguard-android-optimize.txt&#34;</span><span class="p">),</span>
+</span></span><span class="line"><span class="cl">                <span class="s2">&#34;proguard-rules.pro&#34;</span>
+</span></span><span class="line"><span class="cl">            <span class="p">)</span>
+</span></span><span class="line"><span class="cl">        <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">compileOptions</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">sourceCompatibility</span> <span class="p">=</span> <span class="nc">JavaVersion</span><span class="p">.</span><span class="n">VERSION_17</span>
+</span></span><span class="line"><span class="cl">        <span class="n">targetCompatibility</span> <span class="p">=</span> <span class="nc">JavaVersion</span><span class="p">.</span><span class="n">VERSION_17</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl">    <span class="n">kotlinOptions</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">        <span class="n">jvmTarget</span> <span class="p">=</span> <span class="s2">&#34;17&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="n">dependencies</span> <span class="p">{</span>
+</span></span><span class="line"><span class="cl">    <span class="n">implementation</span><span class="p">(</span><span class="s2">&#34;org.jetbrains.kotlin:kotlin-stdlib-jdk17:</span><span class="si">${libs.versions.kotlin.get()}</span><span class="s2">&#34;</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">implementation</span><span class="p">(</span><span class="n">libs</span><span class="p">.</span><span class="n">androidx</span><span class="p">.</span><span class="n">core</span><span class="p">.</span><span class="n">ktx</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">implementation</span><span class="p">(</span><span class="n">libs</span><span class="p">.</span><span class="n">androidx</span><span class="p">.</span><span class="n">appcompat</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">implementation</span><span class="p">(</span><span class="n">libs</span><span class="p">.</span><span class="n">material</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">implementation</span><span class="p">(</span><span class="n">libs</span><span class="p">.</span><span class="n">androidx</span><span class="p">.</span><span class="n">activity</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">implementation</span><span class="p">(</span><span class="n">libs</span><span class="p">.</span><span class="n">androidx</span><span class="p">.</span><span class="n">constraintlayout</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="c1">//增加这一行引入RecycleView依赖
+</span></span></span><span class="line"><span class="cl"><span class="c1"></span>    <span class="n">implementation</span><span class="p">(</span><span class="n">libs</span><span class="p">.</span><span class="n">androidx</span><span class="p">.</span><span class="n">recyclerview</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">    <span class="n">testImplementation</span><span class="p">(</span><span class="n">libs</span><span class="p">.</span><span class="n">junit</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">androidTestImplementation</span><span class="p">(</span><span class="n">libs</span><span class="p">.</span><span class="n">androidx</span><span class="p">.</span><span class="n">junit</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl">    <span class="n">androidTestImplementation</span><span class="p">(</span><span class="n">libs</span><span class="p">.</span><span class="n">androidx</span><span class="p">.</span><span class="n">espresso</span><span class="p">.</span><span class="n">core</span><span class="p">)</span>
+</span></span><span class="line"><span class="cl"><span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/andorid-studio2024.1-api35%E5%BC%95%E5%85%A5recycleview/1.png"
+	width="1920"
+	height="1030"
+	srcset="/p/andorid-studio2024.1-api35%E5%BC%95%E5%85%A5recycleview/1_hu10690076651030689802.png 480w, /p/andorid-studio2024.1-api35%E5%BC%95%E5%85%A5recycleview/1_hu5925703926056761063.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="186"
+		data-flex-basis="447px"
+	
+></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-toml" data-lang="toml"><span class="line"><span class="cl"><span class="p">[</span><span class="nx">versions</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="nx">agp</span> <span class="p">=</span> <span class="s2">&#34;8.5.2&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">kotlin</span> <span class="p">=</span> <span class="s2">&#34;1.9.0&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">coreKtx</span> <span class="p">=</span> <span class="s2">&#34;1.10.1&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">junit</span> <span class="p">=</span> <span class="s2">&#34;4.13.2&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">junitVersion</span> <span class="p">=</span> <span class="s2">&#34;1.1.5&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">espressoCore</span> <span class="p">=</span> <span class="s2">&#34;3.5.1&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">appcompat</span> <span class="p">=</span> <span class="s2">&#34;1.6.1&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">material</span> <span class="p">=</span> <span class="s2">&#34;1.10.0&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">activity</span> <span class="p">=</span> <span class="s2">&#34;1.8.0&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">constraintlayout</span> <span class="p">=</span> <span class="s2">&#34;2.1.4&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nx">androidx-recyclerview</span> <span class="p">=</span> <span class="s2">&#34;1.3.2&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="nx">libraries</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="nx">androidx-core-ktx</span> <span class="p">=</span> <span class="p">{</span> <span class="nx">group</span> <span class="p">=</span> <span class="s2">&#34;androidx.core&#34;</span><span class="p">,</span> <span class="nx">name</span> <span class="p">=</span> <span class="s2">&#34;core-ktx&#34;</span><span class="p">,</span> <span class="nx">version</span><span class="p">.</span><span class="nx">ref</span> <span class="p">=</span> <span class="s2">&#34;coreKtx&#34;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">junit</span> <span class="p">=</span> <span class="p">{</span> <span class="nx">group</span> <span class="p">=</span> <span class="s2">&#34;junit&#34;</span><span class="p">,</span> <span class="nx">name</span> <span class="p">=</span> <span class="s2">&#34;junit&#34;</span><span class="p">,</span> <span class="nx">version</span><span class="p">.</span><span class="nx">ref</span> <span class="p">=</span> <span class="s2">&#34;junit&#34;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">androidx-junit</span> <span class="p">=</span> <span class="p">{</span> <span class="nx">group</span> <span class="p">=</span> <span class="s2">&#34;androidx.test.ext&#34;</span><span class="p">,</span> <span class="nx">name</span> <span class="p">=</span> <span class="s2">&#34;junit&#34;</span><span class="p">,</span> <span class="nx">version</span><span class="p">.</span><span class="nx">ref</span> <span class="p">=</span> <span class="s2">&#34;junitVersion&#34;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">androidx-espresso-core</span> <span class="p">=</span> <span class="p">{</span> <span class="nx">group</span> <span class="p">=</span> <span class="s2">&#34;androidx.test.espresso&#34;</span><span class="p">,</span> <span class="nx">name</span> <span class="p">=</span> <span class="s2">&#34;espresso-core&#34;</span><span class="p">,</span> <span class="nx">version</span><span class="p">.</span><span class="nx">ref</span> <span class="p">=</span> <span class="s2">&#34;espressoCore&#34;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">androidx-appcompat</span> <span class="p">=</span> <span class="p">{</span> <span class="nx">group</span> <span class="p">=</span> <span class="s2">&#34;androidx.appcompat&#34;</span><span class="p">,</span> <span class="nx">name</span> <span class="p">=</span> <span class="s2">&#34;appcompat&#34;</span><span class="p">,</span> <span class="nx">version</span><span class="p">.</span><span class="nx">ref</span> <span class="p">=</span> <span class="s2">&#34;appcompat&#34;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">material</span> <span class="p">=</span> <span class="p">{</span> <span class="nx">group</span> <span class="p">=</span> <span class="s2">&#34;com.google.android.material&#34;</span><span class="p">,</span> <span class="nx">name</span> <span class="p">=</span> <span class="s2">&#34;material&#34;</span><span class="p">,</span> <span class="nx">version</span><span class="p">.</span><span class="nx">ref</span> <span class="p">=</span> <span class="s2">&#34;material&#34;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">androidx-activity</span> <span class="p">=</span> <span class="p">{</span> <span class="nx">group</span> <span class="p">=</span> <span class="s2">&#34;androidx.activity&#34;</span><span class="p">,</span> <span class="nx">name</span> <span class="p">=</span> <span class="s2">&#34;activity&#34;</span><span class="p">,</span> <span class="nx">version</span><span class="p">.</span><span class="nx">ref</span> <span class="p">=</span> <span class="s2">&#34;activity&#34;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">androidx-constraintlayout</span> <span class="p">=</span> <span class="p">{</span> <span class="nx">group</span> <span class="p">=</span> <span class="s2">&#34;androidx.constraintlayout&#34;</span><span class="p">,</span> <span class="nx">name</span> <span class="p">=</span> <span class="s2">&#34;constraintlayout&#34;</span><span class="p">,</span> <span class="nx">version</span><span class="p">.</span><span class="nx">ref</span> <span class="p">=</span> <span class="s2">&#34;constraintlayout&#34;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">androidx-recyclerview</span> <span class="p">=</span> <span class="p">{</span> <span class="nx">module</span> <span class="p">=</span> <span class="s2">&#34;androidx.recyclerview:recyclerview&#34;</span><span class="p">,</span> <span class="nx">version</span><span class="p">.</span><span class="nx">ref</span> <span class="p">=</span> <span class="s2">&#34;androidx-recyclerview&#34;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="p">[</span><span class="nx">plugins</span><span class="p">]</span>
+</span></span><span class="line"><span class="cl"><span class="nx">android-application</span> <span class="p">=</span> <span class="p">{</span> <span class="nx">id</span> <span class="p">=</span> <span class="s2">&#34;com.android.application&#34;</span><span class="p">,</span> <span class="nx">version</span><span class="p">.</span><span class="nx">ref</span> <span class="p">=</span> <span class="s2">&#34;agp&#34;</span> <span class="p">}</span>
+</span></span><span class="line"><span class="cl"><span class="nx">jetbrains-kotlin-android</span> <span class="p">=</span> <span class="p">{</span> <span class="nx">id</span> <span class="p">=</span> <span class="s2">&#34;org.jetbrains.kotlin.android&#34;</span><span class="p">,</span> <span class="nx">version</span><span class="p">.</span><span class="nx">ref</span> <span class="p">=</span> <span class="s2">&#34;kotlin&#34;</span> <span class="p">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/andorid-studio2024.1-api35%E5%BC%95%E5%85%A5recycleview/2.png"
+	width="1920"
+	height="1030"
+	srcset="/p/andorid-studio2024.1-api35%E5%BC%95%E5%85%A5recycleview/2_hu6240494885771578043.png 480w, /p/andorid-studio2024.1-api35%E5%BC%95%E5%85%A5recycleview/2_hu11815700393748417732.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="186"
+		data-flex-basis="447px"
+	
+></p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/android/">Android</a>
+        
+    </section>
+
+
+    <section>
+        页面浏览量<span id="busuanzi_value_page_pv">Loading</span>
+    </section>
+</footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2025 rustWood
+    </section>
+    
+    <section class="powerby">
+        
+            网站总访客数：<span id='busuanzi_value_site_uv'>Loading</span><br/>网站总访问量：<span id='busuanzi_value_site_pv'>Loading</span> <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+
+<style>
+     
+    @font-face {
+    font-family: 'MapleMono';
+    src: url('/font/MapleMono-Woff2/MapleMono-Regular.woff2') format('woff2');
+    }
+  
+     
+    :root {
+      --base-font-family: 'MapleMono', sans-serif;
+      --code-font-family: 'consolas','MapleMono',  monospace;
+    }
+  </style>
+
+
+    </body>
+</html>
