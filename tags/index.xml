@@ -7,7 +7,15 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>rustWood</copyright>
-        <lastBuildDate>Fri, 28 Mar 2025 22:15:11 +0800</lastBuildDate><atom:link href="https://rusthx.github.io/tags/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Thu, 10 Apr 2025 14:49:48 +0800</lastBuildDate><atom:link href="https://rusthx.github.io/tags/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Ubuntu</title>
+        <link>https://rusthx.github.io/tags/ubuntu/</link>
+        <pubDate>Thu, 10 Apr 2025 14:49:48 +0800</pubDate>
+        
+        <guid>https://rusthx.github.io/tags/ubuntu/</guid>
+        <description></description>
+        </item>
+        <item>
         <title>Android</title>
         <link>https://rusthx.github.io/tags/android/</link>
         <pubDate>Fri, 28 Mar 2025 22:15:11 +0800</pubDate>
@@ -109,14 +117,6 @@
         <pubDate>Sat, 07 Sep 2024 12:48:13 +0800</pubDate>
         
         <guid>https://rusthx.github.io/tags/docker/</guid>
-        <description></description>
-        </item>
-        <item>
-        <title>Ubuntu</title>
-        <link>https://rusthx.github.io/tags/ubuntu/</link>
-        <pubDate>Sat, 07 Sep 2024 12:35:29 +0800</pubDate>
-        
-        <guid>https://rusthx.github.io/tags/ubuntu/</guid>
         <description></description>
         </item>
         <item>
