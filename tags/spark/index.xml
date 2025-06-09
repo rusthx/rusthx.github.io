@@ -7,7 +7,46 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>rustWood</copyright>
-        <lastBuildDate>Mon, 09 Dec 2024 22:01:04 +0800</lastBuildDate><atom:link href="https://rusthx.github.io/tags/spark/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Mon, 09 Jun 2025 13:32:25 +0800</lastBuildDate><atom:link href="https://rusthx.github.io/tags/spark/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Idea新建Scala项目</title>
+        <link>https://rusthx.github.io/p/idea%E6%96%B0%E5%BB%BAscala%E9%A1%B9%E7%9B%AE/</link>
+        <pubDate>Mon, 09 Jun 2025 13:32:25 +0800</pubDate>
+        
+        <guid>https://rusthx.github.io/p/idea%E6%96%B0%E5%BB%BAscala%E9%A1%B9%E7%9B%AE/</guid>
+        <description>&lt;p&gt;点击新建项目，选择Java Maven项目
+&lt;img src=&#34;https://rusthx.github.io/p/idea%E6%96%B0%E5%BB%BAscala%E9%A1%B9%E7%9B%AE/1.png&#34;
+	width=&#34;982&#34;
+	height=&#34;822&#34;
+	srcset=&#34;https://rusthx.github.io/p/idea%E6%96%B0%E5%BB%BAscala%E9%A1%B9%E7%9B%AE/1_hu16299037504501351652.png 480w, https://rusthx.github.io/p/idea%E6%96%B0%E5%BB%BAscala%E9%A1%B9%E7%9B%AE/1_hu12324202111742275958.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;119&#34;
+		data-flex-basis=&#34;286px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;点击左上角文件，项目结构
+&lt;img src=&#34;https://rusthx.github.io/p/idea%E6%96%B0%E5%BB%BAscala%E9%A1%B9%E7%9B%AE/2.png&#34;
+	width=&#34;1279&#34;
+	height=&#34;1021&#34;
+	srcset=&#34;https://rusthx.github.io/p/idea%E6%96%B0%E5%BB%BAscala%E9%A1%B9%E7%9B%AE/2_hu10947788498440009916.png 480w, https://rusthx.github.io/p/idea%E6%96%B0%E5%BB%BAscala%E9%A1%B9%E7%9B%AE/2_hu2097993320289247075.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;125&#34;
+		data-flex-basis=&#34;300px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;p&gt;点击全局库，点击&lt;code&gt;+&lt;/code&gt;新建全局库，点击添加&lt;code&gt;Scala SDK&lt;/code&gt;，可以在IDEA里下载，也可以自己在Scala官网手动下载后手动导入。&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;scala官网：https://www.scala-lang.org/download/&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;注意：已经创建过Scala项目的这里会有全局库，只需要点击&lt;code&gt;-&lt;/code&gt;删除旧的全局库，再添加即可。&lt;/p&gt;
+</description>
+        </item>
+        <item>
         <title>Spark源码学习 Shuffle</title>
         <link>https://rusthx.github.io/p/spark%E6%BA%90%E7%A0%81%E5%AD%A6%E4%B9%A0-shuffle/</link>
         <pubDate>Mon, 09 Dec 2024 22:01:04 +0800</pubDate>

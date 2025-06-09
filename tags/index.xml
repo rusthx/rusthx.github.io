@@ -7,7 +7,15 @@
         <generator>Hugo -- gohugo.io</generator>
         <language>zh-cn</language>
         <copyright>rustWood</copyright>
-        <lastBuildDate>Thu, 10 Apr 2025 14:49:48 +0800</lastBuildDate><atom:link href="https://rusthx.github.io/tags/index.xml" rel="self" type="application/rss+xml" /><item>
+        <lastBuildDate>Mon, 09 Jun 2025 13:32:25 +0800</lastBuildDate><atom:link href="https://rusthx.github.io/tags/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Spark</title>
+        <link>https://rusthx.github.io/tags/spark/</link>
+        <pubDate>Mon, 09 Jun 2025 13:32:25 +0800</pubDate>
+        
+        <guid>https://rusthx.github.io/tags/spark/</guid>
+        <description></description>
+        </item>
+        <item>
         <title>Ubuntu</title>
         <link>https://rusthx.github.io/tags/ubuntu/</link>
         <pubDate>Thu, 10 Apr 2025 14:49:48 +0800</pubDate>
@@ -37,14 +45,6 @@
         <pubDate>Mon, 13 Jan 2025 14:58:48 +0800</pubDate>
         
         <guid>https://rusthx.github.io/tags/%E8%BF%90%E7%BB%B4/</guid>
-        <description></description>
-        </item>
-        <item>
-        <title>Spark</title>
-        <link>https://rusthx.github.io/tags/spark/</link>
-        <pubDate>Mon, 09 Dec 2024 22:01:04 +0800</pubDate>
-        
-        <guid>https://rusthx.github.io/tags/spark/</guid>
         <description></description>
         </item>
         <item>
