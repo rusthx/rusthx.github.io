@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+    <channel>
+        <title>Hadoop  on rustWood</title>
+        <link>https://rusthx.github.io/tags/hadoop-/</link>
+        <description>Recent content in Hadoop  on rustWood</description>
+        <generator>Hugo -- gohugo.io</generator>
+        <language>zh-cn</language>
+        <copyright>rustWood</copyright>
+        <lastBuildDate>Tue, 10 Jun 2025 17:31:20 +0800</lastBuildDate><atom:link href="https://rusthx.github.io/tags/hadoop-/index.xml" rel="self" type="application/rss+xml" /><item>
+        <title>Hadoop3配置sqoop</title>
+        <link>https://rusthx.github.io/p/hadoop3%E9%85%8D%E7%BD%AEsqoop/</link>
+        <pubDate>Tue, 10 Jun 2025 17:31:20 +0800</pubDate>
+        
+        <guid>https://rusthx.github.io/p/hadoop3%E9%85%8D%E7%BD%AEsqoop/</guid>
+        <description>&lt;p&gt;sqoop功能稳定后就没再更新了，最新版本就是1.4.7。而最新版的sqoop又分为支持Hadoop2的版本和纯净的版本。
+我们需要把两个包都下下来，提取部分sqoop_hadoop2.6.0版本的jar包放到纯净版sqoop的lib目录下，在sqoop配置文件中加入获取当前环境中的hive及hadoop的lib库来使用.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/hadoop3%E9%85%8D%E7%BD%AEsqoop/1.png&#34;
+	width=&#34;1392&#34;
+	height=&#34;921&#34;
+	srcset=&#34;https://rusthx.github.io/p/hadoop3%E9%85%8D%E7%BD%AEsqoop/1_hu14185283473792889025.png 480w, https://rusthx.github.io/p/hadoop3%E9%85%8D%E7%BD%AEsqoop/1_hu1601919644509101653.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;151&#34;
+		data-flex-basis=&#34;362px&#34;
+	
+&gt;
+&lt;img src=&#34;https://rusthx.github.io/p/hadoop3%E9%85%8D%E7%BD%AEsqoop/2.png&#34;
+	width=&#34;1429&#34;
+	height=&#34;717&#34;
+	srcset=&#34;https://rusthx.github.io/p/hadoop3%E9%85%8D%E7%BD%AEsqoop/2_hu8244027339956693808.png 480w, https://rusthx.github.io/p/hadoop3%E9%85%8D%E7%BD%AEsqoop/2_hu9362476545095594080.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;199&#34;
+		data-flex-basis=&#34;478px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;下载sqoop&#34;&gt;下载sqoop
+&lt;/h2&gt;&lt;p&gt;下载sqoop-1.4.7.bin__hadoop-2.6.0.tar.gz 和sqoop-1.4.7.tar.gz 这两个包。
+从支持Hadoop2的sqoop的lib目录下复制下图所示的三个包到纯净版中，
+mysql开头的那个jar包是MySQL的jdbc连接包，如果使用sqoop同步数据的过程中需要从MySQL导出数据或者从导入数据到MySQL，那还需要放这个包进去。
+同理，如果需要使用hbase，那也一样放jar包进去。（连接hive不需要再放jar包,hive数据是存在hdfs上的）&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/hadoop3%E9%85%8D%E7%BD%AEsqoop/3.png&#34;
+	width=&#34;1106&#34;
+	height=&#34;681&#34;
+	srcset=&#34;https://rusthx.github.io/p/hadoop3%E9%85%8D%E7%BD%AEsqoop/3_hu11338202799012692297.png 480w, https://rusthx.github.io/p/hadoop3%E9%85%8D%E7%BD%AEsqoop/3_hu17028843234120360644.png 1024w&#34;
+	loading=&#34;lazy&#34;
+	
+	
+		class=&#34;gallery-image&#34; 
+		data-flex-grow=&#34;162&#34;
+		data-flex-basis=&#34;389px&#34;
+	
+&gt;&lt;/p&gt;
+&lt;h2 id=&#34;上传sqoop到服务器并配置&#34;&gt;上传sqoop到服务器并配置
+&lt;/h2&gt;&lt;p&gt;把修改好的sqoop上传到服务器上,放在喜欢的位置（我放在了&lt;code&gt;/usr/local&lt;/code&gt;下），在sqoop的conf目录的sqoop-env.sh文件添加如下内容,引入Hadoop和hive的lib库,注意路径要改成自己的安装路径：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;3
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;4
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;5
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;6
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;HADOOP_COMMON_HOME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;/usr/local/hadoop
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;HADOOP_MAPRED_HOME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;/usr/local/hadoop
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;HADOOP_HOME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;/usr/local/hadoop
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;HADOOP_CLASSPATH&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$HADOOP_CLASSPATH&lt;/span&gt;:&lt;span class=&#34;nv&#34;&gt;$HIVE_HOME&lt;/span&gt;/lib/*
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;HIVE_HOME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;/usr/local/hive
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;在服务器上添加sqoop的环境变量，修改&lt;code&gt;~/.bashrc&lt;/code&gt;。添加如下内容：&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
+&lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code&gt;&lt;span class=&#34;lnt&#34;&gt;1
+&lt;/span&gt;&lt;span class=&#34;lnt&#34;&gt;2
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;
+&lt;td class=&#34;lntd&#34;&gt;
+&lt;pre tabindex=&#34;0&#34; class=&#34;chroma&#34;&gt;&lt;code class=&#34;language-shell&#34; data-lang=&#34;shell&#34;&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;SQOOP_HOME&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;/usr/local/sqoop
+&lt;/span&gt;&lt;/span&gt;&lt;span class=&#34;line&#34;&gt;&lt;span class=&#34;cl&#34;&gt;&lt;span class=&#34;nb&#34;&gt;export&lt;/span&gt; &lt;span class=&#34;nv&#34;&gt;PATH&lt;/span&gt;&lt;span class=&#34;o&#34;&gt;=&lt;/span&gt;&lt;span class=&#34;nv&#34;&gt;$PATH&lt;/span&gt;:&lt;span class=&#34;nv&#34;&gt;$SQOOP_HOME&lt;/span&gt;/bin:&lt;span class=&#34;nv&#34;&gt;$SQOOP_HOME&lt;/span&gt;/bin
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/td&gt;&lt;/tr&gt;&lt;/table&gt;
+&lt;/div&gt;
+&lt;/div&gt;&lt;p&gt;至此，sqoop安装完成。sqoop是离线应用，即用即开，和DataX相同。&lt;/p&gt;
+</description>
+        </item>
+        
+    </channel>
+</rss>
