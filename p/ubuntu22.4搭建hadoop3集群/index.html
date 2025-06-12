@@ -1,0 +1,1576 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content=" 参考：尚硅谷Hadoop课程。 [CSDN相关教程]https://blog.csdn.net/zyw2002/article/details/123486055\n">
+<title>Ubuntu22.4搭建Hadoop3集群</title>
+
+<link rel='canonical' href='https://rusthx.github.io/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/'>
+
+<link rel="stylesheet" href="/scss/style.min.f88e0ff8bfb43bef18eec2559d462f612719fb375decfc40b3869dca992f1fa4.css"><meta property='og:title' content="Ubuntu22.4搭建Hadoop3集群">
+<meta property='og:description' content=" 参考：尚硅谷Hadoop课程。 [CSDN相关教程]https://blog.csdn.net/zyw2002/article/details/123486055\n">
+<meta property='og:url' content='https://rusthx.github.io/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/'>
+<meta property='og:site_name' content='rustWood'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Ubuntu ' /><meta property='article:tag' content='Hadoop' /><meta property='article:published_time' content='2025-06-12T21:19:57&#43;08:00'/><meta property='article:modified_time' content='2025-06-12T21:19:57&#43;08:00'/>
+<meta name="twitter:title" content="Ubuntu22.4搭建Hadoop3集群">
+<meta name="twitter:description" content=" 参考：尚硅谷Hadoop课程。 [CSDN相关教程]https://blog.csdn.net/zyw2002/article/details/123486055\n">        
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu290319576234017586.png" width="300"
+                            height="302" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">rustWood</a></h1>
+            <h2 class="site-description">江上何人初见月，江月何年初照人。博客出问题请看关于页面</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/rusthx'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://www.cnblogs.com/rusthx'
+                        target="_blank"
+                        title="博客园"
+                        rel="me"
+                    >
+                        
+                        
+                            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1725698578146" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1508" width="24" height="24" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M478.71488 33.88416c-75.76064 36.6592-123.11552 117.31456-114.82624 194.82624 8.28416 67.03616 43.8016 120.45824 104.17152 156.06784 187.03872 109.98272 419.05664-79.60576 316.06784-258.71872C722.57536 20.26496 591.17568-19.53792 478.71488 33.88416z m187.03872 67.03616c85.23264 52.37248 80.49664 188.53888-9.472 229.39136-104.17152 48.18432-213.07904-15.71328-213.07904-125.696 0-41.89696 5.91872-54.46656 40.24832-84.84352s48.5376-35.61472 98.2528-35.61472c33.14688 0.00512 68.6592 7.33696 84.04992 16.76288z" fill="#707070" p-id="1509"></path><path d="M797.15328 340.7872c-63.9232 115.22048-89.96864 148.736-164.54656 217.87136-75.76064 71.22432-105.35424 90.08128-209.53088 135.12192-67.47648 29.32736-132.5824 50.2784-147.97312 48.18432-22.49216-2.09408-36.69504-25.1392-88.78592-139.31008C120.02816 458.10176 53.73952 333.45536 25.32864 298.89024c-16.57344-19.90144-17.75616-18.85184-11.83744 10.47552 27.22304 156.06784 119.56224 465.06496 147.97312 494.39232 15.39072 17.80736 295.94624 18.85184 456.93952 2.09408 190.58688-19.90144 170.46528-27.23328-121.92768-47.13472l-106.54208-7.33184 102.9888-24.0896c114.82624-27.23328 177.56672-52.37248 261.61664-105.79456 31.96416-19.90144 62.74048-34.56512 69.84192-32.47104 5.91872 2.09408 49.72032 98.46272 94.70464 212.6336 46.16704 115.22048 86.41536 212.6336 91.15136 216.82176 11.83744 11.52-8.28416-233.57952-28.41088-358.22592-10.65472-60.75392-39.0656-187.4944-63.9232-282.81344l-44.98432-172.83072-75.76576 136.17152z" fill="#707070" p-id="1510"></path></svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#下载hadoop">下载Hadoop</a></li>
+    <li><a href="#修改hadoop配置文件">修改Hadoop配置文件</a></li>
+    <li><a href="#添加环境变量">添加环境变量</a></li>
+    <li><a href="#文件分发和命令传输的脚本">文件分发和命令传输的脚本</a></li>
+    <li><a href="#配置hosts映射">配置hosts映射</a></li>
+    <li><a href="#克隆虚拟机">克隆虚拟机</a></li>
+    <li><a href="#修改另外两台机主机名和ip">修改另外两台机主机名和ip</a></li>
+    <li><a href="#配置ssh免密登录">配置ssh免密登录</a></li>
+    <li><a href="#初始化hadoop并启动">初始化Hadoop并启动</a></li>
+    <li><a href="#查看webui">查看webui</a></li>
+    <li><a href="#补充ubuntu修改主机名后怎么办">补充：Ubuntu修改主机名后怎么办</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/">Ubuntu22.4搭建Hadoop3集群</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2025-06-12</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <blockquote>
+<p>参考：<a class="link" href="https://www.bilibili.com/video/BV1Qp4y1n7EN/?spm_id_from=333.1387.search.video_card.click&amp;vd_source=2db7c64d895a2907954a5b8725db55d5"  target="_blank" rel="noopener"
+    >尚硅谷Hadoop课程</a>。
+[CSDN相关教程]https://blog.csdn.net/zyw2002/article/details/123486055</p>
+</blockquote>
+<p>在搭建Hadoop集群前需要先搭建好Ubuntu虚拟机，具体可参考下面的教程。</p>
+<blockquote>
+<p>前置虚拟机搭建：https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/</p>
+</blockquote>
+<p>本文搭建了三台虚拟机，其中hadoop1是主节点，主机名与ip对应关系如下。
+如果你想抄我的配置，不想在部署的时候修改ip,你得先在vmvare里点击左上角编辑，虚拟网络编辑器。改成如下图所示。
+<img src="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/1.png"
+	width="714"
+	height="694"
+	srcset="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/1_hu16460638325917609871.png 480w, /p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/1_hu14038799020160918271.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="102"
+		data-flex-basis="246px"
+	
+></p>
+<p>192.168.146.161   hadoop1
+192.168.146.162   hadoop2
+192.168.146.163   hadoop3</p>
+<h2 id="下载hadoop">下载Hadoop
+</h2><p>推荐在Hadoop官网下载。https://hadoop.apache.org/releases.html</p>
+<p>可以在官网下载好后再用winscp/xshell等工具把Hadoop的二进制包上传到虚拟机上，也可以直接在虚拟机的下载路径(下载文件夹没有权限问题)直接下载Hadoop二进制包。命令如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">cd</span> ~/下载
+</span></span><span class="line"><span class="cl">wget https://dlcdn.apache.org/hadoop/common/hadoop-3.4.1/hadoop-3.4.1.tar.gz
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/2.png"
+	width="1126"
+	height="695"
+	srcset="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/2_hu1166891335849685111.png 480w, /p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/2_hu12656304937464854667.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="162"
+		data-flex-basis="388px"
+	
+></p>
+<p>可以在这里直接右键提取到此处,然后右键改名为hadoop，也可以用命令解压后改名：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">tar xzf hadoop-3.4.1.tar.gz
+</span></span><span class="line"><span class="cl">mv hadoop-3.4.1 hadoop
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="修改hadoop配置文件">修改Hadoop配置文件
+</h2><p>Hadoop的配置文件在Hadoop文件夹下的<code>/etc/hadoop/</code>。包含五个：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">core-site.xml
+</span></span><span class="line"><span class="cl">hdfs-site.xml
+</span></span><span class="line"><span class="cl">mapred-site.xml
+</span></span><span class="line"><span class="cl">yarn-site.xml
+</span></span><span class="line"><span class="cl">workers
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>照样可以右键修改，也可以用命令；</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">cd</span> hadoop/etc/hadoop
+</span></span><span class="line"><span class="cl">vim core-site.xml
+</span></span><span class="line"><span class="cl">vim hdfs-site.xml
+</span></span><span class="line"><span class="cl">vim mapred-site.xml
+</span></span><span class="line"><span class="cl">vim yarn-site.xml
+</span></span><span class="line"><span class="cl">vim workers
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>依次添加配置信息(注意把用户名改成自己的用户名，我的用户名是rust)。<code>core-site.xml</code>:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;?xml-stylesheet type=&#34;text/xsl&#34; href=&#34;configuration.xsl&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="c">&lt;!--
+</span></span></span><span class="line"><span class="cl"><span class="c">  Licensed under the Apache License, Version 2.0 (the &#34;License&#34;);
+</span></span></span><span class="line"><span class="cl"><span class="c">  you may not use this file except in compliance with the License.
+</span></span></span><span class="line"><span class="cl"><span class="c">  You may obtain a copy of the License at
+</span></span></span><span class="line"><span class="cl"><span class="c">
+</span></span></span><span class="line"><span class="cl"><span class="c">    http://www.apache.org/licenses/LICENSE-2.0
+</span></span></span><span class="line"><span class="cl"><span class="c">
+</span></span></span><span class="line"><span class="cl"><span class="c">  Unless required by applicable law or agreed to in writing, software
+</span></span></span><span class="line"><span class="cl"><span class="c">  distributed under the License is distributed on an &#34;AS IS&#34; BASIS,
+</span></span></span><span class="line"><span class="cl"><span class="c">  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+</span></span></span><span class="line"><span class="cl"><span class="c">  See the License for the specific language governing permissions and
+</span></span></span><span class="line"><span class="cl"><span class="c">  limitations under the License. See accompanying LICENSE file.
+</span></span></span><span class="line"><span class="cl"><span class="c">--&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c">&lt;!-- Put site-specific property overrides in this file. --&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;configuration&gt;</span>  
+</span></span><span class="line"><span class="cl"> <span class="nt">&lt;property&gt;</span>  
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;name&gt;</span>fs.default.name<span class="nt">&lt;/name&gt;</span>  
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;value&gt;</span>hdfs://hadoop1:8020<span class="nt">&lt;/value&gt;</span>  
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;description&gt;</span>HDFS的URI，文件系统://namenode标识:端口号<span class="nt">&lt;/description&gt;</span>  
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/property&gt;</span>  
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;property&gt;</span>  
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;name&gt;</span>hadoop.tmp.dir<span class="nt">&lt;/name&gt;</span>  
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;value&gt;</span>/usr/local/hadoop/tmp<span class="nt">&lt;/value&gt;</span>  
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;description&gt;</span>namenode上本地的hadoop临时文件夹<span class="nt">&lt;/description&gt;</span>  
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/property&gt;</span>  
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;name&gt;</span>hadoop.http.staticuser.user<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;value&gt;</span>rust<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;name&gt;</span>hadoop.proxyuser.rust.hosts<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;value&gt;</span>*<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;name&gt;</span>hadoop.proxyuser.rust.groups<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;value&gt;</span>*<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/configuration&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>hdfs-site.xml</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34; encoding=&#34;UTF-8&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;?xml-stylesheet type=&#34;text/xsl&#34; href=&#34;configuration.xsl&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="c">&lt;!--
+</span></span></span><span class="line"><span class="cl"><span class="c">  Licensed under the Apache License, Version 2.0 (the &#34;License&#34;);
+</span></span></span><span class="line"><span class="cl"><span class="c">  you may not use this file except in compliance with the License.
+</span></span></span><span class="line"><span class="cl"><span class="c">  You may obtain a copy of the License at
+</span></span></span><span class="line"><span class="cl"><span class="c">
+</span></span></span><span class="line"><span class="cl"><span class="c">    http://www.apache.org/licenses/LICENSE-2.0
+</span></span></span><span class="line"><span class="cl"><span class="c">
+</span></span></span><span class="line"><span class="cl"><span class="c">  Unless required by applicable law or agreed to in writing, software
+</span></span></span><span class="line"><span class="cl"><span class="c">  distributed under the License is distributed on an &#34;AS IS&#34; BASIS,
+</span></span></span><span class="line"><span class="cl"><span class="c">  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+</span></span></span><span class="line"><span class="cl"><span class="c">  See the License for the specific language governing permissions and
+</span></span></span><span class="line"><span class="cl"><span class="c">  limitations under the License. See accompanying LICENSE file.
+</span></span></span><span class="line"><span class="cl"><span class="c">--&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c">&lt;!-- Put site-specific property overrides in this file. --&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;configuration&gt;</span>  
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;property&gt;</span>  
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;name&gt;</span>dfs.name.dir<span class="nt">&lt;/name&gt;</span>  
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;value&gt;</span>/usr/local/hadoop/hdfs/name<span class="nt">&lt;/value&gt;</span>  
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;description&gt;</span>namenode上存储hdfs名字空间元数据 <span class="nt">&lt;/description&gt;</span>   
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/property&gt;</span>  
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;property&gt;</span>  
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;name&gt;</span>dfs.data.dir<span class="nt">&lt;/name&gt;</span>  
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;value&gt;</span>/usr/local/hadoop/hdfs/data<span class="nt">&lt;/value&gt;</span>  
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;description&gt;</span>datanode上数据块的物理存储位置<span class="nt">&lt;/description&gt;</span>  
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/property&gt;</span>  
+</span></span><span class="line"><span class="cl">  
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;property&gt;</span>  
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;name&gt;</span>dfs.replication<span class="nt">&lt;/name&gt;</span>  
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;value&gt;</span>3<span class="nt">&lt;/value&gt;</span>  
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/property&gt;</span>  
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> <span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;name&gt;</span>dfs.namenode.http.address<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;value&gt;</span>hadoop1:9870<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="c">&lt;!-- 2nn web端访问地址--&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;name&gt;</span>dfs.namenode.secondary.http-address<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;value&gt;</span>hadoop2:9868<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;name&gt;</span>dfs.client.block.write.replace-datanode-on-failure.enable<span class="nt">&lt;/name&gt;</span>    
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;value&gt;</span>true<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;name&gt;</span>dfs.client.block.write.replace-datanode-on-failure.policy<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;value&gt;</span>NEVER<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;name&gt;</span>dfs.webhdfs.enabled<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;value&gt;</span>true<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;name&gt;</span>dfs.permissions.enabled<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">  <span class="nt">&lt;value&gt;</span>false<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/configuration&gt;</span>  
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>mapred-site.xml</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="cp">&lt;?xml-stylesheet type=&#34;text/xsl&#34; href=&#34;configuration.xsl&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="c">&lt;!--
+</span></span></span><span class="line"><span class="cl"><span class="c">  Licensed under the Apache License, Version 2.0 (the &#34;License&#34;);
+</span></span></span><span class="line"><span class="cl"><span class="c">  you may not use this file except in compliance with the License.
+</span></span></span><span class="line"><span class="cl"><span class="c">  You may obtain a copy of the License at
+</span></span></span><span class="line"><span class="cl"><span class="c">
+</span></span></span><span class="line"><span class="cl"><span class="c">    http://www.apache.org/licenses/LICENSE-2.0
+</span></span></span><span class="line"><span class="cl"><span class="c">
+</span></span></span><span class="line"><span class="cl"><span class="c">  Unless required by applicable law or agreed to in writing, software
+</span></span></span><span class="line"><span class="cl"><span class="c">  distributed under the License is distributed on an &#34;AS IS&#34; BASIS,
+</span></span></span><span class="line"><span class="cl"><span class="c">  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+</span></span></span><span class="line"><span class="cl"><span class="c">  See the License for the specific language governing permissions and
+</span></span></span><span class="line"><span class="cl"><span class="c">  limitations under the License. See accompanying LICENSE file.
+</span></span></span><span class="line"><span class="cl"><span class="c">--&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c">&lt;!-- Put site-specific property overrides in this file. --&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;configuration&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;name&gt;</span>mapreduce.framework.name<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;value&gt;</span>yarn<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;name&gt;</span>mapreduce.map.memory.mb<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;value&gt;</span>2048<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl">	<span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;name&gt;</span>mapreduce.jobhistory.address<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;value&gt;</span>hadoop1:10020<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;name&gt;</span>mapreduce.jobhistory.webapp.address<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">                <span class="nt">&lt;value&gt;</span>hadoop1:19888<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">		<span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">  			<span class="nt">&lt;name&gt;</span>yarn.app.mapreduce.am.env<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">  			<span class="nt">&lt;value&gt;</span>HADOOP_MAPRED_HOME=/usr/local/hadoop/etc/hadoop:/usr/local/hadoop/share/hadoop/common/lib/*:/usr/local/hadoop/share/hadoop/common/*:/usr/local/hadoop/share/hadoop/hdfs:/usr/local/hadoop/share/hadoop/hdfs/lib/*:/usr/local/hadoop/share/hadoop/hdfs/*:/usr/local/hadoop/share/hadoop/mapreduce/lib/*:/usr/local/hadoop/share/hadoop/mapreduce/*:/usr/local/hadoop/share/hadoop/yarn:/usr/local/hadoop/share/hadoop/yarn/lib/*:/usr/local/hadoop/share/hadoop/yarn/*<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl">		<span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">		<span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">  			<span class="nt">&lt;name&gt;</span>mapreduce.map.env<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">  			<span class="nt">&lt;value&gt;</span>HADOOP_MAPRED_HOME=/usr/local/hadoop/etc/hadoop:/usr/local/hadoop/share/hadoop/common/lib/*:/usr/local/hadoop/share/hadoop/common/*:/usr/local/hadoop/share/hadoop/hdfs:/usr/local/hadoop/share/hadoop/hdfs/lib/*:/usr/local/hadoop/share/hadoop/hdfs/*:/usr/local/hadoop/share/hadoop/mapreduce/lib/*:/usr/local/hadoop/share/hadoop/mapreduce/*:/usr/local/hadoop/share/hadoop/yarn:/usr/local/hadoop/share/hadoop/yarn/lib/*:/usr/local/hadoop/share/hadoop/yarn/*<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl">		<span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">		<span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">	  		<span class="nt">&lt;name&gt;</span>mapreduce.reduce.env<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">  			<span class="nt">&lt;value&gt;</span>HADOOP_MAPRED_HOME=/usr/local/hadoop/etc/hadoop:/usr/local/hadoop/share/hadoop/common/lib/*:/usr/local/hadoop/share/hadoop/common/*:/usr/local/hadoop/share/hadoop/hdfs:/usr/local/hadoop/share/hadoop/hdfs/lib/*:/usr/local/hadoop/share/hadoop/hdfs/*:/usr/local/hadoop/share/hadoop/mapreduce/lib/*:/usr/local/hadoop/share/hadoop/mapreduce/*:/usr/local/hadoop/share/hadoop/yarn:/usr/local/hadoop/share/hadoop/yarn/lib/*:/usr/local/hadoop/share/hadoop/yarn/*<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl">		<span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/configuration&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>yarn-site.xml</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl"><span class="cp">&lt;?xml version=&#34;1.0&#34;?&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="c">&lt;!--
+</span></span></span><span class="line"><span class="cl"><span class="c">  Licensed under the Apache License, Version 2.0 (the &#34;License&#34;);
+</span></span></span><span class="line"><span class="cl"><span class="c">  you may not use this file except in compliance with the License.
+</span></span></span><span class="line"><span class="cl"><span class="c">  You may obtain a copy of the License at
+</span></span></span><span class="line"><span class="cl"><span class="c">
+</span></span></span><span class="line"><span class="cl"><span class="c">    http://www.apache.org/licenses/LICENSE-2.0
+</span></span></span><span class="line"><span class="cl"><span class="c">
+</span></span></span><span class="line"><span class="cl"><span class="c">  Unless required by applicable law or agreed to in writing, software
+</span></span></span><span class="line"><span class="cl"><span class="c">  distributed under the License is distributed on an &#34;AS IS&#34; BASIS,
+</span></span></span><span class="line"><span class="cl"><span class="c">  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+</span></span></span><span class="line"><span class="cl"><span class="c">  See the License for the specific language governing permissions and
+</span></span></span><span class="line"><span class="cl"><span class="c">  limitations under the License. See accompanying LICENSE file.
+</span></span></span><span class="line"><span class="cl"><span class="c">--&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;configuration&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="c">&lt;!-- 指定ResourceManager的地址--&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;name&gt;</span>yarn.resourcemanager.hostname<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;value&gt;</span>hadoop1<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;name&gt;</span>yarn.nodemanager.aux-services<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;value&gt;</span>mapreduce_shuffle<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl">    <span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;name&gt;</span>yarn.log-aggregation-enable<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;value&gt;</span>true<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"> <span class="c">&lt;!-- 环境变量的继承 --&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;name&gt;</span>yarn.nodemanager.env-whitelist<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;value&gt;</span>JAVA_HOME,HADOOP_COMMON_HOME,HADOOP_HDFS_HOME,HADOOP_CONF_DIR,CLASSPATH_PREPEND_DISTCACHE,HADOOP_YARN_HOME,HADOOP_MAPRED_HOME<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;name&gt;</span>yarn.nodemanager.pmem-check-enabled<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;value&gt;</span>false<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;name&gt;</span>yarn.nodemanager.vmem-check-enabled<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl">        <span class="nt">&lt;value&gt;</span>false<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="c">&lt;!--是否启动一个线程检查每个任务正使用的物理内存量，如果任务超出分配值，则直接将其杀掉，默认
+</span></span></span><span class="line"><span class="cl"><span class="c">是 true --&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl"> <span class="nt">&lt;name&gt;</span>yarn.nodemanager.pmem-check-enabled<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl"> <span class="nt">&lt;value&gt;</span>false<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="c">&lt;!--是否启动一个线程检查每个任务正使用的虚拟内存量，如果任务超出分配值，则直接将其杀掉，默认
+</span></span></span><span class="line"><span class="cl"><span class="c">是 true --&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;property&gt;</span>
+</span></span><span class="line"><span class="cl"> <span class="nt">&lt;name&gt;</span>yarn.nodemanager.vmem-check-enabled<span class="nt">&lt;/name&gt;</span>
+</span></span><span class="line"><span class="cl"> <span class="nt">&lt;value&gt;</span>false<span class="nt">&lt;/value&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/property&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="nt">&lt;/configuration&gt;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><code>workers</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-xml" data-lang="xml"><span class="line"><span class="cl">hadoop1
+</span></span><span class="line"><span class="cl">hadoop2
+</span></span><span class="line"><span class="cl">hadoop3
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>修改hadoop-env.sh,添加java环境变量，这是用命令行apt安装的Java路径，如果自己的Java版本或者路径不对，请修改成自己的版本。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">vim hadoop-env.sh
+</span></span><span class="line"><span class="cl"><span class="c1">#添加如下内容</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">JAVA_HOME</span><span class="o">=</span>/usr/lib/jvm/java-8-openjdk-amd64
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>修改后移动到配置文件中的位置（<code>/usr/local/hadoop</code>）。其他位置也可以，但是我习惯放在<code>/usr/local</code>下。如果想改到其他的目录记得修改上面的五个配置文件设计到的地方。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">cd</span> ~/下载
+</span></span><span class="line"><span class="cl">sudo mv hadoop /usr/local/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="添加环境变量">添加环境变量
+</h2><p>修改环境变量，添加如下内容：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo vim ~/.bashrc
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HADOOP_HOME</span><span class="o">=</span>/usr/local/hadoop
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HADOOP_INSTALL</span><span class="o">=</span><span class="nv">$HADOOP_HOME</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HADOOP_MAPRED_HOME</span><span class="o">=</span><span class="nv">$HADOOP_HOME</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HADOOP_COMMON_HOME</span><span class="o">=</span><span class="nv">$HADOOP_HOME</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HADOOP_HDFS_HOME</span><span class="o">=</span><span class="nv">$HADOOP_HOME</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">YARN_HOME</span><span class="o">=</span><span class="nv">$HADOOP_HOME</span>
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HADOOP_COMMON_LIB_NATIVE_DIR</span><span class="o">=</span><span class="nv">$HADOOP_HOME</span>/lib/native
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:<span class="nv">$HADOOP_HOME</span>/sbin:<span class="nv">$HADOOP_HOME</span>/bin
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HADOOP_CONF_DIR</span><span class="o">=</span><span class="si">${</span><span class="nv">HADOOP_HOME</span><span class="si">}</span>/etc/hadoop
+</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HADOOP_CLASSPATH</span><span class="o">=</span><span class="sb">`</span>hadoop classpath<span class="sb">`</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>添加后使用<code>hadoop version</code>命令查看，如果出现Hadoop版本，那环境变量就修改成功了。如果没有，关闭当前的终端，新开一个终端试试。
+如果还不行，复查一下前面的步骤哪里做的不对。
+<img src="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/3.png"
+	width="910"
+	height="342"
+	srcset="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/3_hu14063794185651671412.png 480w, /p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/3_hu9842009908175557471.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="266"
+		data-flex-basis="638px"
+	
+></p>
+<h2 id="文件分发和命令传输的脚本">文件分发和命令传输的脚本
+</h2><p>在用户目录创建一个bin目录，创建xcall(命令传输，用于在三台虚拟机上依次执行相同命令)、xsync(文件分发，用于把文件分发到三台虚拟机上)。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">cd</span> 
+</span></span><span class="line"><span class="cl">mkdir bin
+</span></span><span class="line"><span class="cl"><span class="nb">cd</span> bin
+</span></span><span class="line"><span class="cl">vim xsync
+</span></span><span class="line"><span class="cl">sudo chmod <span class="m">777</span> xsync
+</span></span><span class="line"><span class="cl">vim xcall
+</span></span><span class="line"><span class="cl">sudo chmod <span class="m">777</span> xcall
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>xsync内容如下,注意我的三台虚拟机叫hadoop1、hadoop2、hadoop3。如果你的虚拟机不叫这个名字，记得修改成自己的主机名</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="cp">#!/bin/bash
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="c1">#校验参数是否合法</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span><span class="o">((</span><span class="nv">$#</span><span class="o">==</span>0<span class="o">))</span>
+</span></span><span class="line"><span class="cl"><span class="k">then</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">echo</span> 请输入要分发的文件!
+</span></span><span class="line"><span class="cl">        exit<span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">fi</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#获取分发文件的绝对路径</span>
+</span></span><span class="line"><span class="cl"><span class="nv">dirpath</span><span class="o">=</span><span class="k">$(</span><span class="nb">cd</span> <span class="sb">`</span>dirname <span class="nv">$1</span><span class="sb">`</span><span class="p">;</span> <span class="nb">pwd</span> -P<span class="k">)</span>
+</span></span><span class="line"><span class="cl"><span class="nv">filename</span><span class="o">=</span><span class="sb">`</span>basename <span class="nv">$1</span><span class="sb">`</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> 要分发的文件的路径是:<span class="nv">$dirpath</span>/<span class="nv">$filename</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#循环执行rsync分发文件到集群的每条机器</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span><span class="o">((</span><span class="nv">i</span><span class="o">=</span>1<span class="p">;</span>i&lt;<span class="o">=</span>3<span class="p">;</span>i++<span class="o">))</span>
+</span></span><span class="line"><span class="cl"><span class="k">do</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">echo</span> ---------------------hadoop<span class="nv">$i</span>---------------------
+</span></span><span class="line"><span class="cl">        rsync -rvlt <span class="nv">$dirpath</span>/<span class="nv">$filename</span>  hadoop<span class="nv">$i</span>:<span class="nv">$dirpath</span>
+</span></span><span class="line"><span class="cl"><span class="k">done</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#此脚本用于虚拟机之间通过scp传送文件</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>xcall内容如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="cp">#!/bin/bash
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="c1">#在集群的所有机器上批量执行同一个命令</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span><span class="o">((</span><span class="nv">$#</span><span class="o">==</span>0<span class="o">))</span>
+</span></span><span class="line"><span class="cl"><span class="k">then</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">echo</span> 请输入要操作的命令!
+</span></span><span class="line"><span class="cl">        exit<span class="p">;</span>
+</span></span><span class="line"><span class="cl"><span class="k">fi</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> 要执行的命令是<span class="nv">$*</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#循环执行此命令</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span><span class="o">((</span><span class="nv">i</span><span class="o">=</span>1<span class="p">;</span>i&lt;<span class="o">=</span>3<span class="p">;</span>i++<span class="o">))</span>
+</span></span><span class="line"><span class="cl"><span class="k">do</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">echo</span> --------------------hadoop<span class="nv">$i</span>--------------------
+</span></span><span class="line"><span class="cl">        ssh hadoop<span class="nv">$i</span> <span class="nv">$*</span>
+</span></span><span class="line"><span class="cl"><span class="k">done</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#此脚本用于对所有声明的虚拟机进行命令的传输</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="配置hosts映射">配置hosts映射
+</h2><p>修改<code>/etc/hosts</code>。添加映射</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo vim /etc/hosts
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>添加如下内容：记得把ip改成自己的ip，虚拟机看ip和改ip的教程在前置教程安装虚拟机里有写，也可以自行必应查询或者问大模型。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">192.168.146.161   hadoop1
+</span></span><span class="line"><span class="cl">192.168.146.162   hadoop2
+</span></span><span class="line"><span class="cl">192.168.146.163   hadoop3
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>补充：配置Windows到虚拟机的hosts映射：（可选）
+修改C盘下的hosts文件，路径为<code>C:\Windows\System32\drivers\etc</code>
+<img src="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/4.png"
+	width="741"
+	height="198"
+	srcset="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/4_hu9544822333016436879.png 480w, /p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/4_hu13829686335772269086.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="374"
+		data-flex-basis="898px"
+	
+></p>
+<h2 id="克隆虚拟机">克隆虚拟机
+</h2><p>在终端命令中关闭虚拟机或者直接在关掉vmvare再启动。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">shutdown -h now
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/5.png"
+	width="1604"
+	height="963"
+	srcset="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/5_hu16882118604343068115.png 480w, /p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/5_hu12606895787672576550.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="166"
+		data-flex-basis="399px"
+	
+>
+<img src="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/6.png"
+	width="646"
+	height="517"
+	srcset="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/6_hu12610813162847048292.png 480w, /p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/6_hu11298144486705140080.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="124"
+		data-flex-basis="299px"
+	
+>
+<img src="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/7.png"
+	width="649"
+	height="513"
+	srcset="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/7_hu15332286673522318558.png 480w, /p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/7_hu1506910297296420209.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="126"
+		data-flex-basis="303px"
+	
+>
+<img src="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/8.png"
+	width="665"
+	height="508"
+	srcset="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/8_hu11627842664661041697.png 480w, /p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/8_hu1675761978655813688.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="130"
+		data-flex-basis="314px"
+	
+>
+按照上面的步骤再克隆一台hadoop3。克隆完成后点击vmvare左上角的文件，打开。
+<img src="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/9.png"
+	width="1495"
+	height="953"
+	srcset="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/9_hu5712188631388993995.png 480w, /p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/9_hu3031444841693634630.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="156"
+		data-flex-basis="376px"
+	
+></p>
+<h2 id="修改另外两台机主机名和ip">修改另外两台机主机名和ip
+</h2><p>在另外两台机上分别执行<code>sudo vim /etc/hostname</code>,分别改成hadoop2和hadopp3。
+修改网络，注意如果你之前改ip是用可视化界面改的就一定要用可视化界面改，如果之前是用命令改的那现在也要用命令改，不然会出问题，将无法访问外网。</p>
+<p><img src="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/10.png"
+	width="1718"
+	height="888"
+	srcset="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/10_hu7555287815872262812.png 480w, /p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/10_hu5057094201756994293.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="193"
+		data-flex-basis="464px"
+	
+>
+<img src="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/11.png"
+	width="1718"
+	height="888"
+	srcset="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/11_hu1957516981406897962.png 480w, /p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/11_hu9401283513531630420.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="193"
+		data-flex-basis="464px"
+	
+>
+<img src="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/12.png"
+	width="1037"
+	height="822"
+	srcset="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/12_hu6041563171547899821.png 480w, /p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/12_hu7000714553347551646.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="126"
+		data-flex-basis="302px"
+	
+>
+<img src="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/13.png"
+	width="1402"
+	height="906"
+	srcset="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/13_hu14270081466898962895.png 480w, /p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/13_hu2335852942726827995.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="154"
+		data-flex-basis="371px"
+	
+>
+这里的ip改成之前hosts映射里写的ip。</p>
+<h2 id="配置ssh免密登录">配置ssh免密登录
+</h2><p>配置免密登录后就不用每次文件分发和命令传输就输一次密码。
+在hadoop1上执行如下密钥生成命令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">ssh-keygen -t rsa
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>一直回车就行，然后再执行如下密钥拷贝命令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">ssh-copy-id hadoop1
+</span></span><span class="line"><span class="cl">ssh-copy-id hadoop2
+</span></span><span class="line"><span class="cl">ssh-copy-id hadoop3
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如此hadoop1就可以免密登录另外两台机，如果想三台机相互可以免密登录，那分别在hadoop2和hadoop3上执行密钥拷贝命令即可。
+<img src="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/14.png"
+	width="1075"
+	height="831"
+	srcset="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/14_hu11885518439228178839.png 480w, /p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/14_hu5587474749461189342.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="129"
+		data-flex-basis="310px"
+	
+></p>
+<p>测试免密情况，在hadoop1上执行如下命令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">xcall jps
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/15.png"
+	width="486"
+	height="154"
+	srcset="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/15_hu1786882057934326399.png 480w, /p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/15_hu5187563896353404475.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="315"
+		data-flex-basis="757px"
+	
+></p>
+<h2 id="初始化hadoop并启动">初始化Hadoop并启动
+</h2><p>Hadoop初始化命令如下，在hadoop1上执行如下命令：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">hadoop namenode -format
+</span></span><span class="line"><span class="cl">start-all.sh
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/16.png"
+	width="1266"
+	height="703"
+	srcset="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/16_hu13188202257595525540.png 480w, /p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/16_hu3408071979287384692.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="180"
+		data-flex-basis="432px"
+	
+>
+<img src="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/17.png"
+	width="1419"
+	height="525"
+	srcset="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/17_hu17220723151016841307.png 480w, /p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/17_hu6067173230426137166.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="270"
+		data-flex-basis="648px"
+	
+>
+Hadoop启动后注意看jps进程，一定要有图中的进程，少一个就是安装失败了，请仔细核对一下自己前面的步骤哪里做的不对，尤其是Hadoop的五个配置文件和<code>hadoop-env.sh</code>。</p>
+<h2 id="查看webui">查看webui
+</h2><p>访问<code>192.168.146.161:9870</code>,看见有三个节点即是配置成功。在Windows配置hosts映射后也可以访问<code>hadoop1:9870</code>
+<img src="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/18.png"
+	width="1920"
+	height="1030"
+	srcset="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/18_hu15435546968888063797.png 480w, /p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/18_hu3776763487493912303.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="186"
+		data-flex-basis="447px"
+	
+></p>
+<h2 id="补充ubuntu修改主机名后怎么办">补充：Ubuntu修改主机名后怎么办
+</h2><ol>
+<li>
+<p>修改hosts:<code>sudo vim /etc/hosts</code></p>
+</li>
+<li>
+<p>修改hostname:<code>sudo vim /etc/hostname</code></p>
+</li>
+<li>
+<p>修改 xsync xcall,把脚本里的旧的用户名改成新的用户名。比如主机名从<code>hadoop01-&gt;hadoo1</code>，那就要把脚本里的<code>hadoop0$i</code>改成<code>hadoop$i</code>。</p>
+</li>
+<li>
+<p>修改ssh,直接删除旧的ssh密钥，重新生成拷贝,在主机执行如下命令（记得把主机名改成自己的）。</p>
+</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">ssh-keygen -t rsa
+</span></span><span class="line"><span class="cl">ssh-copy-id hadoop1
+</span></span><span class="line"><span class="cl">ssh-copy-id hadoop2
+</span></span><span class="line"><span class="cl">ssh-copy-id hadoop3
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>5.修改Hadoop的配置文件，包括<code>core-site.xml</code>、<code>hdfs-site.xml</code>、<code>mapred-site.xml</code>、<code>yarn-site.xml</code>、<code>worker</code></p>
+<p>删除hdfs的数据（<code>/usr/local/hadoop/hdfs/</code>）,主机（namenode所在节点）会多一个name，从节点只有data,都删除，把tmp文件夹直接删掉。</p>
+<p><img src="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/19.png"
+	width="1645"
+	height="822"
+	srcset="/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/19_hu17707344101883214814.png 480w, /p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/19_hu1524349724205165063.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="200"
+		data-flex-basis="480px"
+	
+></p>
+<p>备忘录：如果安装了hive和spark，那还需要修改如下文件</p>
+<p>hive-site.xml</p>
+<p>修改spark/conf/worker
+spark-env.sh
+spark-defaults.conf</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/ubuntu-/">Ubuntu </a>
+        
+            <a href="/tags/hadoop/">Hadoop</a>
+        
+    </section>
+
+
+    <section>
+        页面浏览量<span id="busuanzi_value_page_pv">Loading</span>
+    </section>
+</footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2025 rustWood
+    </section>
+    
+    <section class="powerby">
+        
+            网站总访客数：<span id='busuanzi_value_site_uv'>Loading</span><br/>网站总访问量：<span id='busuanzi_value_site_pv'>Loading</span> <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+
+<style>
+     
+    @font-face {
+    font-family: 'MapleMono';
+    src: url('/font/MapleMono-Woff2/MapleMono-Regular.woff2') format('woff2');
+    }
+  
+     
+    :root {
+      --base-font-family: 'MapleMono', sans-serif;
+      --code-font-family: 'consolas','MapleMono',  monospace;
+    }
+  </style>
+
+
+    </body>
+</html>

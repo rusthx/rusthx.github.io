@@ -3,7 +3,22 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://rusthx.github.io/</loc>
-    <lastmod>2025-06-10T17:31:20+08:00</lastmod>
+    <lastmod>2025-06-12T21:19:57+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/tags/hadoop/</loc>
+    <lastmod>2025-06-12T21:19:57+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/post/</loc>
+    <lastmod>2025-06-12T21:19:57+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/tags/</loc>
+    <lastmod>2025-06-12T21:19:57+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/tags/ubuntu-/</loc>
+    <lastmod>2025-06-12T21:19:57+08:00</lastmod>
+  </url><url>
+    <loc>https://rusthx.github.io/p/ubuntu22.4%E6%90%AD%E5%BB%BAhadoop3%E9%9B%86%E7%BE%A4/</loc>
+    <lastmod>2025-06-12T21:19:57+08:00</lastmod>
   </url><url>
     <loc>https://rusthx.github.io/tags/hadoop-/</loc>
     <lastmod>2025-06-10T17:31:20+08:00</lastmod>
@@ -11,13 +26,7 @@
     <loc>https://rusthx.github.io/p/hadoop3%E9%85%8D%E7%BD%AEsqoop/</loc>
     <lastmod>2025-06-10T17:31:20+08:00</lastmod>
   </url><url>
-    <loc>https://rusthx.github.io/post/</loc>
-    <lastmod>2025-06-10T17:31:20+08:00</lastmod>
-  </url><url>
     <loc>https://rusthx.github.io/tags/sqoop/</loc>
-    <lastmod>2025-06-10T17:31:20+08:00</lastmod>
-  </url><url>
-    <loc>https://rusthx.github.io/tags/</loc>
     <lastmod>2025-06-10T17:31:20+08:00</lastmod>
   </url><url>
     <loc>https://rusthx.github.io/tags/hbase/</loc>
