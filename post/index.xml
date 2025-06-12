@@ -16,11 +16,13 @@
         <description>&lt;blockquote&gt;
 &lt;p&gt;参考：&lt;a class=&#34;link&#34; href=&#34;https://www.bilibili.com/video/BV1Qp4y1n7EN/?spm_id_from=333.1387.search.video_card.click&amp;amp;vd_source=2db7c64d895a2907954a5b8725db55d5&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;尚硅谷Hadoop课程&lt;/a&gt;。
-[CSDN相关教程]https://blog.csdn.net/zyw2002/article/details/123486055&lt;/p&gt;
+&lt;a class=&#34;link&#34; href=&#34;https://blog.csdn.net/zyw2002/article/details/123486055&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;CSDN相关教程&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;在搭建Hadoop集群前需要先搭建好Ubuntu虚拟机，具体可参考下面的教程。&lt;/p&gt;
 &lt;blockquote&gt;
-&lt;p&gt;前置虚拟机搭建：https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/&lt;/p&gt;
+&lt;p&gt;&lt;a class=&#34;link&#34; href=&#34;https://rusthx.github.io/p/vmvare%E5%AE%89%E8%A3%85%E9%85%8D%E7%BD%AEubuntu%E8%99%9A%E6%8B%9F%E6%9C%BA/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
+    &gt;前置虚拟机搭建&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 &lt;p&gt;本文搭建了三台虚拟机，其中hadoop1是主节点，主机名与ip对应关系如下。
 如果你想抄我的配置，不想在部署的时候修改ip,你得先在vmvare里点击左上角编辑，虚拟网络编辑器。改成如下图所示。
