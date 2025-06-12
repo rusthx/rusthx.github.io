@@ -929,28 +929,12 @@
 </div>
 </div><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
-</span><span class="lnt"> 2
-</span><span class="lnt"> 3
-</span><span class="lnt"> 4
-</span><span class="lnt"> 5
-</span><span class="lnt"> 6
-</span><span class="lnt"> 7
-</span><span class="lnt"> 8
-</span><span class="lnt"> 9
-</span><span class="lnt">10
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HADOOP_HOME</span><span class="o">=</span>/usr/local/hadoop
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HADOOP_INSTALL</span><span class="o">=</span><span class="nv">$HADOOP_HOME</span>
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HADOOP_MAPRED_HOME</span><span class="o">=</span><span class="nv">$HADOOP_HOME</span>
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HADOOP_COMMON_HOME</span><span class="o">=</span><span class="nv">$HADOOP_HOME</span>
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HADOOP_HDFS_HOME</span><span class="o">=</span><span class="nv">$HADOOP_HOME</span>
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">YARN_HOME</span><span class="o">=</span><span class="nv">$HADOOP_HOME</span>
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HADOOP_COMMON_LIB_NATIVE_DIR</span><span class="o">=</span><span class="nv">$HADOOP_HOME</span>/lib/native
 </span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">PATH</span><span class="o">=</span><span class="nv">$PATH</span>:<span class="nv">$HADOOP_HOME</span>/sbin:<span class="nv">$HADOOP_HOME</span>/bin
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HADOOP_CONF_DIR</span><span class="o">=</span><span class="si">${</span><span class="nv">HADOOP_HOME</span><span class="si">}</span>/etc/hadoop
-</span></span><span class="line"><span class="cl"><span class="nb">export</span> <span class="nv">HADOOP_CLASSPATH</span><span class="o">=</span><span class="sb">`</span>hadoop classpath<span class="sb">`</span>
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>添加后使用<code>hadoop version</code>命令查看，如果出现Hadoop版本，那环境变量就修改成功了。如果没有，关闭当前的终端，新开一个终端试试。
@@ -1391,9 +1375,9 @@ Hadoop启动后注意看jps进程，一定要有图中的进程，少一个就�
 ></p>
 <p>备忘录：如果安装了hive和spark，那还需要修改如下文件</p>
 <p>hive-site.xml</p>
-<p>修改spark/conf/worker
-spark-env.sh
-spark-defaults.conf</p>
+<p>修改spark/conf/worker</p>
+<p>spark-env.sh</p>
+<p>spark-defaults.conf</p>
 
 </section>
 
