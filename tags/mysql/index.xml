@@ -17,10 +17,10 @@
 &lt;h2 id=&#34;主从复制原理&#34;&gt;主从复制原理
 &lt;/h2&gt;&lt;blockquote&gt;
 &lt;p&gt;参考资料：https://xiaolincoding.com/mysql/log/how_update.html#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%98%AF%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0
-&lt;img src=&#34;https://rusthx.github.io/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/2.png&#34;
+&lt;img src=&#34;https://rusthx.github.io/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/1.png&#34;
 	width=&#34;960&#34;
 	height=&#34;405&#34;
-	srcset=&#34;https://rusthx.github.io/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/2_hu12276740477023013187.png 480w, https://rusthx.github.io/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/2_hu11267129864193341543.png 1024w&#34;
+	srcset=&#34;https://rusthx.github.io/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/1_hu12276740477023013187.png 480w, https://rusthx.github.io/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/1_hu11267129864193341543.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 	
@@ -46,10 +46,10 @@ binlog 信息写入 relay log 的中继日志里，再返回给主库&amp;quot;�
 的数据，最终实现主从的数据一致性。
 在完成主从复制之后，你就可以在写数据时只写主库，在读数据时只读从库，这样即使写请求会锁表或者
 锁记录，也不会影响读请求的执行。
-&lt;img src=&#34;https://rusthx.github.io/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/3.png&#34;
+&lt;img src=&#34;https://rusthx.github.io/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/2.png&#34;
 	width=&#34;612&#34;
 	height=&#34;607&#34;
-	srcset=&#34;https://rusthx.github.io/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/3_hu14524736388878011446.png 480w, https://rusthx.github.io/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/3_hu12211041723728468306.png 1024w&#34;
+	srcset=&#34;https://rusthx.github.io/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/2_hu14524736388878011446.png 480w, https://rusthx.github.io/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/2_hu12211041723728468306.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 	
@@ -63,10 +63,10 @@ binlog 信息写入 relay log 的中继日志里，再返回给主库&amp;quot;�
 &lt;/h2&gt;&lt;h3 id=&#34;前置工作&#34;&gt;前置工作
 &lt;/h3&gt;&lt;p&gt; 在两台机上分别安装MySQL,相关教程可查看我的相关博客&lt;a class=&#34;link&#34; href=&#34;https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/&#34;  target=&#34;_blank&#34; rel=&#34;noopener&#34;
     &gt;Ubuntu22.04安装MySQL8.0.35&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/1.png&#34;
+&lt;p&gt;&lt;img src=&#34;https://rusthx.github.io/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/3.png&#34;
 	width=&#34;1074&#34;
 	height=&#34;906&#34;
-	srcset=&#34;https://rusthx.github.io/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/1_hu9957867129983456533.png 480w, https://rusthx.github.io/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/1_hu13404604853172762023.png 1024w&#34;
+	srcset=&#34;https://rusthx.github.io/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/3_hu9957867129983456533.png 480w, https://rusthx.github.io/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/3_hu13404604853172762023.png 1024w&#34;
 	loading=&#34;lazy&#34;
 	
 	

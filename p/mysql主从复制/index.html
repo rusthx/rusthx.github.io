@@ -330,10 +330,10 @@
 <h2 id="主从复制原理">主从复制原理
 </h2><blockquote>
 <p>参考资料：https://xiaolincoding.com/mysql/log/how_update.html#%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6%E6%98%AF%E6%80%8E%E4%B9%88%E5%AE%9E%E7%8E%B0
-<img src="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/2.png"
+<img src="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/1.png"
 	width="960"
 	height="405"
-	srcset="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/2_hu12276740477023013187.png 480w, /p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/2_hu11267129864193341543.png 1024w"
+	srcset="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/1_hu12276740477023013187.png 480w, /p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/1_hu11267129864193341543.png 1024w"
 	loading="lazy"
 	
 	
@@ -359,10 +359,10 @@ binlog 信息写入 relay log 的中继日志里，再返回给主库&quot;复�
 的数据，最终实现主从的数据一致性。
 在完成主从复制之后，你就可以在写数据时只写主库，在读数据时只读从库，这样即使写请求会锁表或者
 锁记录，也不会影响读请求的执行。
-<img src="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/3.png"
+<img src="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/2.png"
 	width="612"
 	height="607"
-	srcset="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/3_hu14524736388878011446.png 480w, /p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/3_hu12211041723728468306.png 1024w"
+	srcset="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/2_hu14524736388878011446.png 480w, /p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/2_hu12211041723728468306.png 1024w"
 	loading="lazy"
 	
 	
@@ -376,10 +376,10 @@ binlog 信息写入 relay log 的中继日志里，再返回给主库&quot;复�
 </h2><h3 id="前置工作">前置工作
 </h3><p> 在两台机上分别安装MySQL,相关教程可查看我的相关博客<a class="link" href="https://rusthx.github.io/p/ubuntu22.04%E5%AE%89%E8%A3%85mysql8.0.35/"  target="_blank" rel="noopener"
     >Ubuntu22.04安装MySQL8.0.35</a></p>
-<p><img src="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/1.png"
+<p><img src="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/3.png"
 	width="1074"
 	height="906"
-	srcset="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/1_hu9957867129983456533.png 480w, /p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/1_hu13404604853172762023.png 1024w"
+	srcset="/p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/3_hu9957867129983456533.png 480w, /p/mysql%E4%B8%BB%E4%BB%8E%E5%A4%8D%E5%88%B6/3_hu13404604853172762023.png 1024w"
 	loading="lazy"
 	
 	
