@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content=" 参考资料:https://cloud.tencent.com/developer/article/2347138\n禁用Ubuntu Swap 1 sudo gedit /etc/fstab ubuntu24.04这个swapfile配置文件略有调整 Ubuntu安装网桥工具 1 sudo apt-get install bridge-utils -y 添加k8s镜像源 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 # 1. 安装必要工具 sudo apt update sudo apt install -y apt-transport-https ca-certificates curl gpg # 2. 创建 keyring 目录 sudo mkdir -p /etc/apt/keyrings # 3. 下载官方 GPG 密钥 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg # 4. 添加 APT 源（官方地址，支持 noble） echo &#34;deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /&#34; | sudo tee /etc/apt/sources.list.d/kubernetes.list # 5. 更新并安装 sudo apt update sudo apt install -y kubelet kubeadm kubectl # 6. 锁定版本（防止意外升级） sudo apt-mark hold kubelet kubeadm kubectl 下面这个是旧版的命令，在Ubuntu24.04里已经不支持了。权且保留以作参考。\n">
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content=" 参考资料:https://cloud.tencent.com/developer/article/2347138\n禁用Ubuntu Swap 1 sudo gedit /etc/fstab ubuntu24.04这个swapfile配置文件略有调整 Ubuntu安装网桥工具 1 sudo apt-get install bridge-utils -y 添加k8s镜像源 新版命令 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 # 1. 安装必要工具 sudo apt update sudo apt install -y apt-transport-https ca-certificates curl gpg # 2. 创建 keyring 目录 sudo mkdir -p /etc/apt/keyrings # 3. 下载官方 GPG 密钥 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg # 4. 添加 APT 源（官方地址，支持 noble） echo &#34;deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /&#34; | sudo tee /etc/apt/sources.list.d/kubernetes.list # 5. 更新并安装 sudo apt update sudo apt install -y kubelet kubeadm kubectl # 6. 锁定版本（防止意外升级） sudo apt-mark hold kubelet kubeadm kubectl 旧版命令 下面这个是旧版的命令，在Ubuntu24.04里已经不支持了。权且保留以作参考。\n">
 <title>Kubernetes（K8s）集群安装</title>
 
 <link rel='canonical' href='https://rusthx.github.io/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/'>
 
 <link rel="stylesheet" href="/scss/style.min.f88e0ff8bfb43bef18eec2559d462f612719fb375decfc40b3869dca992f1fa4.css"><meta property='og:title' content="Kubernetes（K8s）集群安装">
-<meta property='og:description' content=" 参考资料:https://cloud.tencent.com/developer/article/2347138\n禁用Ubuntu Swap 1 sudo gedit /etc/fstab ubuntu24.04这个swapfile配置文件略有调整 Ubuntu安装网桥工具 1 sudo apt-get install bridge-utils -y 添加k8s镜像源 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 # 1. 安装必要工具 sudo apt update sudo apt install -y apt-transport-https ca-certificates curl gpg # 2. 创建 keyring 目录 sudo mkdir -p /etc/apt/keyrings # 3. 下载官方 GPG 密钥 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg # 4. 添加 APT 源（官方地址，支持 noble） echo &#34;deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /&#34; | sudo tee /etc/apt/sources.list.d/kubernetes.list # 5. 更新并安装 sudo apt update sudo apt install -y kubelet kubeadm kubectl # 6. 锁定版本（防止意外升级） sudo apt-mark hold kubelet kubeadm kubectl 下面这个是旧版的命令，在Ubuntu24.04里已经不支持了。权且保留以作参考。\n">
+<meta property='og:description' content=" 参考资料:https://cloud.tencent.com/developer/article/2347138\n禁用Ubuntu Swap 1 sudo gedit /etc/fstab ubuntu24.04这个swapfile配置文件略有调整 Ubuntu安装网桥工具 1 sudo apt-get install bridge-utils -y 添加k8s镜像源 新版命令 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 # 1. 安装必要工具 sudo apt update sudo apt install -y apt-transport-https ca-certificates curl gpg # 2. 创建 keyring 目录 sudo mkdir -p /etc/apt/keyrings # 3. 下载官方 GPG 密钥 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg # 4. 添加 APT 源（官方地址，支持 noble） echo &#34;deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /&#34; | sudo tee /etc/apt/sources.list.d/kubernetes.list # 5. 更新并安装 sudo apt update sudo apt install -y kubelet kubeadm kubectl # 6. 锁定版本（防止意外升级） sudo apt-mark hold kubelet kubeadm kubectl 旧版命令 下面这个是旧版的命令，在Ubuntu24.04里已经不支持了。权且保留以作参考。\n">
 <meta property='og:url' content='https://rusthx.github.io/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/'>
 <meta property='og:site_name' content='rustWood'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Kubernetes' /><meta property='article:tag' content='Ubuntu' /><meta property='article:published_time' content='2024-09-07T12:35:29&#43;08:00'/><meta property='article:modified_time' content='2024-09-07T12:35:29&#43;08:00'/>
 <meta name="twitter:title" content="Kubernetes（K8s）集群安装">
-<meta name="twitter:description" content=" 参考资料:https://cloud.tencent.com/developer/article/2347138\n禁用Ubuntu Swap 1 sudo gedit /etc/fstab ubuntu24.04这个swapfile配置文件略有调整 Ubuntu安装网桥工具 1 sudo apt-get install bridge-utils -y 添加k8s镜像源 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 # 1. 安装必要工具 sudo apt update sudo apt install -y apt-transport-https ca-certificates curl gpg # 2. 创建 keyring 目录 sudo mkdir -p /etc/apt/keyrings # 3. 下载官方 GPG 密钥 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg # 4. 添加 APT 源（官方地址，支持 noble） echo &#34;deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /&#34; | sudo tee /etc/apt/sources.list.d/kubernetes.list # 5. 更新并安装 sudo apt update sudo apt install -y kubelet kubeadm kubectl # 6. 锁定版本（防止意外升级） sudo apt-mark hold kubelet kubeadm kubectl 下面这个是旧版的命令，在Ubuntu24.04里已经不支持了。权且保留以作参考。\n">        
+<meta name="twitter:description" content=" 参考资料:https://cloud.tencent.com/developer/article/2347138\n禁用Ubuntu Swap 1 sudo gedit /etc/fstab ubuntu24.04这个swapfile配置文件略有调整 Ubuntu安装网桥工具 1 sudo apt-get install bridge-utils -y 添加k8s镜像源 新版命令 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 # 1. 安装必要工具 sudo apt update sudo apt install -y apt-transport-https ca-certificates curl gpg # 2. 创建 keyring 目录 sudo mkdir -p /etc/apt/keyrings # 3. 下载官方 GPG 密钥 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.30/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg # 4. 添加 APT 源（官方地址，支持 noble） echo &#34;deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.30/deb/ /&#34; | sudo tee /etc/apt/sources.list.d/kubernetes.list # 5. 更新并安装 sudo apt update sudo apt install -y kubelet kubeadm kubectl # 6. 锁定版本（防止意外升级） sudo apt-mark hold kubelet kubeadm kubectl 旧版命令 下面这个是旧版的命令，在Ubuntu24.04里已经不支持了。权且保留以作参考。\n">        
     </head>
     <body class="
     article-page
@@ -257,19 +257,25 @@
         <div class="widget--toc">
             <nav id="TableOfContents">
   <ol>
-    <li>
+    <li><a href="#禁用ubuntu-swap">禁用Ubuntu Swap</a></li>
+    <li><a href="#ubuntu安装网桥工具">Ubuntu安装网桥工具</a></li>
+    <li><a href="#添加k8s镜像源">添加k8s镜像源</a>
       <ol>
-        <li><a href="#禁用ubuntu-swap">禁用Ubuntu Swap</a></li>
-        <li><a href="#ubuntu安装网桥工具">Ubuntu安装网桥工具</a></li>
-        <li><a href="#添加k8s镜像源">添加k8s镜像源</a></li>
-        <li><a href="#配置containerd">配置containerd</a></li>
-        <li><a href="#安装kubernetes">安装Kubernetes</a></li>
-        <li><a href="#k8s配置单机节点">k8s配置单机节点</a></li>
-        <li><a href="#克隆虚拟机作为从节点">克隆虚拟机作为从节点</a></li>
-        <li><a href="#配置kubernetes集群">配置Kubernetes集群</a></li>
-        <li><a href="#配置kubernetes网络插件calico">配置Kubernetes网络插件Calico</a></li>
+        <li><a href="#新版命令">新版命令</a></li>
+        <li><a href="#旧版命令">旧版命令</a></li>
       </ol>
     </li>
+    <li><a href="#配置containerd">配置containerd</a>
+      <ol>
+        <li><a href="#旧版命令-1">旧版命令</a></li>
+        <li><a href="#新版命令-1">新版命令</a></li>
+      </ol>
+    </li>
+    <li><a href="#安装kubernetes">安装Kubernetes</a></li>
+    <li><a href="#k8s配置单机节点">k8s配置单机节点</a></li>
+    <li><a href="#克隆虚拟机作为从节点">克隆虚拟机作为从节点</a></li>
+    <li><a href="#配置kubernetes集群">配置Kubernetes集群</a></li>
+    <li><a href="#配置kubernetes网络插件calico">配置Kubernetes网络插件Calico</a></li>
   </ol>
 </nav>
         </div>
@@ -331,8 +337,8 @@
 <p>参考资料:<a class="link" href="https://cloud.tencent.com/developer/article/2347138"  target="_blank" rel="noopener"
     >https://cloud.tencent.com/developer/article/2347138</a></p>
 </blockquote>
-<h3 id="禁用ubuntu-swap">禁用Ubuntu Swap
-</h3><div class="highlight"><div class="chroma">
+<h2 id="禁用ubuntu-swap">禁用Ubuntu Swap
+</h2><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
@@ -365,8 +371,8 @@
 		data-flex-basis="464px"
 	
 ></p>
-<h3 id="ubuntu安装网桥工具">Ubuntu安装网桥工具
-</h3><div class="highlight"><div class="chroma">
+<h2 id="ubuntu安装网桥工具">Ubuntu安装网桥工具
+</h2><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span></code></pre></td>
@@ -386,7 +392,8 @@
 		data-flex-basis="619px"
 	
 ></p>
-<h3 id="添加k8s镜像源">添加k8s镜像源
+<h2 id="添加k8s镜像源">添加k8s镜像源
+</h2><h3 id="新版命令">新版命令
 </h3><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
@@ -431,7 +438,8 @@
 </span></span><span class="line"><span class="cl">sudo apt-mark hold kubelet kubeadm kubectl
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>下面这个是旧版的命令，在Ubuntu24.04里已经不支持了。权且保留以作参考。</p>
+</div><h3 id="旧版命令">旧版命令
+</h3><p>下面这个是旧版的命令，在Ubuntu24.04里已经不支持了。权且保留以作参考。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -448,7 +456,8 @@
 </span></span><span class="line"><span class="cl">sudo add-apt-repository <span class="s2">&#34;deb https://mirrors.aliyun.com/kubernetes/apt/ kubernetes-xenial main&#34;</span>
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="配置containerd">配置containerd
+</div><h2 id="配置containerd">配置containerd
+</h2><h3 id="旧版命令-1">旧版命令
 </h3><p>这里需要安装containerd，但是我在<a class="link" href="https://rusthx.github.io/p/docker%E5%AE%89%E8%A3%85%E4%B8%8E%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C/"  target="_blank" rel="noopener"
     >docker安装</a>的时候已经装好了，相关命令为</p>
 <div class="highlight"><div class="chroma">
@@ -522,44 +531,6 @@
 		data-flex-basis="267px"
 	
 ></p>
-<p>没有装过docker,直接在Ubuntu24.04里装containerd会报错如下，可能是Docker 官方仓库尚未为 Ubuntu 24.04 (Noble Numbat) 提供 containerd.io 软件包，也可能是没配置docker官方镜像源导致的。</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span><span class="lnt">5
-</span><span class="lnt">6
-</span><span class="lnt">7
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">rust@k8s1:~$ sudo apt-get install containerd.io
-</span></span><span class="line"><span class="cl">正在读取软件包列表... 完成
-</span></span><span class="line"><span class="cl">正在分析软件包的依赖关系树... 完成
-</span></span><span class="line"><span class="cl">正在读取状态信息... 完成                 
-</span></span><span class="line"><span class="cl">E: 无法定位软件包 containerd.io
-</span></span><span class="line"><span class="cl">E: 无法按照 glob ‘containerd.io’ 找到任何软件包
-</span></span><span class="line"><span class="cl">E: 无法按照正则表达式 containerd.io 找到任何软件包
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>使用Ubuntu官方仓库的container(Ubuntu官方仓库叫containerd,不叫containerd.io)。安装命令如下：</p>
-<div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">1
-</span><span class="lnt">2
-</span><span class="lnt">3
-</span><span class="lnt">4
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo apt install containerd
-</span></span><span class="line"><span class="cl"><span class="c1"># 配置containrd</span>
-</span></span><span class="line"><span class="cl">sudo mkdir -p /etc/containerd
-</span></span><span class="line"><span class="cl">containerd config default <span class="p">|</span> sudo tee /etc/containerd/config.toml
-</span></span></code></pre></td></tr></table>
-</div>
-</div><p>编辑 /etc/containerd/config.toml，找到以下行：
-<code>[plugins.&quot;io.containerd.grpc.v1.cri&quot;.containerd.runtimes.runc.options]</code>，修改<code>SystemdCgroup = true</code>。</p>
 <p>配置后，重启containerd服务，并保证containerd状态正确</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -583,8 +554,102 @@
 		data-flex-basis="692px"
 	
 ></p>
-<h3 id="安装kubernetes">安装Kubernetes
-</h3><p>安装k8s软件，这里会默认下载最新的kubernetes（阿里云镜像源上的），后面指定版本时需要根据自己的版本进行修改。这里也可以手动指定kubernetes版本。</p>
+<h3 id="新版命令-1">新版命令
+</h3><p>使用Ubuntu官方仓库的container(Ubuntu官方仓库叫containerd,不叫containerd.io,containerd.io是docder仓库的包)。安装命令如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo apt install containerd
+</span></span><span class="line"><span class="cl"><span class="c1"># 配置containrd</span>
+</span></span><span class="line"><span class="cl">sudo mkdir -p /etc/containerd
+</span></span><span class="line"><span class="cl"><span class="c1"># 创建/etc/containerd/config.yaml，修改镜像源和cgroup</span>
+</span></span><span class="line"><span class="cl">sudo tee /etc/containerd/config.toml <span class="s">&lt;&lt; &#39;EOF&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s">version = 2
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">[plugins.&#34;io.containerd.grpc.v1.cri&#34;]
+</span></span></span><span class="line"><span class="cl"><span class="s">  sandbox_image = &#34;registry.aliyuncs.com/google_containers/pause:3.9&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">  [plugins.&#34;io.containerd.grpc.v1.cri&#34;.containerd.runtimes.runc]
+</span></span></span><span class="line"><span class="cl"><span class="s">    runtime_type = &#34;io.containerd.runc.v2&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">    [plugins.&#34;io.containerd.grpc.v1.cri&#34;.containerd.runtimes.runc.options]
+</span></span></span><span class="line"><span class="cl"><span class="s">      SystemdCgroup = true
+</span></span></span><span class="line"><span class="cl"><span class="s">  [plugins.&#34;io.containerd.grpc.v1.cri&#34;.registry]
+</span></span></span><span class="line"><span class="cl"><span class="s">    config_path = &#34;/etc/containerd/certs.d&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>创建<code>/etc/containerd/certs.d</code>目录，在这个目录填入docker.io和registry.k8s.io的镜像源。新版本的k8s在config.yaml改会有冲突问题，不能生效。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># Docker Hub 加速</span>
+</span></span><span class="line"><span class="cl">sudo mkdir -p /etc/containerd/certs.d/docker.io
+</span></span><span class="line"><span class="cl">sudo tee /etc/containerd/certs.d/docker.io/hosts.toml <span class="s">&lt;&lt; &#39;EOF&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s">server = &#34;https://registry-1.docker.io&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">[host.&#34;https://docker.m.daocloud.io&#34;]
+</span></span></span><span class="line"><span class="cl"><span class="s">  capabilities = [&#34;pull&#34;, &#34;resolve&#34;]
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># K8s 镜像加速</span>
+</span></span><span class="line"><span class="cl">sudo mkdir -p /etc/containerd/certs.d/registry.k8s.io
+</span></span><span class="line"><span class="cl">sudo tee /etc/containerd/certs.d/registry.k8s.io/hosts.toml <span class="s">&lt;&lt; &#39;EOF&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s">server = &#34;https://registry.k8s.io&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">[host.&#34;https://registry.aliyuncs.com/google_containers&#34;]
+</span></span></span><span class="line"><span class="cl"><span class="s">  capabilities = [&#34;pull&#34;, &#34;resolve&#34;]
+</span></span></span><span class="line"><span class="cl"><span class="s">  override_path = true
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>重启containerd</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo systemctl restart containerd
+</span></span><span class="line"><span class="cl">sudo systemctl status containerd
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="安装kubernetes">安装Kubernetes
+</h2><p>安装k8s软件，这里会默认下载最新的kubernetes（阿里云镜像源上的），后面指定版本时需要根据自己的版本进行修改。这里也可以手动指定kubernetes版本。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -606,8 +671,8 @@
 	
 >
 此时k8s没有启动成功是正常的，因为kubelet服务成功启动的先决条件，需要kubelet的配置文件，所在目录/var/lib/kubelet还没有建立。</p>
-<h3 id="k8s配置单机节点">k8s配置单机节点
-</h3><p>查看k8s版本</p>
+<h2 id="k8s配置单机节点">k8s配置单机节点
+</h2><p>查看k8s版本</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -695,8 +760,8 @@
 		data-flex-basis="430px"
 	
 ></p>
-<h3 id="克隆虚拟机作为从节点">克隆虚拟机作为从节点
-</h3><p>关闭虚拟机，克隆虚拟机作为从节点。
+<h2 id="克隆虚拟机作为从节点">克隆虚拟机作为从节点
+</h2><p>关闭虚拟机，克隆虚拟机作为从节点。
 右键虚拟机，克隆虚拟机。选择当前状态，创建完整克隆，完成克隆。
 克隆完成后修改从节点的hosts、hostname和ip。
 为了便于管理，修改主节点的hosts为k8s1,从节点分别取名k8s2和k8s3。对应ip指定为192.168.146.112和192.168.146.113。（这里的ip和host要根据自己的情况进行修改，主节点的名字也可以通过修改hotsname来改变）
@@ -737,8 +802,8 @@
 		data-flex-basis="360px"
 	
 ></p>
-<h3 id="配置kubernetes集群">配置Kubernetes集群
-</h3><p>在主节点上跟着初始化成功后的提示继续后续工作</p>
+<h2 id="配置kubernetes集群">配置Kubernetes集群
+</h2><p>在主节点上跟着初始化成功后的提示继续后续工作</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
@@ -884,8 +949,8 @@
 		data-flex-basis="1028px"
 	
 ></p>
-<h3 id="配置kubernetes网络插件calico">配置Kubernetes网络插件Calico
-</h3><div class="highlight"><div class="chroma">
+<h2 id="配置kubernetes网络插件calico">配置Kubernetes网络插件Calico
+</h2><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">1
 </span><span class="lnt">2
