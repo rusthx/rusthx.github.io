@@ -595,6 +595,7 @@
 </span></span></code></pre></td></tr></table>
 </div>
 </div><p>创建<code>/etc/containerd/certs.d</code>目录，在这个目录填入docker.io和registry.k8s.io的镜像源。新版本的k8s在config.yaml改会有冲突问题，不能生效。</p>
+<p>注意：k8s里修改镜像源之后，使用<code>kubectl describe pod &lt;pod_name&gt; </code>查看时还是显示的<code>docker.io</code>和<code>registry.k8s.io</code>。配置镜像源只物理修改从哪里修改，不改镜像拉取的逻辑源。所以改好镜像源之后也不太好验证成功，随便拉个镜像<code>sudo crictl pull nginx:1.14.2</code>，能拉下来就是成了。</p>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
