@@ -793,7 +793,7 @@
 		data-flex-basis=&#34;619px&#34;
 	
 &gt;&lt;/p&gt;
-&lt;h2 id=&#34;添加k8s镜像源&#34;&gt;添加k8s镜像源
+&lt;h2 id=&#34;添加k8sapt镜像源&#34;&gt;添加k8sAPT镜像源
 &lt;/h2&gt;&lt;h3 id=&#34;新版命令&#34;&gt;新版命令
 &lt;/h3&gt;&lt;div class=&#34;highlight&#34;&gt;&lt;div class=&#34;chroma&#34;&gt;
 &lt;table class=&#34;lntable&#34;&gt;&lt;tr&gt;&lt;td class=&#34;lntd&#34;&gt;
