@@ -2,16 +2,16 @@
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
 <meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content=" 官网链接：使用 Deployment 运行一个无状态应用\n前置准备 前置要求：搭建好一套k8s集群，可以参考我写的这篇教程：搭建k8s集群\nk8s官方的镜像站在国内是拉不下来的，有几种方法解决：\n">
-<title>K8s实践练习1：使用Deployment运行无状态应用并更新</title>
+<title>K8s实践练习1_使用Deployment运行无状态应用并更新</title>
 
-<link rel='canonical' href='https://rusthx.github.io/p/k8s%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A01%E4%BD%BF%E7%94%A8deployment%E8%BF%90%E8%A1%8C%E6%97%A0%E7%8A%B6%E6%80%81%E5%BA%94%E7%94%A8%E5%B9%B6%E6%9B%B4%E6%96%B0/'>
+<link rel='canonical' href='https://rusthx.github.io/p/k8s%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A01_%E4%BD%BF%E7%94%A8deployment%E8%BF%90%E8%A1%8C%E6%97%A0%E7%8A%B6%E6%80%81%E5%BA%94%E7%94%A8%E5%B9%B6%E6%9B%B4%E6%96%B0/'>
 
-<link rel="stylesheet" href="/scss/style.min.f88e0ff8bfb43bef18eec2559d462f612719fb375decfc40b3869dca992f1fa4.css"><meta property='og:title' content="K8s实践练习1：使用Deployment运行无状态应用并更新">
+<link rel="stylesheet" href="/scss/style.min.f88e0ff8bfb43bef18eec2559d462f612719fb375decfc40b3869dca992f1fa4.css"><meta property='og:title' content="K8s实践练习1_使用Deployment运行无状态应用并更新">
 <meta property='og:description' content=" 官网链接：使用 Deployment 运行一个无状态应用\n前置准备 前置要求：搭建好一套k8s集群，可以参考我写的这篇教程：搭建k8s集群\nk8s官方的镜像站在国内是拉不下来的，有几种方法解决：\n">
-<meta property='og:url' content='https://rusthx.github.io/p/k8s%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A01%E4%BD%BF%E7%94%A8deployment%E8%BF%90%E8%A1%8C%E6%97%A0%E7%8A%B6%E6%80%81%E5%BA%94%E7%94%A8%E5%B9%B6%E6%9B%B4%E6%96%B0/'>
+<meta property='og:url' content='https://rusthx.github.io/p/k8s%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A01_%E4%BD%BF%E7%94%A8deployment%E8%BF%90%E8%A1%8C%E6%97%A0%E7%8A%B6%E6%80%81%E5%BA%94%E7%94%A8%E5%B9%B6%E6%9B%B4%E6%96%B0/'>
 <meta property='og:site_name' content='rustWood'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Kubernetes' /><meta property='article:published_time' content='2026-02-04T10:13:03&#43;08:00'/><meta property='article:modified_time' content='2026-02-04T10:13:03&#43;08:00'/>
-<meta name="twitter:title" content="K8s实践练习1：使用Deployment运行无状态应用并更新">
+<meta name="twitter:title" content="K8s实践练习1_使用Deployment运行无状态应用并更新">
 <meta name="twitter:description" content=" 官网链接：使用 Deployment 运行一个无状态应用\n前置准备 前置要求：搭建好一套k8s集群，可以参考我写的这篇教程：搭建k8s集群\nk8s官方的镜像站在国内是拉不下来的，有几种方法解决：\n">        
     </head>
     <body class="
@@ -279,7 +279,7 @@
 
     <div class="article-title-wrapper">
         <h2 class="article-title">
-            <a href="/p/k8s%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A01%E4%BD%BF%E7%94%A8deployment%E8%BF%90%E8%A1%8C%E6%97%A0%E7%8A%B6%E6%80%81%E5%BA%94%E7%94%A8%E5%B9%B6%E6%9B%B4%E6%96%B0/">K8s实践练习1：使用Deployment运行无状态应用并更新</a>
+            <a href="/p/k8s%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A01_%E4%BD%BF%E7%94%A8deployment%E8%BF%90%E8%A1%8C%E6%97%A0%E7%8A%B6%E6%80%81%E5%BA%94%E7%94%A8%E5%B9%B6%E6%9B%B4%E6%96%B0/">K8s实践练习1_使用Deployment运行无状态应用并更新</a>
         </h2>
     
         
