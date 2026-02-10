@@ -700,7 +700,7 @@
 <pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Service</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">hello</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">backend</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">hello</span><span class="w">
@@ -869,7 +869,7 @@
 <pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">rust@k8s1:~$ kubectl get services
 </span></span><span class="line"><span class="cl">NAME         TYPE        CLUSTER-IP       EXTERNAL-IP   PORT<span class="o">(</span>S<span class="o">)</span>        AGE
 </span></span><span class="line"><span class="cl">frontend     NodePort    10.101.209.199   &lt;none&gt;        80:30001/TCP   99m
-</span></span><span class="line"><span class="cl">hello        ClusterIP   10.111.212.50    &lt;none&gt;        80/TCP         119m
+</span></span><span class="line"><span class="cl">backend        ClusterIP   10.111.212.50    &lt;none&gt;        80/TCP         119m
 </span></span><span class="line"><span class="cl">kubernetes   ClusterIP   10.96.0.1        &lt;none&gt;        443/TCP        7d
 </span></span></code></pre></td></tr></table>
 </div>
@@ -923,6 +923,17 @@
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">rust@k8s2:~$ curl k8s1:30001
 </span></span><span class="line"><span class="cl"><span class="o">{</span><span class="s2">&#34;message&#34;</span>:<span class="s2">&#34;Hello&#34;</span><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>测试完成，练习结束。不想保存这个练习的服务和pod可用如下命令清除：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl delete services frontend backend
+</span></span><span class="line"><span class="cl">kubectl delete deployment frontend backend
 </span></span></code></pre></td></tr></table>
 </div>
 </div>
