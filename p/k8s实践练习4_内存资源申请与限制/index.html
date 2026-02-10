@@ -872,7 +872,7 @@
 <p>CPU的申请与限制和内存相似。需要注意的是，CPU和内存的单位：</p>
 <ul>
 <li>内存资源的基本单位是字节(byte)，可以使用这些后缀将内存表示为纯整数或定点整数：E、P、T、G、M、K、Ei、Pi、Ti、Gi、Mi、Ki</li>
-<li>CPU资源的基本单位是毫核(millicore)，1000m =1核。CPU并不直接对应物理CPU核心数量，而是表示调度器分配给容器的CPU时间比例。容器进程可能被调度到服务器的任意CPU上执行（优先NUMA节点）。只有当，节点开启<code>cpu-manager-policy=static</code>，Pod 的<code>request == limit</code>且为<strong>整核</strong>，才会获得独占 CPU（pin 到特定核）。
+<li>CPU资源的基本单位是毫核(millicore)，1000m =1核。CPU并不直接对应物理CPU核心数量，而是表示调度器分配给容器的CPU时间比例。容器进程可能被调度到服务器的任意CPU上执行（优先NUMA节点）。只有当节点开启<code>cpu-manager-policy=static</code>，Pod 的<code>request == limit</code>且为<strong>整核</strong>，才会获得独占 CPU（pin 到特定核）。
 底层实现基于Linux的CFS(Completely Fair Scheduler)+cgroup v1/v2来限制CPU配额(quota)和周期(period)。</li>
 </ul>
 <h2 id="清理现场">清理现场

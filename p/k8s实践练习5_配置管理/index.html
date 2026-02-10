@@ -1,0 +1,1757 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content=" 官网链接\n很多应用在其初始化或运行期间要依赖一些配置信息。但是我们不太想要配置参数被硬编码进容器而是希望这些配置参数是可调节的。 ConfigMap 是 Kubernetes 的一种机制，可让你将配置数据注入到应用的Pod内部。\n">
+<title>K8s实践练习5_配置管理</title>
+
+<link rel='canonical' href='https://rusthx.github.io/p/k8s%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A05_%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86/'>
+
+<link rel="stylesheet" href="/scss/style.min.f88e0ff8bfb43bef18eec2559d462f612719fb375decfc40b3869dca992f1fa4.css"><meta property='og:title' content="K8s实践练习5_配置管理">
+<meta property='og:description' content=" 官网链接\n很多应用在其初始化或运行期间要依赖一些配置信息。但是我们不太想要配置参数被硬编码进容器而是希望这些配置参数是可调节的。 ConfigMap 是 Kubernetes 的一种机制，可让你将配置数据注入到应用的Pod内部。\n">
+<meta property='og:url' content='https://rusthx.github.io/p/k8s%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A05_%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86/'>
+<meta property='og:site_name' content='rustWood'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Kubernetes' /><meta property='article:published_time' content='2026-02-10T14:30:19&#43;08:00'/><meta property='article:modified_time' content='2026-02-10T14:30:19&#43;08:00'/>
+<meta name="twitter:title" content="K8s实践练习5_配置管理">
+<meta name="twitter:description" content=" 官网链接\n很多应用在其初始化或运行期间要依赖一些配置信息。但是我们不太想要配置参数被硬编码进容器而是希望这些配置参数是可调节的。 ConfigMap 是 Kubernetes 的一种机制，可让你将配置数据注入到应用的Pod内部。\n">        
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu290319576234017586.png" width="300"
+                            height="302" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">rustWood</a></h1>
+            <h2 class="site-description">江上何人初见月，江月何年初照人。博客出问题请看关于页面</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/rusthx'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://www.cnblogs.com/rusthx'
+                        target="_blank"
+                        title="博客园"
+                        rel="me"
+                    >
+                        
+                        
+                            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1725698578146" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1508" width="24" height="24" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M478.71488 33.88416c-75.76064 36.6592-123.11552 117.31456-114.82624 194.82624 8.28416 67.03616 43.8016 120.45824 104.17152 156.06784 187.03872 109.98272 419.05664-79.60576 316.06784-258.71872C722.57536 20.26496 591.17568-19.53792 478.71488 33.88416z m187.03872 67.03616c85.23264 52.37248 80.49664 188.53888-9.472 229.39136-104.17152 48.18432-213.07904-15.71328-213.07904-125.696 0-41.89696 5.91872-54.46656 40.24832-84.84352s48.5376-35.61472 98.2528-35.61472c33.14688 0.00512 68.6592 7.33696 84.04992 16.76288z" fill="#707070" p-id="1509"></path><path d="M797.15328 340.7872c-63.9232 115.22048-89.96864 148.736-164.54656 217.87136-75.76064 71.22432-105.35424 90.08128-209.53088 135.12192-67.47648 29.32736-132.5824 50.2784-147.97312 48.18432-22.49216-2.09408-36.69504-25.1392-88.78592-139.31008C120.02816 458.10176 53.73952 333.45536 25.32864 298.89024c-16.57344-19.90144-17.75616-18.85184-11.83744 10.47552 27.22304 156.06784 119.56224 465.06496 147.97312 494.39232 15.39072 17.80736 295.94624 18.85184 456.93952 2.09408 190.58688-19.90144 170.46528-27.23328-121.92768-47.13472l-106.54208-7.33184 102.9888-24.0896c114.82624-27.23328 177.56672-52.37248 261.61664-105.79456 31.96416-19.90144 62.74048-34.56512 69.84192-32.47104 5.91872 2.09408 49.72032 98.46272 94.70464 212.6336 46.16704 115.22048 86.41536 212.6336 91.15136 216.82176 11.83744 11.52-8.28416-233.57952-28.41088-358.22592-10.65472-60.75392-39.0656-187.4944-63.9232-282.81344l-44.98432-172.83072-75.76576 136.17152z" fill="#707070" p-id="1510"></path></svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#前置准备">前置准备</a></li>
+    <li><a href="#创建configmap">创建ConfigMap</a>
+      <ol>
+        <li><a href="#使用-kubectl-create-configmap-创建-configmap">使用 kubectl create configmap 创建 ConfigMap</a></li>
+        <li><a href="#基于生成器创建configmap">基于生成器创建configmap</a></li>
+        <li><a href="#使用配置文件创建configmap">使用配置文件创建configmap</a></li>
+      </ol>
+    </li>
+    <li><a href="#使用configmap">使用ConfigMap</a>
+      <ol>
+        <li><a href="#使用configmap的数据定义容器环境变量">使用configmap的数据定义容器环境变量</a></li>
+        <li><a href="#将configmap中的所有键值对配置为容器环境变量">将ConfigMap中的所有键值对配置为容器环境变量</a></li>
+        <li><a href="#在-pod-命令中使用-configmap-定义的环境变量">在 Pod 命令中使用 ConfigMap 定义的环境变量</a></li>
+        <li><a href="#将-configmap-数据添加到一个卷中">将 ConfigMap 数据添加到一个卷中</a></li>
+        <li><a href="#将-configmap-数据添加到卷中的特定路径">将 ConfigMap 数据添加到卷中的特定路径</a></li>
+      </ol>
+    </li>
+    <li><a href="#configmap原理介绍">ConfigMap原理介绍</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/k8s%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A05_%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86/">K8s实践练习5_配置管理</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2026-02-10</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <blockquote>
+<p><a class="link" href="https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/configure-pod-configmap/"  target="_blank" rel="noopener"
+    >官网链接</a></p>
+</blockquote>
+<p>很多应用在其初始化或运行期间要依赖一些配置信息。但是我们不太想要配置参数被硬编码进容器而是希望这些配置参数是可调节的。 ConfigMap 是 Kubernetes 的一种机制，可让你将配置数据注入到应用的Pod内部。</p>
+<p><code>ConfigMap</code>支持将配置清单与镜像内容分离，以保持容器化的应用程序的可移植性。 例如，可以下载并运行相同的容器镜像来启动容器， 用于本地开发、系统测试或运行实时终端用户工作负载。</p>
+<p>本页提供了一系列使用示例，这些示例演示了如何创建 ConfigMap 以及配置 Pod 使用存储在 ConfigMap 中的数据。</p>
+<h2 id="前置准备">前置准备
+</h2><p>搭建好一套k8s集群，可以参考我写的这篇教程：<a class="link" href="https://rusthx.github.io/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/"  target="_blank" rel="noopener"
+    >搭建k8s集群</a></p>
+<p>k8s官方的镜像站在国内是拉不下来的，有几种方法解决：</p>
+<ol>
+<li>在拉取镜像的虚拟机/服务器上科学上网</li>
+<li>配置k8s的镜像源，目前国内只有阿里云支持改版后的k8s镜像源(registry.k8s.io)。</li>
+<li>需要拉取镜像的时候，指定拉取策略为本地拉取(<code>imagePullPolicy:Never</code>),每次需要拉取镜像前都手动拉取/上传一份镜像到服务器上再导入镜像</li>
+</ol>
+<p>这里给出阿里云镜像源的配置教程：
+旧版的k8s直接修改<code>/etc/containerd/config.toml</code>里的mirror信息，添加上阿里云的镜像站就行。但是新版的不支持inline或者说暂时兼容，未来不支持。所以这里就只给出新版k8s镜像源配置教程。</p>
+<p>修改<code>/etc/containerd/config.yaml</code>,填入下列信息（如果你已经有了config.yaml且这个配置文件是从containerd默认配置里生成的，那直接备份，然后使用下面的内容）。<code>sudo vim /etc/containerd/config.yaml</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nv">version</span> <span class="o">=</span> <span class="m">2</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>plugins.<span class="s2">&#34;io.containerd.grpc.v1.cri&#34;</span><span class="o">]</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">sandbox_image</span> <span class="o">=</span> <span class="s2">&#34;registry.aliyuncs.com/google_containers/pause:3.9&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">[</span>plugins.<span class="s2">&#34;io.containerd.grpc.v1.cri&#34;</span>.containerd.runtimes.runc<span class="o">]</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">runtime_type</span> <span class="o">=</span> <span class="s2">&#34;io.containerd.runc.v2&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">[</span>plugins.<span class="s2">&#34;io.containerd.grpc.v1.cri&#34;</span>.containerd.runtimes.runc.options<span class="o">]</span>
+</span></span><span class="line"><span class="cl">      <span class="nv">SystemdCgroup</span> <span class="o">=</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">  <span class="o">[</span>plugins.<span class="s2">&#34;io.containerd.grpc.v1.cri&#34;</span>.registry<span class="o">]</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">config_path</span> <span class="o">=</span> <span class="s2">&#34;/etc/containerd/certs.d&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>创建<code>/etc/containerd/certs.d</code>目录，在这个目录填入docker.io和registry.k8s.io的镜像源。</p>
+<blockquote>
+<p>注意：k8s里修改镜像源之后，使用<code>kubectl describe pod &lt;pod_name&gt; </code>查看时还是显示的<code>docker.io</code>和<code>registry.k8s.io</code>。配置镜像源只物理修改从哪里修改，不改镜像拉取的逻辑源。所以改好镜像源之后也不太好验证成功，随便拉个镜像<code>sudo crictl pull nginx:1.14.2</code>，能拉下来就是成了。</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># Docker Hub 加速</span>
+</span></span><span class="line"><span class="cl">sudo mkdir -p /etc/containerd/certs.d/docker.io
+</span></span><span class="line"><span class="cl">sudo tee /etc/containerd/certs.d/docker.io/hosts.toml <span class="s">&lt;&lt; &#39;EOF&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s">server = &#34;https://registry-1.docker.io&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">[host.&#34;https://docker.m.daocloud.io&#34;]
+</span></span></span><span class="line"><span class="cl"><span class="s">  capabilities = [&#34;pull&#34;, &#34;resolve&#34;]
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># K8s 镜像加速</span>
+</span></span><span class="line"><span class="cl">sudo mkdir -p /etc/containerd/certs.d/registry.k8s.io
+</span></span><span class="line"><span class="cl">sudo tee /etc/containerd/certs.d/registry.k8s.io/hosts.toml <span class="s">&lt;&lt; &#39;EOF&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s">server = &#34;https://registry.k8s.io&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">[host.&#34;https://registry.cn-hangzhou.aliyuncs.com/google_containers&#34;]
+</span></span></span><span class="line"><span class="cl"><span class="s">  capabilities = [&#34;pull&#34;, &#34;resolve&#34;]
+</span></span></span><span class="line"><span class="cl"><span class="s">  override_path = true
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>到这里，镜像源就配置好了，如果不出意外，文件目录应该是下面这样：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">rust@k8s1:/etc/containerd$ ll
+</span></span><span class="line"><span class="cl">总计 <span class="m">28</span>
+</span></span><span class="line"><span class="cl">drwxr-xr-x   <span class="m">3</span> root root  <span class="m">4096</span>  2月  <span class="m">4</span> 10:31 ./
+</span></span><span class="line"><span class="cl">drwxr-xr-x <span class="m">144</span> root root <span class="m">12288</span>  2月  <span class="m">2</span> 17:01 ../
+</span></span><span class="line"><span class="cl">drwxr-xr-x   <span class="m">4</span> root root  <span class="m">4096</span>  2月  <span class="m">2</span> 16:44 certs.d/
+</span></span><span class="line"><span class="cl">-rw-r--r--   <span class="m">1</span> root root   <span class="m">423</span>  2月  <span class="m">2</span> 19:02 config.toml
+</span></span><span class="line"><span class="cl">-rw-r--r--   <span class="m">1</span> root root   <span class="m">886</span> 12月 <span class="m">19</span> 02:48 config.toml.dpkg-dist
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>修改完配置文件后需要重启containerd：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo systemctl restart containerd
+</span></span><span class="line"><span class="cl">sudo systemctl status containerd
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="创建configmap">创建ConfigMap
+</h2><p>k8s支持使用<code>kubectl create configmap</code>或者在<code>kustomization.yaml</code>中的 ConfigMap 生成器来创建 ConfigMap。</p>
+<h3 id="使用-kubectl-create-configmap-创建-configmap">使用 kubectl create configmap 创建 ConfigMap
+</h3><p>可以使用 kubectl create configmap 命令基于目录、 文件或者字面值来创建 ConfigMap：
+<code>kubectl create configmap &lt;configmap_name&gt; &lt;数据源&gt;</code></p>
+<p>其中，&lt;configmap_name&gt; 是为 ConfigMap 指定的名称，&lt;数据源&gt; 是要从中提取数据的目录、 文件或者字面值。ConfigMap 对象的名称必须是合法的 DNS 子域名。</p>
+<p>在基于文件来创建ConfigMap时，&lt;数据源&gt; 中的键名默认取自文件的基本名， 而对应的值则默认为文件的内容。</p>
+<p>可以使用<code>kubectl describe configmaps &lt;config_map_name&gt;</code>或者<code>kubectl get configmaps</code>获取有关 ConfigMap 的信息。</p>
+<ol>
+<li>基于目录创建ConfigMap</li>
+</ol>
+<p>可以使用 kubectl create configmap 基于同一目录中的多个文件创建 ConfigMap。 当基于目录来创建 ConfigMap 时，kubectl 识别目录下文件名可以作为合法键名的文件， 并将这些文件打包到新的 ConfigMap 中。普通文件之外的所有目录项都会被忽略 （例如：子目录、符号链接、设备、管道等等）。</p>
+<blockquote>
+<p>说明：
+用于创建 ConfigMap 的每个文件名必须由可接受的字符组成，即：字母（A 到 Z 和 a 到 z）、数字（0 到 9）、&rsquo;-&rsquo;、&rsquo;_&rsquo; 或 &lsquo;.&rsquo;。 如果在一个目录中使用 kubectl create configmap，而其中任一文件名包含不可接受的字符， 则 kubectl 命令可能会失败。</p>
+<p>kubectl 命令在遇到不合法的文件名时<strong>不会</strong>打印错误。</p>
+</blockquote>
+<p>创建本地目录：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">mkdir -p configure-pod-container/configmap/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>现在，下载示例的配置并创建 ConfigMap：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 将示例文件下载到 `configure-pod-container/configmap/` 目录</span>
+</span></span><span class="line"><span class="cl">wget https://kubernetes.io/examples/configmap/game.properties -O configure-pod-container/configmap/game.properties
+</span></span><span class="line"><span class="cl">wget https://kubernetes.io/examples/configmap/ui.properties -O configure-pod-container/configmap/ui.properties
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 创建 ConfigMap</span>
+</span></span><span class="line"><span class="cl">kubectl create configmap game-config --from-file<span class="o">=</span>configure-pod-container/configmap/
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>以上命令将 configure-pod-container/configmap 目录下的所有文件，也就是 game.properties 和 ui.properties 打包到 game-config ConfigMap 中。</p>
+<p>显示 ConfigMap 的详细信息：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl describe configmaps game-config
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Name:         game-config
+</span></span><span class="line"><span class="cl">Namespace:    default
+</span></span><span class="line"><span class="cl">Labels:       &lt;none&gt;
+</span></span><span class="line"><span class="cl">Annotations:  &lt;none&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">Data</span>
+</span></span><span class="line"><span class="cl"><span class="o">====</span>
+</span></span><span class="line"><span class="cl">game.properties:
+</span></span><span class="line"><span class="cl">----
+</span></span><span class="line"><span class="cl"><span class="nv">enemies</span><span class="o">=</span>aliens
+</span></span><span class="line"><span class="cl"><span class="nv">lives</span><span class="o">=</span><span class="m">3</span>
+</span></span><span class="line"><span class="cl">enemies.cheat<span class="o">=</span><span class="nb">true</span>
+</span></span><span class="line"><span class="cl">enemies.cheat.level<span class="o">=</span>noGoodRotten
+</span></span><span class="line"><span class="cl">secret.code.passphrase<span class="o">=</span>UUDDLRLRBABAS
+</span></span><span class="line"><span class="cl">secret.code.allowed<span class="o">=</span><span class="nb">true</span>
+</span></span><span class="line"><span class="cl">secret.code.lives<span class="o">=</span><span class="m">30</span>
+</span></span><span class="line"><span class="cl">ui.properties:
+</span></span><span class="line"><span class="cl">----
+</span></span><span class="line"><span class="cl">color.good<span class="o">=</span>purple
+</span></span><span class="line"><span class="cl">color.bad<span class="o">=</span>yellow
+</span></span><span class="line"><span class="cl">allow.textmode<span class="o">=</span><span class="nb">true</span>
+</span></span><span class="line"><span class="cl">how.nice.to.look<span class="o">=</span>fairlyNice
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">BinaryData</span>
+</span></span><span class="line"><span class="cl"><span class="o">====</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Events:  &lt;none&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>configure-pod-container/configmap/ 目录中的 game.properties 和 ui.properties 文件出现在 ConfigMap 的 data 部分。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl get configmaps game-config -o yaml
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl get configmaps game-config -o yaml
+</span></span><span class="line"><span class="cl">apiVersion: v1
+</span></span><span class="line"><span class="cl">data:
+</span></span><span class="line"><span class="cl">  game.properties: <span class="p">|</span>-
+</span></span><span class="line"><span class="cl">    <span class="nv">enemies</span><span class="o">=</span>aliens
+</span></span><span class="line"><span class="cl">    <span class="nv">lives</span><span class="o">=</span><span class="m">3</span>
+</span></span><span class="line"><span class="cl">    enemies.cheat<span class="o">=</span><span class="nb">true</span>
+</span></span><span class="line"><span class="cl">    enemies.cheat.level<span class="o">=</span>noGoodRotten
+</span></span><span class="line"><span class="cl">    secret.code.passphrase<span class="o">=</span>UUDDLRLRBABAS
+</span></span><span class="line"><span class="cl">    secret.code.allowed<span class="o">=</span><span class="nb">true</span>
+</span></span><span class="line"><span class="cl">    secret.code.lives<span class="o">=</span><span class="m">30</span>
+</span></span><span class="line"><span class="cl">  ui.properties: <span class="p">|</span>
+</span></span><span class="line"><span class="cl">    color.good<span class="o">=</span>purple
+</span></span><span class="line"><span class="cl">    color.bad<span class="o">=</span>yellow
+</span></span><span class="line"><span class="cl">    allow.textmode<span class="o">=</span><span class="nb">true</span>
+</span></span><span class="line"><span class="cl">    how.nice.to.look<span class="o">=</span>fairlyNice
+</span></span><span class="line"><span class="cl">kind: ConfigMap
+</span></span><span class="line"><span class="cl">metadata:
+</span></span><span class="line"><span class="cl">  creationTimestamp: <span class="s2">&#34;2026-02-10T06:51:06Z&#34;</span>
+</span></span><span class="line"><span class="cl">  name: game-config
+</span></span><span class="line"><span class="cl">  namespace: default
+</span></span><span class="line"><span class="cl">  resourceVersion: <span class="s2">&#34;169466&#34;</span>
+</span></span><span class="line"><span class="cl">  uid: b379ed2c-575b-492e-8485-68ac4c385062
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>基于单个或多个文件创建ConfigMap,
+&ndash;from-file指定单个文件即可基于单个文件创建ConfigMap</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl create configmap game-config-2 --from-file<span class="o">=</span>configure-pod-container/configmap/game.properties
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl get configmaps game-config-2 -o yaml
+</span></span><span class="line"><span class="cl">apiVersion: v1
+</span></span><span class="line"><span class="cl">data:
+</span></span><span class="line"><span class="cl">  game.properties: <span class="p">|</span>-
+</span></span><span class="line"><span class="cl">    <span class="nv">enemies</span><span class="o">=</span>aliens
+</span></span><span class="line"><span class="cl">    <span class="nv">lives</span><span class="o">=</span><span class="m">3</span>
+</span></span><span class="line"><span class="cl">    enemies.cheat<span class="o">=</span><span class="nb">true</span>
+</span></span><span class="line"><span class="cl">    enemies.cheat.level<span class="o">=</span>noGoodRotten
+</span></span><span class="line"><span class="cl">    secret.code.passphrase<span class="o">=</span>UUDDLRLRBABAS
+</span></span><span class="line"><span class="cl">    secret.code.allowed<span class="o">=</span><span class="nb">true</span>
+</span></span><span class="line"><span class="cl">    secret.code.lives<span class="o">=</span><span class="m">30</span>
+</span></span><span class="line"><span class="cl">kind: ConfigMap
+</span></span><span class="line"><span class="cl">metadata:
+</span></span><span class="line"><span class="cl">  creationTimestamp: <span class="s2">&#34;2026-02-10T07:00:06Z&#34;</span>
+</span></span><span class="line"><span class="cl">  name: game-config-2
+</span></span><span class="line"><span class="cl">  namespace: default
+</span></span><span class="line"><span class="cl">  resourceVersion: <span class="s2">&#34;170295&#34;</span>
+</span></span><span class="line"><span class="cl">  uid: a5a08086-7e39-4763-b3aa-1285d96c28e9
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>多个&ndash;from-file，每个指定单个文件即可实现基于多个文件创建ConfigMap</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl create configmap game-config-2 --from-file<span class="o">=</span>configure-pod-container/configmap/game.properties --from-file<span class="o">=</span>configure-pod-container/configmap/ui.properties
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl delete configmap game-config-2
+</span></span><span class="line"><span class="cl">configmap <span class="s2">&#34;game-config-2&#34;</span> deleted
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl create configmap game-config-2 --from-file<span class="o">=</span>configure-pod-container/configmap/game.properties --from-file<span class="o">=</span>configure-pod-container/configmap/ui.properties
+</span></span><span class="line"><span class="cl">configmap/game-config-2 created
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl get configmaps game-config-2 -o yaml
+</span></span><span class="line"><span class="cl">apiVersion: v1
+</span></span><span class="line"><span class="cl">data:
+</span></span><span class="line"><span class="cl">  game.properties: <span class="p">|</span>-
+</span></span><span class="line"><span class="cl">    <span class="nv">enemies</span><span class="o">=</span>aliens
+</span></span><span class="line"><span class="cl">    <span class="nv">lives</span><span class="o">=</span><span class="m">3</span>
+</span></span><span class="line"><span class="cl">    enemies.cheat<span class="o">=</span><span class="nb">true</span>
+</span></span><span class="line"><span class="cl">    enemies.cheat.level<span class="o">=</span>noGoodRotten
+</span></span><span class="line"><span class="cl">    secret.code.passphrase<span class="o">=</span>UUDDLRLRBABAS
+</span></span><span class="line"><span class="cl">    secret.code.allowed<span class="o">=</span><span class="nb">true</span>
+</span></span><span class="line"><span class="cl">    secret.code.lives<span class="o">=</span><span class="m">30</span>
+</span></span><span class="line"><span class="cl">  ui.properties: <span class="p">|</span>
+</span></span><span class="line"><span class="cl">    color.good<span class="o">=</span>purple
+</span></span><span class="line"><span class="cl">    color.bad<span class="o">=</span>yellow
+</span></span><span class="line"><span class="cl">    allow.textmode<span class="o">=</span><span class="nb">true</span>
+</span></span><span class="line"><span class="cl">    how.nice.to.look<span class="o">=</span>fairlyNice
+</span></span><span class="line"><span class="cl">kind: ConfigMap
+</span></span><span class="line"><span class="cl">metadata:
+</span></span><span class="line"><span class="cl">  creationTimestamp: <span class="s2">&#34;2026-02-10T07:02:57Z&#34;</span>
+</span></span><span class="line"><span class="cl">  name: game-config-2
+</span></span><span class="line"><span class="cl">  namespace: default
+</span></span><span class="line"><span class="cl">  resourceVersion: <span class="s2">&#34;170560&#34;</span>
+</span></span><span class="line"><span class="cl">  uid: c0db714a-11ee-4125-8dee-1f64b2986f6a
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="3">
+<li>使用 &ndash;from-env-file 选项基于 env 文件创建 ConfigMap</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">wget https://kubernetes.io/examples/configmap/game-env-file.properties -O configure-pod-container/configmap/game-env-file.properties
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">kubectl create configmap game-config-env-file <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>       --from-env-file<span class="o">=</span>configure-pod-container/configmap/game-env-file.properties
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>Env 文件包含环境变量列表。其中适用以下语法规则:</p>
+<ul>
+<li>Env 文件中的每一行必须为 VAR=VAL 格式。</li>
+<li>以＃开头的行（即注释）将被忽略。</li>
+<li>空行将被忽略。</li>
+<li>引号不会被特殊处理（即它们将成为 ConfigMap 值的一部分）。</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nv">enemies</span><span class="o">=</span>aliens
+</span></span><span class="line"><span class="cl"><span class="nv">lives</span><span class="o">=</span><span class="m">3</span>
+</span></span><span class="line"><span class="cl"><span class="nv">allowed</span><span class="o">=</span><span class="s2">&#34;true&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 此注释和上方的空行将被忽略</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>使用env创建ConfigMap与基于普通文件创建语法类似，同样支持基于单个文件或多个文件创建ConfigMap。
+不同的是创建出的ConfigMap的data里的配置参数格式不同。不再是<code>文件名：配置参数信息</code>的格式，而是直接提取文件内的参数信息，变成了<code>参数名称：值</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">ConfigMap</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">creationTimestamp</span><span class="p">:</span><span class="w"> </span><span class="ld">2019-12-27T18:36:28Z</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">game-config-env-file</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">default</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">resourceVersion</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;809965&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">uid</span><span class="p">:</span><span class="w"> </span><span class="l">d9d1ca5b-eb34-11e7-887b-42010a8002b8</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">data</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">allowed</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;&#34;true&#34;&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">enemies</span><span class="p">:</span><span class="w"> </span><span class="l">aliens</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">lives</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;3&#34;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>在使用 &ndash;from-file 参数时，可以定义在 ConfigMap 的 data 部分出现键名， 而不是按默认行为使用文件名：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl create configmap game-config-3 --from-file<span class="o">=</span>&lt;我的键名&gt;<span class="o">=</span>&lt;文件路径&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">kubectl create configmap game-config-3 --from-file<span class="o">=</span>game-special-key<span class="o">=</span>configure-pod-container/configmap/game.properties
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="4">
+<li>基于字面值创建configmap,
+用&ndash;from-literal传入单个或多个字面值也可以创建configmap</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl create configmap special-config --from-literal<span class="o">=</span>special.how<span class="o">=</span>very --from-literal<span class="o">=</span>special.type<span class="o">=</span>charm
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>得到了类似从env文件创建的config。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">ConfigMap</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">creationTimestamp</span><span class="p">:</span><span class="w"> </span><span class="ld">2022-02-18T19:14:38Z</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">special-config</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">default</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">resourceVersion</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;651&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">uid</span><span class="p">:</span><span class="w"> </span><span class="l">dadce046-d673-11e5-8cd0-68f728db1985</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">data</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">special.how</span><span class="p">:</span><span class="w"> </span><span class="l">very</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">special.type</span><span class="p">:</span><span class="w"> </span><span class="l">charm</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="基于生成器创建configmap">基于生成器创建configmap
+</h3><p>可以基于生成器（Generators）创建 ConfigMap，然后将其应用于集群的 API 服务器上创建对象。 生成器应在目录内的<code>kustomization.yaml</code>中指定。</p>
+<p>基于<code>kustomization.yaml</code>生成器文件创建configmap</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">rust@k8s1:~$ cat <span class="s">&lt;&lt;EOF &gt;./kustomization.yaml./kustomization.yaml
+</span></span></span><span class="line"><span class="cl"><span class="s">configMapGenerator:
+</span></span></span><span class="line"><span class="cl"><span class="s">- name: game-config-4
+</span></span></span><span class="line"><span class="cl"><span class="s">  options:
+</span></span></span><span class="line"><span class="cl"><span class="s">    labels:
+</span></span></span><span class="line"><span class="cl"><span class="s">      game-config: config-4
+</span></span></span><span class="line"><span class="cl"><span class="s">  files:
+</span></span></span><span class="line"><span class="cl"><span class="s">  - configure-pod-container/configmap/game.properties
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl apply -k .
+</span></span><span class="line"><span class="cl">configmap/game-config-4-tbg7c4gc77 created
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl get configmap
+</span></span><span class="line"><span class="cl">NAME                       DATA   AGE
+</span></span><span class="line"><span class="cl">game-config                <span class="m">2</span>      38m
+</span></span><span class="line"><span class="cl">game-config-2              <span class="m">2</span>      26m
+</span></span><span class="line"><span class="cl">game-config-4-tbg7c4gc77   <span class="m">1</span>      8s
+</span></span><span class="line"><span class="cl">kube-root-ca.crt           <span class="m">1</span>      8d
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl describe configmap game-config-4-tbg7c4gc77
+</span></span><span class="line"><span class="cl">Name:         game-config-4-tbg7c4gc77
+</span></span><span class="line"><span class="cl">Namespace:    default
+</span></span><span class="line"><span class="cl">Labels:       game-config<span class="o">=</span>config-4
+</span></span><span class="line"><span class="cl">Annotations:  &lt;none&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">Data</span>
+</span></span><span class="line"><span class="cl"><span class="o">====</span>
+</span></span><span class="line"><span class="cl">game.properties:
+</span></span><span class="line"><span class="cl">----
+</span></span><span class="line"><span class="cl"><span class="nv">enemies</span><span class="o">=</span>aliens
+</span></span><span class="line"><span class="cl"><span class="nv">lives</span><span class="o">=</span><span class="m">3</span>
+</span></span><span class="line"><span class="cl">enemies.cheat<span class="o">=</span><span class="nb">true</span>
+</span></span><span class="line"><span class="cl">enemies.cheat.level<span class="o">=</span>noGoodRotten
+</span></span><span class="line"><span class="cl">secret.code.passphrase<span class="o">=</span>UUDDLRLRBABAS
+</span></span><span class="line"><span class="cl">secret.code.allowed<span class="o">=</span><span class="nb">true</span>
+</span></span><span class="line"><span class="cl">secret.code.lives<span class="o">=</span><span class="m">30</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">BinaryData</span>
+</span></span><span class="line"><span class="cl"><span class="o">====</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Events:  &lt;none&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在生成器文件的file字段，可以像<code>kubectl create configmap</code>那样指定字段值而不是用默认的文件名</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="w">  </span><span class="nt">files</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="l">configure-pod-container/configmap/game.properties</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">files</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="l">game-special-key=configure-pod-container/configmap/game.properties</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>生成器也能用字面值创建configmap,只需要在生成器文件里用literals,就像这样：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">configMapGenerator</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">special-config-2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">literals</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="l">special.how=very</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="l">special.type=charm</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="使用配置文件创建configmap">使用配置文件创建configmap
+</h3><p>第三种创建configmap的方式就是创建configmap类型的yaml文件，yaml文件类似上面两种方式创建的configmap输出的yaml格式的文件。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">ConfigMap</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">env-config</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">default</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">data</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">log_level</span><span class="p">:</span><span class="w"> </span><span class="l">INFO</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>再用<code>kubectl apply -f &lt;configmap_yaml&gt;</code>应用配置文件即可创建configmap。</p>
+<h2 id="使用configmap">使用ConfigMap
+</h2><h3 id="使用configmap的数据定义容器环境变量">使用configmap的数据定义容器环境变量
+</h3><p>创建configmap。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">ConfigMap</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">special-config</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">default</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">data</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">special.how</span><span class="p">:</span><span class="w"> </span><span class="l">very</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nn">---</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">ConfigMap</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">env-config</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">default</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">data</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">log_level</span><span class="p">:</span><span class="w"> </span><span class="l">INFO</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">vim configmaps.yaml
+</span></span><span class="line"><span class="cl">kubectl apply -f configmaps.yaml
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在pod规约(spec)中通过env.valueFrom使用configmap:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Pod</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">dapi-test-pod</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">containers</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">test-container</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">busybox:1.27.2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">&#34;/bin/sh&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;-c&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;env&#34;</span><span class="w"> </span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">env</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c"># 定义容器的环境变量</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">SPECIAL_LEVEL_KEY</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">valueFrom</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">configMapKeyRef</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="c"># ConfigMap 包含你要赋给 SPECIAL_LEVEL_KEY 的值</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">special-config</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="c"># 指定与取值相关的键名</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">special.how</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c"># 多个环境变量对应多个值</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">LOG_LEVEL</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">valueFrom</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">configMapKeyRef</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">env-config</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">log_level</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">restartPolicy</span><span class="p">:</span><span class="w"> </span><span class="l">Never</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>pod启动后在pod详情里可以看到环境变量，使用了configmap。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">Environment:
+</span></span><span class="line"><span class="cl">      SPECIAL_LEVEL_KEY:  &lt;<span class="nb">set</span> to the key <span class="s1">&#39;special.how&#39;</span> of config map <span class="s1">&#39;special-config&#39;</span>&gt;  Optional: <span class="nb">false</span>
+</span></span><span class="line"><span class="cl">      LOG_LEVEL:          &lt;<span class="nb">set</span> to the key <span class="s1">&#39;log_level&#39;</span> of config map <span class="s1">&#39;env-config&#39;</span>&gt;        Optional: <span class="nb">false</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="将configmap中的所有键值对配置为容器环境变量">将ConfigMap中的所有键值对配置为容器环境变量
+</h3><p>创建configmap,yaml文件如下：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">ConfigMap</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">special-config</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">default</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">data</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">SPECIAL_LEVEL</span><span class="p">:</span><span class="w"> </span><span class="l">very</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">SPECIAL_TYPE</span><span class="p">:</span><span class="w"> </span><span class="l">charm</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">vim configmap-multikeys.yaml
+</span></span><span class="line"><span class="cl">kubectl create -f configmap-multikeys.yaml
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>使用 envFrom 将所有 ConfigMap 的数据定义为容器环境变量，ConfigMap 中的键成为 Pod 中的环境变量名称。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">vim  pod-configmap-envFrom.yaml 
+</span></span><span class="line"><span class="cl">kubectl apply -f pod-configmap-envFrom.yaml
+</span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Pod</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">dapi-test-pod</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">containers</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">test-container</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">busybox:1.27.2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">&#34;/bin/sh&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;-c&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;env&#34;</span><span class="w"> </span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">envFrom</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">configMapRef</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">special-config</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">restartPolicy</span><span class="p">:</span><span class="w"> </span><span class="l">Never</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>查看pod详情，发现容器的环境变量全部来自于configmap</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl describe pod dapi-test-pod
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Environment Variables from:
+</span></span><span class="line"><span class="cl">      special-config  ConfigMap  Optional: <span class="nb">false</span>
+</span></span><span class="line"><span class="cl">    Environment:      &lt;none&gt;
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="在-pod-命令中使用-configmap-定义的环境变量">在 Pod 命令中使用 ConfigMap 定义的环境变量
+</h3><p>可以使用 $(VAR_NAME)Kubernetes替换语法在容器的command和args属性中使用 ConfigMap 定义的环境变量。</p>
+<p>例如下面的pod配置文件里，在容器的command里就用$(SPECIAL_LEVEL_KEY) 使用了环境变量。也即是，通过环境变量使用configmap，再在命令里使用替换语法使用环境变量。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Pod</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">dapi-test-pod</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">containers</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">test-container</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">busybox:1.27.2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">&#34;/bin/echo&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;$(SPECIAL_LEVEL_KEY) $(SPECIAL_TYPE_KEY)&#34;</span><span class="w"> </span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">env</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">SPECIAL_LEVEL_KEY</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">valueFrom</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">configMapKeyRef</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">special-config</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">SPECIAL_LEVEL</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">SPECIAL_TYPE_KEY</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">valueFrom</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">configMapKeyRef</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">special-config</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">SPECIAL_TYPE</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">restartPolicy</span><span class="p">:</span><span class="w"> </span><span class="l">Never</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="将-configmap-数据添加到一个卷中">将 ConfigMap 数据添加到一个卷中
+</h3><p>k8s支持用<code>kubectl create configmap</code>来从文件中创建configmap,也支持把configmap作为文件挂载到容器内部，就好像容器里有configmap的文件一样。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">ConfigMap</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">special-config</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">namespace</span><span class="p">:</span><span class="w"> </span><span class="l">default</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">data</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">SPECIAL_LEVEL</span><span class="p">:</span><span class="w"> </span><span class="l">very</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">SPECIAL_TYPE</span><span class="p">:</span><span class="w"> </span><span class="l">charm</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>创建configmap：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">vim configmap-multikeys.yaml
+</span></span><span class="line"><span class="cl">kubectl apply -f configmap-multikeys.yaml
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在 Pod 规约的 volumes 部分下添加 ConfigMap 名称。
+这会将 ConfigMap 数据添加到 volumeMounts.mountPath 所指定的目录 （在本例中为 /etc/config）。</p>
+<p>command 部分列出了名称与 ConfigMap 中的键匹配的目录文件，查看pod日志（command执行情况），将会看到configmap作为文件挂到到容器内，并被ll命令展示。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Pod</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">dapi-test-pod</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">containers</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">test-container</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">busybox:1.27.2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">&#34;/bin/sh&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;-c&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;ls /etc/config/&#34;</span><span class="w"> </span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">volumeMounts</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">config-volume</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l">/etc/config</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">config-volume</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">configMap</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c"># 提供包含要添加到容器中的文件的 ConfigMap 的名称</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">special-config</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">restartPolicy</span><span class="p">:</span><span class="w"> </span><span class="l">Never</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">vim  pod-configmap-volume.yaml
+</span></span><span class="line"><span class="cl">kubectl apply -f pod-configmap-volume.yaml
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ vim  pod-configmap-volume.yaml
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl apply -f pod-configmap-volume.yaml
+</span></span><span class="line"><span class="cl">pod/dapi-test-pod created
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl logs dapi-test-pod
+</span></span><span class="line"><span class="cl">SPECIAL_LEVEL
+</span></span><span class="line"><span class="cl">SPECIAL_TYPE
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>如果将容器的命令改为查看configmap文件(<code>cat /etc/config/SPECIAL_LEVEL</code>),日志中将输出对应文件的内容，也即是configmap中对应key的值。</p>
+<h3 id="将-configmap-数据添加到卷中的特定路径">将 ConfigMap 数据添加到卷中的特定路径
+</h3><p>上面的默认挂在configmap的key同名文件里。可以通过path修改数据挂载到卷中的路径。
+例如下面这个pod就把SPECIAL_LEVEL数据挂载到了keys文件(<code>/etc/config/keys</code>)里。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Pod</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">dapi-test-pod</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">containers</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">test-container</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">busybox:1.27.2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">&#34;/bin/sh&#34;</span><span class="p">,</span><span class="s2">&#34;-c&#34;</span><span class="p">,</span><span class="s2">&#34;cat /etc/config/keys&#34;</span><span class="w"> </span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">volumeMounts</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">config-volume</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l">/etc/config</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">config-volume</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">configMap</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">special-config</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">items</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">SPECIAL_LEVEL</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l">keys</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">restartPolicy</span><span class="p">:</span><span class="w"> </span><span class="l">Never</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl delete pod dapi-test-pod
+</span></span><span class="line"><span class="cl">vim pod-configmap-volume-specific-key.yaml
+</span></span><span class="line"><span class="cl">kubectl apply -f pod-configmap-volume-specific-key.yaml
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1kubectl delete pod dapi-test-pod
+</span></span><span class="line"><span class="cl">pod <span class="s2">&#34;dapi-test-pod&#34;</span> deleted
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ vim pod-configmap-volume-specific-key.yaml
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl apply -f pod-configmap-volume-specific-key.yaml
+</span></span><span class="line"><span class="cl">pod/dapi-test-pod created
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl logs dapi-test-pod
+</span></span><span class="line"><span class="cl">veryrust@k8s1:~$ 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="configmap原理介绍">ConfigMap原理介绍
+</h2><blockquote>
+<p>说明：ConfigMap 应该引用属性文件，而不是替换它们。可以将 ConfigMap 理解为类似于 Linux /etc 目录及其内容的东西。例如，如果你基于 ConfigMap 创建 Kubernetes 卷，则 ConfigMap 中的每个数据项都由该数据卷中的某个独立的文件表示</p>
+</blockquote>
+<p>可以在 Pod 规约中将<strong>对ConfigMap的引用</strong>(env.valueFrom.configMapKeyRef)标记为可选（optional）。 如果 ConfigMap 不存在，则挂载的卷将为空。
+如果 ConfigMap 存在，但引用的键不存在，则挂载点下的路径将不存在。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Pod</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">dapi-test-pod</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">containers</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">test-container</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">busybox:1.27.2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&#34;/bin/sh&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;-c&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;env&#34;</span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">env</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">SPECIAL_LEVEL_KEY</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">valueFrom</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">configMapKeyRef</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">a-config</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">akey</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="nt">optional</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="c"># 将环境变量标记为可选</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">restartPolicy</span><span class="p">:</span><span class="w"> </span><span class="l">Never</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>也可以在 Pod 规约中将<strong>ConfigMap提供的卷和文件</strong>(volumes.configMap)标记为可选。 此时 Kubernetes 将总是为卷创建挂载路径，即使引用的 ConfigMap 或键不存在。 例如，以下 Pod 规约将所引用的ConfigMap 的卷标记为可选：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Pod</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">dapi-test-pod</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">containers</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">test-container</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">busybox:1.27.2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">command</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&#34;/bin/sh&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;-c&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;ls /etc/config&#34;</span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">volumeMounts</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">config-volume</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l">/etc/config</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">volumes</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">config-volume</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">configMap</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="kc">no</span>-<span class="l">config</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">optional</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w"> </span><span class="c"># 将引用的 ConfigMap 的卷标记为可选</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">restartPolicy</span><span class="p">:</span><span class="w"> </span><span class="l">Never</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>当已挂载的 ConfigMap 被更新时，所投射的内容最终也会被更新。 这适用于 Pod 启动后可选引用的 ConfigMap 重新出现的情况。</p>
+<p>Kubelet 在每次定期同步时都会检查所挂载的 ConfigMap 是否是最新的。 然而，它使用其基于 TTL 机制的本地缓存来获取 ConfigMap 的当前值。 因此，从<strong>ConfigMap更新到新键映射到Pod的总延迟</strong>可能与 kubelet 同步周期（默认为 1 分钟）+ kubelet 中 ConfigMap 缓存的 TTL（默认为 1 分钟）一样长。 你可以通过更新 Pod 的一个注解来触发立即刷新。</p>
+<blockquote>
+<p>说明：使用 ConfigMap 作为 subPath 卷的容器将不会收到 ConfigMap 更新。</p>
+</blockquote>
+<p>configMap使用具有如下限制：</p>
+<ul>
+<li>在 Pod 规约中引用某个 ConfigMap 之前，必须先创建这个对象， 或者在 Pod 规约中将 ConfigMap 标记为 optional。 如果所引用的 ConfigMap 不存在，并且没有将应用标记为 optional 则 Pod 将无法启动。 同样，引用ConfigMap中不存在的主键也会令 Pod 无法启动，除非你将 Configmap 标记为 optional。</li>
+<li>如果使用envFrom 来基于ConfigMap 定义环境变量，那么无效的键将被忽略。 Pod可以被启动，但无效名称将被记录在事件日志中（InvalidVariableNames）。 日志消息列出了每个被跳过的键。例如：</li>
+</ul>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl get events
+</span></span><span class="line"><span class="cl"><span class="c1">#输出与此类似：</span>
+</span></span><span class="line"><span class="cl">LASTSEEN FIRSTSEEN COUNT NAME          KIND  SUBOBJECT  TYPE      REASON                            SOURCE                MESSAGE
+</span></span><span class="line"><span class="cl">0s       0s        <span class="m">1</span>     dapi-test-pod Pod              Warning   InvalidEnvironmentVariableNames   <span class="o">{</span>kubelet, 127.0.0.1<span class="o">}</span>  Keys <span class="o">[</span>1badkey, 2alsobad<span class="o">]</span> from the EnvFrom configMap default/myconfig were skipped since they are considered invalid environment variable names.
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ul>
+<li>ConfigMap位于确定的名字空间中。每个ConfigMap只能被同一名字空间中的 Pod 引用。</li>
+<li>Kubernetes不支持将ConfigMap用于静态 Pod（由特定节点上的kubelet守护进程直接管理的Pod）</li>
+</ul>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/kubernetes/">Kubernetes</a>
+        
+    </section>
+
+
+    <section>
+        页面浏览量<span id="busuanzi_value_page_pv">Loading</span>
+    </section>
+</footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 rustWood
+    </section>
+    
+    <section class="powerby">
+        
+            网站总访客数：<span id='busuanzi_value_site_uv'>Loading</span><br/>网站总访问量：<span id='busuanzi_value_site_pv'>Loading</span> <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+
+<style>
+     
+    @font-face {
+    font-family: 'MapleMono';
+    src: url('/font/MapleMono-Woff2/MapleMono-Regular.woff2') format('woff2');
+    }
+  
+     
+    :root {
+      --base-font-family: 'MapleMono', sans-serif;
+      --code-font-family: 'consolas','MapleMono',  monospace;
+    }
+  </style>
+
+
+    </body>
+</html>
