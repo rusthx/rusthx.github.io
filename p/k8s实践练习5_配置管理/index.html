@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content=" 官网链接\n很多应用在其初始化或运行期间要依赖一些配置信息。但是我们不太想要配置参数被硬编码进容器而是希望这些配置参数是可调节的。 ConfigMap 是 Kubernetes 的一种机制，可让你将配置数据注入到应用的Pod内部。\n">
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content=" 官网链接\n很多应用在其初始化或运行期间要依赖一些配置信息。但是我们不太想要配置参数被硬编码进容器,而是希望这些配置参数是可调节的。 ConfigMap 是 Kubernetes 的一种机制，可让你将配置数据注入到应用的Pod内部。\n">
 <title>K8s实践练习5_配置管理</title>
 
 <link rel='canonical' href='https://rusthx.github.io/p/k8s%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A05_%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86/'>
 
 <link rel="stylesheet" href="/scss/style.min.f88e0ff8bfb43bef18eec2559d462f612719fb375decfc40b3869dca992f1fa4.css"><meta property='og:title' content="K8s实践练习5_配置管理">
-<meta property='og:description' content=" 官网链接\n很多应用在其初始化或运行期间要依赖一些配置信息。但是我们不太想要配置参数被硬编码进容器而是希望这些配置参数是可调节的。 ConfigMap 是 Kubernetes 的一种机制，可让你将配置数据注入到应用的Pod内部。\n">
+<meta property='og:description' content=" 官网链接\n很多应用在其初始化或运行期间要依赖一些配置信息。但是我们不太想要配置参数被硬编码进容器,而是希望这些配置参数是可调节的。 ConfigMap 是 Kubernetes 的一种机制，可让你将配置数据注入到应用的Pod内部。\n">
 <meta property='og:url' content='https://rusthx.github.io/p/k8s%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A05_%E9%85%8D%E7%BD%AE%E7%AE%A1%E7%90%86/'>
 <meta property='og:site_name' content='rustWood'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Kubernetes' /><meta property='article:published_time' content='2026-02-10T14:30:19&#43;08:00'/><meta property='article:modified_time' content='2026-02-10T14:30:19&#43;08:00'/>
 <meta name="twitter:title" content="K8s实践练习5_配置管理">
-<meta name="twitter:description" content=" 官网链接\n很多应用在其初始化或运行期间要依赖一些配置信息。但是我们不太想要配置参数被硬编码进容器而是希望这些配置参数是可调节的。 ConfigMap 是 Kubernetes 的一种机制，可让你将配置数据注入到应用的Pod内部。\n">        
+<meta name="twitter:description" content=" 官网链接\n很多应用在其初始化或运行期间要依赖一些配置信息。但是我们不太想要配置参数被硬编码进容器,而是希望这些配置参数是可调节的。 ConfigMap 是 Kubernetes 的一种机制，可让你将配置数据注入到应用的Pod内部。\n">        
     </head>
     <body class="
     article-page
@@ -336,7 +336,7 @@
 <p><a class="link" href="https://kubernetes.io/zh-cn/docs/tasks/configure-pod-container/configure-pod-configmap/"  target="_blank" rel="noopener"
     >官网链接</a></p>
 </blockquote>
-<p>很多应用在其初始化或运行期间要依赖一些配置信息。但是我们不太想要配置参数被硬编码进容器而是希望这些配置参数是可调节的。 ConfigMap 是 Kubernetes 的一种机制，可让你将配置数据注入到应用的Pod内部。</p>
+<p>很多应用在其初始化或运行期间要依赖一些配置信息。但是我们不太想要配置参数被硬编码进容器,而是希望这些配置参数是可调节的。 ConfigMap 是 Kubernetes 的一种机制，可让你将配置数据注入到应用的Pod内部。</p>
 <p><code>ConfigMap</code>支持将配置清单与镜像内容分离，以保持容器化的应用程序的可移植性。 例如，可以下载并运行相同的容器镜像来启动容器， 用于本地开发、系统测试或运行实时终端用户工作负载。</p>
 <p>本页提供了一系列使用示例，这些示例演示了如何创建 ConfigMap 以及配置 Pod 使用存储在 ConfigMap 中的数据。</p>
 <h2 id="前置准备">前置准备
