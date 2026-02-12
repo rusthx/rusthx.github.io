@@ -1,0 +1,2226 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content=" 官网链接\n本教程将使用StatefulSet部署一个简单的 Web 应用。\n创建 StatefulSet 了解StatefulSet怎样管理它的 Pod 删除 StatefulSet 对StatefulSet 进行扩容/缩容 更新一个StatefulSet的Pod 前置准备 搭建好一套k8s集群，可以参考我写的这篇教程：搭建k8s集群\n">
+<title>K8s实践练习7_有状态应用</title>
+
+<link rel='canonical' href='https://rusthx.github.io/p/k8s%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A07_%E6%9C%89%E7%8A%B6%E6%80%81%E5%BA%94%E7%94%A8/'>
+
+<link rel="stylesheet" href="/scss/style.min.f88e0ff8bfb43bef18eec2559d462f612719fb375decfc40b3869dca992f1fa4.css"><meta property='og:title' content="K8s实践练习7_有状态应用">
+<meta property='og:description' content=" 官网链接\n本教程将使用StatefulSet部署一个简单的 Web 应用。\n创建 StatefulSet 了解StatefulSet怎样管理它的 Pod 删除 StatefulSet 对StatefulSet 进行扩容/缩容 更新一个StatefulSet的Pod 前置准备 搭建好一套k8s集群，可以参考我写的这篇教程：搭建k8s集群\n">
+<meta property='og:url' content='https://rusthx.github.io/p/k8s%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A07_%E6%9C%89%E7%8A%B6%E6%80%81%E5%BA%94%E7%94%A8/'>
+<meta property='og:site_name' content='rustWood'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Kubernetes' /><meta property='article:published_time' content='2026-02-11T17:35:23&#43;08:00'/><meta property='article:modified_time' content='2026-02-11T17:35:23&#43;08:00'/>
+<meta name="twitter:title" content="K8s实践练习7_有状态应用">
+<meta name="twitter:description" content=" 官网链接\n本教程将使用StatefulSet部署一个简单的 Web 应用。\n创建 StatefulSet 了解StatefulSet怎样管理它的 Pod 删除 StatefulSet 对StatefulSet 进行扩容/缩容 更新一个StatefulSet的Pod 前置准备 搭建好一套k8s集群，可以参考我写的这篇教程：搭建k8s集群\n">        
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu290319576234017586.png" width="300"
+                            height="302" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">rustWood</a></h1>
+            <h2 class="site-description">江上何人初见月，江月何年初照人。博客出问题请看关于页面</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/rusthx'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://www.cnblogs.com/rusthx'
+                        target="_blank"
+                        title="博客园"
+                        rel="me"
+                    >
+                        
+                        
+                            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1725698578146" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1508" width="24" height="24" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M478.71488 33.88416c-75.76064 36.6592-123.11552 117.31456-114.82624 194.82624 8.28416 67.03616 43.8016 120.45824 104.17152 156.06784 187.03872 109.98272 419.05664-79.60576 316.06784-258.71872C722.57536 20.26496 591.17568-19.53792 478.71488 33.88416z m187.03872 67.03616c85.23264 52.37248 80.49664 188.53888-9.472 229.39136-104.17152 48.18432-213.07904-15.71328-213.07904-125.696 0-41.89696 5.91872-54.46656 40.24832-84.84352s48.5376-35.61472 98.2528-35.61472c33.14688 0.00512 68.6592 7.33696 84.04992 16.76288z" fill="#707070" p-id="1509"></path><path d="M797.15328 340.7872c-63.9232 115.22048-89.96864 148.736-164.54656 217.87136-75.76064 71.22432-105.35424 90.08128-209.53088 135.12192-67.47648 29.32736-132.5824 50.2784-147.97312 48.18432-22.49216-2.09408-36.69504-25.1392-88.78592-139.31008C120.02816 458.10176 53.73952 333.45536 25.32864 298.89024c-16.57344-19.90144-17.75616-18.85184-11.83744 10.47552 27.22304 156.06784 119.56224 465.06496 147.97312 494.39232 15.39072 17.80736 295.94624 18.85184 456.93952 2.09408 190.58688-19.90144 170.46528-27.23328-121.92768-47.13472l-106.54208-7.33184 102.9888-24.0896c114.82624-27.23328 177.56672-52.37248 261.61664-105.79456 31.96416-19.90144 62.74048-34.56512 69.84192-32.47104 5.91872 2.09408 49.72032 98.46272 94.70464 212.6336 46.16704 115.22048 86.41536 212.6336 91.15136 216.82176 11.83744 11.52-8.28416-233.57952-28.41088-358.22592-10.65472-60.75392-39.0656-187.4944-63.9232-282.81344l-44.98432-172.83072-75.76576 136.17152z" fill="#707070" p-id="1510"></path></svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#前置准备">前置准备</a></li>
+    <li><a href="#给本地自建k8s集群添加默认存储类">给本地自建k8s集群添加默认存储类</a></li>
+    <li><a href="#创建-statefulset">创建 StatefulSet</a></li>
+    <li><a href="#statefulset-中的-pod">StatefulSet 中的 Pod</a>
+      <ol>
+        <li><a href="#检查-pod-的顺序索引">检查 Pod 的顺序索引</a></li>
+        <li><a href="#使用稳定的网络身份标识">使用稳定的网络身份标识</a></li>
+        <li><a href="#发现-statefulset-中特定的-pod">发现 StatefulSet 中特定的 Pod</a></li>
+        <li><a href="#写入稳定的存储">写入稳定的存储</a></li>
+      </ol>
+    </li>
+    <li><a href="#扩容缩容-statefulset">扩容/缩容 StatefulSet</a>
+      <ol>
+        <li><a href="#扩容">扩容</a></li>
+        <li><a href="#缩容">缩容</a></li>
+      </ol>
+    </li>
+    <li><a href="#更新statefulset">更新StatefulSet</a>
+      <ol>
+        <li><a href="#滚动更新">滚动更新</a>
+          <ol>
+            <li><a href="#分段更新">分段更新</a></li>
+            <li><a href="#金丝雀发布">金丝雀发布</a></li>
+            <li><a href="#分阶段的发布">分阶段的发布</a></li>
+          </ol>
+        </li>
+        <li><a href="#ondelete-策略">OnDelete 策略</a></li>
+      </ol>
+    </li>
+    <li><a href="#删除statefulset">删除StatefulSet</a>
+      <ol>
+        <li><a href="#非级联删除">非级联删除</a></li>
+        <li><a href="#级联删除">级联删除</a></li>
+      </ol>
+    </li>
+    <li><a href="#pod管理策略">Pod管理策略</a>
+      <ol>
+        <li><a href="#orderedready-pod管理策略">OrderedReady Pod管理策略</a></li>
+        <li><a href="#parallel-pod管理策略">Parallel Pod管理策略</a></li>
+      </ol>
+    </li>
+    <li><a href="#清理现场">清理现场</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/k8s%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A07_%E6%9C%89%E7%8A%B6%E6%80%81%E5%BA%94%E7%94%A8/">K8s实践练习7_有状态应用</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2026-02-11</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <blockquote>
+<p><a class="link" href="https://kubernetes.io/zh-cn/docs/tutorials/stateful-application/basic-stateful-set/"  target="_blank" rel="noopener"
+    >官网链接</a></p>
+</blockquote>
+<p>本教程将使用StatefulSet部署一个简单的 Web 应用。</p>
+<ol>
+<li>创建 StatefulSet</li>
+<li>了解StatefulSet怎样管理它的 Pod</li>
+<li>删除 StatefulSet</li>
+<li>对StatefulSet 进行扩容/缩容</li>
+<li>更新一个StatefulSet的Pod</li>
+</ol>
+<h2 id="前置准备">前置准备
+</h2><p>搭建好一套k8s集群，可以参考我写的这篇教程：<a class="link" href="https://rusthx.github.io/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/"  target="_blank" rel="noopener"
+    >搭建k8s集群</a></p>
+<p>k8s官方的镜像站在国内是拉不下来的，有几种方法解决：</p>
+<ol>
+<li>在拉取镜像的虚拟机/服务器上科学上网</li>
+<li>配置k8s的镜像源，目前国内只有阿里云支持改版后的k8s镜像源(registry.k8s.io)。</li>
+<li>需要拉取镜像的时候，指定拉取策略为本地拉取(<code>imagePullPolicy:Never</code>),每次需要拉取镜像前都手动拉取/上传一份镜像到服务器上再导入镜像</li>
+</ol>
+<p>这里给出阿里云镜像源的配置教程：
+旧版的k8s直接修改<code>/etc/containerd/config.toml</code>里的mirror信息，添加上阿里云的镜像站就行。但是新版的不支持inline或者说暂时兼容，未来不支持。所以这里就只给出新版k8s镜像源配置教程。</p>
+<p>修改<code>/etc/containerd/config.yaml</code>,填入下列信息（如果你已经有了config.yaml且这个配置文件是从containerd默认配置里生成的，那直接备份，然后使用下面的内容）。<code>sudo vim /etc/containerd/config.yaml</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nv">version</span> <span class="o">=</span> <span class="m">2</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>plugins.<span class="s2">&#34;io.containerd.grpc.v1.cri&#34;</span><span class="o">]</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">sandbox_image</span> <span class="o">=</span> <span class="s2">&#34;registry.aliyuncs.com/google_containers/pause:3.9&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">[</span>plugins.<span class="s2">&#34;io.containerd.grpc.v1.cri&#34;</span>.containerd.runtimes.runc<span class="o">]</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">runtime_type</span> <span class="o">=</span> <span class="s2">&#34;io.containerd.runc.v2&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">[</span>plugins.<span class="s2">&#34;io.containerd.grpc.v1.cri&#34;</span>.containerd.runtimes.runc.options<span class="o">]</span>
+</span></span><span class="line"><span class="cl">      <span class="nv">SystemdCgroup</span> <span class="o">=</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">  <span class="o">[</span>plugins.<span class="s2">&#34;io.containerd.grpc.v1.cri&#34;</span>.registry<span class="o">]</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">config_path</span> <span class="o">=</span> <span class="s2">&#34;/etc/containerd/certs.d&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>创建<code>/etc/containerd/certs.d</code>目录，在这个目录填入docker.io和registry.k8s.io的镜像源。</p>
+<blockquote>
+<p>注意：k8s里修改镜像源之后，使用<code>kubectl describe pod &lt;pod_name&gt; </code>查看时还是显示的<code>docker.io</code>和<code>registry.k8s.io</code>。配置镜像源只物理修改从哪里修改，不改镜像拉取的逻辑源。所以改好镜像源之后也不太好验证成功，随便拉个镜像<code>sudo crictl pull nginx:1.14.2</code>，能拉下来就是成了。</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># Docker Hub 加速</span>
+</span></span><span class="line"><span class="cl">sudo mkdir -p /etc/containerd/certs.d/docker.io
+</span></span><span class="line"><span class="cl">sudo tee /etc/containerd/certs.d/docker.io/hosts.toml <span class="s">&lt;&lt; &#39;EOF&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s">server = &#34;https://registry-1.docker.io&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">[host.&#34;https://docker.m.daocloud.io&#34;]
+</span></span></span><span class="line"><span class="cl"><span class="s">  capabilities = [&#34;pull&#34;, &#34;resolve&#34;]
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># K8s 镜像加速</span>
+</span></span><span class="line"><span class="cl">sudo mkdir -p /etc/containerd/certs.d/registry.k8s.io
+</span></span><span class="line"><span class="cl">sudo tee /etc/containerd/certs.d/registry.k8s.io/hosts.toml <span class="s">&lt;&lt; &#39;EOF&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s">server = &#34;https://registry.k8s.io&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">[host.&#34;https://registry.cn-hangzhou.aliyuncs.com/google_containers&#34;]
+</span></span></span><span class="line"><span class="cl"><span class="s">  capabilities = [&#34;pull&#34;, &#34;resolve&#34;]
+</span></span></span><span class="line"><span class="cl"><span class="s">  override_path = true
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>到这里，镜像源就配置好了，如果不出意外，文件目录应该是下面这样：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">rust@k8s1:/etc/containerd$ ll
+</span></span><span class="line"><span class="cl">总计 <span class="m">28</span>
+</span></span><span class="line"><span class="cl">drwxr-xr-x   <span class="m">3</span> root root  <span class="m">4096</span>  2月  <span class="m">4</span> 10:31 ./
+</span></span><span class="line"><span class="cl">drwxr-xr-x <span class="m">144</span> root root <span class="m">12288</span>  2月  <span class="m">2</span> 17:01 ../
+</span></span><span class="line"><span class="cl">drwxr-xr-x   <span class="m">4</span> root root  <span class="m">4096</span>  2月  <span class="m">2</span> 16:44 certs.d/
+</span></span><span class="line"><span class="cl">-rw-r--r--   <span class="m">1</span> root root   <span class="m">423</span>  2月  <span class="m">2</span> 19:02 config.toml
+</span></span><span class="line"><span class="cl">-rw-r--r--   <span class="m">1</span> root root   <span class="m">886</span> 12月 <span class="m">19</span> 02:48 config.toml.dpkg-dist
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>修改完配置文件后需要重启containerd：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo systemctl restart containerd
+</span></span><span class="line"><span class="cl">sudo systemctl status containerd
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="给本地自建k8s集群添加默认存储类">给本地自建k8s集群添加默认存储类
+</h2><p>K8s “产品”本身不自带 StorageClass；
+但“常见的集群环境”（云厂商、本地发行版）一般都会预置一个或多个 StorageClass，并把其中一个标为默认。例如：</p>
+<ul>
+<li>minikube：通常有一个 standard StorageClass，并标记为 (default)。</li>
+<li>GKE：一般会自带 standard-rwo（或类似名字）默认类。</li>
+<li>EKS：AWS EBS CSI 会安装 gp2 / gp3 类并设为默认</li>
+</ul>
+<p><code>kubectl get sc</code>查看集群存储类。有的话可以跳过此节</p>
+<ol>
+<li>在三个节点上创建存储基础目录(xcall是<a class="link" href="https://rusthx.github.io/p/k8s%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A03_%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E4%B8%8E%E7%BD%91%E7%BB%9C/"  target="_blank" rel="noopener"
+    >自建的脚本</a>)</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">xcall sudo mkdir -p /opt/local-path-provisioner
+</span></span><span class="line"><span class="cl">xcall sudo chmod <span class="m">755</span> /opt/local-path-provisioner
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>以后想换路径可以修改local-path-config这个ConfigMap里的nodePathMap配置</p>
+<ol start="2">
+<li>安装 local-path-provisioner（自带一个 StorageClass：local-path）
+直接用官方的 YAML(以当前稳定版 v0.0.34 为例)</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl apply -f https://raw.githubusercontent.com/rancher/local-path-provisioner/v0.0.34/deploy/local-path-storage.yaml
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个 YAML 里面已经包含：</p>
+<ul>
+<li>Namespace：local-path-storage</li>
+<li>RBAC（ServiceAccount / Role / ClusterRole / RoleBinding / ClusterRoleBinding）</li>
+<li>Deployment：local-path-provisioner</li>
+<li>一个 StorageClass：名字叫 local-path，provisioner 是 rancher.io/local-path</li>
+<li>一个 ConfigMap：local-path-config，里面配置了默认路径 /opt/local-path-provisioner</li>
+</ul>
+<ol start="3">
+<li>确认安装成功,检查 Pod 是否 Running,存储类是否已经存在(名字是local-path)</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl get pods -n local-path-storage
+</span></span><span class="line"><span class="cl">kubectl describe pod &lt;pod_name&gt; -n local-path-storage
+</span></span><span class="line"><span class="cl">kubectl get sc
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~/k8s_try$ kubectl get sc
+</span></span><span class="line"><span class="cl">NAME         PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+</span></span><span class="line"><span class="cl">local-path   rancher.io/local-path   Delete          WaitForFirstConsumer   <span class="nb">false</span>                  4m40s
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="4">
+<li>把 local-path 设置为默认StorageClass。
+Kubernetes 默认 StorageClass 是通过注解 storageclass.kubernetes.io/is-default-class 来标记的。
+local-path-provisioner 的 YAML 里默认没有给它打这个注解，
+直接用 kubectl patch 打注解：</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl patch storageclass local-path <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  -p <span class="s1">&#39;{&#34;metadata&#34;:{&#34;annotations&#34;:{&#34;storageclass.kubernetes.io/is-default-class&#34;:&#34;true&#34;}}}&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~/k8s_try$ kubectl patch storageclass local-path <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  -p <span class="s1">&#39;{&#34;metadata&#34;:{&#34;annotations&#34;:{&#34;storageclass.kubernetes.io/is-default-class&#34;:&#34;true&#34;}}}&#39;</span>
+</span></span><span class="line"><span class="cl">storageclass.storage.k8s.io/local-path patched
+</span></span><span class="line"><span class="cl"><span class="c1"># 打上注解后再查看存储类，发现local-path以标记为默认存储类</span>
+</span></span><span class="line"><span class="cl">rust@k8s1:~/k8s_try$ kubectl get sc
+</span></span><span class="line"><span class="cl">NAME                   PROVISIONER             RECLAIMPOLICY   VOLUMEBINDINGMODE      ALLOWVOLUMEEXPANSION   AGE
+</span></span><span class="line"><span class="cl">local-path <span class="o">(</span>default<span class="o">)</span>   rancher.io/local-path   Delete          WaitForFirstConsumer   <span class="nb">false</span>                  9m22s
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>现在集群就可以自动制取持久卷了。</p>
+<h2 id="创建-statefulset">创建 StatefulSet
+</h2><p>创建一个Headless Service nginx用来发布StatefulSet web中的Pod的IP地址。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Service</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">web</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">clusterIP</span><span class="p">:</span><span class="w"> </span><span class="l">None</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nn">---</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">apps/v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">StatefulSet</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">web</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">serviceName</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;nginx&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="m">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">labels</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">containers</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="c"># 官方文档里用的瘦身版，拉不下来就用普通的nginx就行</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">nginx:1.25</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">web</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">volumeMounts</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">www</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l">/usr/share/nginx/html</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">volumeClaimTemplates</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">www</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">accessModes</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">&#34;ReadWriteOnce&#34;</span><span class="w"> </span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">resources</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">requests</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="l">1Gi</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>开启两个终端，一个终端用来监控StatefulSet状态，另一个用来创建StatefulSet。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 在第一个终端监控StatefulSet状态</span>
+</span></span><span class="line"><span class="cl">kubectl get pods --watch -l <span class="nv">app</span><span class="o">=</span>nginx
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 在第二个终端创建StatefulSet</span>
+</span></span><span class="line"><span class="cl">vim web.yaml
+</span></span><span class="line"><span class="cl">kubectl apply -f web.yaml
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>web.yaml创建了两个 Pod，每个都运行了一个 NGINX Web 服务器。查看pod、service、statefulset运行状态：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~/k8s_try$ kubectl get pods
+</span></span><span class="line"><span class="cl">NAME    READY   STATUS    RESTARTS   AGE
+</span></span><span class="line"><span class="cl">web-0   1/1     Running   <span class="m">0</span>          90s
+</span></span><span class="line"><span class="cl">web-1   1/1     Running   <span class="m">0</span>          90s
+</span></span><span class="line"><span class="cl">rust@k8s1:~/k8s_try$ kubectl get service nginx
+</span></span><span class="line"><span class="cl">NAME    TYPE        CLUSTER-IP   EXTERNAL-IP   PORT<span class="o">(</span>S<span class="o">)</span>   AGE
+</span></span><span class="line"><span class="cl">nginx   ClusterIP   None         &lt;none&gt;        80/TCP    26m
+</span></span><span class="line"><span class="cl">rust@k8s1:~/k8s_try$ kubectl get statefulset web
+</span></span><span class="line"><span class="cl">NAME   READY   AGE
+</span></span><span class="line"><span class="cl">web    2/2     26m
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>StatefulSet 默认以严格的顺序创建其 Pod。</p>
+<p>对于一个拥有 n 个副本的 StatefulSet，Pod 被部署时是按照 {0..n-1} 的序号顺序创建的。
+从刚刚开启的监控终端可以看到statefulSet创建过程中直到第一个pod(web-0)处于Running并ready状态时，第二个pod才开始创建。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">NAME      READY     STATUS    RESTARTS   AGE
+</span></span><span class="line"><span class="cl">web-0     0/1       Pending   <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-0     0/1       Pending   <span class="m">0</span>         0s
+</span></span><span class="line"><span class="cl">web-0     0/1       ContainerCreating   <span class="m">0</span>         0s
+</span></span><span class="line"><span class="cl">web-0     1/1       Running   <span class="m">0</span>         19s
+</span></span><span class="line"><span class="cl">web-1     0/1       Pending   <span class="m">0</span>         0s
+</span></span><span class="line"><span class="cl">web-1     0/1       Pending   <span class="m">0</span>         0s
+</span></span><span class="line"><span class="cl">web-1     0/1       ContainerCreating   <span class="m">0</span>         0s
+</span></span><span class="line"><span class="cl">web-1     1/1       Running   <span class="m">0</span>         18s
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="statefulset-中的-pod">StatefulSet 中的 Pod
+</h2><h3 id="检查-pod-的顺序索引">检查 Pod 的顺序索引
+</h3><p>StatefulSet中的每个Pod拥有一个唯一的顺序索引和稳定的网络身份标识。</p>
+<p>StatefulSet 中的每个Pod拥有一个具有黏性的、独一无二的身份标志。这个标志基于StatefulSet控制器分配给每个 Pod 的唯一顺序索引。 Pod 名称的格式为 &lt;statefulset 名称&gt;-&lt;序号索引&gt;。web StatefulSet拥有两个副本，所以它创建了两个Pod：web-0 和 web-1。</p>
+<p>每个 Pod 都拥有一个基于其顺序索引的稳定的主机名。使用kubectl exec在每个 Pod 中查看hostname</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">rust@k8s1:~$ kubectl get pods -l <span class="nv">app</span><span class="o">=</span>nginx
+</span></span><span class="line"><span class="cl">NAME    READY   STATUS    RESTARTS        AGE
+</span></span><span class="line"><span class="cl">web-0   1/1     Running   <span class="m">1</span> <span class="o">(</span>9m28s ago<span class="o">)</span>   13h
+</span></span><span class="line"><span class="cl">web-1   1/1     Running   <span class="m">1</span> <span class="o">(</span>9m23s ago<span class="o">)</span>   13h
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ <span class="k">for</span> i in <span class="m">0</span> 1<span class="p">;</span> <span class="k">do</span> kubectl <span class="nb">exec</span> <span class="s2">&#34;web-</span><span class="nv">$i</span><span class="s2">&#34;</span> -- sh -c <span class="s1">&#39;hostname&#39;</span><span class="p">;</span> <span class="k">done</span>
+</span></span><span class="line"><span class="cl">web-0
+</span></span><span class="line"><span class="cl">web-1
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="使用稳定的网络身份标识">使用稳定的网络身份标识
+</h3><p>使用 kubectl run 运行一个提供 nslookup 命令的容器，该命令来自于 dnsutils 包。 通过对 Pod 的主机名执行 nslookup，检查这些主机名在集群内部的 DNS 地址：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 打开dns-test容器终端</span>
+</span></span><span class="line"><span class="cl">kubectl run -i --tty --image busybox:1.28 dns-test --restart<span class="o">=</span>Never --rm
+</span></span><span class="line"><span class="cl"><span class="c1"># 在终端中查看dns,可以看到两个pod的dns server地址相同</span>
+</span></span><span class="line"><span class="cl">nslookup web-0.nginx
+</span></span><span class="line"><span class="cl">nslookup web-1.nginx
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl run -i --tty --image busybox:1.28 dns-test --restart<span class="o">=</span>Never --rm
+</span></span><span class="line"><span class="cl">If you don<span class="err">&#39;</span>t see a <span class="nb">command</span> prompt, try pressing enter.
+</span></span><span class="line"><span class="cl">/ <span class="c1"># nslookup web-0.nginx</span>
+</span></span><span class="line"><span class="cl">Server:    10.96.0.10
+</span></span><span class="line"><span class="cl">Address 1: 10.96.0.10 kube-dns.kube-system.svc.cluster.local
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Name:      web-0.nginx
+</span></span><span class="line"><span class="cl">Address 1: 172.16.109.124 web-0.nginx.default.svc.cluster.local
+</span></span><span class="line"><span class="cl">/ <span class="c1"># nslookup web-1.nginx</span>
+</span></span><span class="line"><span class="cl">Server:    10.96.0.10
+</span></span><span class="line"><span class="cl">Address 1: 10.96.0.10 kube-dns.kube-system.svc.cluster.local
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Name:      web-1.nginx
+</span></span><span class="line"><span class="cl">Address 1: 172.16.219.51 web-1.nginx.default.svc.cluster.local
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>删除现有的pod，等待statefulSet控制器重建启动这些pod。再次查看这些pod的信息，会发现Pod 的序号、主机名、SRV 条目和记录名称没有改变，但和 Pod 相关联的 IP 地址可能发生了改变。 在本教程中使用的集群中它们就改变了。这就是为什么不要在其他应用中使用 StatefulSet 中特定 Pod 的 IP 地址进行连接，这点很重要（可以通过解析 Pod 的主机名来连接到 Pod）。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 先开一个终端监控删除后statefulSet重建pod的过程</span>
+</span></span><span class="line"><span class="cl">kubectl get pod --watch -l <span class="nv">app</span><span class="o">=</span>nginx
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 在第二个终端删除pod</span>
+</span></span><span class="line"><span class="cl">kubectl delete pod -l <span class="nv">app</span><span class="o">=</span>nginx
+</span></span><span class="line"><span class="cl"><span class="c1"># 删除完成后再查看pod，可以看见还是有两个pod在运行，但是age只有几秒</span>
+</span></span><span class="line"><span class="cl">kubectl get pods
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl delete pod -l <span class="nv">app</span><span class="o">=</span>nginx
+</span></span><span class="line"><span class="cl">pod <span class="s2">&#34;web-0&#34;</span> deleted
+</span></span><span class="line"><span class="cl">pod <span class="s2">&#34;web-1&#34;</span> deleted
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl get pods
+</span></span><span class="line"><span class="cl">NAME    READY   STATUS    RESTARTS   AGE
+</span></span><span class="line"><span class="cl">web-0   1/1     Running   <span class="m">0</span>          5s
+</span></span><span class="line"><span class="cl">web-1   1/1     Running   <span class="m">0</span>          4s
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 第二个终端监控</span>
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl get pod --watch -l <span class="nv">app</span><span class="o">=</span>nginx
+</span></span><span class="line"><span class="cl">NAME    READY   STATUS    RESTARTS   AGE
+</span></span><span class="line"><span class="cl">web-0   1/1     Running   <span class="m">0</span>          29s
+</span></span><span class="line"><span class="cl">web-1   1/1     Running   <span class="m">0</span>          28s
+</span></span><span class="line"><span class="cl">web-0   1/1     Terminating   <span class="m">0</span>          32s
+</span></span><span class="line"><span class="cl">web-1   1/1     Terminating   <span class="m">0</span>          31s
+</span></span><span class="line"><span class="cl">web-1   1/1     Terminating   <span class="m">0</span>          31s
+</span></span><span class="line"><span class="cl">web-0   1/1     Terminating   <span class="m">0</span>          32s
+</span></span><span class="line"><span class="cl">web-1   0/1     Terminating   <span class="m">0</span>          32s
+</span></span><span class="line"><span class="cl">web-0   0/1     Terminating   <span class="m">0</span>          33s
+</span></span><span class="line"><span class="cl">web-1   0/1     Terminating   <span class="m">0</span>          32s
+</span></span><span class="line"><span class="cl">web-1   0/1     Terminating   <span class="m">0</span>          32s
+</span></span><span class="line"><span class="cl">web-0   0/1     Terminating   <span class="m">0</span>          33s
+</span></span><span class="line"><span class="cl">web-0   0/1     Terminating   <span class="m">0</span>          33s
+</span></span><span class="line"><span class="cl">web-0   0/1     Pending       <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-0   0/1     Pending       <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-0   0/1     ContainerCreating   <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-0   0/1     ContainerCreating   <span class="m">0</span>          2s
+</span></span><span class="line"><span class="cl">web-0   1/1     Running             <span class="m">0</span>          2s
+</span></span><span class="line"><span class="cl">web-1   0/1     Pending             <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-1   0/1     Pending             <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-1   0/1     ContainerCreating   <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-1   0/1     ContainerCreating   <span class="m">0</span>          1s
+</span></span><span class="line"><span class="cl">web-1   1/1     Running             <span class="m">0</span>          2s
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>两个pod在删除重建后，再次查看主机名和集群内部的DNS表项。
+Pod 的序号、主机名、SRV 条目和记录名称没有改变，但和 Pod 相关联的 IP 地址可能发生了改变</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">rust@k8s1:~$ <span class="k">for</span> i in <span class="m">0</span> 1<span class="p">;</span> <span class="k">do</span> kubectl <span class="nb">exec</span> web-<span class="nv">$i</span> -- sh -c <span class="s1">&#39;hostname&#39;</span><span class="p">;</span> <span class="k">done</span>
+</span></span><span class="line"><span class="cl">web-0
+</span></span><span class="line"><span class="cl">web-1
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl run -i --tty --image busybox:1.28 dns-test --restart<span class="o">=</span>Never --rm
+</span></span><span class="line"><span class="cl">If you don<span class="err">&#39;</span>t see a <span class="nb">command</span> prompt, try pressing enter.
+</span></span><span class="line"><span class="cl">/ <span class="c1"># nslookup web-0.nginx</span>
+</span></span><span class="line"><span class="cl">Server:    10.96.0.10
+</span></span><span class="line"><span class="cl">Address 1: 10.96.0.10 kube-dns.kube-system.svc.cluster.local
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Name:      web-0.nginx
+</span></span><span class="line"><span class="cl">Address 1: 172.16.109.127 web-0.nginx.default.svc.cluster.local
+</span></span><span class="line"><span class="cl">/ <span class="c1"># nslookup web-1.nginx</span>
+</span></span><span class="line"><span class="cl">Server:    10.96.0.10
+</span></span><span class="line"><span class="cl">Address 1: 10.96.0.10 kube-dns.kube-system.svc.cluster.local
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">Name:      web-1.nginx
+</span></span><span class="line"><span class="cl">Address 1: 172.16.219.53 web-1.nginx.default.svc.cluster.local
+</span></span><span class="line"><span class="cl">/ <span class="c1"># exit</span>
+</span></span><span class="line"><span class="cl">pod <span class="s2">&#34;dns-test&#34;</span> deleted
+</span></span><span class="line"><span class="cl">rust@k8s1:~$
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="发现-statefulset-中特定的-pod">发现 StatefulSet 中特定的 Pod
+</h3><blockquote>
+<p>相关概念：无头服务、Pod稳定主机名、SRV记录</p>
+</blockquote>
+<ol>
+<li>Headless Service（无头服务）就是 clusterIP: None 的 Service，比如示例里的：</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="w">     </span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Service</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="nt">clusterIP</span><span class="p">:</span><span class="w"> </span><span class="l">None   </span><span class="w"> </span><span class="c"># 关键：Headless</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="nt">selector</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">         </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">         </span>- <span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">           </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">web</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>对应statefulSet的：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="w">     </span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">apps/v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">StatefulSet</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">web</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">     </span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">       </span><span class="nt">serviceName</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;nginx&#34;</span><span class="w">   </span><span class="c"># 关联到这个 Headless Service</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="m">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="l">...</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>Headless Service不会有一个统一的 ClusterIP，而是给每个 Pod 生成一条 DNS 记录</p>
+<ol start="2">
+<li>Pod 的稳定主机名</li>
+</ol>
+<ul>
+<li>StatefulSet 里的 Pod 名字固定、有序：web-0，web-1，web-2……</li>
+<li>每个Pod 有一个“稳定的主机名”：web-0.nginx.default.svc.cluster.local、web-1.nginx.default.svc.cluster.local</li>
+<li>即使 Pod 删除重建，名字不变，IP 可能变，但主机名对应关系不变。</li>
+</ul>
+<ol start="3">
+<li>SRV 记录：
+DNS 里除了 A 记录（域名-&gt;IP），还有 SRV 记录，用来表示“某个服务有哪些后端实例（主机:端口）”。
+对 Headless Service，K8s 会给每个 Running+Ready 的 Pod 生成一条 SRV 记录</li>
+</ol>
+<p>同一个 StatefulSet，有三种不同抽象层级的“服务发现方式”，分别对应“要列表 / 要固定 / 要简单”三种需求。</p>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>查找需求</th>
+          <th>DNS 查询的内容</th>
+          <th>返回值</th>
+          <th>自动健康检查</th>
+          <th>典型场景</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>当前所有健康成员列表</td>
+          <td>Headless Service 的 CNAME → SRV(nginx.default.svc.cluster.local)</td>
+          <td>多个 Pod 的主机名+端口（仅 Running+Ready）</td>
+          <td>是，由 SRV 过滤</td>
+          <td>数据库集群、副本集，要成员列表</td>
+      </tr>
+      <tr>
+          <td>固定连某个编号的 Pod</td>
+          <td>某个 Pod 的 SRV(web-0.nginx.default.svc.cluster.local、web-1.nginx.default.svc.cluster.local)</td>
+          <td>单个 Pod 的 IP+端口</td>
+          <td>不负责，靠应用自己探活</td>
+          <td>主从、分片，需要固定连某个序号</td>
+      </tr>
+      <tr>
+          <td>随便连一个健康的 Pod</td>
+          <td>普通<strong>ClusterIP Service</strong>的 DNS 或 IP</td>
+          <td>随机一个后端 Pod 的 IP</td>
+          <td>是，Service 层负责</td>
+          <td>无状态服务、简单客户端</td>
+      </tr>
+  </tbody>
+</table></div>
+<h3 id="写入稳定的存储">写入稳定的存储
+</h3><p>查看web-0和web-1的PersistentVolumeClaims：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl get pvc -l <span class="nv">app</span><span class="o">=</span>nginx
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl get pvc -l <span class="nv">app</span><span class="o">=</span>nginx
+</span></span><span class="line"><span class="cl">NAME        STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+</span></span><span class="line"><span class="cl">www-web-0   Bound    pvc-29d78e3e-a93b-4db3-880e-3a121d9af83b   1Gi        RWO            local-path     &lt;unset&gt;                 18h
+</span></span><span class="line"><span class="cl">www-web-1   Bound    pvc-0b32d304-d17d-4f7d-9c38-a8d6fb62a709   1Gi        RWO            local-path     &lt;unset&gt;                 18h
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>StatefulSet 控制器创建了两个 PersistentVolumeClaims， 绑定到两个 PersistentVolumes。
+前面配置了默认存储类，所以PV是动态创建和绑定的。</p>
+<p>NginX Web 服务器默认会加载位于 /usr/share/nginx/html/index.html 的 index 文件。 StatefulSet spec 中的 volumeMounts 字段保证了 /usr/share/nginx/html 文件夹由一个 PersistentVolume 卷支持。</p>
+<p>将 Pod 的主机名写入它们的 index.html 文件并验证 NginX Web 服务器使用该主机名提供服务：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="k">for</span> i in <span class="m">0</span> 1<span class="p">;</span> <span class="k">do</span> kubectl <span class="nb">exec</span> <span class="s2">&#34;web-</span><span class="nv">$i</span><span class="s2">&#34;</span> -- sh -c <span class="s1">&#39;echo &#34;$(hostname)&#34; &gt; /usr/share/nginx/html/index.html&#39;</span><span class="p">;</span> <span class="k">done</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> i in <span class="m">0</span> 1<span class="p">;</span> <span class="k">do</span> kubectl <span class="nb">exec</span> -i -t <span class="s2">&#34;web-</span><span class="nv">$i</span><span class="s2">&#34;</span> -- curl http://localhost/<span class="p">;</span> <span class="k">done</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ <span class="k">for</span> i in <span class="m">0</span> 1<span class="p">;</span> <span class="k">do</span> kubectl <span class="nb">exec</span> <span class="s2">&#34;web-</span><span class="nv">$i</span><span class="s2">&#34;</span> -- sh -c <span class="s1">&#39;echo &#34;$(hostname)&#34; &gt; /usr/share/nginx/html/index.html&#39;</span><span class="p">;</span> <span class="k">done</span>
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ <span class="k">for</span> i in <span class="m">0</span> 1<span class="p">;</span> <span class="k">do</span> kubectl <span class="nb">exec</span> -i -t <span class="s2">&#34;web-</span><span class="nv">$i</span><span class="s2">&#34;</span> -- curl http://localhost/<span class="p">;</span> <span class="k">done</span>
+</span></span><span class="line"><span class="cl">web-0
+</span></span><span class="line"><span class="cl">web-1
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在一个终端监视 StatefulSet 的 Pod,在另一个终端删除Pod，删除后再次验证所有Web 服务器在继续使用它们的主机名提供服务。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 监控终端</span>
+</span></span><span class="line"><span class="cl">kubectl get pod -w -l <span class="nv">app</span><span class="o">=</span>nginx
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 操作终端，删除pod后检查pod状态以及提供服务情况</span>
+</span></span><span class="line"><span class="cl">kubectl delete pod web-0 web-1
+</span></span><span class="line"><span class="cl">kubectl get pods
+</span></span><span class="line"><span class="cl"><span class="k">for</span> i in <span class="m">0</span> 1<span class="p">;</span> <span class="k">do</span> kubectl <span class="nb">exec</span> -i -t <span class="s2">&#34;web-</span><span class="nv">$i</span><span class="s2">&#34;</span> -- curl http://localhost/<span class="p">;</span> <span class="k">done</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl delete pod web-0 web-1
+</span></span><span class="line"><span class="cl">pod <span class="s2">&#34;web-0&#34;</span> deleted
+</span></span><span class="line"><span class="cl">pod <span class="s2">&#34;web-1&#34;</span> deleted
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl get pods
+</span></span><span class="line"><span class="cl">NAME    READY   STATUS    RESTARTS   AGE
+</span></span><span class="line"><span class="cl">web-0   1/1     Running   <span class="m">0</span>          40s
+</span></span><span class="line"><span class="cl">web-1   1/1     Running   <span class="m">0</span>          39s
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ <span class="k">for</span> i in <span class="m">0</span> 1<span class="p">;</span> <span class="k">do</span> kubectl <span class="nb">exec</span> -i -t <span class="s2">&#34;web-</span><span class="nv">$i</span><span class="s2">&#34;</span> -- curl http://localhost/<span class="p">;</span> <span class="k">done</span>
+</span></span><span class="line"><span class="cl">web-0
+</span></span><span class="line"><span class="cl">web-1
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>虽然 web-0 和 web-1 被重新调度了，但它们仍然继续监听各自的主机名，因为和它们的 PersistentVolumeClaim 相关联的 PersistentVolume 卷被重新挂载到了各自的 volumeMount 上。 不管 web-0 和 web-1 被调度到了哪个节点上，它们的 PersistentVolume 卷将会被挂载到合适的挂载点上。</p>
+<h2 id="扩容缩容-statefulset">扩容/缩容 StatefulSet
+</h2><p>扩容/缩容 StatefulSet 指增加或减少它的副本数。这通过更新 replicas 字段完成（水平缩放）。
+可以使用 kubectl scale 或者 kubectl patch 来扩容/缩容一个 StatefulSet。</p>
+<h3 id="扩容">扩容
+</h3><p>在一个终端窗口监视 StatefulSet 的 Pod，在另一个终端窗口使用 kubectl scale 扩展副本数为 5。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 监控pod状态，当 StatefulSet 有 5 个健康的 Pod 时结束此 watch</span>
+</span></span><span class="line"><span class="cl">kubectl get pods --watch -l <span class="nv">app</span><span class="o">=</span>nginx
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">kubectl scale sts web --replicas<span class="o">=</span><span class="m">5</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>StatefulSet 控制器扩展了副本的数量。StatefulSet 按序号索引顺序创建各个 Pod，并且会等待前一个 Pod 变为 Running 和 Ready 才会启动下一个 Pod。</p>
+<h3 id="缩容">缩容
+</h3><p>依旧在一个终端中监控，另一个终端中操作。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 监控到有3个pod在运行时就可以停了</span>
+</span></span><span class="line"><span class="cl">kubectl get pods --watch -l <span class="nv">app</span><span class="o">=</span>nginx
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 操作终端，缩容pod副本数为3个</span>
+</span></span><span class="line"><span class="cl">kubectl patch sts web -p <span class="s1">&#39;{&#34;spec&#34;:{&#34;replicas&#34;:3}}&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl get pods --watch -l <span class="nv">app</span><span class="o">=</span>nginx
+</span></span><span class="line"><span class="cl">NAME    READY   STATUS    RESTARTS   AGE
+</span></span><span class="line"><span class="cl">web-0   1/1     Running   <span class="m">0</span>          17m
+</span></span><span class="line"><span class="cl">web-1   1/1     Running   <span class="m">0</span>          17m
+</span></span><span class="line"><span class="cl">web-2   1/1     Running   <span class="m">0</span>          3m24s
+</span></span><span class="line"><span class="cl">web-3   1/1     Running   <span class="m">0</span>          3m18s
+</span></span><span class="line"><span class="cl">web-4   1/1     Running   <span class="m">0</span>          3m13s
+</span></span><span class="line"><span class="cl">web-4   1/1     Terminating   <span class="m">0</span>          3m17s
+</span></span><span class="line"><span class="cl">web-4   1/1     Terminating   <span class="m">0</span>          3m17s
+</span></span><span class="line"><span class="cl">web-4   0/1     Terminating   <span class="m">0</span>          3m17s
+</span></span><span class="line"><span class="cl">web-4   0/1     Terminating   <span class="m">0</span>          3m17s
+</span></span><span class="line"><span class="cl">web-4   0/1     Terminating   <span class="m">0</span>          3m17s
+</span></span><span class="line"><span class="cl">web-3   1/1     Terminating   <span class="m">0</span>          3m22s
+</span></span><span class="line"><span class="cl">web-3   1/1     Terminating   <span class="m">0</span>          3m22s
+</span></span><span class="line"><span class="cl">web-3   0/1     Terminating   <span class="m">0</span>          3m22s
+</span></span><span class="line"><span class="cl">web-3   0/1     Terminating   <span class="m">0</span>          3m23s
+</span></span><span class="line"><span class="cl">web-3   0/1     Terminating   <span class="m">0</span>          3m23s
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl patch sts web -p <span class="s1">&#39;{&#34;spec&#34;:{&#34;replicas&#34;:3}}&#39;</span>
+</span></span><span class="line"><span class="cl">statefulset.apps/web patched
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl get pods
+</span></span><span class="line"><span class="cl">NAME    READY   STATUS    RESTARTS   AGE
+</span></span><span class="line"><span class="cl">web-0   1/1     Running   <span class="m">0</span>          18m
+</span></span><span class="line"><span class="cl">web-1   1/1     Running   <span class="m">0</span>          18m
+</span></span><span class="line"><span class="cl">web-2   1/1     Running   <span class="m">0</span>          3m54s
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>控制器会按照与 Pod 序号索引相反的顺序每次删除一个 Pod。在删除下一个 Pod 前会等待上一个被完全关闭。也就是后开启的先关闭（后进先出）。</p>
+<p>获取 StatefulSet 的 PersistentVolumeClaims,PVC的生命周期和Pod是隔离的，
+即使Pod被关闭或者删除（不管是手动删除还是缩容导致的删除），PVC也不会回收。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl get pvc -l <span class="nv">app</span><span class="o">=</span>nginx
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl get pvc -l <span class="nv">app</span><span class="o">=</span>nginx
+</span></span><span class="line"><span class="cl">NAME        STATUS   VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS   VOLUMEATTRIBUTESCLASS   AGE
+</span></span><span class="line"><span class="cl">www-web-0   Bound    pvc-29d78e3e-a93b-4db3-880e-3a121d9af83b   1Gi        RWO            local-path     &lt;unset&gt;                 18h
+</span></span><span class="line"><span class="cl">www-web-1   Bound    pvc-0b32d304-d17d-4f7d-9c38-a8d6fb62a709   1Gi        RWO            local-path     &lt;unset&gt;                 18h
+</span></span><span class="line"><span class="cl">www-web-2   Bound    pvc-1d4e4d92-8153-4bd2-b1d0-45e3de8b477a   1Gi        RWO            local-path     &lt;unset&gt;                 5m46s
+</span></span><span class="line"><span class="cl">www-web-3   Bound    pvc-cc082b06-9eec-4831-bc9a-1efa3f6c4eb7   1Gi        RWO            local-path     &lt;unset&gt;                 5m40s
+</span></span><span class="line"><span class="cl">www-web-4   Bound    pvc-fbad49f8-f1b3-4869-9dba-67e1d2200324   1Gi        RWO            local-path     &lt;unset&gt;                 5m35s
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="更新statefulset">更新StatefulSet
+</h2><p>StatefulSet 控制器支持自动更新。 更新策略由 StatefulSet API 对象的 spec.updateStrategy 字段决定。这个特性能够用来更新一个 StatefulSet中Pod的容器镜像(image)、资源请求和限制(request、limit)、标签和注解(label、annotation)。</p>
+<p>有两个有效的更新策略：RollingUpdate（默认）和 OnDelete。</p>
+<h3 id="滚动更新">滚动更新
+</h3><p>RollingUpdate 更新策略会更新一个 StatefulSet 中的所有 Pod，采用与序号索引相反的顺序并遵循 StatefulSet 的保证。</p>
+<p>可以通过指定<code>.spec.updateStrategy.rollingUpdate.partition</code>将使用RollingUpdate策略的StatefulSet的更新拆分为<strong>多个分区</strong>。</p>
+<p>尝试一个简单的滚动更新，更新nginx镜像版本为1.14.2。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1">#在另外一个终端监控pod滚动更新</span>
+</span></span><span class="line"><span class="cl">kubectl get pod -l <span class="nv">app</span><span class="o">=</span>nginx --watch
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">kubectl patch statefulset web --type<span class="o">=</span><span class="s1">&#39;json&#39;</span> -p<span class="o">=</span><span class="s1">&#39;[{&#34;op&#34;: &#34;replace&#34;, &#34;path&#34;: &#34;/spec/template/spec/containers/0/image&#34;, &#34;value&#34;:&#34;nginx:1.14.2&#34;}]&#39;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>StatefulSet 里的 Pod 采用和序号相反的顺序更新。在更新下一个 Pod 前，StatefulSet控制器会终止最新的Pod并等待它们变成 Running 和 Ready。</p>
+<p>请注意，虽然在顺序后继者变成 Running 和 Ready 之前 StatefulSet 控制器不会更新下一个 Pod，但它仍然会重建任何在更新过程中发生故障的 Pod，使用的是它们现有的版本。</p>
+<p>此外，我在实验中发现假如滚动更新过程中重建pod失败，例如更新后的镜像是一个拉不下来的镜像（k8s官方镜像源的镜像），那么web-2将卡住另外两个pod的更新。这时候我再执行更新命令，更新nginx镜像为可拉取的镜像，web-2并不会执行更新而是一直堵塞在上一次更新，并且导致其他两个pod也不更新（因为最新的Pod web-2还没有完成更新）。这时候删除web-2，StatefulSet控制器会根据当前的StatefulSet配置文件创建web-2,然后再滚动更新web-1和web-0。</p>
+<p>查看更新后的镜像，确认滚动更新是否以及完成。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="k">for</span> p in <span class="m">0</span> <span class="m">1</span> 2<span class="p">;</span> <span class="k">do</span> kubectl get pod <span class="s2">&#34;web-</span><span class="nv">$p</span><span class="s2">&#34;</span> --template <span class="s1">&#39;{{range $i, $c := .spec.containers}}{{$c.image}}{{end}}&#39;</span><span class="p">;</span> echo<span class="p">;</span> <span class="k">done</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ <span class="k">for</span> p in <span class="m">0</span> <span class="m">1</span> 2<span class="p">;</span> <span class="k">do</span> kubectl get pod <span class="s2">&#34;web-</span><span class="nv">$p</span><span class="s2">&#34;</span> --template <span class="s1">&#39;{{range $i, $c := .spec.containers}}{{$c.image}}{{end}}&#39;</span><span class="p">;</span> echo<span class="p">;</span> <span class="k">done</span>
+</span></span><span class="line"><span class="cl">nginx:1.14.2
+</span></span><span class="line"><span class="cl">nginx:1.14.2
+</span></span><span class="line"><span class="cl">nginx:1.14.2
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="分段更新">分段更新
+</h4><p>指定 .spec.updateStrategy.rollingUpdate.partition 将使用 RollingUpdate 策略的 StatefulSet 的更新拆分为多个分区。</p>
+<p>如果声明了一个分区，当 StatefulSet 的 .spec.template 被更新时，所有序号大于等于该分区序号的 Pod 都会被更新。</p>
+<p>所有序号小于该分区序号的 Pod 都不会被更新，并且，即使它们被删除也会依据之前的版本进行重建。
+如果 StatefulSet 的 .spec.updateStrategy.rollingUpdate.partition 大于它的 .spec.replicas，则对它的 .spec.template 的更新将不会传递到它的 Pod。</p>
+<p>分段更新适用于阶段更新、执行金丝雀或执行分阶段上线。</p>
+<blockquote>
+<p><a class="link" href="https://glossary.cncf.io/zh-cn/canary-deployment/"  target="_blank" rel="noopener"
+    >金丝雀发布</a>
+金丝雀部署是一种部署策略，开始时有两个环境：一个有实时流量，另一个包含没有实时流量的更新代码。 流量逐渐从应用程序的原始版本转移到更新版本。 它可以从移动 1% 的实时流量开始，然后是 10%，25%，以此类推，直到所有流量都通过更新的版本运行。 企业可以在生产中测试新版本的软件，获得反馈，诊断错误，并在必要时快速回滚到稳定版本。</p>
+</blockquote>
+<p>“金丝雀” 一词是指 “煤矿中的金丝雀” 的做法，即把金丝雀带入煤矿以保证矿工的安全。 如果出现无味的有害气体，鸟就会死亡，而矿工们知道他们必须迅速撤离。 同样，如果更新后的代码出了问题，现场交通就会被 “疏散” 回原来的版本</p>
+<p>对 web StatefulSet 执行 Patch 操作，为 updateStrategy 字段添加一个分区,再次 Patch StatefulSet 来改变此 StatefulSet 使用的容器镜像，这次将nginx版本1.14.2-&gt;1.16.1。再删除Pod web-2，等待替代的 Pod 变成 Running 和 Ready后查看pod的镜像版本。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl patch statefulset web -p <span class="s1">&#39;{&#34;spec&#34;:{&#34;updateStrategy&#34;:{&#34;type&#34;:&#34;OnDelete&#34;, &#34;rollingUpdate&#34;: null}}}&#39;</span>
+</span></span><span class="line"><span class="cl">kubectl patch statefulset web --type<span class="o">=</span><span class="s1">&#39;json&#39;</span> -p<span class="o">=</span><span class="s1">&#39;[{&#34;op&#34;: &#34;replace&#34;, &#34;path&#34;: &#34;/spec/template/spec/containers/0/image&#34;, &#34;value&#34;:&#34;nginx:1.16.1&#34;}]&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">kubectl delete pod web-2
+</span></span><span class="line"><span class="cl">kubectl get pod web-2 --template <span class="s1">&#39;{{range $i, $c := .spec.containers}}{{$c.image}}{{end}}&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl patch statefulset web -p <span class="s1">&#39;{&#34;spec&#34;:{&#34;updateStrategy&#34;:{&#34;type&#34;:&#34;OnDelete&#34;, &#34;rollingUpdate&#34;: null}}}&#39;</span>
+</span></span><span class="line"><span class="cl">statefulset.apps/web patched
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl patch statefulset web --type<span class="o">=</span><span class="s1">&#39;json&#39;</span> -p<span class="o">=</span><span class="s1">&#39;[{&#34;op&#34;: &#34;replace&#34;, &#34;path&#34;: &#34;/spec/template/spec/containers/0/image&#34;, &#34;value&#34;:&#34;nginx:1.16.1&#34;}]&#39;</span>
+</span></span><span class="line"><span class="cl">statefulset.apps/web patched
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl delete pod web-2
+</span></span><span class="line"><span class="cl">pod <span class="s2">&#34;web-2&#34;</span> deleted
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl get pods
+</span></span><span class="line"><span class="cl">NAME    READY   STATUS    RESTARTS   AGE
+</span></span><span class="line"><span class="cl">web-0   1/1     Running   <span class="m">0</span>          25m
+</span></span><span class="line"><span class="cl">web-1   1/1     Running   <span class="m">0</span>          25m
+</span></span><span class="line"><span class="cl">web-2   1/1     Running   <span class="m">0</span>          39s
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl get pod web-2 --template <span class="s1">&#39;{{range $i, $c := .spec.containers}}{{$c.image}}{{end}}&#39;</span>
+</span></span><span class="line"><span class="cl">nginx:1.16.1rust@k8s1:~$ 
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>监控更新的终端里显示只有web-2被更新（终止后重启），web-1和web-0没变化。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">rust@k8s1:~$ kubectl get pods --watch -l <span class="nv">app</span><span class="o">=</span>nginx
+</span></span><span class="line"><span class="cl">NAME    READY   STATUS    RESTARTS   AGE
+</span></span><span class="line"><span class="cl">web-0   1/1     Running   <span class="m">0</span>          24m
+</span></span><span class="line"><span class="cl">web-1   1/1     Running   <span class="m">0</span>          24m
+</span></span><span class="line"><span class="cl">web-2   1/1     Running   <span class="m">0</span>          24m
+</span></span><span class="line"><span class="cl">web-2   1/1     Terminating   <span class="m">0</span>          24m
+</span></span><span class="line"><span class="cl">web-2   1/1     Terminating   <span class="m">0</span>          24m
+</span></span><span class="line"><span class="cl">web-2   0/1     Terminating   <span class="m">0</span>          24m
+</span></span><span class="line"><span class="cl">web-2   0/1     Terminating   <span class="m">0</span>          24m
+</span></span><span class="line"><span class="cl">web-2   0/1     Terminating   <span class="m">0</span>          24m
+</span></span><span class="line"><span class="cl">web-2   0/1     Pending       <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-2   0/1     Pending       <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-2   0/1     ContainerCreating   <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-2   0/1     ContainerCreating   <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-2   1/1     Running             <span class="m">0</span>          1s
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>在第一个终端查看各个pod的nginx镜像版本，确实只有web-2更新了。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="k">for</span> p in <span class="m">0</span> <span class="m">1</span> 2<span class="p">;</span> <span class="k">do</span> kubectl get pod <span class="s2">&#34;web-</span><span class="nv">$p</span><span class="s2">&#34;</span> --template <span class="s1">&#39;{{range $i, $c := .spec.containers}}{{$c.image}}{{end}}&#39;</span><span class="p">;</span> echo<span class="p">;</span> <span class="k">done</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ <span class="k">for</span> p in <span class="m">0</span> <span class="m">1</span> 2<span class="p">;</span> <span class="k">do</span> kubectl get pod <span class="s2">&#34;web-</span><span class="nv">$p</span><span class="s2">&#34;</span> --template <span class="s1">&#39;{{range $i, $c := .spec.containers}}{{$c.image}}{{end}}&#39;</span><span class="p">;</span> echo<span class="p">;</span> <span class="k">done</span>
+</span></span><span class="line"><span class="cl">nginx:1.14.2
+</span></span><span class="line"><span class="cl">nginx:1.14.2
+</span></span><span class="line"><span class="cl">nginx:1.16.1
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="金丝雀发布">金丝雀发布
+</h4><p>现在尝试对分段的变更进行金丝雀发布。</p>
+<p>可以通过减少上文指定的 partition 来进行金丝雀发布，以测试修改后的模板。</p>
+<p>控制平面会触发 web-2 的替换（先优雅地删除现有 Pod，然后在删除完成后创建一个新的 Pod）。
+等待新的 web-2 Pod 变成 Running 和 Ready，再查看容器的镜像版本。</p>
+<p>改 template + 大 partition，再把 partition 减小，这样web-2由于分区比partition小，将在当前template将下被重建</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 开一个监控终端监控pod变化</span>
+</span></span><span class="line"><span class="cl">kubectl get pods --watch -l <span class="nv">app</span><span class="o">=</span>nginx
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># “partition” 的值应与 StatefulSet 现有的最高序号相匹配</span>
+</span></span><span class="line"><span class="cl">kubectl patch statefulset web -p <span class="s1">&#39;{&#34;spec&#34;:{&#34;updateStrategy&#34;:{&#34;type&#34;:&#34;RollingUpdate&#34;,&#34;rollingUpdate&#34;:{&#34;partition&#34;:2}}}}&#39;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 再改一次镜像（或其他 template 字段）</span>
+</span></span><span class="line"><span class="cl">kubectl patch statefulset web --type<span class="o">=</span><span class="s1">&#39;json&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  -p<span class="o">=</span><span class="s1">&#39;[{&#34;op&#34;: &#34;replace&#34;, &#34;path&#34;: &#34;/spec/template/spec/containers/0/image&#34;, &#34;value&#34;:&#34;nginx:1.25&#34;}]&#39;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>更改template字段后，监控终端将看到web-2这个pod终止后重启，而另外两个pod由于partition比设定的partition小，将不会更新。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">rust@k8s1:~$ <span class="k">for</span> p in <span class="m">0</span> <span class="m">1</span> 2<span class="p">;</span> <span class="k">do</span> kubectl get pod <span class="s2">&#34;web-</span><span class="nv">$p</span><span class="s2">&#34;</span> --template <span class="s1">&#39;{{range $i, $c := .spec.containers}}{{$c.image}}{{end}}&#39;</span><span class="p">;</span> echo<span class="p">;</span> <span class="k">done</span>
+</span></span><span class="line"><span class="cl">nginx:1.14.2
+</span></span><span class="line"><span class="cl">nginx:1.14.2
+</span></span><span class="line"><span class="cl">nginx:1.16.1
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl patch statefulset web --type<span class="o">=</span><span class="s1">&#39;json&#39;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>  -p<span class="o">=</span><span class="s1">&#39;[{&#34;op&#34;: &#34;replace&#34;, &#34;path&#34;: &#34;/spec/template/spec/containers/0/image&#34;, &#34;value&#34;:&#34;nginx:1.25&#34;}]&#39;</span>
+</span></span><span class="line"><span class="cl">statefulset.apps/web patched
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ <span class="k">for</span> p in <span class="m">0</span> <span class="m">1</span> 2<span class="p">;</span> <span class="k">do</span> kubectl get pod <span class="s2">&#34;web-</span><span class="nv">$p</span><span class="s2">&#34;</span> --template <span class="s1">&#39;{{range $i, $c := .spec.containers}}{{$c.image}}{{end}}&#39;</span><span class="p">;</span> echo<span class="p">;</span> <span class="k">done</span>
+</span></span><span class="line"><span class="cl">nginx:1.14.2
+</span></span><span class="line"><span class="cl">nginx:1.14.2
+</span></span><span class="line"><span class="cl">nginx:1.25
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl get pods --watch -l <span class="nv">app</span><span class="o">=</span>nginx
+</span></span><span class="line"><span class="cl">NAME    READY   STATUS    RESTARTS   AGE
+</span></span><span class="line"><span class="cl">web-0   1/1     Running   <span class="m">0</span>          71m
+</span></span><span class="line"><span class="cl">web-1   1/1     Running   <span class="m">0</span>          21m
+</span></span><span class="line"><span class="cl">web-2   1/1     Running   <span class="m">0</span>          46m
+</span></span><span class="line"><span class="cl">web-2   1/1     Terminating   <span class="m">0</span>          46m
+</span></span><span class="line"><span class="cl">web-2   1/1     Terminating   <span class="m">0</span>          46m
+</span></span><span class="line"><span class="cl">web-2   0/1     Terminating   <span class="m">0</span>          46m
+</span></span><span class="line"><span class="cl">web-2   0/1     Terminating   <span class="m">0</span>          46m
+</span></span><span class="line"><span class="cl">web-2   0/1     Terminating   <span class="m">0</span>          46m
+</span></span><span class="line"><span class="cl">web-2   0/1     Pending       <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-2   0/1     Pending       <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-2   0/1     ContainerCreating   <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-2   0/1     ContainerCreating   <span class="m">0</span>          1s
+</span></span><span class="line"><span class="cl">web-2   1/1     Running             <span class="m">0</span>          1s
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这时候再删除web-1,由于web-1的Pod的序号小于分区，web-1重建将依据原来的template文件，也即是nginx版本还是1.14.2。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">rust@k8s1:~$ kubectl delete pod web-1
+</span></span><span class="line"><span class="cl">pod <span class="s2">&#34;web-1&#34;</span> deleted
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ <span class="k">for</span> p in <span class="m">0</span> <span class="m">1</span> 2<span class="p">;</span> <span class="k">do</span> kubectl get pod <span class="s2">&#34;web-</span><span class="nv">$p</span><span class="s2">&#34;</span> --template <span class="s1">&#39;{{range $i, $c := .spec.containers}}{{$c.image}}{{end}}&#39;</span><span class="p">;</span> echo<span class="p">;</span> <span class="k">done</span>
+</span></span><span class="line"><span class="cl">nginx:1.14.2
+</span></span><span class="line"><span class="cl">nginx:1.14.2
+</span></span><span class="line"><span class="cl">nginx:1.25
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl get pods --watch -l <span class="nv">app</span><span class="o">=</span>nginx
+</span></span><span class="line"><span class="cl">NAME    READY   STATUS    RESTARTS   AGE
+</span></span><span class="line"><span class="cl">web-0   1/1     Running   <span class="m">0</span>          71m
+</span></span><span class="line"><span class="cl">web-1   1/1     Running   <span class="m">0</span>          21m
+</span></span><span class="line"><span class="cl">web-2   1/1     Running   <span class="m">0</span>          46m
+</span></span><span class="line"><span class="cl">web-2   1/1     Terminating   <span class="m">0</span>          46m
+</span></span><span class="line"><span class="cl">web-2   1/1     Terminating   <span class="m">0</span>          46m
+</span></span><span class="line"><span class="cl">web-2   0/1     Terminating   <span class="m">0</span>          46m
+</span></span><span class="line"><span class="cl">web-2   0/1     Terminating   <span class="m">0</span>          46m
+</span></span><span class="line"><span class="cl">web-2   0/1     Terminating   <span class="m">0</span>          46m
+</span></span><span class="line"><span class="cl">web-2   0/1     Pending       <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-2   0/1     Pending       <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-2   0/1     ContainerCreating   <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-2   0/1     ContainerCreating   <span class="m">0</span>          1s
+</span></span><span class="line"><span class="cl">web-2   1/1     Running             <span class="m">0</span>          1s
+</span></span><span class="line"><span class="cl">web-1   1/1     Terminating         <span class="m">0</span>          24m
+</span></span><span class="line"><span class="cl">web-1   1/1     Terminating         <span class="m">0</span>          24m
+</span></span><span class="line"><span class="cl">web-1   0/1     Terminating         <span class="m">0</span>          24m
+</span></span><span class="line"><span class="cl">web-1   0/1     Terminating         <span class="m">0</span>          24m
+</span></span><span class="line"><span class="cl">web-1   0/1     Terminating         <span class="m">0</span>          24m
+</span></span><span class="line"><span class="cl">web-1   0/1     Pending             <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-1   0/1     Pending             <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-1   0/1     ContainerCreating   <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-1   0/1     ContainerCreating   <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-1   0/1     ContainerCreating   <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-1   1/1     Running             <span class="m">0</span>          1s
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h4 id="分阶段的发布">分阶段的发布
+</h4><p>可以使用类似金丝雀发布的方法执行一次分阶段的发布 （例如一次线性的、等比的或者指数形式的发布）。</p>
+<p>把分区设置为0，则web-1和web-0都将更新。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl patch statefulset web -p <span class="s1">&#39;{&#34;spec&#34;:{&#34;updateStrategy&#34;:{&#34;type&#34;:&#34;RollingUpdate&#34;,&#34;rollingUpdate&#34;:{&#34;partition&#34;:0}}}}&#39;</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> p in <span class="m">0</span> <span class="m">1</span> 2<span class="p">;</span> <span class="k">do</span> kubectl get pod <span class="s2">&#34;web-</span><span class="nv">$p</span><span class="s2">&#34;</span> --template <span class="s1">&#39;{{range $i, $c := .spec.containers}}{{$c.image}}{{end}}&#39;</span><span class="p">;</span> echo<span class="p">;</span> <span class="k">done</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl patch statefulset web -p <span class="s1">&#39;{&#34;spec&#34;:{&#34;updateStrategy&#34;:{&#34;type&#34;:&#34;RollingUpdate&#34;,&#34;rollingUpdate&#34;:{&#34;partition&#34;:0}}}}&#39;</span>
+</span></span><span class="line"><span class="cl">statefulset.apps/web patched
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ <span class="k">for</span> p in <span class="m">0</span> <span class="m">1</span> 2<span class="p">;</span> <span class="k">do</span> kubectl get pod <span class="s2">&#34;web-</span><span class="nv">$p</span><span class="s2">&#34;</span> --template <span class="s1">&#39;{{range $i, $c := .spec.containers}}{{$c.image}}{{end}}&#39;</span><span class="p">;</span> echo<span class="p">;</span> <span class="k">done</span>
+</span></span><span class="line"><span class="cl">nginx:1.25
+</span></span><span class="line"><span class="cl">nginx:1.25
+</span></span><span class="line"><span class="cl">nginx:1.25
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl get pods --watch -l <span class="nv">app</span><span class="o">=</span>nginx
+</span></span><span class="line"><span class="cl">NAME    READY   STATUS    RESTARTS   AGE
+</span></span><span class="line"><span class="cl">web-0   1/1     Running   <span class="m">0</span>          78m
+</span></span><span class="line"><span class="cl">web-1   1/1     Running   <span class="m">0</span>          3m8s
+</span></span><span class="line"><span class="cl">web-2   1/1     Running   <span class="m">0</span>          6m34s
+</span></span><span class="line"><span class="cl">web-1   1/1     Terminating   <span class="m">0</span>          3m12s
+</span></span><span class="line"><span class="cl">web-1   1/1     Terminating   <span class="m">0</span>          3m12s
+</span></span><span class="line"><span class="cl">web-1   0/1     Terminating   <span class="m">0</span>          3m12s
+</span></span><span class="line"><span class="cl">web-1   0/1     Terminating   <span class="m">0</span>          3m12s
+</span></span><span class="line"><span class="cl">web-1   0/1     Terminating   <span class="m">0</span>          3m12s
+</span></span><span class="line"><span class="cl">web-1   0/1     Pending       <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-1   0/1     Pending       <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-1   0/1     ContainerCreating   <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-1   0/1     ContainerCreating   <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-1   1/1     Running             <span class="m">0</span>          1s
+</span></span><span class="line"><span class="cl">web-0   1/1     Terminating         <span class="m">0</span>          78m
+</span></span><span class="line"><span class="cl">web-0   1/1     Terminating         <span class="m">0</span>          78m
+</span></span><span class="line"><span class="cl">web-0   0/1     Terminating         <span class="m">0</span>          78m
+</span></span><span class="line"><span class="cl">web-0   0/1     Terminating         <span class="m">0</span>          78m
+</span></span><span class="line"><span class="cl">web-0   0/1     Terminating         <span class="m">0</span>          78m
+</span></span><span class="line"><span class="cl">web-0   0/1     Pending             <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-0   0/1     Pending             <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-0   0/1     ContainerCreating   <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-0   0/1     ContainerCreating   <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-0   1/1     Running             <span class="m">0</span>          1s
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="ondelete-策略">OnDelete 策略
+</h3><p>将<code>.spec.template.updateStrategy.type</code>设置为OnDelete，以使用OnDelete更新策略。</p>
+<p>对 web StatefulSet 执行 patch 操作</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl patch statefulset web -p <span class="s1">&#39;{&#34;spec&#34;:{&#34;updateStrategy&#34;:{&#34;type&#34;:&#34;OnDelete&#34;, &#34;rollingUpdate&#34;: null}}}&#39;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>当选择这个更新策略并修改 StatefulSet 的 .spec.template 字段时，StatefulSet 控制器将不会自动更新 Pod。
+需要自己手动管理发布，或使用单独的自动化工具来管理发布。</p>
+<h2 id="删除statefulset">删除StatefulSet
+</h2><p>StatefulSet 同时支持<strong>非级联</strong>和<strong>级联删除</strong>。使用非级联方式删除 StatefulSet 时，StatefulSet 的 Pod 不会被删除。使用级联删除时，StatefulSet 和它的 Pod 都会被删除。</p>
+<h3 id="非级联删除">非级联删除
+</h3><p>在删除statefulSet时加上参数<code>--cascade=orphan</code>即可非级联删除。非级联删除虽然不会删除Pod，但是也没有StatefulSet管理pod，如果pod被删除或者因为异常停止退出，也不会重启。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">rust@k8s1:~$ kubectl delete statefulset web --cascade<span class="o">=</span>orphan
+</span></span><span class="line"><span class="cl">statefulset.apps <span class="s2">&#34;web&#34;</span> deleted
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl get pods
+</span></span><span class="line"><span class="cl">NAME    READY   STATUS    RESTARTS   AGE
+</span></span><span class="line"><span class="cl">web-0   1/1     Running   <span class="m">0</span>          11m
+</span></span><span class="line"><span class="cl">web-1   1/1     Running   <span class="m">0</span>          11m
+</span></span><span class="line"><span class="cl">web-2   1/1     Running   <span class="m">0</span>          18m
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl delete pod web-0
+</span></span><span class="line"><span class="cl">pod <span class="s2">&#34;web-0&#34;</span> deleted
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl get pods
+</span></span><span class="line"><span class="cl">NAME    READY   STATUS    RESTARTS   AGE
+</span></span><span class="line"><span class="cl">web-1   1/1     Running   <span class="m">0</span>          13m
+</span></span><span class="line"><span class="cl">web-2   1/1     Running   <span class="m">0</span>          20m
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>重新应用StatefulSet的yaml文件，因为接下来测试级联删除还需要用(最早的yaml文件里设置的副本数为2，只是扩容缩容后变成了3)。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">rust@k8s1:~/k8s_try$ kubectl apply -f web.yaml 
+</span></span><span class="line"><span class="cl">service/nginx unchanged
+</span></span><span class="line"><span class="cl">statefulset.apps/web created
+</span></span><span class="line"><span class="cl">rust@k8s1:~/k8s_try$ kubectl get pods
+</span></span><span class="line"><span class="cl">NAME    READY   STATUS    RESTARTS   AGE
+</span></span><span class="line"><span class="cl">web-0   1/1     Running   <span class="m">0</span>          5s
+</span></span><span class="line"><span class="cl">web-1   1/1     Running   <span class="m">0</span>          15m
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>当重新创建 web StatefulSet 时，web-0 被第一个重新启动。 由于 web-1 已经处于 Running 和 Ready 状态，当 web-0 变成 Running 和 Ready 时， StatefulSet 会接收这个 Pod。由于重新创建的 StatefulSet 的 replicas 等于 2， 一旦 web-0 被重新创建并且 web-1 被认为已经处于 Running 和 Ready 状态时，web-2 将会被终止。</p>
+<p>由于巧合，web-1的nginx版本被改回了1.25版本，也就是最早的web.yaml里的版本。如果刚才改的版本与web.yaml版本不一致，再查看pod的nginx版本，会发现web-1并没有修改为web.yaml里指定的版本。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">rust@k8s1:~$ kubectl get pods --watch -l <span class="nv">app</span><span class="o">=</span>nginx
+</span></span><span class="line"><span class="cl">web-0   1/1     Terminating         <span class="m">0</span>          13m
+</span></span><span class="line"><span class="cl">web-0   1/1     Terminating         <span class="m">0</span>          13m
+</span></span><span class="line"><span class="cl">web-0   0/1     Terminating         <span class="m">0</span>          13m
+</span></span><span class="line"><span class="cl">web-0   0/1     Terminating         <span class="m">0</span>          13m
+</span></span><span class="line"><span class="cl">web-0   0/1     Terminating         <span class="m">0</span>          13m
+</span></span><span class="line"><span class="cl">web-2   1/1     Running             <span class="m">0</span>          22m
+</span></span><span class="line"><span class="cl">web-1   1/1     Running             <span class="m">0</span>          15m
+</span></span><span class="line"><span class="cl">web-0   0/1     Pending             <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-0   0/1     Pending             <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-0   0/1     ContainerCreating   <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-0   0/1     ContainerCreating   <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-0   1/1     Running             <span class="m">0</span>          1s
+</span></span><span class="line"><span class="cl">web-2   1/1     Terminating         <span class="m">0</span>          22m
+</span></span><span class="line"><span class="cl">web-2   1/1     Terminating         <span class="m">0</span>          22m
+</span></span><span class="line"><span class="cl">web-2   0/1     Terminating         <span class="m">0</span>          22m
+</span></span><span class="line"><span class="cl">web-2   0/1     Terminating         <span class="m">0</span>          22m
+</span></span><span class="line"><span class="cl">web-2   0/1     Terminating         <span class="m">0</span>          22m
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>现在再看看被 Pod 的 Web 服务器加载的 index.html 的内容：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="k">for</span> i in <span class="m">0</span> 1<span class="p">;</span> <span class="k">do</span> kubectl <span class="nb">exec</span> -i -t <span class="s2">&#34;web-</span><span class="nv">$i</span><span class="s2">&#34;</span> -- curl http://localhost/<span class="p">;</span> <span class="k">done</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~/k8s_try$ <span class="k">for</span> i in <span class="m">0</span> 1<span class="p">;</span> <span class="k">do</span> kubectl <span class="nb">exec</span> -i -t <span class="s2">&#34;web-</span><span class="nv">$i</span><span class="s2">&#34;</span> -- curl http://localhost/<span class="p">;</span> <span class="k">done</span>
+</span></span><span class="line"><span class="cl">web-0
+</span></span><span class="line"><span class="cl">web-1
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>尽管同时删除了 StatefulSet 和 web-0 Pod，但它仍然使用最初写入 index.html 文件的主机名进行服务。这是因为StatefulSet不会删除PV。当你重建这个 StatefulSet并且重新启动了 web-0 时，它原本的 PersistentVolume 卷会被重新挂载。</p>
+<h3 id="级联删除">级联删除
+</h3><p>默认的删除模式就是级联删除（不加参数）。不过级联删除也只删除pod，不会删除关联的service。这是因为pod是由StatefulSet控制器创建的，所以删除StatefulSet时会级联删除也能级联删除Pod，但Service是由Service控制器创建的，StatefulSet不能删除Service。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">rust@k8s1:~/k8s_try$ kubectl delete statefulset web
+</span></span><span class="line"><span class="cl">statefulset.apps <span class="s2">&#34;web&#34;</span> deleted
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl get pods --watch -l <span class="nv">app</span><span class="o">=</span>nginx
+</span></span><span class="line"><span class="cl">NAME    READY   STATUS    RESTARTS   AGE
+</span></span><span class="line"><span class="cl">web-0   1/1     Running   <span class="m">0</span>          7m17s
+</span></span><span class="line"><span class="cl">web-1   1/1     Running   <span class="m">0</span>          22m
+</span></span><span class="line"><span class="cl">web-1   1/1     Terminating   <span class="m">0</span>          27m
+</span></span><span class="line"><span class="cl">web-0   1/1     Terminating   <span class="m">0</span>          12m
+</span></span><span class="line"><span class="cl">web-1   1/1     Terminating   <span class="m">0</span>          27m
+</span></span><span class="line"><span class="cl">web-0   1/1     Terminating   <span class="m">0</span>          12m
+</span></span><span class="line"><span class="cl">web-1   0/1     Terminating   <span class="m">0</span>          27m
+</span></span><span class="line"><span class="cl">web-0   0/1     Terminating   <span class="m">0</span>          12m
+</span></span><span class="line"><span class="cl">web-0   0/1     Terminating   <span class="m">0</span>          12m
+</span></span><span class="line"><span class="cl">web-0   0/1     Terminating   <span class="m">0</span>          12m
+</span></span><span class="line"><span class="cl">web-1   0/1     Terminating   <span class="m">0</span>          27m
+</span></span><span class="line"><span class="cl">web-1   0/1     Terminating   <span class="m">0</span>          27m
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这时候再重新应用web.yaml，再查看web-0和web-1的index.yaml，会发现挂载的还是原本的PVC,输出的还是更改过的主机名。
+（不知是第几次call back了，这也是持久卷为什么叫持久卷。这里就不再演示了）</p>
+<h2 id="pod管理策略">Pod管理策略
+</h2><p>对于某些分布式系统来说，StatefulSet 的顺序性保证是不必要和/或者不应该的。这些系统仅仅要求唯一性和身份标志。</p>
+<p>可以指定Pod管理策略以避免这个严格的顺序；OrderedReady（默认）或 Parallel</p>
+<h3 id="orderedready-pod管理策略">OrderedReady Pod管理策略
+</h3><p>OrderedReady Pod 管理策略是 StatefulSet 的默认选项。它告诉 StatefulSet 控制器遵循上文展示的顺序性保证。</p>
+<p>顺序就是前文中创建和删除的顺序。后进先出。严格按序</p>
+<h3 id="parallel-pod管理策略">Parallel Pod管理策略
+</h3><p>Parallel Pod管理策略告诉StatefulSet控制器并行的终止所有Pod，在启动或终止另一个 Pod 前，不必等待这些 Pod 变成 Running 和 Ready 或者完全终止状态。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Service</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">labels</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">web</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">clusterIP</span><span class="p">:</span><span class="w"> </span><span class="l">None</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nn">---</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">apps/v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">StatefulSet</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">web</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">serviceName</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;nginx&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># 关键：指定Pod管理策略为并行</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">podManagementPolicy</span><span class="p">:</span><span class="w"> </span><span class="s2">&#34;Parallel&#34;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">replicas</span><span class="p">:</span><span class="w"> </span><span class="m">2</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">matchLabels</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">template</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">labels</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">containers</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">nginx</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l">nginx:1.25</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">containerPort</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">web</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">volumeMounts</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">www</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">mountPath</span><span class="p">:</span><span class="w"> </span><span class="l">/usr/share/nginx/html</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">volumeClaimTemplates</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">www</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">accessModes</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">&#34;ReadWriteOnce&#34;</span><span class="w"> </span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">resources</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">requests</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">storage</span><span class="p">:</span><span class="w"> </span><span class="l">1Gi</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 开一个终端监控pod状态</span>
+</span></span><span class="line"><span class="cl">kubectl get pods --watch -l <span class="nv">app</span><span class="o">=</span>nginx
+</span></span><span class="line"><span class="cl"><span class="c1"># 操作终端创建编辑应用yaml文件</span>
+</span></span><span class="line"><span class="cl">vim web-parallel.yaml
+</span></span><span class="line"><span class="cl">kubectl apply -f web-parallel.yaml
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~$ kubectl get pods --watch -l <span class="nv">app</span><span class="o">=</span>nginx
+</span></span><span class="line"><span class="cl">NAME    READY   STATUS    RESTARTS   AGE
+</span></span><span class="line"><span class="cl">web-0   0/1     Pending   <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-1   0/1     Pending   <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-0   0/1     Pending   <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-1   0/1     Pending   <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-0   0/1     ContainerCreating   <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-1   0/1     ContainerCreating   <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-0   0/1     ContainerCreating   <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-1   0/1     ContainerCreating   <span class="m">0</span>          0s
+</span></span><span class="line"><span class="cl">web-0   1/1     Running             <span class="m">0</span>          1s
+</span></span><span class="line"><span class="cl">web-1   1/1     Running             <span class="m">0</span>          1s
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="清理现场">清理现场
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 删除StatefulSet,sts 是 statefulset 的缩写</span>
+</span></span><span class="line"><span class="cl">kubectl delete sts web
+</span></span><span class="line"><span class="cl"><span class="c1"># 删除Sevice</span>
+</span></span><span class="line"><span class="cl">kubectl delete svc nginx
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 删除PVC。</span>
+</span></span><span class="line"><span class="cl">kubectl delete pvc www-web-0 www-web-1 www-web-2 www-web-3 www-web-4
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>由于动态制备的 PV 默认回收策略是Delete(reclaimPolicy: Delete)，所以删除PVC之后绑定的PV也会自动删除。
+如果是Retain 策略则PV 变 Released，保留数据</p>
+<p>而直接删PV不会立刻成功，PV会进入 Terminating 状态，finalizer里会有kubernetes.io/pv-protection；要等到PV不再被任何PVC绑定，才会真正删除</p>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/kubernetes/">Kubernetes</a>
+        
+    </section>
+
+
+    <section>
+        页面浏览量<span id="busuanzi_value_page_pv">Loading</span>
+    </section>
+</footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 rustWood
+    </section>
+    
+    <section class="powerby">
+        
+            网站总访客数：<span id='busuanzi_value_site_uv'>Loading</span><br/>网站总访问量：<span id='busuanzi_value_site_pv'>Loading</span> <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+
+<style>
+     
+    @font-face {
+    font-family: 'MapleMono';
+    src: url('/font/MapleMono-Woff2/MapleMono-Regular.woff2') format('woff2');
+    }
+  
+     
+    :root {
+      --base-font-family: 'MapleMono', sans-serif;
+      --code-font-family: 'consolas','MapleMono',  monospace;
+    }
+  </style>
+
+
+    </body>
+</html>
