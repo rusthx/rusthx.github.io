@@ -1,0 +1,1048 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content=" 官网链接-ingress概念讲解\nK8s集群搭建以及镜像源配置 搭建好一套k8s集群，可以参考我写的这篇教程：搭建k8s集群\nk8s官方的镜像站在国内是拉不下来的，有几种方法解决：\n">
+<title>K8s实践练习9_流量入口Ingress</title>
+
+<link rel='canonical' href='https://rusthx.github.io/p/k8s%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A09_%E6%B5%81%E9%87%8F%E5%85%A5%E5%8F%A3ingress/'>
+
+<link rel="stylesheet" href="/scss/style.min.f88e0ff8bfb43bef18eec2559d462f612719fb375decfc40b3869dca992f1fa4.css"><meta property='og:title' content="K8s实践练习9_流量入口Ingress">
+<meta property='og:description' content=" 官网链接-ingress概念讲解\nK8s集群搭建以及镜像源配置 搭建好一套k8s集群，可以参考我写的这篇教程：搭建k8s集群\nk8s官方的镜像站在国内是拉不下来的，有几种方法解决：\n">
+<meta property='og:url' content='https://rusthx.github.io/p/k8s%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A09_%E6%B5%81%E9%87%8F%E5%85%A5%E5%8F%A3ingress/'>
+<meta property='og:site_name' content='rustWood'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Kubernetes' /><meta property='article:published_time' content='2026-02-13T09:54:49&#43;08:00'/><meta property='article:modified_time' content='2026-02-13T09:54:49&#43;08:00'/>
+<meta name="twitter:title" content="K8s实践练习9_流量入口Ingress">
+<meta name="twitter:description" content=" 官网链接-ingress概念讲解\nK8s集群搭建以及镜像源配置 搭建好一套k8s集群，可以参考我写的这篇教程：搭建k8s集群\nk8s官方的镜像站在国内是拉不下来的，有几种方法解决：\n">        
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu290319576234017586.png" width="300"
+                            height="302" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">rustWood</a></h1>
+            <h2 class="site-description">江上何人初见月，江月何年初照人。博客出问题请看关于页面</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/rusthx'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://www.cnblogs.com/rusthx'
+                        target="_blank"
+                        title="博客园"
+                        rel="me"
+                    >
+                        
+                        
+                            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1725698578146" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1508" width="24" height="24" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M478.71488 33.88416c-75.76064 36.6592-123.11552 117.31456-114.82624 194.82624 8.28416 67.03616 43.8016 120.45824 104.17152 156.06784 187.03872 109.98272 419.05664-79.60576 316.06784-258.71872C722.57536 20.26496 591.17568-19.53792 478.71488 33.88416z m187.03872 67.03616c85.23264 52.37248 80.49664 188.53888-9.472 229.39136-104.17152 48.18432-213.07904-15.71328-213.07904-125.696 0-41.89696 5.91872-54.46656 40.24832-84.84352s48.5376-35.61472 98.2528-35.61472c33.14688 0.00512 68.6592 7.33696 84.04992 16.76288z" fill="#707070" p-id="1509"></path><path d="M797.15328 340.7872c-63.9232 115.22048-89.96864 148.736-164.54656 217.87136-75.76064 71.22432-105.35424 90.08128-209.53088 135.12192-67.47648 29.32736-132.5824 50.2784-147.97312 48.18432-22.49216-2.09408-36.69504-25.1392-88.78592-139.31008C120.02816 458.10176 53.73952 333.45536 25.32864 298.89024c-16.57344-19.90144-17.75616-18.85184-11.83744 10.47552 27.22304 156.06784 119.56224 465.06496 147.97312 494.39232 15.39072 17.80736 295.94624 18.85184 456.93952 2.09408 190.58688-19.90144 170.46528-27.23328-121.92768-47.13472l-106.54208-7.33184 102.9888-24.0896c114.82624-27.23328 177.56672-52.37248 261.61664-105.79456 31.96416-19.90144 62.74048-34.56512 69.84192-32.47104 5.91872 2.09408 49.72032 98.46272 94.70464 212.6336 46.16704 115.22048 86.41536 212.6336 91.15136 216.82176 11.83744 11.52-8.28416-233.57952-28.41088-358.22592-10.65472-60.75392-39.0656-187.4944-63.9232-282.81344l-44.98432-172.83072-75.76576 136.17152z" fill="#707070" p-id="1510"></path></svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#k8s集群搭建以及镜像源配置">K8s集群搭建以及镜像源配置</a></li>
+    <li><a href="#ingress原理介绍与对比">Ingress原理介绍与对比</a>
+      <ol>
+        <li><a href="#service是怎么通过vip实现负载均衡的">Service是怎么通过VIP实现负载均衡的？</a></li>
+        <li><a href="#既然-nodeport-就能用为什么还要-ingress">既然 NodePort 就能用，为什么还要 Ingress？</a></li>
+      </ol>
+    </li>
+    <li><a href="#无状态应用ingress改造">无状态应用Ingress改造</a>
+      <ol>
+        <li><a href="#安装-nginx-ingress-controllerbare-metal">安装 NGINX Ingress Controller（bare-metal）</a></li>
+        <li><a href="#把前端-service-改成-clusterip">把前端 Service 改成 ClusterIP</a></li>
+        <li><a href="#创建-ingress-资源">创建 Ingress 资源</a></li>
+      </ol>
+    </li>
+    <li><a href="#进阶玩法把-nginx-ingress-改成-hostnetwork">进阶玩法：把 NGINX Ingress 改成 HostNetwork</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/k8s%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A09_%E6%B5%81%E9%87%8F%E5%85%A5%E5%8F%A3ingress/">K8s实践练习9_流量入口Ingress</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2026-02-13</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <blockquote>
+<p><a class="link" href="https://kubernetes.io/zh-cn/docs/concepts/services-networking/ingress/"  target="_blank" rel="noopener"
+    >官网链接-ingress概念讲解</a></p>
+</blockquote>
+<h2 id="k8s集群搭建以及镜像源配置">K8s集群搭建以及镜像源配置
+</h2><p>搭建好一套k8s集群，可以参考我写的这篇教程：<a class="link" href="https://rusthx.github.io/p/kubernetesk8s%E9%9B%86%E7%BE%A4%E5%AE%89%E8%A3%85/"  target="_blank" rel="noopener"
+    >搭建k8s集群</a></p>
+<p>k8s官方的镜像站在国内是拉不下来的，有几种方法解决：</p>
+<ol>
+<li>在拉取镜像的虚拟机/服务器上科学上网</li>
+<li>配置k8s的镜像源，目前国内只有阿里云支持改版后的k8s镜像源(registry.k8s.io)。</li>
+<li>需要拉取镜像的时候，指定拉取策略为本地拉取(<code>imagePullPolicy:Never</code>),每次需要拉取镜像前都手动拉取/上传一份镜像到服务器上再导入镜像</li>
+</ol>
+<p>这里给出阿里云镜像源的配置教程：
+旧版的k8s直接修改<code>/etc/containerd/config.toml</code>里的mirror信息，添加上阿里云的镜像站就行。但是新版的不支持inline或者说暂时兼容，未来不支持。所以这里就只给出新版k8s镜像源配置教程。</p>
+<p>修改<code>/etc/containerd/config.yaml</code>,填入下列信息（如果你已经有了config.yaml且这个配置文件是从containerd默认配置里生成的，那直接备份，然后使用下面的内容）。<code>sudo vim /etc/containerd/config.yaml</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="nv">version</span> <span class="o">=</span> <span class="m">2</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="o">[</span>plugins.<span class="s2">&#34;io.containerd.grpc.v1.cri&#34;</span><span class="o">]</span>
+</span></span><span class="line"><span class="cl">  <span class="nv">sandbox_image</span> <span class="o">=</span> <span class="s2">&#34;registry.aliyuncs.com/google_containers/pause:3.9&#34;</span>
+</span></span><span class="line"><span class="cl">  <span class="o">[</span>plugins.<span class="s2">&#34;io.containerd.grpc.v1.cri&#34;</span>.containerd.runtimes.runc<span class="o">]</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">runtime_type</span> <span class="o">=</span> <span class="s2">&#34;io.containerd.runc.v2&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="o">[</span>plugins.<span class="s2">&#34;io.containerd.grpc.v1.cri&#34;</span>.containerd.runtimes.runc.options<span class="o">]</span>
+</span></span><span class="line"><span class="cl">      <span class="nv">SystemdCgroup</span> <span class="o">=</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">  <span class="o">[</span>plugins.<span class="s2">&#34;io.containerd.grpc.v1.cri&#34;</span>.registry<span class="o">]</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">config_path</span> <span class="o">=</span> <span class="s2">&#34;/etc/containerd/certs.d&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>创建<code>/etc/containerd/certs.d</code>目录，在这个目录填入docker.io和registry.k8s.io的镜像源。</p>
+<blockquote>
+<p>注意：k8s里修改镜像源之后，使用<code>kubectl describe pod &lt;pod_name&gt; </code>查看时还是显示的<code>docker.io</code>和<code>registry.k8s.io</code>。配置镜像源只物理修改从哪里修改，不改镜像拉取的逻辑源。所以改好镜像源之后也不太好验证成功，随便拉个镜像<code>sudo crictl pull nginx:1.14.2</code>，能拉下来就是成了。</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># Docker Hub 加速</span>
+</span></span><span class="line"><span class="cl">sudo mkdir -p /etc/containerd/certs.d/docker.io
+</span></span><span class="line"><span class="cl">sudo tee /etc/containerd/certs.d/docker.io/hosts.toml <span class="s">&lt;&lt; &#39;EOF&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s">server = &#34;https://registry-1.docker.io&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">[host.&#34;https://docker.m.daocloud.io&#34;]
+</span></span></span><span class="line"><span class="cl"><span class="s">  capabilities = [&#34;pull&#34;, &#34;resolve&#34;]
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># K8s 镜像加速</span>
+</span></span><span class="line"><span class="cl">sudo mkdir -p /etc/containerd/certs.d/registry.k8s.io
+</span></span><span class="line"><span class="cl">sudo tee /etc/containerd/certs.d/registry.k8s.io/hosts.toml <span class="s">&lt;&lt; &#39;EOF&#39;
+</span></span></span><span class="line"><span class="cl"><span class="s">server = &#34;https://registry.k8s.io&#34;
+</span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">[host.&#34;https://registry.cn-hangzhou.aliyuncs.com/google_containers&#34;]
+</span></span></span><span class="line"><span class="cl"><span class="s">  capabilities = [&#34;pull&#34;, &#34;resolve&#34;]
+</span></span></span><span class="line"><span class="cl"><span class="s">  override_path = true
+</span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>到这里，镜像源就配置好了，如果不出意外，文件目录应该是下面这样：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">rust@k8s1:/etc/containerd$ ll
+</span></span><span class="line"><span class="cl">总计 <span class="m">28</span>
+</span></span><span class="line"><span class="cl">drwxr-xr-x   <span class="m">3</span> root root  <span class="m">4096</span>  2月  <span class="m">4</span> 10:31 ./
+</span></span><span class="line"><span class="cl">drwxr-xr-x <span class="m">144</span> root root <span class="m">12288</span>  2月  <span class="m">2</span> 17:01 ../
+</span></span><span class="line"><span class="cl">drwxr-xr-x   <span class="m">4</span> root root  <span class="m">4096</span>  2月  <span class="m">2</span> 16:44 certs.d/
+</span></span><span class="line"><span class="cl">-rw-r--r--   <span class="m">1</span> root root   <span class="m">423</span>  2月  <span class="m">2</span> 19:02 config.toml
+</span></span><span class="line"><span class="cl">-rw-r--r--   <span class="m">1</span> root root   <span class="m">886</span> 12月 <span class="m">19</span> 02:48 config.toml.dpkg-dist
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>修改完配置文件后需要重启containerd：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo systemctl restart containerd
+</span></span><span class="line"><span class="cl">sudo systemctl status containerd
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="ingress原理介绍与对比">Ingress原理介绍与对比
+</h2><p>Service是“后端+负载均衡”的抽象，解决“怎么找到 Pod”和“在多个Pod间做负载均衡”。</p>
+<p>Ingress是“前置网关+路由规则”，在HTTP(S)这一层，做“HTTP路由+TLS+虚拟主机”，根据域名、路径等把流量分到不同的Service。</p>
+<p>Gateway API是Ingress的“升级版”，把“网关实例”和“路由规则”拆开，更标准、更强大、更适合生产。</p>
+<p>没有ingress时，<a class="link" href="https://rusthx.github.io/p/k8s%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A03_%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E4%B8%8E%E7%BD%91%E7%BB%9C/"  target="_blank" rel="noopener"
+    >部署一套无状态应用</a>
+每个应用都需要一个NodePort或者LoadBalancer；同时需要记住&quot;哪个端口对应哪个服务&quot;；
+想加域名、HTTPS、路径重写，要自己写反向代理配置（Nginx/HAProxy 等）。</p>
+<p>在学习/小集群场景下完全没问题，但是如果应用多起来（微服务架构），维护成本就变得很高了。</p>
+<p>如果加上一个ingress,内容如下,就可以通过path+pathType(Prefix或者Exact)来区分不同的服务。
+对外访问变成了<code>http://demo.example.com/</code> → svc-a（前端）,<code>http://demo.example.com/api</code> → svc-b（后端）。
+而 svc-a / svc-b 可以只是普通 ClusterIP Service，不需要 NodePort/LoadBalancer。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">networking.k8s.io/v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Ingress</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">demo-ingress</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">annotations</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">nginx.ingress.kubernetes.io/rewrite-target</span><span class="p">:</span><span class="w"> </span><span class="l">/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">rules</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l">demo.example.com</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">http</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">paths</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l">/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l">Prefix</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">backend</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">service</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">svc-a</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">port</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l">/api</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l">Prefix</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">backend</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">service</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">svc-b</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">port</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>Service与Ingress都有负载均衡的作用，但这两个工作的网络层次不同，面向的对象也不同。</p>
+<p>Service工作在L4传输层(IP:port),给一组 Pod 一个统一的VIP(ClusterIP)，把TCP/UDP连接均匀分发到后端Pod。
+NodePort/LoadBalancer类型Service，本质上也是在节点上开一个端口（NodePort）或云厂商给你分配一个外部 LB；
+再把这个L4流量转发到Service的ClusterIP，最后到 Pod。</p>
+<p>Ingress工作在L7应用层(HTTP/HTTPS),它本身是个“HTTP 反向代理”（Nginx、Envoy、Traefik 等）；
+根据域名、路径、Header等把请求路由到不同 Service；在同一个 Ingress 内部，它会对后端Service的多个Pod做L7负载均衡（轮询、权重、健康检查等）。</p>
+<ul>
+<li>Service：解决“Pod 挂了怎么办、怎么在多个 Pod 间轮询”，是“后端池”。</li>
+<li>Ingress：解决“一个入口怎么统一路由给很多后端服务”，是“前端网关”。</li>
+</ul>
+<h3 id="service是怎么通过vip实现负载均衡的">Service是怎么通过VIP实现负载均衡的？
+</h3><p>在k8s里，当创建一个type: ClusterIP的Service 时：
+控制平面会从某个预先保留的 IP 段（&ndash;service-cluster-ip-range）里分配一个 IP 地址，这就是.spec.clusterIP。
+这个 IP 不是一个真正绑定在某个网卡上的 IP，而是一个 “虚拟 IP（Virtual IP）”，只存在于 kube-proxy / CNI 的规则里。</p>
+<p>kube-proxy（或替代组件）在每个节点上运行，监听 Service 和 EndpointSlice。
+对每个 ClusterIP:Port，它在节点上配置一套规则（iptables / IPVS / eBPF 等），规则内容类似：
+“所有发往 10.96.0.1:80的包，都改成一个后端 Pod 的 IP:Port，并做负载均衡轮询”。
+当一个 Pod（或集群外通过NodePort进来的包）访问10.96.0.1:80时：
+实际上不会真正有“机器”监听在这个 IP 上；
+而是经过这些规则，通过iptables/IPVS被DNAT（目标地址转换） 成某个真实 Pod IP:Port。</p>
+<p>反向代理和路由的区别：</p>
+<p>反向代理：是一个“服务器角色”，站在客户端和后端服务器之间，帮服务器收请求、再转发给后端，通常在“应用层”（HTTP 等）做这件事。</p>
+<p>路由：是一种“规则/机制”，用来决定“一个请求（或包）该往哪儿走”，可以在网络层（IP 路由）、也可以在应用层（URL 路由）做。</p>
+<p>关系：反向代理是“做代理的那台机器”，路由是它内部决定怎么转发的“规则”。</p>
+<p>类比就像：反向代理是一个“门卫”，路由是它手里拿的“路线图”，门卫根据路线图把人（请求）带到对应的办公室（后端服务）。</p>
+<h3 id="既然-nodeport-就能用为什么还要-ingress">既然 NodePort 就能用，为什么还要 Ingress？
+</h3><p>类别一下：</p>
+<ul>
+<li>NodePort：像给每栋楼开一个单独的大门，每栋楼自己有门牌号（端口）。</li>
+<li>Ingress：像建一个“小区大门”，所有访客先到小区大门，再根据地址（域名/路径）分到具体楼栋</li>
+</ul>
+<ol>
+<li>
+<p>端口与协议限制：官网中明确说：Ingress 不暴露任意端口或协议。把 HTTP/HTTPS 以外的服务暴露到互联网，通常用Service.Type=NodePort或Service.Type=LoadBalancer。（补充：Gateway API支持更多的协议，包括TCP/UDP）</p>
+</li>
+<li>
+<p>多服务、多域名场景：如果只有一栋楼（一个应用），那用NodePort确实够了；但是在有一个小区（多个应用）的情况下，再给每栋楼开个对外的门，会造成管理混乱的问题。如果硬要用NodePort，那还需要自己做路由(Nginx)来分发请求。</p>
+</li>
+<li>
+<p>TLS、虚拟主机、路径重写等能力：Ingress支持终止TLS（配置证书，统一 HTTPS）；虚拟主机（根据 Host头路由到不同服务）；路径重写、限流、白名单等（通过注解或 Gateway API）。这些如果用 NodePort，就要自己在外面再搭一套反向代理，反而更麻烦。</p>
+</li>
+</ol>
+<p>Ingress和Gateway API区别</p>
+<blockquote>
+<p>官网说：Kubernetes 项目推荐使用 Gateway 代替 Ingress。Ingress API 已冻结。
+也就是说Ingress 不会再有新功能，只做维护；新特性、新标准都会放在 Gateway API 里。</p>
+</blockquote>
+<div class="table-wrapper"><table>
+  <thead>
+      <tr>
+          <th>维度</th>
+          <th>Ingress</th>
+          <th>Gateway API</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td>目标协议</td>
+          <td>主要 HTTP/HTTPSkubernetes.io</td>
+          <td>HTTP、HTTPS、gRPC、TCP、UDP 等多协议</td>
+      </tr>
+      <tr>
+          <td>API 风格</td>
+          <td>单一 Ingress 资源，把“网关 + 路由规则”写在一起</td>
+          <td>拆分为 GatewayClass、Gateway、HTTPRoute 等角色化资源</td>
+      </tr>
+      <tr>
+          <td>角色/职责</td>
+          <td>没有明确区分基础设施和开发者</td>
+          <td>明确区分：Gateway 归集群管理员，HTTPRoute 归应用开发者</td>
+      </tr>
+      <tr>
+          <td>高级路由</td>
+          <td>仅主机 + 路径，高级功能依赖各控制器注解</td>
+          <td>原生支持 Header 匹配、流量分割、镜像、超时、重试等</td>
+      </tr>
+      <tr>
+          <td>可移植性</td>
+          <td>各控制器实现差异大，注解各不相同</td>
+          <td>标准化 API，跨实现更可移植</td>
+      </tr>
+      <tr>
+          <td>状态</td>
+          <td>已冻结，不再演进</td>
+          <td>活跃开发中，未来会持续增加新能力</td>
+      </tr>
+  </tbody>
+</table></div>
+<h2 id="无状态应用ingress改造">无状态应用Ingress改造
+</h2><blockquote>
+<p><a class="link" href="https://rusthx.github.io/p/k8s%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A03_%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E4%B8%8E%E7%BD%91%E7%BB%9C/"  target="_blank" rel="noopener"
+    >前置内容:无状态应用</a></p>
+</blockquote>
+<p>改造前客户端通过NodePort直连前端，改造后用ingress统一入口，客户端访问ingress。</p>
+<p>前端 Service：从 type: NodePort 改成 type: ClusterIP。
+后端 Service：保持不变（仍然 ClusterIP）。
+新增：Ingress Controller（这里用NGINX Ingress）；一个Ingress资源，把hello.example.com/转发到 frontend:80</p>
+<h3 id="安装-nginx-ingress-controllerbare-metal">安装 NGINX Ingress Controller（bare-metal）
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl -O https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.14.3/deploy/static/provider/baremetal/deploy.yaml
+</span></span><span class="line"><span class="cl"><span class="c1"># 官方仓库的镜像拉不下来，修改为阿里云的镜像源</span>
+</span></span><span class="line"><span class="cl">sed -i <span class="s1">&#39;s|registry.k8s.io/ingress-nginx/controller:v1.14.3@.*|registry.cn-hangzhou.aliyuncs.com/google_containers/nginx-ingress-controller:v1.14.3|&#39;</span> deploy.yaml
+</span></span><span class="line"><span class="cl">sed -i <span class="s1">&#39;s|registry.k8s.io/ingress-nginx/kube-webhook-certgen:v1.6.7@.*|registry.cn-hangzhou.aliyuncs.com/google_containers/kube-webhook-certgen:v1.6.7|&#39;</span> deploy.yaml
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 部署</span>
+</span></span><span class="line"><span class="cl">kubectl apply -f deploy.yaml
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~/k8s_try$ curl -O  https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.14.3/deploy/static/provider/baremetal/deploy.yaml
+</span></span><span class="line"><span class="cl">  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+</span></span><span class="line"><span class="cl">                                 Dload  Upload   Total   Spent    Left  Speed
+</span></span><span class="line"><span class="cl"><span class="m">100</span> <span class="m">16279</span>  <span class="m">100</span> <span class="m">16279</span>    <span class="m">0</span>     <span class="m">0</span>  <span class="m">22100</span>      <span class="m">0</span> --:--:-- --:--:-- --:--:-- <span class="m">22088</span>
+</span></span><span class="line"><span class="cl">rust@k8s1:~/k8s_try$ kubectl apply -f deploy.yaml 
+</span></span><span class="line"><span class="cl">namespace/ingress-nginx created
+</span></span><span class="line"><span class="cl">serviceaccount/ingress-nginx created
+</span></span><span class="line"><span class="cl">serviceaccount/ingress-nginx-admission created
+</span></span><span class="line"><span class="cl">role.rbac.authorization.k8s.io/ingress-nginx created
+</span></span><span class="line"><span class="cl">role.rbac.authorization.k8s.io/ingress-nginx-admission created
+</span></span><span class="line"><span class="cl">clusterrole.rbac.authorization.k8s.io/ingress-nginx created
+</span></span><span class="line"><span class="cl">clusterrole.rbac.authorization.k8s.io/ingress-nginx-admission created
+</span></span><span class="line"><span class="cl">rolebinding.rbac.authorization.k8s.io/ingress-nginx created
+</span></span><span class="line"><span class="cl">rolebinding.rbac.authorization.k8s.io/ingress-nginx-admission created
+</span></span><span class="line"><span class="cl">clusterrolebinding.rbac.authorization.k8s.io/ingress-nginx created
+</span></span><span class="line"><span class="cl">clusterrolebinding.rbac.authorization.k8s.io/ingress-nginx-admission created
+</span></span><span class="line"><span class="cl">configmap/ingress-nginx-controller created
+</span></span><span class="line"><span class="cl">service/ingress-nginx-controller created
+</span></span><span class="line"><span class="cl">service/ingress-nginx-controller-admission created
+</span></span><span class="line"><span class="cl">deployment.apps/ingress-nginx-controller created
+</span></span><span class="line"><span class="cl">job.batch/ingress-nginx-admission-create created
+</span></span><span class="line"><span class="cl">job.batch/ingress-nginx-admission-patch created
+</span></span><span class="line"><span class="cl">ingressclass.networking.k8s.io/nginx created
+</span></span><span class="line"><span class="cl">validatingwebhookconfiguration.admissionregistration.k8s.io/ingress-nginx-admission created
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>这个yaml将创建一个 ingress-nginx namespace；部署 NGINX Ingress Controller；
+创建一个 ingress-nginx-controller Service，类型为 NodePort，在 80/443 端口上暴露。</p>
+<blockquote>
+<p>应用deloy.yaml创建了好多东西，如果过程中出现了一些问题，比如镜像拉不下来，想重做，用<code>kubectl delete -f deploy.yaml</code>即可删除用这个文件创建的所有资源。</p>
+</blockquote>
+<p>查看安装状态,如果pod有三个ingress-nginx-admission-create-xx、ingress-nginx-admission-patch-xx、 ingress-nginx-controller-74d74b7998-xx。属于正常情况，creat和patch是两个job，在执行完成后会自动删除。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl get pod -n ingress-nginx
+</span></span><span class="line"><span class="cl">kubectl get svc -n ingress-nginx
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~/k8s_try$ kubectl get pod -n ingress-nginx
+</span></span><span class="line"><span class="cl">NAME                                        READY   STATUS    RESTARTS   AGE
+</span></span><span class="line"><span class="cl">ingress-nginx-controller-65b88c9cd4-vc4qf   1/1     Running   <span class="m">0</span>          8m56s
+</span></span><span class="line"><span class="cl">rust@k8s1:~/k8s_try$ kubectl get svc -n ingress-nginx
+</span></span><span class="line"><span class="cl">NAME                                 TYPE        CLUSTER-IP     EXTERNAL-IP   PORT<span class="o">(</span>S<span class="o">)</span>                      AGE
+</span></span><span class="line"><span class="cl">ingress-nginx-controller             NodePort    10.99.59.37    &lt;none&gt;        80:31238/TCP,443:32350/TCP   8m33s
+</span></span><span class="line"><span class="cl">ingress-nginx-controller-admission   ClusterIP   10.98.81.151   &lt;none&gt;        443/TCP                      8m33s
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>HTTP NodePort：比如80:31238/TCP，这里的31238；</p>
+<p>HTTPS NodePort：比如443:32350/TCP，这里的32350。</p>
+<p>访问方式：http://任意节点IP:31238，https://任意节点IP:32350。返回结果目前应该是HTTP ERROR 503。</p>
+<h3 id="把前端-service-改成-clusterip">把前端 Service 改成 ClusterIP
+</h3><p>新建/修改 frontend-service.yaml，去掉 type: NodePort 和 nodePort。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Service</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">frontend</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">selector</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">app</span><span class="p">:</span><span class="w"> </span><span class="l">hello</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">tier</span><span class="p">:</span><span class="w"> </span><span class="l">frontend</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">ports</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">protocol</span><span class="p">:</span><span class="w"> </span><span class="l">TCP</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">targetPort</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># 不写 type，默认就是 ClusterIP</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>应用yaml文件。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">vim frontend-service.yaml
+</span></span><span class="line"><span class="cl">kubectl apply -f frontend-service.yaml
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>后端 Service 保持不变。</p>
+<h3 id="创建-ingress-资源">创建 Ingress 资源
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">apiVersion</span><span class="p">:</span><span class="w"> </span><span class="l">networking.k8s.io/v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">kind</span><span class="p">:</span><span class="w"> </span><span class="l">Ingress</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">metadata</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">frontend-ingress</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">annotations</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># 如果后面要用路径重写，可以开这个注解（按需）</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># nginx.ingress.kubernetes.io/rewrite-target: /</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">spec</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">ingressClassName</span><span class="p">:</span><span class="w"> </span><span class="l">nginx         </span><span class="w"> </span><span class="c"># NGINX Ingress Controller 默认使用 nginx 这个 class</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">rules</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c">#  - host: hello.example.com        # 改成你自己的域名，或者先删掉这行用 IP 访问</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">http</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">paths</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l">/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">pathType</span><span class="p">:</span><span class="w"> </span><span class="l">Prefix</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">backend</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">service</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">frontend       </span><span class="w"> </span><span class="c"># 对应前端Service 名字</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">            </span><span class="nt">port</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">              </span><span class="nt">number</span><span class="p">:</span><span class="w"> </span><span class="m">80</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><p>新建并应用frontend-ingress.yaml。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">vim frontend-ingress.yaml
+</span></span><span class="line"><span class="cl">kubectl apply -f frontend-ingress.yaml
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>查看ingress状态</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">kubectl get ingress
+</span></span><span class="line"><span class="cl">kubectl describe ingress frontend-ingress
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~/k8s_try$ kubectl get ingress
+</span></span><span class="line"><span class="cl">NAME               CLASS   HOSTS   ADDRESS           PORTS   AGE
+</span></span><span class="line"><span class="cl">frontend-ingress   nginx   *       192.168.146.202   <span class="m">80</span>      86s
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>验证nginx服务状态</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">curl &lt;Host&gt;:&lt;Port&gt;
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">rust@k8s1:~/k8s_try$ curl k8s1:31238
+</span></span><span class="line"><span class="cl"><span class="o">{</span><span class="s2">&#34;message&#34;</span>:<span class="s2">&#34;Hello&#34;</span><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="进阶玩法把-nginx-ingress-改成-hostnetwork">进阶玩法：把 NGINX Ingress 改成 HostNetwork
+</h2><p>把 NGINX Ingress 改成 HostNetwork后有下面的好处：</p>
+<ol>
+<li>让 Ingress Controller 的 Pod 直接监听节点的 80/443；</li>
+<li>不再依赖 NodePort Service；</li>
+<li>访问方式变成标准的 http(s)://hello.example.com，不用再带 :31234 之类的端口</li>
+</ol>
+<blockquote>
+<p>暂且搁置，以后有时间再研究</p>
+</blockquote>
+
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/kubernetes/">Kubernetes</a>
+        
+    </section>
+
+
+    <section>
+        页面浏览量<span id="busuanzi_value_page_pv">Loading</span>
+    </section>
+</footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 rustWood
+    </section>
+    
+    <section class="powerby">
+        
+            网站总访客数：<span id='busuanzi_value_site_uv'>Loading</span><br/>网站总访问量：<span id='busuanzi_value_site_pv'>Loading</span> <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+
+<style>
+     
+    @font-face {
+    font-family: 'MapleMono';
+    src: url('/font/MapleMono-Woff2/MapleMono-Regular.woff2') format('woff2');
+    }
+  
+     
+    :root {
+      --base-font-family: 'MapleMono', sans-serif;
+      --code-font-family: 'consolas','MapleMono',  monospace;
+    }
+  </style>
+
+
+    </body>
+</html>
