@@ -495,7 +495,8 @@
 <p><code>kubectl get sc</code>查看集群存储类。有的话可以跳过此节</p>
 <ol>
 <li>在三个节点上创建存储基础目录(xcall是<a class="link" href="https://rusthx.github.io/p/k8s%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A03_%E6%9C%8D%E5%8A%A1%E5%8F%91%E7%8E%B0%E4%B8%8E%E7%BD%91%E7%BB%9C/"  target="_blank" rel="noopener"
-    >自建的脚本</a>)</li>
+    >自建的脚本</a>)。
+后续动态创建PV时，会按PVC来建子目录，每个PVC会有自己的一块目录。</li>
 </ol>
 <div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
