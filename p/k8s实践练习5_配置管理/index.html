@@ -401,6 +401,8 @@
 </span><span class="lnt">16
 </span><span class="lnt">17
 </span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># Docker Hub 加速</span>
@@ -417,9 +419,11 @@
 </span></span><span class="line"><span class="cl">sudo tee /etc/containerd/certs.d/registry.k8s.io/hosts.toml <span class="s">&lt;&lt; &#39;EOF&#39;
 </span></span></span><span class="line"><span class="cl"><span class="s">server = &#34;https://registry.k8s.io&#34;
 </span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">[host.&#34;https://k8s.nju.edu.cn&#34;]
+</span></span></span><span class="line"><span class="cl"><span class="s">  capabilities = [&#34;pull&#34;, &#34;resolve&#34;]
+</span></span></span><span class="line"><span class="cl"><span class="s">
 </span></span></span><span class="line"><span class="cl"><span class="s">[host.&#34;https://registry.cn-hangzhou.aliyuncs.com/google_containers&#34;]
 </span></span></span><span class="line"><span class="cl"><span class="s">  capabilities = [&#34;pull&#34;, &#34;resolve&#34;]
-</span></span></span><span class="line"><span class="cl"><span class="s">  override_path = true
 </span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
 </span></span></code></pre></td></tr></table>
 </div>

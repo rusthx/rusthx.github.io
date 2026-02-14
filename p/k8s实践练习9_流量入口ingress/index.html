@@ -395,6 +395,8 @@
 </span><span class="lnt">16
 </span><span class="lnt">17
 </span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># Docker Hub 加速</span>
@@ -411,9 +413,11 @@
 </span></span><span class="line"><span class="cl">sudo tee /etc/containerd/certs.d/registry.k8s.io/hosts.toml <span class="s">&lt;&lt; &#39;EOF&#39;
 </span></span></span><span class="line"><span class="cl"><span class="s">server = &#34;https://registry.k8s.io&#34;
 </span></span></span><span class="line"><span class="cl"><span class="s">
+</span></span></span><span class="line"><span class="cl"><span class="s">[host.&#34;https://k8s.nju.edu.cn&#34;]
+</span></span></span><span class="line"><span class="cl"><span class="s">  capabilities = [&#34;pull&#34;, &#34;resolve&#34;]
+</span></span></span><span class="line"><span class="cl"><span class="s">
 </span></span></span><span class="line"><span class="cl"><span class="s">[host.&#34;https://registry.cn-hangzhou.aliyuncs.com/google_containers&#34;]
 </span></span></span><span class="line"><span class="cl"><span class="s">  capabilities = [&#34;pull&#34;, &#34;resolve&#34;]
-</span></span></span><span class="line"><span class="cl"><span class="s">  override_path = true
 </span></span></span><span class="line"><span class="cl"><span class="s">EOF</span>
 </span></span></code></pre></td></tr></table>
 </div>
@@ -868,7 +872,18 @@ NodePort/LoadBalancer类型Service，本质上也是在节点上开一个端口�
 <blockquote>
 <p>暂且搁置，以后有时间再研究</p>
 </blockquote>
+<!-- ## 升级：使用Gateway API替代Ingress
 
+```shell
+wget https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.4.1/standard-install.yaml
+
+kubectl apply -f standard-install.yaml
+
+# 安装 Envoy Gateway 控制器
+wget https://github.com/envoyproxy/gateway/releases/download/v1.6.4/install.yaml
+
+kubectl apply -f install.yaml
+``` -->
 </section>
 
 
