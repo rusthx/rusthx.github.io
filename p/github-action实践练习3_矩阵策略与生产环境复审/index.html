@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="zh-cn" dir="ltr">
+    <head><meta charset='utf-8'>
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="矩阵策略练习 应用上线前，需要在多个版本或多个平台测试兼容性。编写workflow，在多个python版本测试。\n在./github/workflows里创建matrix-remote.yaml文件。\n">
+<title>Github Action实践练习3_矩阵策略与生产环境复审</title>
+
+<link rel='canonical' href='https://rusthx.github.io/p/github-action%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A03_%E7%9F%A9%E9%98%B5%E7%AD%96%E7%95%A5%E4%B8%8E%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E5%A4%8D%E5%AE%A1/'>
+
+<link rel="stylesheet" href="/scss/style.min.f88e0ff8bfb43bef18eec2559d462f612719fb375decfc40b3869dca992f1fa4.css"><meta property='og:title' content="Github Action实践练习3_矩阵策略与生产环境复审">
+<meta property='og:description' content="矩阵策略练习 应用上线前，需要在多个版本或多个平台测试兼容性。编写workflow，在多个python版本测试。\n在./github/workflows里创建matrix-remote.yaml文件。\n">
+<meta property='og:url' content='https://rusthx.github.io/p/github-action%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A03_%E7%9F%A9%E9%98%B5%E7%AD%96%E7%95%A5%E4%B8%8E%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E5%A4%8D%E5%AE%A1/'>
+<meta property='og:site_name' content='rustWood'>
+<meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Github Action' /><meta property='article:published_time' content='2026-04-10T16:38:54&#43;08:00'/><meta property='article:modified_time' content='2026-04-10T16:38:54&#43;08:00'/>
+<meta name="twitter:title" content="Github Action实践练习3_矩阵策略与生产环境复审">
+<meta name="twitter:description" content="矩阵策略练习 应用上线前，需要在多个版本或多个平台测试兼容性。编写workflow，在多个python版本测试。\n在./github/workflows里创建matrix-remote.yaml文件。\n">        
+    </head>
+    <body class="
+    article-page
+    ">
+    <script>
+        (function() {
+            const colorSchemeKey = 'StackColorScheme';
+            if(!localStorage.getItem(colorSchemeKey)){
+                localStorage.setItem(colorSchemeKey, "auto");
+            }
+        })();
+    </script><script>
+    (function() {
+        const colorSchemeKey = 'StackColorScheme';
+        const colorSchemeItem = localStorage.getItem(colorSchemeKey);
+        const supportDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches === true;
+
+        if (colorSchemeItem == 'dark' || colorSchemeItem === 'auto' && supportDarkMode) {
+            
+
+            document.documentElement.dataset.scheme = 'dark';
+        } else {
+            document.documentElement.dataset.scheme = 'light';
+        }
+    })();
+</script>
+<div class="container main-container flex on-phone--column extended"><aside class="sidebar left-sidebar sticky ">
+    <button class="hamburger hamburger--spin" type="button" id="toggle-menu" aria-label="切换菜单">
+        <span class="hamburger-box">
+            <span class="hamburger-inner"></span>
+        </span>
+    </button>
+
+    <header>
+        
+            
+            <figure class="site-avatar">
+                <a href="/">
+                
+                    
+                    
+                    
+                        
+                        <img src="/img/avatar_hu290319576234017586.png" width="300"
+                            height="302" class="site-logo" loading="lazy" alt="Avatar">
+                    
+                
+                </a>
+                
+            </figure>
+            
+        
+        
+        <div class="site-meta">
+            <h1 class="site-name"><a href="/">rustWood</a></h1>
+            <h2 class="site-description">江上何人初见月，江月何年初照人。博客出问题请看关于页面</h2>
+        </div>
+    </header><ol class="menu-social">
+            
+                <li>
+                    <a 
+                        href='https://github.com/rusthx'
+                        target="_blank"
+                        title="GitHub"
+                        rel="me"
+                    >
+                        
+                        
+                            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-brand-github" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z" fill="none"/>
+  <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5" />
+</svg>
+
+
+
+                        
+                    </a>
+                </li>
+            
+                <li>
+                    <a 
+                        href='https://www.cnblogs.com/rusthx'
+                        target="_blank"
+                        title="博客园"
+                        rel="me"
+                    >
+                        
+                        
+                            <?xml version="1.0" standalone="no"?><!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"><svg t="1725698578146" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="1508" width="24" height="24" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="M478.71488 33.88416c-75.76064 36.6592-123.11552 117.31456-114.82624 194.82624 8.28416 67.03616 43.8016 120.45824 104.17152 156.06784 187.03872 109.98272 419.05664-79.60576 316.06784-258.71872C722.57536 20.26496 591.17568-19.53792 478.71488 33.88416z m187.03872 67.03616c85.23264 52.37248 80.49664 188.53888-9.472 229.39136-104.17152 48.18432-213.07904-15.71328-213.07904-125.696 0-41.89696 5.91872-54.46656 40.24832-84.84352s48.5376-35.61472 98.2528-35.61472c33.14688 0.00512 68.6592 7.33696 84.04992 16.76288z" fill="#707070" p-id="1509"></path><path d="M797.15328 340.7872c-63.9232 115.22048-89.96864 148.736-164.54656 217.87136-75.76064 71.22432-105.35424 90.08128-209.53088 135.12192-67.47648 29.32736-132.5824 50.2784-147.97312 48.18432-22.49216-2.09408-36.69504-25.1392-88.78592-139.31008C120.02816 458.10176 53.73952 333.45536 25.32864 298.89024c-16.57344-19.90144-17.75616-18.85184-11.83744 10.47552 27.22304 156.06784 119.56224 465.06496 147.97312 494.39232 15.39072 17.80736 295.94624 18.85184 456.93952 2.09408 190.58688-19.90144 170.46528-27.23328-121.92768-47.13472l-106.54208-7.33184 102.9888-24.0896c114.82624-27.23328 177.56672-52.37248 261.61664-105.79456 31.96416-19.90144 62.74048-34.56512 69.84192-32.47104 5.91872 2.09408 49.72032 98.46272 94.70464 212.6336 46.16704 115.22048 86.41536 212.6336 91.15136 216.82176 11.83744 11.52-8.28416-233.57952-28.41088-358.22592-10.65472-60.75392-39.0656-187.4944-63.9232-282.81344l-44.98432-172.83072-75.76576 136.17152z" fill="#707070" p-id="1510"></path></svg>
+                        
+                    </a>
+                </li>
+            
+        </ol><ol class="menu" id="main-menu">
+        
+        
+        
+        <li >
+            <a href='/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-home" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <polyline points="5 12 3 12 12 3 21 12 19 12" />
+  <path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" />
+  <path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" />
+</svg>
+
+
+
+                
+                <span>主页</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E5%85%B3%E4%BA%8E/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-user" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="12" cy="7" r="4" />
+  <path d="M6 21v-2a4 4 0 0 1 4 -4h4a4 4 0 0 1 4 4v2" />
+</svg>
+
+
+
+                
+                <span>关于</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/archives/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-archive" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <rect x="3" y="4" width="18" height="4" rx="2" />
+  <path d="M5 8v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-10" />
+  <line x1="10" y1="12" x2="14" y2="12" />
+</svg>
+
+
+
+                
+                <span>归档</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/search/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-search" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="10" cy="10" r="7" />
+  <line x1="21" y1="21" x2="15" y2="15" />
+</svg>
+
+
+
+                
+                <span>搜索</span>
+            </a>
+        </li>
+        
+        
+        <li >
+            <a href='/%E9%93%BE%E6%8E%A5/' >
+                
+                
+                
+                    <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-link" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M10 14a3.5 3.5 0 0 0 5 0l4 -4a3.5 3.5 0 0 0 -5 -5l-.5 .5" />
+  <path d="M14 10a3.5 3.5 0 0 0 -5 0l-4 4a3.5 3.5 0 0 0 5 5l.5 -.5" />
+</svg>
+
+
+
+                
+                <span>链接</span>
+            </a>
+        </li>
+        
+        <li class="menu-bottom-section">
+            <ol class="menu">
+
+                
+                    <li id="dark-mode-toggle">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-left" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="8" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-toggle-right" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <circle cx="16" cy="12" r="2" />
+  <rect x="2" y="6" width="20" height="12" rx="6" />
+</svg>
+
+
+
+                        <span>暗色模式</span>
+                    </li>
+                
+            </ol>
+        </li>
+    </ol>
+</aside>
+
+    <aside class="sidebar right-sidebar sticky">
+        
+            
+                
+    <section class="widget archives">
+        <div class="widget-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-hash" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <line x1="5" y1="9" x2="19" y2="9" />
+  <line x1="5" y1="15" x2="19" y2="15" />
+  <line x1="11" y1="4" x2="7" y2="20" />
+  <line x1="17" y1="4" x2="13" y2="20" />
+</svg>
+
+
+
+        </div>
+        <h2 class="widget-title section-title">目录</h2>
+        
+        <div class="widget--toc">
+            <nav id="TableOfContents">
+  <ol>
+    <li><a href="#矩阵策略练习">矩阵策略练习</a></li>
+    <li><a href="#安全密钥前置工作">安全密钥前置工作</a></li>
+    <li><a href="#安全密钥练习">安全密钥练习</a></li>
+  </ol>
+</nav>
+        </div>
+    </section>
+
+            
+        
+    </aside>
+
+
+            <main class="main full-width">
+    <article class="main-article">
+    <header class="article-header">
+
+    <div class="article-details">
+    
+
+    <div class="article-title-wrapper">
+        <h2 class="article-title">
+            <a href="/p/github-action%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A03_%E7%9F%A9%E9%98%B5%E7%AD%96%E7%95%A5%E4%B8%8E%E7%94%9F%E4%BA%A7%E7%8E%AF%E5%A2%83%E5%A4%8D%E5%AE%A1/">Github Action实践练习3_矩阵策略与生产环境复审</a>
+        </h2>
+    
+        
+    </div>
+
+    
+    
+    
+    
+    <footer class="article-time">
+        
+            <div>
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-calendar-time" width="56" height="56" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+  <path stroke="none" d="M0 0h24v24H0z"/>
+  <path d="M11.795 21h-6.795a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h12a2 2 0 0 1 2 2v4" />
+  <circle cx="18" cy="18" r="4" />
+  <path d="M15 3v4" />
+  <path d="M7 3v4" />
+  <path d="M3 11h16" />
+  <path d="M18 16.496v1.504l1 1" />
+</svg>
+                <time class="article-time--published">2026-04-10</time>
+            </div>
+        
+
+        
+    </footer>
+    
+
+    
+</div>
+
+</header>
+
+    <section class="article-content">
+    
+    
+    <h2 id="矩阵策略练习">矩阵策略练习
+</h2><p>应用上线前，需要在多个版本或多个平台测试兼容性。编写workflow，在多个python版本测试。</p>
+<p>在./github/workflows里创建<code>matrix-remote.yaml</code>文件。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Matrix</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">on</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">push</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">branches</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">&#34;main&#34;</span><span class="w"> </span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">jobs</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># 矩阵策略练习</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">test_matrix</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Test on Python ${{ matrix.python-version }}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l">ubuntu-24.04</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">strategy</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="c"># 矩阵配置：定义测试变量</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">matrix</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">python-version</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s2">&#34;3.9&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;3.10&#34;</span><span class="p">,</span><span class="w"> </span><span class="s2">&#34;3.11&#34;</span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">steps</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Checkout code</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">actions/checkout@v6</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Set up Python ${{ matrix.python-version }}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">actions/setup-python@v6</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">with</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">python-version</span><span class="p">:</span><span class="w"> </span><span class="l">${{ matrix.python-version }}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Run a simple test</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">          python -c &#34;print(&#39;Testing on Python ${{ matrix.python-version }}&#39;)&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sd">          # 模拟测试通过
+</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;Matrix tests passed!&#34;</span><span class="w">          
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="安全密钥前置工作">安全密钥前置工作
+</h2><p>在服务器或本地虚拟机创建ssh密钥用于GitHub仓库远程连接：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">ssh-keygen -t ed25519 -C <span class="s2">&#34;github_actions_key&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">cat ~/.ssh/id_ed25519.pub &gt;&gt; ~/.ssh/authorized_keys
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 查看私钥</span>
+</span></span><span class="line"><span class="cl">cat ~/.ssh/id_ed25519
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><strong>配置Github仓库密钥</strong></p>
+<ol>
+<li>在Github仓库打开setting -&gt; Secrets and variables -&gt; Actions，</li>
+<li>点击New repository secret，名称(Name)填入SSH_PRIVATE_KEY,</li>
+<li>值(Value)填入刚刚查看的私钥完整内容(包括&mdash;&ndash;BEGIN OPENSSH PRIVATE KEY&mdash;&ndash;开头结尾)</li>
+</ol>
+<p><strong>配置仓库的环境(Environment)</strong></p>
+<blockquote>
+<p>注：这个功能必须仓库是public才能开启，在Settings划到最底下的<code>Danger Zone</code>的<code>Change repository visibility</code>里可以调整仓库为public或private</p>
+</blockquote>
+<ol>
+<li>进入Settings -&gt; Environments,</li>
+<li>点击New environment，取名为production</li>
+<li>在Deployment branches选择All branches(或者限制为主分支)，
+勾选Required reviewers(必须审批人),
+在搜索框填入自己的Github用户名，点击Save protection rules。</li>
+</ol>
+<blockquote>
+<p>这样，代码提交到生产(production)环境后，就需要指定审批人通过才能部署</p>
+</blockquote>
+<p><strong>本地虚拟机安装Github Action自托管Runner模拟远程服务器</strong></p>
+<blockquote>
+<p>用的服务器的话就可以跳过这一步。Github并不推荐用本地Runner，因为如果有人fork了你的仓库，可能会在本地机器上运行恶意代码。</p>
+</blockquote>
+<p>在虚拟机安装并注册Runner。在仓库点击Settings -&gt; Actions -&gt; Runnerss -&gt; New self-hosted runner。</p>
+<p>按提示运行配置脚本。提示会让你给本地runner取名，一路enter后默认的虚拟机名是[self-hosted, linux, X64]</p>
+<blockquote>
+<p>从GitHub下载tar包这一步可能下不下来，建议本地下载了再传到虚拟机上。</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 下载</span>
+</span></span><span class="line"><span class="cl"><span class="c1">#   创建并进入文件夹</span>
+</span></span><span class="line"><span class="cl">mkdir actions-runner <span class="o">&amp;&amp;</span> <span class="nb">cd</span> actions-runner
+</span></span><span class="line"><span class="cl"><span class="c1">#   下载runner压缩包</span>
+</span></span><span class="line"><span class="cl">curl -o actions-runner-linux-x64-2.333.1.tar.gz -L https://github.com/actions/runner/releases/download/v2.333.1/actions-runner-linux-x64-2.333.1.tar.gz
+</span></span><span class="line"><span class="cl"><span class="c1">#   校验压缩包hash值</span>
+</span></span><span class="line"><span class="cl"><span class="nb">echo</span> <span class="s2">&#34;18f8f68ed1892854ff2ab1bab4fcaa2f5abeedc98093b6cb13638991725cab74  actions-runner-linux-x64-2.333.1.tar.gz&#34;</span> <span class="p">|</span> shasum -a <span class="m">256</span> -c
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 解压</span>
+</span></span><span class="line"><span class="cl">tar xzf ./actions-runner-linux-x64-2.333.1.tar.gz
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 配置</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># Create the runner and start the configuration experience</span>
+</span></span><span class="line"><span class="cl">./config.sh--url https://github.com/你的用户名/仓库名 --token YOUR_TOKEN
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 运行</span>
+</span></span><span class="line"><span class="cl">$ ./run.sh
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 在workflows的yaml文件里使用本地runner</span>
+</span></span><span class="line"><span class="cl">runs-on: self-hosted
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="安全密钥练习">安全密钥练习
+</h2><p>在.github/workflows文件夹下创建safety-local.yaml文件。</p>
+<blockquote>
+<p>正经流程应该是先多版本/平台测试后，再部署上线。也即是在安全密钥job之前应该有矩阵测试的job。不过矩阵测试的actions需要下载checkout actions和安装python。这里示例就拆分成了两个练习。</p>
+</blockquote>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Security </span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">on</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">push</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">branches</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="w"> </span><span class="s2">&#34;main&#34;</span><span class="w"> </span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">jobs</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># SSH 连接与生产环境复审,部署到本地虚拟机</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">deploy_to_local</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Deploy to Local VM (Production)</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="l">self-hosted, linux, X64]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">environment</span><span class="p">:</span><span class="w"> </span><span class="l">production</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">steps</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="c"># 安全技巧：安装 SSH 私钥</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="c"># 注意：为了防止泄露,使用echo而不是cat</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Setup SSH Key</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">          mkdir -p ~/.ssh
+</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;${{ secrets.SSH_PRIVATE_KEY }}&#34; &gt; ~/.ssh/id_ed25519
+</span></span></span><span class="line"><span class="cl"><span class="sd">          chmod 600 ~/.ssh/id_ed25519</span><span class="w">          
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Connect and Execute</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;Attempting to connect to local VM via ngrok...&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sd">          # 使用 SSH 连接，执行 echo 命令
+</span></span></span><span class="line"><span class="cl"><span class="sd">          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_ed25519 rust@localhost &#34;
+</span></span></span><span class="line"><span class="cl"><span class="sd">            echo &#39;====================================&#39;
+</span></span></span><span class="line"><span class="cl"><span class="sd">            echo &#39;Hello from GitHub Actions!&#39;
+</span></span></span><span class="line"><span class="cl"><span class="sd">            echo &#39;This message is running on 本地虚拟机$(hostname). User is $(whoami)&#39;
+</span></span></span><span class="line"><span class="cl"><span class="sd">            echo &#39;Current Time:&#39; $(date)
+</span></span></span><span class="line"><span class="cl"><span class="sd">            echo &#39;====================================&#39;
+</span></span></span><span class="line"><span class="cl"><span class="sd">          &#34;</span><span class="w">          
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div>
+</section>
+
+
+    <footer class="article-footer">
+    
+    <section class="article-tags">
+        
+            <a href="/tags/github-action/">Github Action</a>
+        
+    </section>
+
+
+    <section>
+        页面浏览量<span id="busuanzi_value_page_pv">Loading</span>
+    </section>
+</footer>
+
+
+    
+        <link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css"integrity="sha384-n8MVd4RsNIU0tAv4ct0nTaAbDJwPJzDEaqSD1odI&#43;WdtXRGWt2kTvGFasHpSy3SV"crossorigin="anonymous"
+            ><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"integrity="sha384-XjKyOOlGwcjNTAIQHIpgOno0Hl1YQqzUOEleOLALmuqehneUG&#43;vnGctmUb0ZY0l8"crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"integrity="sha384-&#43;VBxd3r6XgURycqtZ117nYw44OOcIax56Z4dCRWbxyPt0Koah1uHoK0o4&#43;/RRE05"crossorigin="anonymous"
+                defer
+                >
+            </script><script>
+    window.addEventListener("DOMContentLoaded", () => {
+        renderMathInElement(document.body, {
+            delimiters: [
+                { left: "$$", right: "$$", display: true },
+                { left: "$", right: "$", display: false },
+                { left: "\\(", right: "\\)", display: false },
+                { left: "\\[", right: "\\]", display: true }
+            ],
+            ignoredClasses: ["gist"]
+        });})
+</script>
+    
+</article>
+
+    
+
+    
+
+     
+    
+        
+    
+
+    <footer class="site-footer">
+    <section class="copyright">
+        &copy; 
+        
+            2024 - 
+        
+        2026 rustWood
+    </section>
+    
+    <section class="powerby">
+        
+            网站总访客数：<span id='busuanzi_value_site_uv'>Loading</span><br/>网站总访问量：<span id='busuanzi_value_site_pv'>Loading</span> <br/>
+        使用 <a href="https://gohugo.io/" target="_blank" rel="noopener">Hugo</a> 构建 <br />
+        主题 <b><a href="https://github.com/CaiJimmy/hugo-theme-stack" target="_blank" rel="noopener" data-version="3.26.0">Stack</a></b> 由 <a href="https://jimmycai.com" target="_blank" rel="noopener">Jimmy</a> 设计
+    </section>
+    
+    <script defer src="https://cn.vercount.one/js"></script>
+</footer>
+
+
+    
+<div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+    
+    <div class="pswp__bg"></div>
+
+    
+    <div class="pswp__scroll-wrap">
+
+        
+        <div class="pswp__container">
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+            <div class="pswp__item"></div>
+        </div>
+
+        
+        <div class="pswp__ui pswp__ui--hidden">
+
+            <div class="pswp__top-bar">
+
+                
+
+                <div class="pswp__counter"></div>
+
+                <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                
+                
+                <div class="pswp__preloader">
+                    <div class="pswp__preloader__icn">
+                        <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                <div class="pswp__share-tooltip"></div>
+            </div>
+
+            <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+            </button>
+
+            <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+            </button>
+
+            <div class="pswp__caption">
+                <div class="pswp__caption__center"></div>
+            </div>
+
+        </div>
+
+    </div>
+
+</div><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.js"integrity="sha256-ePwmChbbvXbsO02lbM3HoHbSHTHFAeChekF1xKJdleo="crossorigin="anonymous"
+                defer
+                >
+            </script><script 
+                src="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe-ui-default.min.js"integrity="sha256-UKkzOn/w1mBxRmLLGrSeyB4e1xbrp4xylgAWb3M42pU="crossorigin="anonymous"
+                defer
+                >
+            </script><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/default-skin/default-skin.min.css"crossorigin="anonymous"
+            ><link 
+                rel="stylesheet" 
+                href="https://cdn.jsdelivr.net/npm/photoswipe@4.1.3/dist/photoswipe.min.css"crossorigin="anonymous"
+            >
+
+            </main>
+        </div>
+        <script 
+                src="https://cdn.jsdelivr.net/npm/node-vibrant@3.1.6/dist/vibrant.min.js"integrity="sha256-awcR2jno4kI5X0zL8ex0vi2z&#43;KMkF24hUW8WePSA9HM="crossorigin="anonymous"
+                
+                >
+            </script><script type="text/javascript" src="/ts/main.js" defer></script>
+
+<style>
+     
+    @font-face {
+    font-family: 'MapleMono';
+    src: url('/font/MapleMono-Woff2/MapleMono-Regular.woff2') format('woff2');
+    }
+  
+     
+    :root {
+      --base-font-family: 'MapleMono', sans-serif;
+      --code-font-family: 'consolas','MapleMono',  monospace;
+    }
+  </style>
+
+
+    </body>
+</html>
