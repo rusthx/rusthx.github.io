@@ -274,7 +274,19 @@
       </ol>
     </li>
     <li><a href="#成功">成功</a></li>
-    <li><a href="#附件代码">附件代码</a></li>
+    <li><a href="#安全改造">安全改造</a>
+      <ol>
+        <li><a href="#创建部署用户">创建部署用户</a></li>
+        <li><a href="#部署用户ssh密钥">部署用户ssh密钥</a></li>
+        <li><a href="#封装部署容器逻辑为脚本">封装部署容器逻辑为脚本</a></li>
+        <li><a href="#脚本权限控制">脚本权限控制</a></li>
+        <li><a href="#改造workflow">改造workflow</a></li>
+        <li><a href="#其他安全改造思路">其他安全改造思路</a></li>
+      </ol>
+    </li>
+    <li><a href="#git提交触发">git提交触发</a></li>
+    <li><a href="#附件代码安全改造前">附件代码（安全改造前）</a></li>
+    <li><a href="#附件代码安全改造后">附件代码（安全改造后）</a></li>
   </ol>
 </nav>
         </div>
@@ -951,7 +963,467 @@ DEPLOY_USER（ssh连接的用户，必须有docker权限才能运行docker容器
 		data-flex-basis="438px"
 	
 ></p>
-<h2 id="附件代码">附件代码
+<h2 id="安全改造">安全改造
+</h2><h3 id="创建部署用户">创建部署用户
+</h3><p>添加GitHub Action部署用的用户</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo useradd -m -s /bin/bash deployer      <span class="c1"># 创建用户</span>
+</span></span><span class="line"><span class="cl">id deployer                              <span class="c1"># 确认 groups 中无 docker</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="部署用户ssh密钥">部署用户ssh密钥
+</h3><p>生产Github Action部署用户的ssh密钥</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 在服务器上，将公钥添加到 deployer 用户的 authorized_keys 中</span>
+</span></span><span class="line"><span class="cl">sudo mkdir -p /home/deployer/.ssh
+</span></span><span class="line"><span class="cl">sudo cp .ssh/deployer_key.pub /home/deployer/.ssh/authorized_keys
+</span></span><span class="line"><span class="cl">sudo chown -R deployer:deployer /home/deployer/.ssh
+</span></span><span class="line"><span class="cl">sudo chmod <span class="m">700</span> /home/deployer/.ssh
+</span></span><span class="line"><span class="cl">sudo chmod <span class="m">600</span> /home/deployer/.ssh/authorized_keys
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>将生成的私钥内容（cat deployer_key）复制到 GitHub 仓库的 Settings → Secrets → Actions 中，命名为 DEPLOY_SSH_KEY_DEPLOYER。</p>
+<h3 id="封装部署容器逻辑为脚本">封装部署容器逻辑为脚本
+</h3><p>将docker部署回退镜像的逻辑封装成脚本。
+<code>sudo vim /usr/local/bin/deploy-fastapi-app.sh</code></p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">  1
+</span><span class="lnt">  2
+</span><span class="lnt">  3
+</span><span class="lnt">  4
+</span><span class="lnt">  5
+</span><span class="lnt">  6
+</span><span class="lnt">  7
+</span><span class="lnt">  8
+</span><span class="lnt">  9
+</span><span class="lnt"> 10
+</span><span class="lnt"> 11
+</span><span class="lnt"> 12
+</span><span class="lnt"> 13
+</span><span class="lnt"> 14
+</span><span class="lnt"> 15
+</span><span class="lnt"> 16
+</span><span class="lnt"> 17
+</span><span class="lnt"> 18
+</span><span class="lnt"> 19
+</span><span class="lnt"> 20
+</span><span class="lnt"> 21
+</span><span class="lnt"> 22
+</span><span class="lnt"> 23
+</span><span class="lnt"> 24
+</span><span class="lnt"> 25
+</span><span class="lnt"> 26
+</span><span class="lnt"> 27
+</span><span class="lnt"> 28
+</span><span class="lnt"> 29
+</span><span class="lnt"> 30
+</span><span class="lnt"> 31
+</span><span class="lnt"> 32
+</span><span class="lnt"> 33
+</span><span class="lnt"> 34
+</span><span class="lnt"> 35
+</span><span class="lnt"> 36
+</span><span class="lnt"> 37
+</span><span class="lnt"> 38
+</span><span class="lnt"> 39
+</span><span class="lnt"> 40
+</span><span class="lnt"> 41
+</span><span class="lnt"> 42
+</span><span class="lnt"> 43
+</span><span class="lnt"> 44
+</span><span class="lnt"> 45
+</span><span class="lnt"> 46
+</span><span class="lnt"> 47
+</span><span class="lnt"> 48
+</span><span class="lnt"> 49
+</span><span class="lnt"> 50
+</span><span class="lnt"> 51
+</span><span class="lnt"> 52
+</span><span class="lnt"> 53
+</span><span class="lnt"> 54
+</span><span class="lnt"> 55
+</span><span class="lnt"> 56
+</span><span class="lnt"> 57
+</span><span class="lnt"> 58
+</span><span class="lnt"> 59
+</span><span class="lnt"> 60
+</span><span class="lnt"> 61
+</span><span class="lnt"> 62
+</span><span class="lnt"> 63
+</span><span class="lnt"> 64
+</span><span class="lnt"> 65
+</span><span class="lnt"> 66
+</span><span class="lnt"> 67
+</span><span class="lnt"> 68
+</span><span class="lnt"> 69
+</span><span class="lnt"> 70
+</span><span class="lnt"> 71
+</span><span class="lnt"> 72
+</span><span class="lnt"> 73
+</span><span class="lnt"> 74
+</span><span class="lnt"> 75
+</span><span class="lnt"> 76
+</span><span class="lnt"> 77
+</span><span class="lnt"> 78
+</span><span class="lnt"> 79
+</span><span class="lnt"> 80
+</span><span class="lnt"> 81
+</span><span class="lnt"> 82
+</span><span class="lnt"> 83
+</span><span class="lnt"> 84
+</span><span class="lnt"> 85
+</span><span class="lnt"> 86
+</span><span class="lnt"> 87
+</span><span class="lnt"> 88
+</span><span class="lnt"> 89
+</span><span class="lnt"> 90
+</span><span class="lnt"> 91
+</span><span class="lnt"> 92
+</span><span class="lnt"> 93
+</span><span class="lnt"> 94
+</span><span class="lnt"> 95
+</span><span class="lnt"> 96
+</span><span class="lnt"> 97
+</span><span class="lnt"> 98
+</span><span class="lnt"> 99
+</span><span class="lnt">100
+</span><span class="lnt">101
+</span><span class="lnt">102
+</span><span class="lnt">103
+</span><span class="lnt">104
+</span><span class="lnt">105
+</span><span class="lnt">106
+</span><span class="lnt">107
+</span><span class="lnt">108
+</span><span class="lnt">109
+</span><span class="lnt">110
+</span><span class="lnt">111
+</span><span class="lnt">112
+</span><span class="lnt">113
+</span><span class="lnt">114
+</span><span class="lnt">115
+</span><span class="lnt">116
+</span><span class="lnt">117
+</span><span class="lnt">118
+</span><span class="lnt">119
+</span><span class="lnt">120
+</span><span class="lnt">121
+</span><span class="lnt">122
+</span><span class="lnt">123
+</span><span class="lnt">124
+</span><span class="lnt">125
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="cp">#!/bin/bash
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="nb">set</span> -euo pipefail
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">##############################</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 安全部署 fastapi-app 容器（含自动回退）</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 用法: sudo deploy-fastapi-app.sh &lt;镜像完整TAG&gt;</span>
+</span></span><span class="line"><span class="cl"><span class="c1">##############################</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">APP_NAME</span><span class="o">=</span><span class="s2">&#34;fastapi-app&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">HEALTH_URL</span><span class="o">=</span><span class="s2">&#34;http://localhost:8000/health&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">HEALTH_RETRIES</span><span class="o">=</span><span class="m">10</span>
+</span></span><span class="line"><span class="cl"><span class="nv">HEALTH_DELAY</span><span class="o">=</span><span class="m">3</span>
+</span></span><span class="line"><span class="cl"><span class="nv">BACKUP_CONTAINER</span><span class="o">=</span><span class="s2">&#34;</span><span class="si">${</span><span class="nv">APP_NAME</span><span class="si">}</span><span class="s2">-backup&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">DOCKER</span><span class="o">=</span><span class="s2">&#34;/usr/bin/docker&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">CURL</span><span class="o">=</span><span class="s2">&#34;/usr/bin/curl&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">LOG_FILE</span><span class="o">=</span><span class="s2">&#34;/var/log/deploy-app.log&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">touch <span class="s2">&#34;</span><span class="nv">$LOG_FILE</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">chmod <span class="m">600</span> <span class="s2">&#34;</span><span class="nv">$LOG_FILE</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">log<span class="o">()</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">local</span> <span class="nv">msg</span><span class="o">=</span><span class="s2">&#34;[</span><span class="k">$(</span>date <span class="s1">&#39;+%Y-%m-%d %H:%M:%S&#39;</span><span class="k">)</span><span class="s2">] </span><span class="nv">$*</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 写入独立日志文件</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">echo</span> <span class="s2">&#34;</span><span class="nv">$msg</span><span class="s2">&#34;</span> &gt;&gt; <span class="s2">&#34;</span><span class="nv">$LOG_FILE</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 同时继续写入系统日志（用于审计）</span>
+</span></span><span class="line"><span class="cl">    /usr/bin/logger -t deploy-app <span class="s2">&#34;</span><span class="nv">$*</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># ============ 参数严格校验 ============</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="o">[</span> <span class="nv">$#</span> -ne <span class="m">1</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+</span></span><span class="line"><span class="cl">    log <span class="s2">&#34;错误: 需要传入镜像 TAG&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">exit</span> <span class="m">1</span>
+</span></span><span class="line"><span class="cl"><span class="k">fi</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="nv">IMAGE_TAG</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 只拒绝包含常见 Shell 注入字符的字符串，其余镜像标签放行</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="nb">echo</span> <span class="s2">&#34;</span><span class="nv">$IMAGE_TAG</span><span class="s2">&#34;</span> <span class="p">|</span> grep -q <span class="s1">&#39;[;&amp;$`|*?(){}!&lt;&gt;\\&#39;</span><span class="se">\&#39;</span><span class="s1">&#39;&#34;]&#39;</span> <span class="p">;</span> <span class="k">then</span>
+</span></span><span class="line"><span class="cl">    log <span class="s2">&#34;错误: 镜像 TAG 包含危险字符，禁止执行&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nb">exit</span> <span class="m">1</span>
+</span></span><span class="line"><span class="cl"><span class="k">fi</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">log <span class="s2">&#34;===== 开始部署应用，镜像: </span><span class="nv">$IMAGE_TAG</span><span class="s2"> =====&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 拉取镜像</span>
+</span></span><span class="line"><span class="cl">log <span class="s2">&#34;拉取新镜像...&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$DOCKER</span> pull <span class="s2">&#34;</span><span class="nv">$IMAGE_TAG</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">log <span class="s2">&#34;检查并清理可能冲突的旧容器...&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#  清理之前部署失败的残留容器（status=Created/Exited/Dead）</span>
+</span></span><span class="line"><span class="cl"><span class="nv">FAILED_CONTAINER_ID</span><span class="o">=</span><span class="k">$(</span><span class="nv">$DOCKER</span> ps -aq --filter <span class="s2">&#34;name=^</span><span class="si">${</span><span class="nv">APP_NAME</span><span class="si">}</span>$<span class="s2">&#34;</span> --filter <span class="s2">&#34;status=created&#34;</span> --filter <span class="s2">&#34;status=exited&#34;</span> --filter <span class="s2">&#34;status=dead&#34;</span> 2&gt;/dev/null <span class="o">||</span> <span class="nb">true</span><span class="k">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="o">[</span> -n <span class="s2">&#34;</span><span class="nv">$FAILED_CONTAINER_ID</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+</span></span><span class="line"><span class="cl">    log <span class="s2">&#34;发现残留的失败容器: </span><span class="nv">$FAILED_CONTAINER_ID</span><span class="s2">，强制移除...&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$DOCKER</span> rm -f <span class="s2">&#34;</span><span class="nv">$FAILED_CONTAINER_ID</span><span class="s2">&#34;</span> 2&gt;/dev/null <span class="o">||</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl"><span class="k">fi</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#  检查是否已有同名容器在运行，如果有，则停止并重命名为备份</span>
+</span></span><span class="line"><span class="cl"><span class="nv">RUNNING_CONTAINER_ID</span><span class="o">=</span><span class="k">$(</span><span class="nv">$DOCKER</span> ps -q --filter <span class="s2">&#34;name=^</span><span class="si">${</span><span class="nv">APP_NAME</span><span class="si">}</span>$<span class="s2">&#34;</span> <span class="o">||</span> <span class="nb">true</span><span class="k">)</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="o">[</span> -n <span class="s2">&#34;</span><span class="nv">$RUNNING_CONTAINER_ID</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+</span></span><span class="line"><span class="cl">    log <span class="s2">&#34;停止并备份当前运行的容器: </span><span class="nv">$RUNNING_CONTAINER_ID</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 清理可能存在的旧备份容器</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$DOCKER</span> rm -f <span class="s2">&#34;</span><span class="nv">$BACKUP_CONTAINER</span><span class="s2">&#34;</span> 2&gt;/dev/null <span class="o">||</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 停止当前容器</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$DOCKER</span> stop <span class="s2">&#34;</span><span class="nv">$APP_NAME</span><span class="s2">&#34;</span> &gt;/dev/null <span class="o">||</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 重命名为备份容器</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$DOCKER</span> rename <span class="s2">&#34;</span><span class="nv">$APP_NAME</span><span class="s2">&#34;</span> <span class="s2">&#34;</span><span class="nv">$BACKUP_CONTAINER</span><span class="s2">&#34;</span> <span class="o">||</span> <span class="o">{</span>
+</span></span><span class="line"><span class="cl">        log <span class="s2">&#34;重命名容器失败，强制移除后继续&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$DOCKER</span> rm -f <span class="s2">&#34;</span><span class="nv">$APP_NAME</span><span class="s2">&#34;</span> 2&gt;/dev/null <span class="o">||</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">    <span class="o">}</span>
+</span></span><span class="line"><span class="cl"><span class="k">fi</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1">#  最后确认，8000端口当前没有被占用（双重保险）</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> ss -tuln <span class="p">|</span> grep -q <span class="s1">&#39;:8000&#39;</span><span class="p">;</span> <span class="k">then</span>
+</span></span><span class="line"><span class="cl">    log <span class="s2">&#34;警告: 8000端口仍被占用，尝试清理...&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 查找并强制移除占用8000端口的其他容器（非我们的目标容器）</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">PORT_CONTAINER_ID</span><span class="o">=</span><span class="k">$(</span><span class="nv">$DOCKER</span> ps -q --filter <span class="s2">&#34;publish=8000&#34;</span><span class="k">)</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">[</span> -n <span class="s2">&#34;</span><span class="nv">$PORT_CONTAINER_ID</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
+</span></span><span class="line"><span class="cl">        log <span class="s2">&#34;移除占用8000端口的容器: </span><span class="nv">$PORT_CONTAINER_ID</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$DOCKER</span> rm -f <span class="s2">&#34;</span><span class="nv">$PORT_CONTAINER_ID</span><span class="s2">&#34;</span> 2&gt;/dev/null <span class="o">||</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">    <span class="k">fi</span>
+</span></span><span class="line"><span class="cl"><span class="k">fi</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 启动新容器（只读根文件系统、限制内存、非特权）</span>
+</span></span><span class="line"><span class="cl">log <span class="s2">&#34;启动新容器...&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">$DOCKER</span> run -d <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    --name <span class="s2">&#34;</span><span class="nv">$APP_NAME</span><span class="s2">&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    --restart unless-stopped <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    -p 8000:8000 <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    --memory 256m <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    --read-only <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    --tmpfs /tmp <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    <span class="s2">&#34;</span><span class="nv">$IMAGE_TAG</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 健康检查</span>
+</span></span><span class="line"><span class="cl">log <span class="s2">&#34;等待健康检查通过 (最多 </span><span class="si">${</span><span class="nv">HEALTH_RETRIES</span><span class="si">}</span><span class="s2"> 次)...&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">SUCCESS</span><span class="o">=</span><span class="nb">false</span>
+</span></span><span class="line"><span class="cl"><span class="k">for</span> i in <span class="k">$(</span>seq <span class="m">1</span> <span class="nv">$HEALTH_RETRIES</span><span class="k">)</span><span class="p">;</span> <span class="k">do</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nv">$CURL</span> -sSf <span class="s2">&#34;</span><span class="nv">$HEALTH_URL</span><span class="s2">&#34;</span> &gt; /dev/null 2&gt;<span class="p">&amp;</span>1<span class="p">;</span> <span class="k">then</span>
+</span></span><span class="line"><span class="cl">        log <span class="s2">&#34;新容器健康检查通过&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">SUCCESS</span><span class="o">=</span><span class="nb">true</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">break</span>
+</span></span><span class="line"><span class="cl">    <span class="k">fi</span>
+</span></span><span class="line"><span class="cl">    log <span class="s2">&#34;健康检查未通过，重试 </span><span class="nv">$i</span><span class="s2">/</span><span class="nv">$HEALTH_RETRIES</span><span class="s2"> ...&#34;</span>
+</span></span><span class="line"><span class="cl">    sleep <span class="nv">$HEALTH_DELAY</span>
+</span></span><span class="line"><span class="cl"><span class="k">done</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 根据健康检查结果决定后续动作</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="nv">$SUCCESS</span><span class="p">;</span> <span class="k">then</span>
+</span></span><span class="line"><span class="cl">    log <span class="s2">&#34;部署成功，清理备份容器&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$DOCKER</span> rm -f <span class="s2">&#34;</span><span class="nv">$BACKUP_CONTAINER</span><span class="s2">&#34;</span> 2&gt;/dev/null <span class="o">||</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl"><span class="k">else</span>
+</span></span><span class="line"><span class="cl">    log <span class="s2">&#34;错误: 新容器健康检查失败，开始自动回退...&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$DOCKER</span> stop <span class="s2">&#34;</span><span class="nv">$APP_NAME</span><span class="s2">&#34;</span> <span class="o">||</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$DOCKER</span> rm <span class="s2">&#34;</span><span class="nv">$APP_NAME</span><span class="s2">&#34;</span> <span class="o">||</span> <span class="nb">true</span>
+</span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nv">$DOCKER</span> inspect <span class="s2">&#34;</span><span class="nv">$BACKUP_CONTAINER</span><span class="s2">&#34;</span> &gt;/dev/null 2&gt;<span class="p">&amp;</span>1<span class="p">;</span> <span class="k">then</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$DOCKER</span> rename <span class="s2">&#34;</span><span class="nv">$BACKUP_CONTAINER</span><span class="s2">&#34;</span> <span class="s2">&#34;</span><span class="nv">$APP_NAME</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$DOCKER</span> start <span class="s2">&#34;</span><span class="nv">$APP_NAME</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">        log <span class="s2">&#34;回退成功，旧容器已恢复运行&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="k">else</span>
+</span></span><span class="line"><span class="cl">        log <span class="s2">&#34;严重: 没有备份容器可用，服务中断！&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="nb">exit</span> <span class="m">1</span>
+</span></span><span class="line"><span class="cl">    <span class="k">fi</span>
+</span></span><span class="line"><span class="cl"><span class="k">fi</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl">log <span class="s2">&#34;===== 部署流程结束 =====&#34;</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>现在的日志在系统日志和<code>/var/log/deploy-app.log</code>各存了一份，防止系统日志过多，配合<code>logrotate</code>进行自动轮转。
+在 /etc/logrotate.d/deploy-app 中创建：</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">vim /etc/logrotate.d/deploy-app
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 填入下面的内容，每月轮转一次，保留 12 个月，旧的压缩</span>
+</span></span><span class="line"><span class="cl">/var/log/deploy-app.log <span class="o">{</span>
+</span></span><span class="line"><span class="cl">    monthly
+</span></span><span class="line"><span class="cl">    rotate <span class="m">12</span>
+</span></span><span class="line"><span class="cl">    compress
+</span></span><span class="line"><span class="cl">    missingok
+</span></span><span class="line"><span class="cl">    notifempty
+</span></span><span class="line"><span class="cl">    create <span class="m">600</span> root root
+</span></span><span class="line"><span class="cl"><span class="o">}</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="脚本权限控制">脚本权限控制
+</h3><p>赋予脚本正确的权限和归属。</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo chown root:root /usr/local/bin/deploy-fastapi-app.sh
+</span></span><span class="line"><span class="cl">sudo chmod <span class="m">755</span> /usr/local/bin/deploy-fastapi-app.sh
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>配置sudo白名单，只允许deploy用户执行这个脚本</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo vim /etc/sudoers.d/deployer
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 填入如下内容</span>
+</span></span><span class="line"><span class="cl">deployer <span class="nv">ALL</span><span class="o">=(</span>root<span class="o">)</span> NOPASSWD: /usr/local/bin/deploy-fastapi-app.sh *
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="改造workflow">改造workflow
+</h3><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="w">  </span><span class="nt">deploy</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Deploy to Aliyun ECS</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l">ubuntu-22.04</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">needs</span><span class="p">:</span><span class="w"> </span><span class="l">build</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l">github.event_name == &#39;push&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">environment</span><span class="p">:</span><span class="w"> </span><span class="l">production</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">steps</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">通过专用脚本安全部署</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">appleboy/ssh-action@v1</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">with</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l">${{ vars.DEPLOY_HOST }}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l">deployer                       </span><span class="w"> </span><span class="c"># 使用我们刚创建的普通用户</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">${{ secrets.DEPLOY_SSH_KEY_DEPLOYER }} </span><span class="w"> </span><span class="c"># 该用户对应的私钥</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">script</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">            sudo /usr/local/bin/deploy-fastapi-app.sh ${{ needs.build.outputs.image_tag }}</span><span class="w">            
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><h3 id="其他安全改造思路">其他安全改造思路
+</h3><ol>
+<li>只给deploy用户docker相关操作的sudo权限。不过这样用通配符还是有命令注入的风险，而且不太好管理。</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl">sudo vim /etc/sudoers.d/deployer
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 填入如下内容</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 允许 deployer 用户无密码执行特定的 Docker 命令</span>
+</span></span><span class="line"><span class="cl">deployer <span class="nv">ALL</span><span class="o">=(</span>root<span class="o">)</span> NOPASSWD: /usr/bin/docker pull ghcr.io/*/*
+</span></span><span class="line"><span class="cl">deployer <span class="nv">ALL</span><span class="o">=(</span>root<span class="o">)</span> NOPASSWD: /usr/bin/docker stop fastapi-app
+</span></span><span class="line"><span class="cl">deployer <span class="nv">ALL</span><span class="o">=(</span>root<span class="o">)</span> NOPASSWD: /usr/bin/docker rm fastapi-app
+</span></span><span class="line"><span class="cl">deployer <span class="nv">ALL</span><span class="o">=(</span>root<span class="o">)</span> NOPASSWD: /usr/bin/docker run --name fastapi-app *
+</span></span><span class="line"><span class="cl">deployer <span class="nv">ALL</span><span class="o">=(</span>root<span class="o">)</span> NOPASSWD: /usr/bin/docker start fastapi-app
+</span></span><span class="line"><span class="cl">deployer <span class="nv">ALL</span><span class="o">=(</span>root<span class="o">)</span> NOPASSWD: /usr/bin/docker inspect fastapi-app
+</span></span><span class="line"><span class="cl">deployer <span class="nv">ALL</span><span class="o">=(</span>root<span class="o">)</span> NOPASSWD: /usr/bin/docker ps *
+</span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>使用argoCD来拉取镜像，部署容器</li>
+<li>使用rootless Docker或者Podman运行容器</li>
+</ol>
+<h2 id="git提交触发">git提交触发
+</h2><div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># 1. 添加修改后的 CI 配置文件</span>
+</span></span><span class="line"><span class="cl">git add .github/workflows/ci-cd.yml
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 2. 使用明确的提交信息</span>
+</span></span><span class="line"><span class="cl">git commit -m <span class="s2">&#34;fix: 修复 Deploy Job 中镜像标签多行传递导致命令执行异常的问题&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 3. 推送到 main 分支</span>
+</span></span><span class="line"><span class="cl">git push origin main
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 4. 创建一个新的 Tag（例如 v1.0.2）</span>
+</span></span><span class="line"><span class="cl">git tag -a v1.0.2 -m <span class="s2">&#34;release v1.0.2: 尝试修复部署标签问题&#34;</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 5. 推送该 Tag 以触发完整 CI/CD 流程（包括部署）</span>
+</span></span><span class="line"><span class="cl">git push origin v1.0.2
+</span></span></code></pre></td></tr></table>
+</div>
+</div><h2 id="附件代码安全改造前">附件代码（安全改造前）
 </h2><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">  1
@@ -1580,7 +2052,8 @@ DEPLOY_USER（ssh连接的用户，必须有docker权限才能运行docker容器
 </span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;[查看服务](http://${{vars.DEPLOY_HOST }}:8000/docs)&#34; &gt;&gt; $GITHUB_STEP_SUMMARY</span><span class="w">          
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div>
+</div><h2 id="附件代码安全改造后">附件代码（安全改造后）
+</h2>
 </section>
 
 
