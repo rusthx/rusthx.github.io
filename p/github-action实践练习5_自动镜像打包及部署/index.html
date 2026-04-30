@@ -1,18 +1,18 @@
 <!DOCTYPE html>
 <html lang="zh-cn" dir="ltr">
     <head><meta charset='utf-8'>
-<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="背景 fastapi-cicd-demo 是一个用于演示 Python（FastAPI）项目 CI/CD 流水线的练习项目，我用这个项目来练习自动镜像构建和部署。\n在workflow里实现代码格式审查、代码自动测试、Docker 镜像自动构建、阿里云服务器自动部署，以及部署失败后的自动回退老版本。\n">
+<meta name='viewport' content='width=device-width, initial-scale=1'><meta name='description' content="背景 项目代码：https://github.com/rusthx/fastapi-cicd-demo fastapi-cicd-demo 是一个用于演示 Python（FastAPI）项目 CI/CD 流水线的练习项目，我用这个项目来练习自动镜像构建和部署。\n">
 <title>Github Action实践练习5_自动镜像打包及部署</title>
 
 <link rel='canonical' href='https://rusthx.github.io/p/github-action%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A05_%E8%87%AA%E5%8A%A8%E9%95%9C%E5%83%8F%E6%89%93%E5%8C%85%E5%8F%8A%E9%83%A8%E7%BD%B2/'>
 
 <link rel="stylesheet" href="/scss/style.min.f88e0ff8bfb43bef18eec2559d462f612719fb375decfc40b3869dca992f1fa4.css"><meta property='og:title' content="Github Action实践练习5_自动镜像打包及部署">
-<meta property='og:description' content="背景 fastapi-cicd-demo 是一个用于演示 Python（FastAPI）项目 CI/CD 流水线的练习项目，我用这个项目来练习自动镜像构建和部署。\n在workflow里实现代码格式审查、代码自动测试、Docker 镜像自动构建、阿里云服务器自动部署，以及部署失败后的自动回退老版本。\n">
+<meta property='og:description' content="背景 项目代码：https://github.com/rusthx/fastapi-cicd-demo fastapi-cicd-demo 是一个用于演示 Python（FastAPI）项目 CI/CD 流水线的练习项目，我用这个项目来练习自动镜像构建和部署。\n">
 <meta property='og:url' content='https://rusthx.github.io/p/github-action%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A05_%E8%87%AA%E5%8A%A8%E9%95%9C%E5%83%8F%E6%89%93%E5%8C%85%E5%8F%8A%E9%83%A8%E7%BD%B2/'>
 <meta property='og:site_name' content='rustWood'>
 <meta property='og:type' content='article'><meta property='article:section' content='Post' /><meta property='article:tag' content='Github Action' /><meta property='article:published_time' content='2026-04-27T15:25:08&#43;08:00'/><meta property='article:modified_time' content='2026-04-27T15:25:08&#43;08:00'/>
 <meta name="twitter:title" content="Github Action实践练习5_自动镜像打包及部署">
-<meta name="twitter:description" content="背景 fastapi-cicd-demo 是一个用于演示 Python（FastAPI）项目 CI/CD 流水线的练习项目，我用这个项目来练习自动镜像构建和部署。\n在workflow里实现代码格式审查、代码自动测试、Docker 镜像自动构建、阿里云服务器自动部署，以及部署失败后的自动回退老版本。\n">        
+<meta name="twitter:description" content="背景 项目代码：https://github.com/rusthx/fastapi-cicd-demo fastapi-cicd-demo 是一个用于演示 Python（FastAPI）项目 CI/CD 流水线的练习项目，我用这个项目来练习自动镜像构建和部署。\n">        
     </head>
     <body class="
     article-page
@@ -273,20 +273,20 @@
         <li><a href="#ssh连接到服务器自动部署及回退">SSH连接到服务器自动部署及回退</a></li>
       </ol>
     </li>
-    <li><a href="#成功">成功</a></li>
+    <li><a href="#监控引入">监控引入</a></li>
+    <li><a href="#运行成功">运行成功</a></li>
     <li><a href="#安全改造">安全改造</a>
       <ol>
         <li><a href="#创建部署用户">创建部署用户</a></li>
         <li><a href="#部署用户ssh密钥">部署用户ssh密钥</a></li>
         <li><a href="#封装部署容器逻辑为脚本">封装部署容器逻辑为脚本</a></li>
         <li><a href="#脚本权限控制">脚本权限控制</a></li>
-        <li><a href="#改造workflow">改造workflow</a></li>
+        <li><a href="#旧版容器部署代码参考">旧版容器部署代码参考</a></li>
         <li><a href="#其他安全改造思路">其他安全改造思路</a></li>
       </ol>
     </li>
     <li><a href="#git提交触发">git提交触发</a></li>
-    <li><a href="#附件代码安全改造前">附件代码（安全改造前）</a></li>
-    <li><a href="#附件代码安全改造后">附件代码（安全改造后）</a></li>
+    <li><a href="#完整ci-cdyml代码">完整ci-cd.yml代码</a></li>
   </ol>
 </nav>
         </div>
@@ -345,13 +345,17 @@
     
     
     <h2 id="背景">背景
-</h2><p>fastapi-cicd-demo 是一个用于演示 Python（FastAPI）项目 CI/CD 流水线的练习项目，我用这个项目来练习自动镜像构建和部署。</p>
+</h2><blockquote>
+<p>项目代码：https://github.com/rusthx/fastapi-cicd-demo
+fastapi-cicd-demo 是一个用于演示 Python（FastAPI）项目 CI/CD 流水线的练习项目，我用这个项目来练习自动镜像构建和部署。</p>
+</blockquote>
 <p>在workflow里实现代码格式审查、代码自动测试、Docker 镜像自动构建、阿里云服务器自动部署，以及部署失败后的自动回退老版本。</p>
 <p>用阿里云是因为阿里云有免费额度，任何可以拉取GitHub 镜像的远程服务器都可以。如果不能拉取GitHub镜像，也可以改造我的workflow，将镜像推到harbor仓库里，再从harbor仓库拉取镜像。（这才是实际生产环境的流程，只是我懒得部署harbor加上没有多余的服务器，所以直接把镜像放在GitHub里。）</p>
 <p>自动部署到阿里云的服务器里是用docker部署的，如果有k8s集群，也可以改造我的workflow，部署到k8s集群里。</p>
 <h2 id="前置准备">前置准备
 </h2><h3 id="开启阿里云服务器的指定端口">开启阿里云服务器的指定端口
-</h3><p>在阿里云的实例控制台里，网络与安全组-&gt;入方向-&gt;访问来源任何（0.0.0.0），访问端口8000。开启端口后才能从本地访问到后面部署的fastapi服务。</p>
+</h3><p>在阿里云的实例控制台里，网络与安全组-&gt;入方向-&gt;访问来源任何（0.0.0.0），访问端口8000。开启端口后才能从本地访问到后面部署的fastapi服务。
+后续引入Prometheus和Grafana监控时需要开启9090和3000端口。</p>
 <p><img src="/p/github-action%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A05_%E8%87%AA%E5%8A%A8%E9%95%9C%E5%83%8F%E6%89%93%E5%8C%85%E5%8F%8A%E9%83%A8%E7%BD%B2/1.png"
 	width="1920"
 	height="1052"
@@ -406,47 +410,103 @@ DEPLOY_USER（ssh连接的用户，必须有docker权限才能运行docker容器
 </span><span class="lnt">24
 </span><span class="lnt">25
 </span><span class="lnt">26
-</span><span class="lnt">27
-</span><span class="lnt">28
-</span><span class="lnt">29
-</span><span class="lnt">30
-</span><span class="lnt">31
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">lint</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l">Lint</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l">ubuntu-22.04</span><span class="w">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="w">  </span><span class="nt">lint</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l">Lint</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l">ubuntu-22.04</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">steps</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Checkout 代码</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">actions/checkout@v6</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">steps</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Checkout 代码</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">actions/checkout@v6</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">设置 Python ${{ env.PYTHON_VERSION }}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">actions/setup-python@v6</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">with</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">python-version</span><span class="p">:</span><span class="w"> </span><span class="l">${{ env.PYTHON_VERSION }}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">cache</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;pip&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">设置 Python ${{ env.PYTHON_VERSION }}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">actions/setup-python@v6</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">with</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">python-version</span><span class="p">:</span><span class="w"> </span><span class="l">${{ env.PYTHON_VERSION }}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">cache</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;pip&#39;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># 把多个 pip install 命令放在同一个 run 块里</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">安装依赖</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">        python -m pip install --upgrade pip
-</span></span></span><span class="line"><span class="cl"><span class="sd">        pip install flake8
-</span></span></span><span class="line"><span class="cl"><span class="sd">        pip install -r requirements.txt</span><span class="w">        
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">安装 pre-commit</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l">python -m pip install --upgrade pip &amp;&amp; pip install pre-commit</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">运行 flake8 检查</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">        echo &#34;=========================================&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">        echo &#34;  Flake8 代码规范检查&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">        echo &#34;=========================================&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">        flake8 app/ tests/ \
-</span></span></span><span class="line"><span class="cl"><span class="sd">          --statistics \
-</span></span></span><span class="line"><span class="cl"><span class="sd">          --count \
-</span></span></span><span class="line"><span class="cl"><span class="sd">          --show-source
-</span></span></span><span class="line"><span class="cl"><span class="sd">        echo &#34;代码规范检查通过！&#34;</span><span class="w">        
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="c"># 缓存 pre-commit 的虚拟环境</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">缓存 pre-commit 环境</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">actions/cache@v5</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">with</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l">~/.cache/pre-commit</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">pre-commit|${{ env.PYTHON_VERSION }}|${{ hashFiles(&#39;.pre-commit-config.yaml&#39;) }}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">运行 pre-commit</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l">pre-commit run --all-files</span><span class="w">
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><p>没太多需要介绍的，就是下载项目的python依赖和flask8，用flask8对项目做规范检查。<code>flake8 app/ tests/ --statistics --count --show-source</code>。</p>
+</div><p>本地和ci引入pre-commit，pre-commit配置文件<code>.pre-commit-config.yaml</code>,配置了ruff。本地<code>git commit</code>时用ruff检查代码格式和规范。</p>
+<p>本地引入pre-commit流程：</p>
+<ol>
+<li>编辑配置文件。在项目根目录下创建<code>.pre-commit-config.yaml</code>。</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># pre-commit 钩子配置</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># 文档：https://pre-commit.com/</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">repos</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># ─── 通用格式检查 ───</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">repo</span><span class="p">:</span><span class="w"> </span><span class="l">https://github.com/pre-commit/pre-commit-hooks</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">rev</span><span class="p">:</span><span class="w"> </span><span class="l">v5.0.0</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">hooks</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">trailing-whitespace       </span><span class="w"> </span><span class="c"># 删除行尾空白</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">end-of-file-fixer         </span><span class="w"> </span><span class="c"># 确保文件末尾有换行</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">check-yaml                </span><span class="w"> </span><span class="c"># YAML 语法检查</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">check-added-large-files   </span><span class="w"> </span><span class="c"># 防止提交大文件</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span><span class="p">[</span><span class="s1">&#39;--maxkb=500&#39;</span><span class="p">]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">check-merge-conflict      </span><span class="w"> </span><span class="c"># 检查合并冲突标记</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># ─── ruff 代码规范检查 + 自动格式化 ───</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span>- <span class="nt">repo</span><span class="p">:</span><span class="w"> </span><span class="l">https://github.com/astral-sh/ruff-pre-commit</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">rev</span><span class="p">:</span><span class="w"> </span><span class="l">v0.15.12</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">hooks</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">ruff                 </span><span class="w"> </span><span class="c"># 代码规范检查 + 自动修复</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">args</span><span class="p">:</span><span class="w"> </span><span class="p">[</span>--<span class="l">fix]</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">ruff-format          </span><span class="w"> </span><span class="c"># 自动格式化</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># ─── 排除不检查的文件 ───</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">exclude</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;^( migrations/|\.github/ )&#39;</span><span class="w">
+</span></span></span></code></pre></td></tr></table>
+</div>
+</div><ol start="2">
+<li>下载pre-commit。<code>pip install pre-commit</code></li>
+<li>安装Git钩子脚本。<code>pre-commit install</code>。成功执行后，会看到类似 pre-commit installed at .git/hooks/pre-commit 的提示</li>
+<li>git commit时，pre-commit 会自动对暂存区的文件运行所有配置好的检查。
+也可以手动执行命令<code>pre-commit run --all-files</code>，这个命令会立即执行检查，如果Ruff自动修复了格式或语法问题，你需要用git add重新暂存这些被修改的文件，然后再次尝试提交。</li>
+</ol>
 <h3 id="单元测试">单元测试
 </h3><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
@@ -488,7 +548,7 @@ DEPLOY_USER（ssh连接的用户，必须有docker权限才能运行docker容器
 </span><span class="lnt">36
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">test</span><span class="p">:</span><span class="w">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="w">  </span><span class="nt">test</span><span class="p">:</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l">Test</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l">ubuntu-22.04</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">needs</span><span class="p">:</span><span class="w"> </span><span class="l">lint                       </span><span class="w"> </span><span class="c"># 依赖 lint 通过后才执行</span><span class="w">
@@ -593,9 +653,18 @@ DEPLOY_USER（ssh连接的用户，必须有docker权限才能运行docker容器
 </span><span class="lnt">60
 </span><span class="lnt">61
 </span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
+</span><span class="lnt">69
+</span><span class="lnt">70
+</span><span class="lnt">71
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="nt">build</span><span class="p">:</span><span class="w">
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="w">  </span><span class="nt">build</span><span class="p">:</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l">Build Image</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l">ubuntu-22.04</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">needs</span><span class="p">:</span><span class="w"> </span><span class="l">test                       </span><span class="w"> </span><span class="c"># 依赖测试通过后才构建</span><span class="w">
@@ -604,7 +673,7 @@ DEPLOY_USER（ssh连接的用户，必须有docker权限才能运行docker容器
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l">github.event_name == &#39;push&#39;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">outputs</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">image_tag</span><span class="p">:</span><span class="w"> </span><span class="l">${{ steps.meta.outputs.tags }}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">image_tag</span><span class="p">:</span><span class="w"> </span><span class="l">${{ steps.single-tag.outputs.tag }}</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">steps</span><span class="p">:</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Checkout 代码</span><span class="w">
@@ -631,6 +700,15 @@ DEPLOY_USER（ssh连接的用户，必须有docker权限才能运行docker容器
 </span></span></span><span class="line"><span class="cl"><span class="sd">            type=sha,prefix=
 </span></span></span><span class="line"><span class="cl"><span class="sd">            # 始终添加 latest 标签（仅 main 分支）
 </span></span></span><span class="line"><span class="cl"><span class="sd">            type=raw,value=latest,enable=${{ github.ref == &#39;refs/heads/main&#39; }}</span><span class="w">            
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">提取第一个镜像标签</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">single-tag</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">          ALL_TAGS=&#34;${{ steps.meta.outputs.tags }}&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sd">          # 提取第一个非空标签行
+</span></span></span><span class="line"><span class="cl"><span class="sd">          FIRST_TAG=$(echo &#34;$ALL_TAGS&#34; | head -n 1 | xargs)
+</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;提取的部署标签: $FIRST_TAG&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;tag=$FIRST_TAG&#34; &gt;&gt; &#34;$GITHUB_OUTPUT&#34;</span><span class="w">          
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l">设置 Docker Buildx</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">docker/setup-buildx-action@v4</span><span class="w">
@@ -664,6 +742,7 @@ DEPLOY_USER（ssh连接的用户，必须有docker权限才能运行docker容器
 <li>Checkout，拉取项目代码。</li>
 <li>复用docker官方发的login-action，登录ghcr（GitHub Container Repository，Github容器仓库）。</li>
 <li>复用docker官方发的metadata-action，根据提交的tag和分支生成容器的元数据。</li>
+<li>生成的标签可能有两个，这里会报错，所以提取出第一个标签。</li>
 <li>复用docker官方发的setup-buildx-action，设置buildx，它支持更高级的构建特性（多平台构建、缓存导出等）。</li>
 <li>复用docker官方发的build-push-action，构建并推送镜像，利用 GHA 缓存层加速构建，在依赖不变时让每次推送的反馈时间缩短到秒级。</li>
 <li>构建推送完成，输出镜像信息。</li>
@@ -703,237 +782,63 @@ DEPLOY_USER（ssh连接的用户，必须有docker权限才能运行docker容器
 <h3 id="ssh连接到服务器自动部署及回退">SSH连接到服务器自动部署及回退
 </h3><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">  1
-</span><span class="lnt">  2
-</span><span class="lnt">  3
-</span><span class="lnt">  4
-</span><span class="lnt">  5
-</span><span class="lnt">  6
-</span><span class="lnt">  7
-</span><span class="lnt">  8
-</span><span class="lnt">  9
-</span><span class="lnt"> 10
-</span><span class="lnt"> 11
-</span><span class="lnt"> 12
-</span><span class="lnt"> 13
-</span><span class="lnt"> 14
-</span><span class="lnt"> 15
-</span><span class="lnt"> 16
-</span><span class="lnt"> 17
-</span><span class="lnt"> 18
-</span><span class="lnt"> 19
-</span><span class="lnt"> 20
-</span><span class="lnt"> 21
-</span><span class="lnt"> 22
-</span><span class="lnt"> 23
-</span><span class="lnt"> 24
-</span><span class="lnt"> 25
-</span><span class="lnt"> 26
-</span><span class="lnt"> 27
-</span><span class="lnt"> 28
-</span><span class="lnt"> 29
-</span><span class="lnt"> 30
-</span><span class="lnt"> 31
-</span><span class="lnt"> 32
-</span><span class="lnt"> 33
-</span><span class="lnt"> 34
-</span><span class="lnt"> 35
-</span><span class="lnt"> 36
-</span><span class="lnt"> 37
-</span><span class="lnt"> 38
-</span><span class="lnt"> 39
-</span><span class="lnt"> 40
-</span><span class="lnt"> 41
-</span><span class="lnt"> 42
-</span><span class="lnt"> 43
-</span><span class="lnt"> 44
-</span><span class="lnt"> 45
-</span><span class="lnt"> 46
-</span><span class="lnt"> 47
-</span><span class="lnt"> 48
-</span><span class="lnt"> 49
-</span><span class="lnt"> 50
-</span><span class="lnt"> 51
-</span><span class="lnt"> 52
-</span><span class="lnt"> 53
-</span><span class="lnt"> 54
-</span><span class="lnt"> 55
-</span><span class="lnt"> 56
-</span><span class="lnt"> 57
-</span><span class="lnt"> 58
-</span><span class="lnt"> 59
-</span><span class="lnt"> 60
-</span><span class="lnt"> 61
-</span><span class="lnt"> 62
-</span><span class="lnt"> 63
-</span><span class="lnt"> 64
-</span><span class="lnt"> 65
-</span><span class="lnt"> 66
-</span><span class="lnt"> 67
-</span><span class="lnt"> 68
-</span><span class="lnt"> 69
-</span><span class="lnt"> 70
-</span><span class="lnt"> 71
-</span><span class="lnt"> 72
-</span><span class="lnt"> 73
-</span><span class="lnt"> 74
-</span><span class="lnt"> 75
-</span><span class="lnt"> 76
-</span><span class="lnt"> 77
-</span><span class="lnt"> 78
-</span><span class="lnt"> 79
-</span><span class="lnt"> 80
-</span><span class="lnt"> 81
-</span><span class="lnt"> 82
-</span><span class="lnt"> 83
-</span><span class="lnt"> 84
-</span><span class="lnt"> 85
-</span><span class="lnt"> 86
-</span><span class="lnt"> 87
-</span><span class="lnt"> 88
-</span><span class="lnt"> 89
-</span><span class="lnt"> 90
-</span><span class="lnt"> 91
-</span><span class="lnt"> 92
-</span><span class="lnt"> 93
-</span><span class="lnt"> 94
-</span><span class="lnt"> 95
-</span><span class="lnt"> 96
-</span><span class="lnt"> 97
-</span><span class="lnt"> 98
-</span><span class="lnt"> 99
-</span><span class="lnt">100
-</span><span class="lnt">101
-</span><span class="lnt">102
-</span><span class="lnt">103
-</span><span class="lnt">104
-</span><span class="lnt">105
-</span><span class="lnt">106
-</span><span class="lnt">107
-</span><span class="lnt">108
-</span><span class="lnt">109
-</span><span class="lnt">110
-</span><span class="lnt">111
-</span><span class="lnt">112
-</span><span class="lnt">113
-</span><span class="lnt">114
-</span><span class="lnt">115
-</span><span class="lnt">116
-</span><span class="lnt">117
-</span><span class="lnt">118
-</span><span class="lnt">119
-</span><span class="lnt">120
-</span><span class="lnt">121
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="w">  </span><span class="nt">deploy</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l">Deploy</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Deploy to Aliyun ECS</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l">ubuntu-22.04</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">needs</span><span class="p">:</span><span class="w"> </span><span class="l">build</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l">github.ref == &#39;refs/heads/main&#39; || startsWith(github.ref, &#39;refs/tags/&#39;)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">environment</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">production                  </span><span class="w"> </span><span class="c"># 需要在 GitHub Settings → Environments 中配置</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l">http://${{ vars.DEPLOY_HOST }}:8000</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l">github.event_name == &#39;push&#39;</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">environment</span><span class="p">:</span><span class="w"> </span><span class="l">production</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">steps</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l">Checkout 代码</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">actions/checkout@v6</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l">确定部署版本标签</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">version</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">          if [[ &#34;${{ github.ref }}&#34; == refs/tags/* ]]; then
-</span></span></span><span class="line"><span class="cl"><span class="sd">            # 从 tag 提取版本号：refs/tags/v1.0.0 → v1.0.0
-</span></span></span><span class="line"><span class="cl"><span class="sd">            VERSION=&#34;${GITHUB_REF#refs/tags/}&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">          else
-</span></span></span><span class="line"><span class="cl"><span class="sd">            # main 分支使用 latest
-</span></span></span><span class="line"><span class="cl"><span class="sd">            VERSION=&#34;latest&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">          fi
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;version=$VERSION&#34; &gt;&gt; &#34;$GITHUB_OUTPUT&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34; 部署版本: $VERSION&#34;</span><span class="w">          
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="c"># 通过 SSH 连接远程服务器执行部署（含自动回退）</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l">SSH 部署到服务器</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">appleboy/ssh-action@v1.0.3</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">通过专用脚本安全部署</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">appleboy/ssh-action@v1</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">with</span><span class="p">:</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l">${{ vars.DEPLOY_HOST }}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l">${{ secrets.DEPLOY_USER }}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">${{ secrets.DEPLOY_SSH_KEY }}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="m">22</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">command_timeout</span><span class="p">:</span><span class="w"> </span><span class="l">10m</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l">deployer</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">${{ secrets.DEPLOY_SSH_KEY_DEPLOYER }}</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">script</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">            echo &#34;=========================================&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">            echo &#34;  开始部署 fastapi-cicd-demo&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">            echo &#34;  版本: ${{ steps.version.outputs.version }}&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">            echo &#34;=========================================&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">            # 1. 登录 GitHub Container Registry
-</span></span></span><span class="line"><span class="cl"><span class="sd">            echo &#34;${{ secrets.GITHUB_TOKEN }}&#34; | docker login ghcr.io -u ${{ github.actor }} --password-stdin || { echo &#34;docker login 失败&#34;; exit 1; }
-</span></span></span><span class="line"><span class="cl"><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">            # 2. 拉取新镜像
-</span></span></span><span class="line"><span class="cl"><span class="sd">            IMAGE=&#34;${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">            docker pull &#34;$IMAGE&#34; || { echo &#34;docker pull 失败&#34;; exit 1; }
-</span></span></span><span class="line"><span class="cl"><span class="sd">            echo &#34;镜像拉取成功: $IMAGE&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">            # 3. 检查旧容器是否存在（用于回退）
-</span></span></span><span class="line"><span class="cl"><span class="sd">            OLD_CONTAINER_EXISTS=false
-</span></span></span><span class="line"><span class="cl"><span class="sd">            if docker inspect fastapi-cicd-demo &gt; /dev/null 2&gt;&amp;1; then
-</span></span></span><span class="line"><span class="cl"><span class="sd">              OLD_CONTAINER_EXISTS=true
-</span></span></span><span class="line"><span class="cl"><span class="sd">              echo &#34;发现旧容器&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">            else
-</span></span></span><span class="line"><span class="cl"><span class="sd">              echo &#34;未发现旧容器，首次部署&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">            fi
-</span></span></span><span class="line"><span class="cl"><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">            # 4. 停止旧容器（保留，不删除，用于回退）
-</span></span></span><span class="line"><span class="cl"><span class="sd">            docker stop fastapi-cicd-demo 2&gt;/dev/null || true
-</span></span></span><span class="line"><span class="cl"><span class="sd">            echo &#34;旧容器已停止&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">            # 5. 启动新容器（临时名称）
-</span></span></span><span class="line"><span class="cl"><span class="sd">            docker run -d \
-</span></span></span><span class="line"><span class="cl"><span class="sd">              --name fastapi-cicd-demo-new \
-</span></span></span><span class="line"><span class="cl"><span class="sd">              --restart unless-stopped \
-</span></span></span><span class="line"><span class="cl"><span class="sd">              -p 8000:8000 \
-</span></span></span><span class="line"><span class="cl"><span class="sd">              -e ENVIRONMENT=production \
-</span></span></span><span class="line"><span class="cl"><span class="sd">              &#34;$IMAGE&#34; || { echo &#34;docker run 失败&#34;; exit 1; }
-</span></span></span><span class="line"><span class="cl"><span class="sd">            echo &#34;新容器已启动&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">            # 6. 等待新容器启动并做健康检查
-</span></span></span><span class="line"><span class="cl"><span class="sd">            echo &#34;等待新服务启动...&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">            sleep 5
-</span></span></span><span class="line"><span class="cl"><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">            HEALTH=$(curl -sf http://localhost:8000/health || echo &#34;FAILED&#34;)
-</span></span></span><span class="line"><span class="cl"><span class="sd">            echo &#34;健康检查结果: $HEALTH&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">            if echo &#34;$HEALTH&#34; | grep -q &#34;healthy&#34;; then
-</span></span></span><span class="line"><span class="cl"><span class="sd">              #  部署成功：清理旧容器，重命名新容器 
-</span></span></span><span class="line"><span class="cl"><span class="sd">              echo &#34; 新容器健康检查通过！&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">              docker rm fastapi-cicd-demo 2&gt;/dev/null || true
-</span></span></span><span class="line"><span class="cl"><span class="sd">              docker rename fastapi-cicd-demo-new fastapi-cicd-demo
-</span></span></span><span class="line"><span class="cl"><span class="sd">              docker image prune -f
-</span></span></span><span class="line"><span class="cl"><span class="sd">              echo &#34;部署成功！&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">            else
-</span></span></span><span class="line"><span class="cl"><span class="sd">              # ── 部署失败：回退到旧版本 ──
-</span></span></span><span class="line"><span class="cl"><span class="sd">              echo &#34;新容器健康检查失败！&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">              docker logs fastapi-cicd-demo-new 2&gt;/dev/null || true
-</span></span></span><span class="line"><span class="cl"><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">              # 删除失败的新容器
-</span></span></span><span class="line"><span class="cl"><span class="sd">              docker stop fastapi-cicd-demo-new 2&gt;/dev/null || true
-</span></span></span><span class="line"><span class="cl"><span class="sd">              docker rm fastapi-cicd-demo-new 2&gt;/dev/null || true
-</span></span></span><span class="line"><span class="cl"><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">              # 回退：重新启动旧容器
-</span></span></span><span class="line"><span class="cl"><span class="sd">              if [ &#34;$OLD_CONTAINER_EXISTS&#34; = true ]; then
-</span></span></span><span class="line"><span class="cl"><span class="sd">                echo &#34; 正在回退到旧版本...&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">                docker start fastapi-cicd-demo
-</span></span></span><span class="line"><span class="cl"><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">                sleep 3
-</span></span></span><span class="line"><span class="cl"><span class="sd">                ROLLBACK_HEALTH=$(curl -sf http://localhost:8000/health || echo &#34;FAILED&#34;)
-</span></span></span><span class="line"><span class="cl"><span class="sd">                echo &#34;回退后健康检查: $ROLLBACK_HEALTH&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">                echo &#34;已回退到旧版本&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">              fi
-</span></span></span><span class="line"><span class="cl"><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">            if [ -z &#34;${{ needs.build.outputs.image_tag }}&#34; ]; then
+</span></span></span><span class="line"><span class="cl"><span class="sd">              echo &#34;错误：未获取到有效的镜像标签！&#34;
 </span></span></span><span class="line"><span class="cl"><span class="sd">              exit 1
-</span></span></span><span class="line"><span class="cl"><span class="sd">            fi</span><span class="w">            
+</span></span></span><span class="line"><span class="cl"><span class="sd">            fi
+</span></span></span><span class="line"><span class="cl"><span class="sd">            echo &#34;即将部署镜像: ${{ needs.build.outputs.image_tag }}&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sd">            sudo /usr/local/bin/deploy-fastapi-app.sh ${{ needs.build.outputs.image_tag }}</span><span class="w">            
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l">部署摘要</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
@@ -941,7 +846,7 @@ DEPLOY_USER（ssh连接的用户，必须有docker权限才能运行docker容器
 </span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;&#34; &gt;&gt; $GITHUB_STEP_SUMMARY
 </span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;| 项目 | 值 |&#34; &gt;&gt; $GITHUB_STEP_SUMMARY
 </span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;|------|-----|&#34; &gt;&gt; $GITHUB_STEP_SUMMARY
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;| 版本 | \`${{ steps.version.outputs.version }}\` |&#34; &gt;&gt; $GITHUB_STEP_SUMMARY
+</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;| 版本 | \`${{ needs.build.outputs.image_tag }}\` |&#34; &gt;&gt; $GITHUB_STEP_SUMMARY
 </span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;| 触发者 | @${{ github.actor }} |&#34; &gt;&gt; $GITHUB_STEP_SUMMARY
 </span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;| Commit | \`${{ github.sha }}\` |&#34; &gt;&gt; $GITHUB_STEP_SUMMARY
 </span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;| 服务器 | \`${{ vars.DEPLOY_HOST }}\` |&#34; &gt;&gt; $GITHUB_STEP_SUMMARY
@@ -949,9 +854,58 @@ DEPLOY_USER（ssh连接的用户，必须有docker权限才能运行docker容器
 </span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;[查看服务](http://${{vars.DEPLOY_HOST }}:8000/docs)&#34; &gt;&gt; $GITHUB_STEP_SUMMARY</span><span class="w">          
 </span></span></span></code></pre></td></tr></table>
 </div>
-</div><p>这里只复用了ssh连接的action，自动部署及回退的代码写到很详细，不多讲。</p>
-<h2 id="成功">成功
-</h2><p><img src="/p/github-action%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A05_%E8%87%AA%E5%8A%A8%E9%95%9C%E5%83%8F%E6%89%93%E5%8C%85%E5%8F%8A%E9%83%A8%E7%BD%B2/2.png"
+</div><p>这里只复用了ssh连接的action，运行项目部署脚本<code>/usr/local/bin/deploy-fastapi-app.sh</code>,自动部署及回退。脚本内容、创建用户、日志配置在<a class="link" href="#%e5%ae%89%e5%85%a8%e6%94%b9%e9%80%a0" >安全改造</a>里。</p>
+<blockquote>
+<p>最开始的一版代码没有用自动部署的脚本，而是用一个有docker权限的用户直接ssh连接到服务器上执行docker操作，进行部署及回滚。
+但是这样很不安全。安全改造后将部署回退的逻辑封装成了脚本。部署用户只有执行这个脚本的权限。</p>
+</blockquote>
+<h2 id="监控引入">监控引入
+</h2><p>云原生项目自然也该有云原生的监控。这里引入了Prometheus+Grafana来监控。</p>
+<ol>
+<li>新增app/prometheus_metrics.py，封装 prometheus-fastapi-instrumentator，定义setup_metrics（）函数。</li>
+<li>编辑requirement.txt，新增<code>prometheus-fastapi-instrumentator==7.1.0</code>依赖。</li>
+<li>新增prometheus-yml，Prometheus抓取配置文件。</li>
+<li>新增grafana\provisioning\datasources\prometheus.yml,grafana的数据源配置文件。</li>
+<li>新增docker-compose.monitor.yml，监控容器的docker compose文件。</li>
+<li>3、4、5新增的三个文件放在服务器的<code>/usr/local/bin</code>下（生产环境不该这么放，不过这是我练手的项目，文件没多少，就随便放了）。</li>
+<li>服务器监控网络和监控容器初始化。服务器上执行<code>docker compose -f /usr/local/bin/docker-compose.monitor.yml up -d</code>。监控架构如下图</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-fallback" data-lang="fallback"><span class="line"><span class="cl">┌─────────────────────────────────────────────┐
+</span></span><span class="line"><span class="cl">│              Docker monitor 网络           │
+</span></span><span class="line"><span class="cl">│  ┌──────────────┐    ┌───────────────┐      │
+</span></span><span class="line"><span class="cl">│  │  prometheus  │◄───│    grafana    │      │
+</span></span><span class="line"><span class="cl">│  │   (9090)     │    │   (3000)      │      │
+</span></span><span class="line"><span class="cl">│  └──────┬───────┘    └───────────────┘      │
+</span></span><span class="line"><span class="cl">│         │ 抓取 /metrics                       │
+</span></span><span class="line"><span class="cl">│         ▼                                     │
+</span></span><span class="line"><span class="cl">│  ┌──────────────┐                            │
+</span></span><span class="line"><span class="cl">│  │  fastapi-app │  ← deploy-fastapi-app.sh   │
+</span></span><span class="line"><span class="cl">│  │   (8000)     │    蓝绿部署 + 自动回退      │
+</span></span><span class="line"><span class="cl">│  └──────────────┘                            │
+</span></span><span class="line"><span class="cl">└─────────────────────────────────────────────┘
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p>后续 CI/CD 发布时，GitHub Actions 的 SSH 部署命令完全不变，脚本会自动处理网络接入。Prometheus 和 Grafana 作为常驻基础设施，只在初始化时启动一次。</p>
+<h2 id="运行成功">运行成功
+</h2><p><strong>验证fastapi项目</strong>
+<img src="/p/github-action%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A05_%E8%87%AA%E5%8A%A8%E9%95%9C%E5%83%8F%E6%89%93%E5%8C%85%E5%8F%8A%E9%83%A8%E7%BD%B2/2.png"
 	width="1920"
 	height="1052"
 	srcset="/p/github-action%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A05_%E8%87%AA%E5%8A%A8%E9%95%9C%E5%83%8F%E6%89%93%E5%8C%85%E5%8F%8A%E9%83%A8%E7%BD%B2/2_hu1594376476904005428.png 480w, /p/github-action%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A05_%E8%87%AA%E5%8A%A8%E9%95%9C%E5%83%8F%E6%89%93%E5%8C%85%E5%8F%8A%E9%83%A8%E7%BD%B2/2_hu6185412101775040606.png 1024w"
@@ -961,6 +915,69 @@ DEPLOY_USER（ssh连接的用户，必须有docker权限才能运行docker容器
 		class="gallery-image" 
 		data-flex-grow="182"
 		data-flex-basis="438px"
+	
+></p>
+<p><strong>验证 Prometheus</strong></p>
+<ol>
+<li>浏览器访问：http://IP:9090</li>
+<li>进入 Status-&gt;Targets</li>
+<li>应该看到 fastapi-app 状态是 UP</li>
+<li>点击 fastapi-app 的 Endpoint 链接，能直接看到 /metrics 的原始数据</li>
+<li>可以在搜索框里输入几个指标查看情况。点击table或graph查看数据表或者展示图。</li>
+</ol>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre tabindex="0" class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="c1"># http总请求数</span>
+</span></span><span class="line"><span class="cl">http_requests_total
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 总请求数（按状态码分组）</span>
+</span></span><span class="line"><span class="cl">sum by <span class="o">(</span>status_code<span class="o">)</span> <span class="o">(</span>http_requests_total<span class="o">)</span>
+</span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 请求延迟分布</span>
+</span></span><span class="line"><span class="cl">histogram_quantile<span class="o">(</span>0.95, rate<span class="o">(</span>http_request_duration_seconds_bucket<span class="o">[</span>5m<span class="o">]))</span>
+</span></span></code></pre></td></tr></table>
+</div>
+</div><p><img src="/p/github-action%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A05_%E8%87%AA%E5%8A%A8%E9%95%9C%E5%83%8F%E6%89%93%E5%8C%85%E5%8F%8A%E9%83%A8%E7%BD%B2/3.png"
+	width="1891"
+	height="861"
+	srcset="/p/github-action%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A05_%E8%87%AA%E5%8A%A8%E9%95%9C%E5%83%8F%E6%89%93%E5%8C%85%E5%8F%8A%E9%83%A8%E7%BD%B2/3_hu3884041226461185978.png 480w, /p/github-action%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A05_%E8%87%AA%E5%8A%A8%E9%95%9C%E5%83%8F%E6%89%93%E5%8C%85%E5%8F%8A%E9%83%A8%E7%BD%B2/3_hu2293449801215723509.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="219"
+		data-flex-basis="527px"
+	
+></p>
+<p><strong>验证 Grafana</strong></p>
+<ol>
+<li>浏览器访问：http://IP:3000</li>
+<li>账号admin，密码admin</li>
+<li>左侧Connections-&gt;Data Sources，确认Prometheus已自动配置好</li>
+<li>进入Explore，选择数据源 Prometheus</li>
+<li>在Metric下拉框里应该能看到http_requests_total等指标</li>
+<li>输入http_requests_total，点击 Run query，能看到折线图</li>
+</ol>
+<p><img src="/p/github-action%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A05_%E8%87%AA%E5%8A%A8%E9%95%9C%E5%83%8F%E6%89%93%E5%8C%85%E5%8F%8A%E9%83%A8%E7%BD%B2/4.png"
+	width="1903"
+	height="964"
+	srcset="/p/github-action%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A05_%E8%87%AA%E5%8A%A8%E9%95%9C%E5%83%8F%E6%89%93%E5%8C%85%E5%8F%8A%E9%83%A8%E7%BD%B2/4_hu13528099953912993988.png 480w, /p/github-action%E5%AE%9E%E8%B7%B5%E7%BB%83%E4%B9%A05_%E8%87%AA%E5%8A%A8%E9%95%9C%E5%83%8F%E6%89%93%E5%8C%85%E5%8F%8A%E9%83%A8%E7%BD%B2/4_hu4353234670191283270.png 1024w"
+	loading="lazy"
+	
+	
+		class="gallery-image" 
+		data-flex-grow="197"
+		data-flex-basis="473px"
 	
 ></p>
 <h2 id="安全改造">安全改造
@@ -1127,10 +1144,21 @@ DEPLOY_USER（ssh连接的用户，必须有docker权限才能运行docker容器
 </span><span class="lnt">123
 </span><span class="lnt">124
 </span><span class="lnt">125
+</span><span class="lnt">126
+</span><span class="lnt">127
+</span><span class="lnt">128
+</span><span class="lnt">129
+</span><span class="lnt">130
+</span><span class="lnt">131
+</span><span class="lnt">132
+</span><span class="lnt">133
+</span><span class="lnt">134
+</span><span class="lnt">135
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-shell" data-lang="shell"><span class="line"><span class="cl"><span class="cp">#!/bin/bash
-</span></span></span><span class="line"><span class="cl"><span class="cp"></span><span class="nb">set</span> -euo pipefail
+</span></span></span><span class="line"><span class="cl"><span class="cp"></span>
+</span></span><span class="line"><span class="cl"><span class="nb">set</span> -euo pipefail
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1">##############################</span>
 </span></span><span class="line"><span class="cl"><span class="c1"># 安全部署 fastapi-app 容器（含自动回退）</span>
@@ -1138,6 +1166,7 @@ DEPLOY_USER（ssh连接的用户，必须有docker权限才能运行docker容器
 </span></span><span class="line"><span class="cl"><span class="c1">##############################</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="nv">APP_NAME</span><span class="o">=</span><span class="s2">&#34;fastapi-app&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="nv">NETWORK_NAME</span><span class="o">=</span><span class="s2">&#34;monitor&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="nv">HEALTH_URL</span><span class="o">=</span><span class="s2">&#34;http://localhost:8000/health&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="nv">HEALTH_RETRIES</span><span class="o">=</span><span class="m">10</span>
 </span></span><span class="line"><span class="cl"><span class="nv">HEALTH_DELAY</span><span class="o">=</span><span class="m">3</span>
@@ -1164,7 +1193,7 @@ DEPLOY_USER（ssh连接的用户，必须有docker权限才能运行docker容器
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="nv">IMAGE_TAG</span><span class="o">=</span><span class="s2">&#34;</span><span class="nv">$1</span><span class="s2">&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="c1"># 只拒绝包含常见 Shell 注入字符的字符串，其余镜像标签放行</span>
-</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="nb">echo</span> <span class="s2">&#34;</span><span class="nv">$IMAGE_TAG</span><span class="s2">&#34;</span> <span class="p">|</span> grep -q <span class="s1">&#39;[;&amp;$`|*?(){}!&lt;&gt;\\&#39;</span><span class="se">\&#39;</span><span class="s1">&#39;&#34;]&#39;</span> <span class="p">;</span> <span class="k">then</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> <span class="nb">echo</span> <span class="s2">&#34;</span><span class="nv">$IMAGE_TAG</span><span class="s2">&#34;</span> <span class="p">|</span> grep -q <span class="s2">&#34;[;&amp;\$\`|*?(){}!&lt;&gt;\\&#39;\&#34;]&#34;</span> <span class="p">;</span> <span class="k">then</span>
 </span></span><span class="line"><span class="cl">    log <span class="s2">&#34;错误: 镜像 TAG 包含危险字符，禁止执行&#34;</span>
 </span></span><span class="line"><span class="cl">    <span class="nb">exit</span> <span class="m">1</span>
 </span></span><span class="line"><span class="cl"><span class="k">fi</span>
@@ -1175,6 +1204,11 @@ DEPLOY_USER（ssh连接的用户，必须有docker权限才能运行docker容器
 </span></span><span class="line"><span class="cl">log <span class="s2">&#34;拉取新镜像...&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="nv">$DOCKER</span> pull <span class="s2">&#34;</span><span class="nv">$IMAGE_TAG</span><span class="s2">&#34;</span>
 </span></span><span class="line"><span class="cl">
+</span></span><span class="line"><span class="cl"><span class="c1"># 确保监控网络存在（用于 Prometheus/Grafana 连通）</span>
+</span></span><span class="line"><span class="cl"><span class="k">if</span> ! <span class="nv">$DOCKER</span> network inspect <span class="s2">&#34;</span><span class="nv">$NETWORK_NAME</span><span class="s2">&#34;</span> &gt;/dev/null 2&gt;<span class="p">&amp;</span>1<span class="p">;</span> <span class="k">then</span>
+</span></span><span class="line"><span class="cl">    log <span class="s2">&#34;创建 Docker 网络: </span><span class="nv">$NETWORK_NAME</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="nv">$DOCKER</span> network create <span class="s2">&#34;</span><span class="nv">$NETWORK_NAME</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl"><span class="k">fi</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl">log <span class="s2">&#34;检查并清理可能冲突的旧容器...&#34;</span>
 </span></span><span class="line"><span class="cl">
@@ -1202,8 +1236,8 @@ DEPLOY_USER（ssh连接的用户，必须有docker权限才能运行docker容器
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1">#  最后确认，8000端口当前没有被占用（双重保险）</span>
 </span></span><span class="line"><span class="cl"><span class="k">if</span> ss -tuln <span class="p">|</span> grep -q <span class="s1">&#39;:8000&#39;</span><span class="p">;</span> <span class="k">then</span>
-</span></span><span class="line"><span class="cl">    log <span class="s2">&#34;警告: 8000端口仍被占用，尝试清理...&#34;</span>
-</span></span><span class="line"><span class="cl">    <span class="c1"># 查找并强制移除占用8000端口的其他容器（非我们的目标容器）</span>
+</span></span><span class="line"><span class="cl">    log <span class="s2">&#34;警告: 8000端口仍被占用,尝试清理...&#34;</span>
+</span></span><span class="line"><span class="cl">    <span class="c1"># 查找并强制移除占用8000端口的其他容器</span>
 </span></span><span class="line"><span class="cl">    <span class="nv">PORT_CONTAINER_ID</span><span class="o">=</span><span class="k">$(</span><span class="nv">$DOCKER</span> ps -q --filter <span class="s2">&#34;publish=8000&#34;</span><span class="k">)</span>
 </span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="o">[</span> -n <span class="s2">&#34;</span><span class="nv">$PORT_CONTAINER_ID</span><span class="s2">&#34;</span> <span class="o">]</span><span class="p">;</span> <span class="k">then</span>
 </span></span><span class="line"><span class="cl">        log <span class="s2">&#34;移除占用8000端口的容器: </span><span class="nv">$PORT_CONTAINER_ID</span><span class="s2">&#34;</span>
@@ -1211,10 +1245,11 @@ DEPLOY_USER（ssh连接的用户，必须有docker权限才能运行docker容器
 </span></span><span class="line"><span class="cl">    <span class="k">fi</span>
 </span></span><span class="line"><span class="cl"><span class="k">fi</span>
 </span></span><span class="line"><span class="cl">
-</span></span><span class="line"><span class="cl"><span class="c1"># 启动新容器（只读根文件系统、限制内存、非特权）</span>
+</span></span><span class="line"><span class="cl"><span class="c1"># 启动新容器（只读根文件系统、限制内存、非特权，加入监控网络）</span>
 </span></span><span class="line"><span class="cl">log <span class="s2">&#34;启动新容器...&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="nv">$DOCKER</span> run -d <span class="se">\
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>    --name <span class="s2">&#34;</span><span class="nv">$APP_NAME</span><span class="s2">&#34;</span> <span class="se">\
+</span></span></span><span class="line"><span class="cl"><span class="se"></span>    --network <span class="s2">&#34;</span><span class="nv">$NETWORK_NAME</span><span class="s2">&#34;</span> <span class="se">\
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>    --restart unless-stopped <span class="se">\
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>    -p 8000:8000 <span class="se">\
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>    --memory 256m <span class="se">\
@@ -1223,7 +1258,7 @@ DEPLOY_USER（ssh连接的用户，必须有docker权限才能运行docker容器
 </span></span></span><span class="line"><span class="cl"><span class="se"></span>    <span class="s2">&#34;</span><span class="nv">$IMAGE_TAG</span><span class="s2">&#34;</span>
 </span></span><span class="line"><span class="cl">
 </span></span><span class="line"><span class="cl"><span class="c1"># 健康检查</span>
-</span></span><span class="line"><span class="cl">log <span class="s2">&#34;等待健康检查通过 (最多 </span><span class="si">${</span><span class="nv">HEALTH_RETRIES</span><span class="si">}</span><span class="s2"> 次)...&#34;</span>
+</span></span><span class="line"><span class="cl">log <span class="s2">&#34;等待健康检查通过，最多 </span><span class="si">${</span><span class="nv">HEALTH_RETRIES</span><span class="si">}</span><span class="s2"> 次...&#34;</span>
 </span></span><span class="line"><span class="cl"><span class="nv">SUCCESS</span><span class="o">=</span><span class="nb">false</span>
 </span></span><span class="line"><span class="cl"><span class="k">for</span> i in <span class="k">$(</span>seq <span class="m">1</span> <span class="nv">$HEALTH_RETRIES</span><span class="k">)</span><span class="p">;</span> <span class="k">do</span>
 </span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nv">$CURL</span> -sSf <span class="s2">&#34;</span><span class="nv">$HEALTH_URL</span><span class="s2">&#34;</span> &gt; /dev/null 2&gt;<span class="p">&amp;</span>1<span class="p">;</span> <span class="k">then</span>
@@ -1244,7 +1279,9 @@ DEPLOY_USER（ssh连接的用户，必须有docker权限才能运行docker容器
 </span></span><span class="line"><span class="cl">    <span class="nv">$DOCKER</span> stop <span class="s2">&#34;</span><span class="nv">$APP_NAME</span><span class="s2">&#34;</span> <span class="o">||</span> <span class="nb">true</span>
 </span></span><span class="line"><span class="cl">    <span class="nv">$DOCKER</span> rm <span class="s2">&#34;</span><span class="nv">$APP_NAME</span><span class="s2">&#34;</span> <span class="o">||</span> <span class="nb">true</span>
 </span></span><span class="line"><span class="cl">    <span class="k">if</span> <span class="nv">$DOCKER</span> inspect <span class="s2">&#34;</span><span class="nv">$BACKUP_CONTAINER</span><span class="s2">&#34;</span> &gt;/dev/null 2&gt;<span class="p">&amp;</span>1<span class="p">;</span> <span class="k">then</span>
+</span></span><span class="line"><span class="cl">        <span class="c1"># 回退时需要把备份容器加回监控网络</span>
 </span></span><span class="line"><span class="cl">        <span class="nv">$DOCKER</span> rename <span class="s2">&#34;</span><span class="nv">$BACKUP_CONTAINER</span><span class="s2">&#34;</span> <span class="s2">&#34;</span><span class="nv">$APP_NAME</span><span class="s2">&#34;</span>
+</span></span><span class="line"><span class="cl">        <span class="nv">$DOCKER</span> network connect <span class="s2">&#34;</span><span class="nv">$NETWORK_NAME</span><span class="s2">&#34;</span> <span class="s2">&#34;</span><span class="nv">$APP_NAME</span><span class="s2">&#34;</span> 2&gt;/dev/null <span class="o">||</span> <span class="nb">true</span>
 </span></span><span class="line"><span class="cl">        <span class="nv">$DOCKER</span> start <span class="s2">&#34;</span><span class="nv">$APP_NAME</span><span class="s2">&#34;</span>
 </span></span><span class="line"><span class="cl">        log <span class="s2">&#34;回退成功，旧容器已恢复运行&#34;</span>
 </span></span><span class="line"><span class="cl">    <span class="k">else</span>
@@ -1313,8 +1350,9 @@ DEPLOY_USER（ssh连接的用户，必须有docker权限才能运行docker容器
 </span></span><span class="line"><span class="cl">deployer <span class="nv">ALL</span><span class="o">=(</span>root<span class="o">)</span> NOPASSWD: /usr/local/bin/deploy-fastapi-app.sh *
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h3 id="改造workflow">改造workflow
-</h3><div class="highlight"><div class="chroma">
+</div><h3 id="旧版容器部署代码参考">旧版容器部署代码参考
+</h3><p>旧版的容器部署回退是放在ci里用一个有docker权限的用户做的，这样不太安全，后面做了安全改造。不过这里还是放下原版代码，以作参考。</p>
+<div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt"> 1
 </span><span class="lnt"> 2
@@ -1332,24 +1370,128 @@ DEPLOY_USER（ssh连接的用户，必须有docker权限才能运行docker容器
 </span><span class="lnt">14
 </span><span class="lnt">15
 </span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span><span class="lnt">33
+</span><span class="lnt">34
+</span><span class="lnt">35
+</span><span class="lnt">36
+</span><span class="lnt">37
+</span><span class="lnt">38
+</span><span class="lnt">39
+</span><span class="lnt">40
+</span><span class="lnt">41
+</span><span class="lnt">42
+</span><span class="lnt">43
+</span><span class="lnt">44
+</span><span class="lnt">45
+</span><span class="lnt">46
+</span><span class="lnt">47
+</span><span class="lnt">48
+</span><span class="lnt">49
+</span><span class="lnt">50
+</span><span class="lnt">51
+</span><span class="lnt">52
+</span><span class="lnt">53
+</span><span class="lnt">54
+</span><span class="lnt">55
+</span><span class="lnt">56
+</span><span class="lnt">57
+</span><span class="lnt">58
+</span><span class="lnt">59
+</span><span class="lnt">60
+</span><span class="lnt">61
+</span><span class="lnt">62
+</span><span class="lnt">63
+</span><span class="lnt">64
+</span><span class="lnt">65
+</span><span class="lnt">66
+</span><span class="lnt">67
+</span><span class="lnt">68
 </span></code></pre></td>
 <td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="w">  </span><span class="nt">deploy</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Deploy to Aliyun ECS</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l">ubuntu-22.04</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">needs</span><span class="p">:</span><span class="w"> </span><span class="l">build</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l">github.event_name == &#39;push&#39;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">environment</span><span class="p">:</span><span class="w"> </span><span class="l">production</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">steps</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">通过专用脚本安全部署</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">appleboy/ssh-action@v1</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">with</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l">${{ vars.DEPLOY_HOST }}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l">deployer                       </span><span class="w"> </span><span class="c"># 使用我们刚创建的普通用户</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">${{ secrets.DEPLOY_SSH_KEY_DEPLOYER }} </span><span class="w"> </span><span class="c"># 该用户对应的私钥</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">script</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">            sudo /usr/local/bin/deploy-fastapi-app.sh ${{ needs.build.outputs.image_tag }}</span><span class="w">            
+<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl">- <span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l">SSH 部署到服务器</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">appleboy/ssh-action@v1.0.3</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">with</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l">${{ vars.DEPLOY_HOST }}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l">${{ secrets.DEPLOY_USER }}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">${{ secrets.DEPLOY_SSH_KEY }}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="m">22</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">command_timeout</span><span class="p">:</span><span class="w"> </span><span class="l">10m</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">script</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
+</span></span></span><span class="line"><span class="cl"><span class="sd">      echo &#34;=========================================&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sd">      echo &#34;  开始部署 fastapi-cicd-demo&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sd">      echo &#34;  版本: ${{ steps.version.outputs.version }}&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sd">      echo &#34;=========================================&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sd">      # 1. 登录 GitHub Container Registry
+</span></span></span><span class="line"><span class="cl"><span class="sd">      echo &#34;${{ secrets.GITHUB_TOKEN }}&#34; | docker login ghcr.io -u ${{ github.actor }} --password-stdin || { echo &#34;docker login 失败&#34;; exit 1; }
+</span></span></span><span class="line"><span class="cl"><span class="sd">      # 2. 拉取新镜像
+</span></span></span><span class="line"><span class="cl"><span class="sd">      IMAGE=&#34;${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sd">      docker pull &#34;$IMAGE&#34; || { echo &#34;docker pull 失败&#34;; exit 1; }
+</span></span></span><span class="line"><span class="cl"><span class="sd">      echo &#34;镜像拉取成功: $IMAGE&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sd">      # 3. 检查旧容器是否存在（用于回退）
+</span></span></span><span class="line"><span class="cl"><span class="sd">      OLD_CONTAINER_EXISTS=false
+</span></span></span><span class="line"><span class="cl"><span class="sd">      if docker inspect fastapi-cicd-demo &gt; /dev/null 2&gt;&amp;1; then
+</span></span></span><span class="line"><span class="cl"><span class="sd">        OLD_CONTAINER_EXISTS=true
+</span></span></span><span class="line"><span class="cl"><span class="sd">        echo &#34;发现旧容器&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sd">      else
+</span></span></span><span class="line"><span class="cl"><span class="sd">        echo &#34;未发现旧容器，首次部署&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sd">      fi
+</span></span></span><span class="line"><span class="cl"><span class="sd">      # 4. 停止旧容器（保留，不删除，用于回退）
+</span></span></span><span class="line"><span class="cl"><span class="sd">      docker stop fastapi-cicd-demo 2&gt;/dev/null || true
+</span></span></span><span class="line"><span class="cl"><span class="sd">      echo &#34;旧容器已停止&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sd">      # 5. 启动新容器（临时名称）
+</span></span></span><span class="line"><span class="cl"><span class="sd">      docker run -d \
+</span></span></span><span class="line"><span class="cl"><span class="sd">        --name fastapi-cicd-demo-new \
+</span></span></span><span class="line"><span class="cl"><span class="sd">        --restart unless-stopped \
+</span></span></span><span class="line"><span class="cl"><span class="sd">        -p 8000:8000 \
+</span></span></span><span class="line"><span class="cl"><span class="sd">        -e ENVIRONMENT=production \
+</span></span></span><span class="line"><span class="cl"><span class="sd">        &#34;$IMAGE&#34; || { echo &#34;docker run 失败&#34;; exit 1; }
+</span></span></span><span class="line"><span class="cl"><span class="sd">      echo &#34;新容器已启动&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sd">      # 6. 等待新容器启动并做健康检查
+</span></span></span><span class="line"><span class="cl"><span class="sd">      echo &#34;等待新服务启动...&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sd">      sleep 5
+</span></span></span><span class="line"><span class="cl"><span class="sd">      HEALTH=$(curl -sf http://localhost:8000/health || echo &#34;FAILED&#34;)
+</span></span></span><span class="line"><span class="cl"><span class="sd">      echo &#34;健康检查结果: $HEALTH&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sd">      if echo &#34;$HEALTH&#34; | grep -q &#34;healthy&#34;; then
+</span></span></span><span class="line"><span class="cl"><span class="sd">        #  部署成功：清理旧容器，重命名新容器 
+</span></span></span><span class="line"><span class="cl"><span class="sd">        echo &#34; 新容器健康检查通过！&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sd">        docker rm fastapi-cicd-demo 2&gt;/dev/null || true
+</span></span></span><span class="line"><span class="cl"><span class="sd">        docker rename fastapi-cicd-demo-new fastapi-cicd-demo
+</span></span></span><span class="line"><span class="cl"><span class="sd">        docker image prune -f
+</span></span></span><span class="line"><span class="cl"><span class="sd">        echo &#34;部署成功！&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sd">      else
+</span></span></span><span class="line"><span class="cl"><span class="sd">        # ── 部署失败：回退到旧版本 ──
+</span></span></span><span class="line"><span class="cl"><span class="sd">        echo &#34;新容器健康检查失败！&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sd">        docker logs fastapi-cicd-demo-new 2&gt;/dev/null || true
+</span></span></span><span class="line"><span class="cl"><span class="sd">        # 删除失败的新容器
+</span></span></span><span class="line"><span class="cl"><span class="sd">        docker stop fastapi-cicd-demo-new 2&gt;/dev/null || true
+</span></span></span><span class="line"><span class="cl"><span class="sd">        docker rm fastapi-cicd-demo-new 2&gt;/dev/null || true
+</span></span></span><span class="line"><span class="cl"><span class="sd">        # 回退：重新启动旧容器
+</span></span></span><span class="line"><span class="cl"><span class="sd">        if [ &#34;$OLD_CONTAINER_EXISTS&#34; = true ]; then
+</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34; 正在回退到旧版本...&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sd">          docker start fastapi-cicd-demo
+</span></span></span><span class="line"><span class="cl"><span class="sd">          sleep 3
+</span></span></span><span class="line"><span class="cl"><span class="sd">          ROLLBACK_HEALTH=$(curl -sf http://localhost:8000/health || echo &#34;FAILED&#34;)
+</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;回退后健康检查: $ROLLBACK_HEALTH&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;已回退到旧版本&#34;
+</span></span></span><span class="line"><span class="cl"><span class="sd">        fi
+</span></span></span><span class="line"><span class="cl"><span class="sd">        exit 1
+</span></span></span><span class="line"><span class="cl"><span class="sd">      fi</span><span class="w">      
 </span></span></span></code></pre></td></tr></table>
 </div>
 </div><h3 id="其他安全改造思路">其他安全改造思路
@@ -1423,7 +1565,7 @@ DEPLOY_USER（ssh连接的用户，必须有docker权限才能运行docker容器
 </span></span><span class="line"><span class="cl">git push origin v1.0.2
 </span></span></code></pre></td></tr></table>
 </div>
-</div><h2 id="附件代码安全改造前">附件代码（安全改造前）
+</div><h2 id="完整ci-cdyml代码">完整ci-cd.yml代码
 </h2><div class="highlight"><div class="chroma">
 <table class="lntable"><tr><td class="lntd">
 <pre tabindex="0" class="chroma"><code><span class="lnt">  1
@@ -1651,640 +1793,6 @@ DEPLOY_USER（ssh连接的用户，必须有docker权限才能运行docker容器
 </span><span class="lnt">223
 </span><span class="lnt">224
 </span><span class="lnt">225
-</span><span class="lnt">226
-</span><span class="lnt">227
-</span><span class="lnt">228
-</span><span class="lnt">229
-</span><span class="lnt">230
-</span><span class="lnt">231
-</span><span class="lnt">232
-</span><span class="lnt">233
-</span><span class="lnt">234
-</span><span class="lnt">235
-</span><span class="lnt">236
-</span><span class="lnt">237
-</span><span class="lnt">238
-</span><span class="lnt">239
-</span><span class="lnt">240
-</span><span class="lnt">241
-</span><span class="lnt">242
-</span><span class="lnt">243
-</span><span class="lnt">244
-</span><span class="lnt">245
-</span><span class="lnt">246
-</span><span class="lnt">247
-</span><span class="lnt">248
-</span><span class="lnt">249
-</span><span class="lnt">250
-</span><span class="lnt">251
-</span><span class="lnt">252
-</span><span class="lnt">253
-</span><span class="lnt">254
-</span><span class="lnt">255
-</span><span class="lnt">256
-</span><span class="lnt">257
-</span><span class="lnt">258
-</span><span class="lnt">259
-</span><span class="lnt">260
-</span><span class="lnt">261
-</span><span class="lnt">262
-</span><span class="lnt">263
-</span><span class="lnt">264
-</span><span class="lnt">265
-</span><span class="lnt">266
-</span><span class="lnt">267
-</span><span class="lnt">268
-</span><span class="lnt">269
-</span><span class="lnt">270
-</span><span class="lnt">271
-</span><span class="lnt">272
-</span><span class="lnt">273
-</span><span class="lnt">274
-</span><span class="lnt">275
-</span><span class="lnt">276
-</span><span class="lnt">277
-</span><span class="lnt">278
-</span><span class="lnt">279
-</span><span class="lnt">280
-</span><span class="lnt">281
-</span><span class="lnt">282
-</span><span class="lnt">283
-</span><span class="lnt">284
-</span><span class="lnt">285
-</span><span class="lnt">286
-</span><span class="lnt">287
-</span><span class="lnt">288
-</span><span class="lnt">289
-</span><span class="lnt">290
-</span><span class="lnt">291
-</span><span class="lnt">292
-</span><span class="lnt">293
-</span><span class="lnt">294
-</span><span class="lnt">295
-</span><span class="lnt">296
-</span><span class="lnt">297
-</span><span class="lnt">298
-</span><span class="lnt">299
-</span><span class="lnt">300
-</span><span class="lnt">301
-</span><span class="lnt">302
-</span><span class="lnt">303
-</span><span class="lnt">304
-</span><span class="lnt">305
-</span><span class="lnt">306
-</span><span class="lnt">307
-</span><span class="lnt">308
-</span><span class="lnt">309
-</span><span class="lnt">310
-</span><span class="lnt">311
-</span></code></pre></td>
-<td class="lntd">
-<pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># ============================================================</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># FastAPI CI/CD 流水线</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># ============================================================</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># 触发条件：</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c">#   1. push 到 main 分支（执行 Lint + Test + Build + Deploy）</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c">#   2. push tag（如 v1.0.0，执行 Lint + Test + Build + Deploy，使用 tag 作为版本号）</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c">#   3. Pull Request（仅执行 Lint + Test）</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># ============================================================</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">CI/CD Pipeline</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># ──────────────────────────────────────</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># 触发条件</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># ──────────────────────────────────────</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">on</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">push</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">branches</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">main         </span><span class="w"> </span><span class="c"># 测试用，提交到main分支就触发，实际使用需删除</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">tags</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="s1">&#39;v*&#39;</span><span class="w">          </span><span class="c"># 匹配 v1.0.0, v2.1.3 等</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">pull_request</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">branches</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="l">main</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># ──────────────────────────────────────</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># 全局环境变量</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># ──────────────────────────────────────</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">env</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">DOCKER_REGISTRY</span><span class="p">:</span><span class="w"> </span><span class="l">ghcr.io                 </span><span class="w"> </span><span class="c"># GitHub Container Registry</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">IMAGE_NAME</span><span class="p">:</span><span class="w"> </span><span class="l">${{ github.repository }}    </span><span class="w"> </span><span class="c"># 镜像名 = 用户名/仓库名</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">PYTHON_VERSION</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;3.10&#39;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># ──────────────────────────────────────</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># 权限</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># ──────────────────────────────────────</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">permissions</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">contents</span><span class="p">:</span><span class="w"> </span><span class="l">read</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">packages</span><span class="p">:</span><span class="w"> </span><span class="l">write</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">security-events</span><span class="p">:</span><span class="w"> </span><span class="l">write</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># ============================================================</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># Jobs</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="c"># ============================================================</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w"></span><span class="nt">jobs</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># ──────────────────────────────────────</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># Job 1: Lint（代码规范检查）</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># ──────────────────────────────────────</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">lint</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l">Lint</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l">ubuntu-22.04</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">steps</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Checkout 代码</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">actions/checkout@v6</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">设置 Python ${{ env.PYTHON_VERSION }}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">actions/setup-python@v6</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">with</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">python-version</span><span class="p">:</span><span class="w"> </span><span class="l">${{ env.PYTHON_VERSION }}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">cache</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;pip&#39;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="c"># 把多个 pip install 命令放在同一个 run 块里</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">安装依赖</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">          python -m pip install --upgrade pip
-</span></span></span><span class="line"><span class="cl"><span class="sd">          pip install flake8
-</span></span></span><span class="line"><span class="cl"><span class="sd">          pip install -r requirements.txt</span><span class="w">          
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">运行 flake8 检查</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;=========================================&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;  Flake8 代码规范检查&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;=========================================&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">          flake8 app/ tests/ \
-</span></span></span><span class="line"><span class="cl"><span class="sd">            --statistics \
-</span></span></span><span class="line"><span class="cl"><span class="sd">            --count \
-</span></span></span><span class="line"><span class="cl"><span class="sd">            --show-source
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;代码规范检查通过！&#34;</span><span class="w">          
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># ──────────────────────────────────────</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># Job 2: Test（单元测试 + 覆盖率）</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># ──────────────────────────────────────</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">test</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l">Test</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l">ubuntu-22.04</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">needs</span><span class="p">:</span><span class="w"> </span><span class="l">lint                       </span><span class="w"> </span><span class="c"># 依赖 lint 通过后才执行</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">steps</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l">Checkout 代码</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">actions/checkout@v6</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">设置 Python ${{ env.PYTHON_VERSION }}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">actions/setup-python@v6</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">with</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">python-version</span><span class="p">:</span><span class="w"> </span><span class="l">${{ env.PYTHON_VERSION }}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">cache</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;pip&#39;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">安装依赖</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">          python -m pip install --upgrade pip
-</span></span></span><span class="line"><span class="cl"><span class="sd">          pip install -r requirements.txt</span><span class="w">          
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">运行 pytest</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;=========================================&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;  Pytest 单元测试 + 覆盖率报告&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;=========================================&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">          pytest</span><span class="w">          
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="c">#    使用 actions/upload-artifact 保留生成的pytest 测试报告文件</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l">上传测试结果 (JUnit XML)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l">always()                   </span><span class="w"> </span><span class="c"># 即使测试失败也要上传</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">actions/upload-artifact@v7</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">with</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">test-results-junit</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l">test-results.xml</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">retention-days</span><span class="p">:</span><span class="w"> </span><span class="m">30</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># ──────────────────────────────────────</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># Job 3: Build（构建 Docker 镜像）</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># ──────────────────────────────────────</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">build</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l">Build Image</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l">ubuntu-22.04</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">needs</span><span class="p">:</span><span class="w"> </span><span class="l">test                       </span><span class="w"> </span><span class="c"># 依赖测试通过后才构建</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="c"># 只有 push（非 PR）才构建</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l">github.event_name == &#39;push&#39;</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">outputs</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">image_tag</span><span class="p">:</span><span class="w"> </span><span class="l">${{ steps.meta.outputs.tags }}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">steps</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">Checkout 代码</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">actions/checkout@v6</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l">登录 GitHub Container Registry</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">docker/login-action@v4</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">with</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">registry</span><span class="p">:</span><span class="w"> </span><span class="l">${{ env.DOCKER_REGISTRY }}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l">${{ github.actor }}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">password</span><span class="p">:</span><span class="w"> </span><span class="l">${{ secrets.GITHUB_TOKEN }}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="c">#  自动根据 Git Tag / SHA 生成 Docker 镜像标签</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l">生成镜像标签元数据</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">meta</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">docker/metadata-action@v6</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">with</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">images</span><span class="p">:</span><span class="w"> </span><span class="l">${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">tags</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">            # 如果是 tag 推送：v1.0.0 → 1.0.0, latest
-</span></span></span><span class="line"><span class="cl"><span class="sd">            type=semver,pattern={{version}}
-</span></span></span><span class="line"><span class="cl"><span class="sd">            type=semver,pattern={{major}}.{{minor}}
-</span></span></span><span class="line"><span class="cl"><span class="sd">            # 如果是 branch 推送：main → sha-xxxxxx
-</span></span></span><span class="line"><span class="cl"><span class="sd">            type=sha,prefix=
-</span></span></span><span class="line"><span class="cl"><span class="sd">            # 始终添加 latest 标签（仅 main 分支）
-</span></span></span><span class="line"><span class="cl"><span class="sd">            type=raw,value=latest,enable=${{ github.ref == &#39;refs/heads/main&#39; }}</span><span class="w">            
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l">设置 Docker Buildx</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">docker/setup-buildx-action@v4</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l">构建并推送镜像</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">docker/build-push-action@v7</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">with</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">context</span><span class="p">:</span><span class="w"> </span><span class="l">.</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">push</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">tags</span><span class="p">:</span><span class="w"> </span><span class="l">${{ steps.meta.outputs.tags }}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">labels</span><span class="p">:</span><span class="w"> </span><span class="l">${{ steps.meta.outputs.labels }}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">cache-from</span><span class="p">:</span><span class="w"> </span><span class="l">type=gha          </span><span class="w"> </span><span class="c"># 使用 GitHub Actions 缓存加速构建</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">cache-to</span><span class="p">:</span><span class="w"> </span><span class="l">type=gha,mode=max</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">platforms</span><span class="p">:</span><span class="w"> </span><span class="l">linux/amd64</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l">输出镜像信息</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;=========================================&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;  镜像构建成功！&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;=========================================&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;标签: ${{ steps.meta.outputs.tags }}&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;标签 JSON:&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;${{ steps.meta.outputs.tags }}&#34; | tr &#39;,&#39; &#39;\n&#39;
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;拉取命令：&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;  docker pull ${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:latest&#34;</span><span class="w">          
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># ──────────────────────────────────────</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># Job 4: Deploy（部署到服务器）</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># ──────────────────────────────────────</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="nt">deploy</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l">Deploy</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">runs-on</span><span class="p">:</span><span class="w"> </span><span class="l">ubuntu-22.04</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">needs</span><span class="p">:</span><span class="w"> </span><span class="l">build</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l">github.ref == &#39;refs/heads/main&#39; || startsWith(github.ref, &#39;refs/tags/&#39;)</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">environment</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">production                  </span><span class="w"> </span><span class="c"># 需要在 GitHub Settings → Environments 中配置</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="nt">url</span><span class="p">:</span><span class="w"> </span><span class="l">http://${{ vars.DEPLOY_HOST }}:8000</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">    </span><span class="nt">steps</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l">Checkout 代码</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">actions/checkout@v6</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l">确定部署版本标签</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l">version</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">          if [[ &#34;${{ github.ref }}&#34; == refs/tags/* ]]; then
-</span></span></span><span class="line"><span class="cl"><span class="sd">            # 从 tag 提取版本号：refs/tags/v1.0.0 → v1.0.0
-</span></span></span><span class="line"><span class="cl"><span class="sd">            VERSION=&#34;${GITHUB_REF#refs/tags/}&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">          else
-</span></span></span><span class="line"><span class="cl"><span class="sd">            # main 分支使用 latest
-</span></span></span><span class="line"><span class="cl"><span class="sd">            VERSION=&#34;latest&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">          fi
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;version=$VERSION&#34; &gt;&gt; &#34;$GITHUB_OUTPUT&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34; 部署版本: $VERSION&#34;</span><span class="w">          
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="c"># 通过 SSH 连接远程服务器执行部署（含自动回退）</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l">SSH 部署到服务器</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">appleboy/ssh-action@v1.0.3</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">with</span><span class="p">:</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l">${{ vars.DEPLOY_HOST }}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l">${{ secrets.DEPLOY_USER }}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">${{ secrets.DEPLOY_SSH_KEY }}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">port</span><span class="p">:</span><span class="w"> </span><span class="m">22</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">command_timeout</span><span class="p">:</span><span class="w"> </span><span class="l">10m</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">script</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">            echo &#34;=========================================&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">            echo &#34;  开始部署 fastapi-cicd-demo&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">            echo &#34;  版本: ${{ steps.version.outputs.version }}&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">            echo &#34;=========================================&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">            # 1. 登录 GitHub Container Registry
-</span></span></span><span class="line"><span class="cl"><span class="sd">            echo &#34;${{ secrets.GITHUB_TOKEN }}&#34; | docker login ghcr.io -u ${{ github.actor }} --password-stdin || { echo &#34;docker login 失败&#34;; exit 1; }
-</span></span></span><span class="line"><span class="cl"><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">            # 2. 拉取新镜像
-</span></span></span><span class="line"><span class="cl"><span class="sd">            IMAGE=&#34;${{ env.DOCKER_REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">            docker pull &#34;$IMAGE&#34; || { echo &#34;docker pull 失败&#34;; exit 1; }
-</span></span></span><span class="line"><span class="cl"><span class="sd">            echo &#34;镜像拉取成功: $IMAGE&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">            # 3. 检查旧容器是否存在（用于回退）
-</span></span></span><span class="line"><span class="cl"><span class="sd">            OLD_CONTAINER_EXISTS=false
-</span></span></span><span class="line"><span class="cl"><span class="sd">            if docker inspect fastapi-cicd-demo &gt; /dev/null 2&gt;&amp;1; then
-</span></span></span><span class="line"><span class="cl"><span class="sd">              OLD_CONTAINER_EXISTS=true
-</span></span></span><span class="line"><span class="cl"><span class="sd">              echo &#34;发现旧容器&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">            else
-</span></span></span><span class="line"><span class="cl"><span class="sd">              echo &#34;未发现旧容器，首次部署&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">            fi
-</span></span></span><span class="line"><span class="cl"><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">            # 4. 停止旧容器（保留，不删除，用于回退）
-</span></span></span><span class="line"><span class="cl"><span class="sd">            docker stop fastapi-cicd-demo 2&gt;/dev/null || true
-</span></span></span><span class="line"><span class="cl"><span class="sd">            echo &#34;旧容器已停止&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">            # 5. 启动新容器（临时名称）
-</span></span></span><span class="line"><span class="cl"><span class="sd">            docker run -d \
-</span></span></span><span class="line"><span class="cl"><span class="sd">              --name fastapi-cicd-demo-new \
-</span></span></span><span class="line"><span class="cl"><span class="sd">              --restart unless-stopped \
-</span></span></span><span class="line"><span class="cl"><span class="sd">              -p 8000:8000 \
-</span></span></span><span class="line"><span class="cl"><span class="sd">              -e ENVIRONMENT=production \
-</span></span></span><span class="line"><span class="cl"><span class="sd">              &#34;$IMAGE&#34; || { echo &#34;docker run 失败&#34;; exit 1; }
-</span></span></span><span class="line"><span class="cl"><span class="sd">            echo &#34;新容器已启动&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">            # 6. 等待新容器启动并做健康检查
-</span></span></span><span class="line"><span class="cl"><span class="sd">            echo &#34;等待新服务启动...&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">            sleep 5
-</span></span></span><span class="line"><span class="cl"><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">            HEALTH=$(curl -sf http://localhost:8000/health || echo &#34;FAILED&#34;)
-</span></span></span><span class="line"><span class="cl"><span class="sd">            echo &#34;健康检查结果: $HEALTH&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">            if echo &#34;$HEALTH&#34; | grep -q &#34;healthy&#34;; then
-</span></span></span><span class="line"><span class="cl"><span class="sd">              #  部署成功：清理旧容器，重命名新容器 
-</span></span></span><span class="line"><span class="cl"><span class="sd">              echo &#34; 新容器健康检查通过！&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">              docker rm fastapi-cicd-demo 2&gt;/dev/null || true
-</span></span></span><span class="line"><span class="cl"><span class="sd">              docker rename fastapi-cicd-demo-new fastapi-cicd-demo
-</span></span></span><span class="line"><span class="cl"><span class="sd">              docker image prune -f
-</span></span></span><span class="line"><span class="cl"><span class="sd">              echo &#34;部署成功！&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">            else
-</span></span></span><span class="line"><span class="cl"><span class="sd">              # ── 部署失败：回退到旧版本 ──
-</span></span></span><span class="line"><span class="cl"><span class="sd">              echo &#34;新容器健康检查失败！&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">              docker logs fastapi-cicd-demo-new 2&gt;/dev/null || true
-</span></span></span><span class="line"><span class="cl"><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">              # 删除失败的新容器
-</span></span></span><span class="line"><span class="cl"><span class="sd">              docker stop fastapi-cicd-demo-new 2&gt;/dev/null || true
-</span></span></span><span class="line"><span class="cl"><span class="sd">              docker rm fastapi-cicd-demo-new 2&gt;/dev/null || true
-</span></span></span><span class="line"><span class="cl"><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">              # 回退：重新启动旧容器
-</span></span></span><span class="line"><span class="cl"><span class="sd">              if [ &#34;$OLD_CONTAINER_EXISTS&#34; = true ]; then
-</span></span></span><span class="line"><span class="cl"><span class="sd">                echo &#34; 正在回退到旧版本...&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">                docker start fastapi-cicd-demo
-</span></span></span><span class="line"><span class="cl"><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">                sleep 3
-</span></span></span><span class="line"><span class="cl"><span class="sd">                ROLLBACK_HEALTH=$(curl -sf http://localhost:8000/health || echo &#34;FAILED&#34;)
-</span></span></span><span class="line"><span class="cl"><span class="sd">                echo &#34;回退后健康检查: $ROLLBACK_HEALTH&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">                echo &#34;已回退到旧版本&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">              fi
-</span></span></span><span class="line"><span class="cl"><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">              exit 1
-</span></span></span><span class="line"><span class="cl"><span class="sd">            fi</span><span class="w">            
-</span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w">  </span><span class="l">部署摘要</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;##  部署完成&#34; &gt;&gt; $GITHUB_STEP_SUMMARY
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;&#34; &gt;&gt; $GITHUB_STEP_SUMMARY
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;| 项目 | 值 |&#34; &gt;&gt; $GITHUB_STEP_SUMMARY
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;|------|-----|&#34; &gt;&gt; $GITHUB_STEP_SUMMARY
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;| 版本 | \`${{ steps.version.outputs.version }}\` |&#34; &gt;&gt; $GITHUB_STEP_SUMMARY
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;| 触发者 | @${{ github.actor }} |&#34; &gt;&gt; $GITHUB_STEP_SUMMARY
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;| Commit | \`${{ github.sha }}\` |&#34; &gt;&gt; $GITHUB_STEP_SUMMARY
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;| 服务器 | \`${{ vars.DEPLOY_HOST }}\` |&#34; &gt;&gt; $GITHUB_STEP_SUMMARY
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;&#34; &gt;&gt; $GITHUB_STEP_SUMMARY
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;[查看服务](http://${{vars.DEPLOY_HOST }}:8000/docs)&#34; &gt;&gt; $GITHUB_STEP_SUMMARY</span><span class="w">          
-</span></span></span></code></pre></td></tr></table>
-</div>
-</div><h2 id="附件代码安全改造后">附件代码（安全改造后）
-</h2><div class="highlight"><div class="chroma">
-<table class="lntable"><tr><td class="lntd">
-<pre tabindex="0" class="chroma"><code><span class="lnt">  1
-</span><span class="lnt">  2
-</span><span class="lnt">  3
-</span><span class="lnt">  4
-</span><span class="lnt">  5
-</span><span class="lnt">  6
-</span><span class="lnt">  7
-</span><span class="lnt">  8
-</span><span class="lnt">  9
-</span><span class="lnt"> 10
-</span><span class="lnt"> 11
-</span><span class="lnt"> 12
-</span><span class="lnt"> 13
-</span><span class="lnt"> 14
-</span><span class="lnt"> 15
-</span><span class="lnt"> 16
-</span><span class="lnt"> 17
-</span><span class="lnt"> 18
-</span><span class="lnt"> 19
-</span><span class="lnt"> 20
-</span><span class="lnt"> 21
-</span><span class="lnt"> 22
-</span><span class="lnt"> 23
-</span><span class="lnt"> 24
-</span><span class="lnt"> 25
-</span><span class="lnt"> 26
-</span><span class="lnt"> 27
-</span><span class="lnt"> 28
-</span><span class="lnt"> 29
-</span><span class="lnt"> 30
-</span><span class="lnt"> 31
-</span><span class="lnt"> 32
-</span><span class="lnt"> 33
-</span><span class="lnt"> 34
-</span><span class="lnt"> 35
-</span><span class="lnt"> 36
-</span><span class="lnt"> 37
-</span><span class="lnt"> 38
-</span><span class="lnt"> 39
-</span><span class="lnt"> 40
-</span><span class="lnt"> 41
-</span><span class="lnt"> 42
-</span><span class="lnt"> 43
-</span><span class="lnt"> 44
-</span><span class="lnt"> 45
-</span><span class="lnt"> 46
-</span><span class="lnt"> 47
-</span><span class="lnt"> 48
-</span><span class="lnt"> 49
-</span><span class="lnt"> 50
-</span><span class="lnt"> 51
-</span><span class="lnt"> 52
-</span><span class="lnt"> 53
-</span><span class="lnt"> 54
-</span><span class="lnt"> 55
-</span><span class="lnt"> 56
-</span><span class="lnt"> 57
-</span><span class="lnt"> 58
-</span><span class="lnt"> 59
-</span><span class="lnt"> 60
-</span><span class="lnt"> 61
-</span><span class="lnt"> 62
-</span><span class="lnt"> 63
-</span><span class="lnt"> 64
-</span><span class="lnt"> 65
-</span><span class="lnt"> 66
-</span><span class="lnt"> 67
-</span><span class="lnt"> 68
-</span><span class="lnt"> 69
-</span><span class="lnt"> 70
-</span><span class="lnt"> 71
-</span><span class="lnt"> 72
-</span><span class="lnt"> 73
-</span><span class="lnt"> 74
-</span><span class="lnt"> 75
-</span><span class="lnt"> 76
-</span><span class="lnt"> 77
-</span><span class="lnt"> 78
-</span><span class="lnt"> 79
-</span><span class="lnt"> 80
-</span><span class="lnt"> 81
-</span><span class="lnt"> 82
-</span><span class="lnt"> 83
-</span><span class="lnt"> 84
-</span><span class="lnt"> 85
-</span><span class="lnt"> 86
-</span><span class="lnt"> 87
-</span><span class="lnt"> 88
-</span><span class="lnt"> 89
-</span><span class="lnt"> 90
-</span><span class="lnt"> 91
-</span><span class="lnt"> 92
-</span><span class="lnt"> 93
-</span><span class="lnt"> 94
-</span><span class="lnt"> 95
-</span><span class="lnt"> 96
-</span><span class="lnt"> 97
-</span><span class="lnt"> 98
-</span><span class="lnt"> 99
-</span><span class="lnt">100
-</span><span class="lnt">101
-</span><span class="lnt">102
-</span><span class="lnt">103
-</span><span class="lnt">104
-</span><span class="lnt">105
-</span><span class="lnt">106
-</span><span class="lnt">107
-</span><span class="lnt">108
-</span><span class="lnt">109
-</span><span class="lnt">110
-</span><span class="lnt">111
-</span><span class="lnt">112
-</span><span class="lnt">113
-</span><span class="lnt">114
-</span><span class="lnt">115
-</span><span class="lnt">116
-</span><span class="lnt">117
-</span><span class="lnt">118
-</span><span class="lnt">119
-</span><span class="lnt">120
-</span><span class="lnt">121
-</span><span class="lnt">122
-</span><span class="lnt">123
-</span><span class="lnt">124
-</span><span class="lnt">125
-</span><span class="lnt">126
-</span><span class="lnt">127
-</span><span class="lnt">128
-</span><span class="lnt">129
-</span><span class="lnt">130
-</span><span class="lnt">131
-</span><span class="lnt">132
-</span><span class="lnt">133
-</span><span class="lnt">134
-</span><span class="lnt">135
-</span><span class="lnt">136
-</span><span class="lnt">137
-</span><span class="lnt">138
-</span><span class="lnt">139
-</span><span class="lnt">140
-</span><span class="lnt">141
-</span><span class="lnt">142
-</span><span class="lnt">143
-</span><span class="lnt">144
-</span><span class="lnt">145
-</span><span class="lnt">146
-</span><span class="lnt">147
-</span><span class="lnt">148
-</span><span class="lnt">149
-</span><span class="lnt">150
-</span><span class="lnt">151
-</span><span class="lnt">152
-</span><span class="lnt">153
-</span><span class="lnt">154
-</span><span class="lnt">155
-</span><span class="lnt">156
-</span><span class="lnt">157
-</span><span class="lnt">158
-</span><span class="lnt">159
-</span><span class="lnt">160
-</span><span class="lnt">161
-</span><span class="lnt">162
-</span><span class="lnt">163
-</span><span class="lnt">164
-</span><span class="lnt">165
-</span><span class="lnt">166
-</span><span class="lnt">167
-</span><span class="lnt">168
-</span><span class="lnt">169
-</span><span class="lnt">170
-</span><span class="lnt">171
-</span><span class="lnt">172
-</span><span class="lnt">173
-</span><span class="lnt">174
-</span><span class="lnt">175
-</span><span class="lnt">176
-</span><span class="lnt">177
-</span><span class="lnt">178
-</span><span class="lnt">179
-</span><span class="lnt">180
-</span><span class="lnt">181
-</span><span class="lnt">182
-</span><span class="lnt">183
-</span><span class="lnt">184
-</span><span class="lnt">185
-</span><span class="lnt">186
-</span><span class="lnt">187
-</span><span class="lnt">188
-</span><span class="lnt">189
-</span><span class="lnt">190
-</span><span class="lnt">191
-</span><span class="lnt">192
-</span><span class="lnt">193
-</span><span class="lnt">194
-</span><span class="lnt">195
-</span><span class="lnt">196
-</span><span class="lnt">197
-</span><span class="lnt">198
-</span><span class="lnt">199
-</span><span class="lnt">200
-</span><span class="lnt">201
-</span><span class="lnt">202
-</span><span class="lnt">203
-</span><span class="lnt">204
-</span><span class="lnt">205
-</span><span class="lnt">206
-</span><span class="lnt">207
-</span><span class="lnt">208
-</span><span class="lnt">209
-</span><span class="lnt">210
-</span><span class="lnt">211
-</span><span class="lnt">212
-</span><span class="lnt">213
-</span><span class="lnt">214
-</span><span class="lnt">215
-</span><span class="lnt">216
-</span><span class="lnt">217
-</span><span class="lnt">218
-</span><span class="lnt">219
-</span><span class="lnt">220
-</span><span class="lnt">221
-</span><span class="lnt">222
-</span><span class="lnt">223
-</span><span class="lnt">224
-</span><span class="lnt">225
-</span><span class="lnt">226
-</span><span class="lnt">227
-</span><span class="lnt">228
-</span><span class="lnt">229
-</span><span class="lnt">230
 </span></code></pre></td>
 <td class="lntd">
 <pre tabindex="0" class="chroma"><code class="language-yaml" data-lang="yaml"><span class="line"><span class="cl"><span class="c"># ============================================================</span><span class="w">
@@ -2346,23 +1854,18 @@ DEPLOY_USER（ssh连接的用户，必须有docker权限才能运行docker容器
 </span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">python-version</span><span class="p">:</span><span class="w"> </span><span class="l">${{ env.PYTHON_VERSION }}</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">cache</span><span class="p">:</span><span class="w"> </span><span class="s1">&#39;pip&#39;</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="c"># 把多个 pip install 命令放在同一个 run 块里</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">安装依赖</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">          python -m pip install --upgrade pip
-</span></span></span><span class="line"><span class="cl"><span class="sd">          pip install flake8
-</span></span></span><span class="line"><span class="cl"><span class="sd">          pip install -r requirements.txt</span><span class="w">          
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">安装 pre-commit</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l">python -m pip install --upgrade pip &amp;&amp; pip install pre-commit</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">运行 flake8 检查</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;=========================================&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;  Flake8 代码规范检查&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;=========================================&#34;
-</span></span></span><span class="line"><span class="cl"><span class="sd">          flake8 app/ tests/ \
-</span></span></span><span class="line"><span class="cl"><span class="sd">            --statistics \
-</span></span></span><span class="line"><span class="cl"><span class="sd">            --count \
-</span></span></span><span class="line"><span class="cl"><span class="sd">            --show-source
-</span></span></span><span class="line"><span class="cl"><span class="sd">          echo &#34;代码规范检查通过！&#34;</span><span class="w">          
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span><span class="c"># 缓存 pre-commit 的虚拟环境</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">缓存 pre-commit 环境</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">actions/cache@v5</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">with</span><span class="p">:</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">path</span><span class="p">:</span><span class="w"> </span><span class="l">~/.cache/pre-commit</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">pre-commit|${{ env.PYTHON_VERSION }}|${{ hashFiles(&#39;.pre-commit-config.yaml&#39;) }}</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">      </span>- <span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l">运行 pre-commit</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l">pre-commit run --all-files</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># ──────────────────────────────────────</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">  </span><span class="c"># Job 2: Test（单元测试 + 覆盖率）</span><span class="w">
@@ -2495,8 +1998,8 @@ DEPLOY_USER（ssh连接的用户，必须有docker权限才能运行docker容器
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l">appleboy/ssh-action@v1</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">        </span><span class="nt">with</span><span class="p">:</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">host</span><span class="p">:</span><span class="w"> </span><span class="l">${{ vars.DEPLOY_HOST }}</span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l">deployer                        </span><span class="w">
-</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">${{ secrets.DEPLOY_SSH_KEY_DEPLOYER }}  </span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">username</span><span class="p">:</span><span class="w"> </span><span class="l">deployer</span><span class="w">
+</span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">key</span><span class="p">:</span><span class="w"> </span><span class="l">${{ secrets.DEPLOY_SSH_KEY_DEPLOYER }}</span><span class="w">
 </span></span></span><span class="line"><span class="cl"><span class="w">          </span><span class="nt">script</span><span class="p">:</span><span class="w"> </span><span class="p">|</span><span class="sd">
 </span></span></span><span class="line"><span class="cl"><span class="sd">            if [ -z &#34;${{ needs.build.outputs.image_tag }}&#34; ]; then
 </span></span></span><span class="line"><span class="cl"><span class="sd">              echo &#34;错误：未获取到有效的镜像标签！&#34;
